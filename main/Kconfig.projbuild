@@ -1,0 +1,11 @@
+menu "Device Configuration"
+
+
+		config NEW_HW
+			bool "NEW_HW"
+			default n
+			help
+			This component will initialize NEW_HW Pins
+
+
+endmenu

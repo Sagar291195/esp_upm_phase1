@@ -1,0 +1,48 @@
+
+xssParentContainer_ss
+
+	_xssContStatusBar_ss
+		__xssTimeLabel_ss
+		__xssBatteryLabel_ss
+		__xssWifiLabel_ss
+	_xssParaHeadingCont_ss
+		__xssBackArrowLabel_ss
+		__xssSummaryHeadingLbl_ss
+	_xssSummayCont_ss
+		__xssStartTxtLbl_ss
+		__xssStopTxtLbl_ss
+		__xssStartDateLbl_ss
+		__xssStopDateLbl_ss
+
+		__xssSampleNunLbl_ss
+
+		_xssFlowStPBaseCont_ss
+			__xssFlowStPTxtLbl_ss
+			__xssFlowStPValueLbl_ss
+
+		_xssSeqNumBaseCont_ss
+			__xssSeqNumTxtLbl_ss
+			__xssSeqNumValueLbl_ss
+
+		_xssDurationCont_ss
+			__xssDurationTxtLbl_ss
+			__xssDurationValueLbl_ss
+
+		_xssPersonCont_ss
+			__xssPersonTxtLbl_ss
+			__xssPersonNameLbl_ss
+
+		_xssLtrCntrCont_ss
+			__xssLtrCntrTxtLbl_ss
+			__xssLtrCntrValLbl_ss
+
+		_xssHrCntrCont_ss
+			__xssHrCntrTxtLbl_ss
+			__xssHrCntrValLbl_ss
+
+
+	_xssValidJobBtn_ss
+		__xssStartJobTxtLabel_ss
+
+
+

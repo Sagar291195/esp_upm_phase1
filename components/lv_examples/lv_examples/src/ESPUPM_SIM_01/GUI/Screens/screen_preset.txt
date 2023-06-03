@@ -1,0 +1,1032 @@
+/**
+ *  @copyright "License Name" described in the LICENSE file.
+ *  @author    ABHAI TIWARI
+ *  @date      2021-03-01
+ */
+
+
+/*********************
+ *      INCLUDES
+ *********************/
+#include "screen_includes.h"
+
+/*********************
+ *   DEFINES/CONST
+ *********************/
+
+#define SYMBOL_SIGNAL "\uf012"
+
+#define screenBGcolor LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+#define darkGrayClor LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)
+/*********************
+ *      DEFINES
+ *********************/ 
+
+
+/*********************
+ *   DECLARATION
+ *********************/
+//Declare Fonts here
+LV_FONT_DECLARE(signal_20)
+
+//Declare Images Here
+
+LV_IMG_DECLARE(left_arrow_icon)
+
+/**********************
+ *      TYPEDEFS
+ **********************/
+
+/**********************
+ *  STATIC PROTOTYPES
+ **********************/
+
+// call backs
+//static void event_handler(lv_obj_t * obj, lv_event_t event);
+//static void Calender_event_handler(lv_obj_t * obj, lv_event_t event);
+static void valid_btn_event_handler(lv_obj_t * obj, lv_event_t event);
+static void _xsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event);
+
+
+/**********************
+ *  STATIC VARIABLES
+ **********************/
+
+
+lv_obj_t * xaParentContainer_Adv;
+lv_obj_t * _xaContainerStatusBar_Adv;
+lv_obj_t * _xaTimeLabel_Adv;
+lv_obj_t * _xaBatteryLabel_Adv;
+lv_obj_t * _xaWifiLabel_Adv;
+lv_obj_t * _xaSignalLabel_Adv;
+lv_obj_t * _xaParaHeadingCont_Adv;
+lv_obj_t * _xaBackArrowLabel_Adv;
+lv_obj_t * _xaParameterHeading_Adv;
+lv_obj_t * _xaGoToNextCont_Adv;
+lv_obj_t * _xaGoToNextLbl_Adv;
+lv_obj_t * _xaStartLabel_Adv;
+lv_obj_t * _xaDMYCon_Adv;
+lv_obj_t * _xaDateroller;
+lv_obj_t * _xaHourroller;
+lv_obj_t * _xaMinutroller;
+lv_obj_t * _xaDotLabel_Adv;
+//lv_obj_t * _xaSPDurCon_Adv;
+lv_obj_t * _xaSPLabel_Adv;
+lv_obj_t * _xaDurLabel_Adv;
+lv_obj_t * _xsSProller;
+lv_obj_t * _xaLPMTxtLabel_Adv;
+lv_obj_t * _xsDurHourroller;
+lv_obj_t * _xaDurHourTxtLabel_Adv;
+lv_obj_t * _xsDurMinutroller;
+lv_obj_t * _xaDurMinTxtLabel_Adv;
+lv_obj_t * _xaValidBtn;
+lv_obj_t * _xaValidButtonLabel;
+
+/**********************
+ *      MACROS
+ **********************/
+
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+
+
+/**********************
+ *   GLOBAL FUNCTIONS
+ **********************/
+
+// void xsPresetScreen(void)
+// {
+//     lv_obj_t * xsParentContainer_seq;
+//     xsParentContainer_seq = lv_cont_create(lv_scr_act(), NULL);
+//     lv_obj_set_size(xsParentContainer_seq, 320, 480);
+//     lv_obj_set_click(xsParentContainer_seq, false);
+//     lv_obj_align(xsParentContainer_seq, NULL, LV_ALIGN_CENTER, 0,0);
+//     lv_obj_set_style_local_bg_color(xsParentContainer_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) );
+    
+//     lv_obj_t * _xsContainerStatusBar_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_set_size(_xsContainerStatusBar_seq, 320, 35);
+//     lv_obj_align(_xsContainerStatusBar_seq, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
+//     lv_obj_set_style_local_bg_color(_xsContainerStatusBar_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+//     lv_obj_set_style_local_border_opa(_xsContainerStatusBar_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
+
+//     //Create Watch upper left corner
+//     lv_obj_t * _xsTimeLabel_seq;
+//     _xsTimeLabel_seq = lv_label_create(_xsContainerStatusBar_seq, NULL);
+//     lv_obj_align(_xsTimeLabel_seq, _xsContainerStatusBar_seq, LV_ALIGN_IN_TOP_LEFT, 12,5);
+//     lv_label_set_text(_xsTimeLabel_seq, "04:55");
+
+//     static lv_style_t _xsTimeLabelStyle_seq;
+//     lv_style_init(&_xsTimeLabelStyle_seq);
+//     lv_style_set_text_font(&_xsTimeLabelStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_20); 
+//     lv_style_set_text_color(&_xsTimeLabelStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsTimeLabel_seq, LV_LABEL_PART_MAIN, &_xsTimeLabelStyle_seq);
+
+//     //Create Label for Battery icon
+//     lv_obj_t * _xsBatteryLabel_seq = lv_label_create(_xsContainerStatusBar_seq, NULL);
+//     lv_obj_align(_xsBatteryLabel_seq, _xsContainerStatusBar_seq, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
+//     lv_label_set_text(_xsBatteryLabel_seq, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
+
+//     static lv_style_t _xsBatteryLabelStyle_seq;
+//     lv_style_init(&_xsBatteryLabelStyle_seq);
+//     lv_style_set_text_font(&_xsBatteryLabelStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_24); 
+//     lv_style_set_text_color(&_xsBatteryLabelStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsBatteryLabel_seq, LV_LABEL_PART_MAIN, &_xsBatteryLabelStyle_seq);
+
+//     //Create Label for Wifi icon
+//     lv_obj_t * _xsWifiLabel_seq = lv_label_create(_xsContainerStatusBar_seq, NULL);
+//     lv_obj_align(_xsWifiLabel_seq, _xsBatteryLabel_seq, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
+//     lv_label_set_text(_xsWifiLabel_seq, LV_SYMBOL_WIFI);
+
+//     static lv_style_t _xsWifiLabelStyle_seq;
+//     lv_style_init(&_xsWifiLabelStyle_seq);
+//     lv_style_set_text_font(&_xsWifiLabelStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); 
+//     lv_style_set_text_color(&_xsWifiLabelStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsWifiLabel_seq, LV_LABEL_PART_MAIN, &_xsWifiLabelStyle_seq);
+
+//     //Create Label for Signal icon
+//     lv_obj_t * _xsSignalLabel_seq = lv_label_create(_xsContainerStatusBar_seq, NULL);
+//     lv_obj_align(_xsSignalLabel_seq, _xsWifiLabel_seq, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
+//     lv_label_set_text(_xsSignalLabel_seq, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+
+//     static lv_style_t _xsSignalLabelStyle_seq;
+//     lv_style_init(&_xsSignalLabelStyle_seq);
+//     lv_style_set_text_font(&_xsSignalLabelStyle_seq, LV_STATE_DEFAULT  ,&signal_20); //signal_20
+//     lv_style_set_text_color(&_xsSignalLabelStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsSignalLabel_seq, LV_LABEL_PART_MAIN, &_xsSignalLabelStyle_seq);
+
+//     //==============================================================================================================
+//     // Create a container to contain Sequences Header 
+
+//     lv_obj_t * _xsParaHeadingCont_seq;
+//     _xsParaHeadingCont_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_set_size(_xsParaHeadingCont_seq, 300, 70);
+//     lv_obj_align(_xsParaHeadingCont_seq, _xsContainerStatusBar_seq, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
+//     lv_obj_set_style_local_bg_color(_xsParaHeadingCont_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+//     lv_obj_set_style_local_border_width(_xsParaHeadingCont_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
+
+//     lv_obj_t * _xsBackArrowLabel_seq;
+//     _xsBackArrowLabel_seq = lv_img_create(_xsParaHeadingCont_seq, NULL);
+//     lv_img_set_src(_xsBackArrowLabel_seq, &left_arrow_icon);
+//     lv_obj_align(_xsBackArrowLabel_seq, _xsParaHeadingCont_seq, LV_ALIGN_IN_LEFT_MID, 5 , 0);
+//     lv_obj_set_click(_xsBackArrowLabel_seq, true);
+//     lv_obj_set_style_local_image_recolor_opa(_xsBackArrowLabel_seq, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
+//     lv_obj_set_style_local_image_recolor(_xsBackArrowLabel_seq, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+//     lv_obj_set_event_cb(_xsBackArrowLabel_seq, _xsBackArrow_event_handler);
+
+//     //Create Label for Sequences "Heading"
+//     lv_obj_t * _xsParameterHeading_seq;
+//     _xsParameterHeading_seq = lv_label_create(_xsParaHeadingCont_seq, NULL);
+//     lv_obj_align(_xsParameterHeading_seq, _xsParaHeadingCont_seq, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
+//     lv_label_set_text(_xsParameterHeading_seq, "Sequence 1");
+
+//     static lv_style_t _xsParameterHeadingStyle_seq;
+//     lv_style_init(&_xsParameterHeadingStyle_seq);
+//     lv_style_set_text_font(&_xsParameterHeadingStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); //signal_20
+//     lv_style_set_text_color(&_xsParameterHeadingStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsParameterHeading_seq, LV_LABEL_PART_MAIN, &_xsParameterHeadingStyle_seq);
+
+//     //Create Next Sequence Navigation BTN
+
+//     lv_obj_t * _xsGoToNextCont_seq;
+//     _xsGoToNextCont_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsGoToNextCont_seq, _xsContainerStatusBar_seq, LV_ALIGN_OUT_BOTTOM_RIGHT, -5, 5);
+//     lv_obj_set_size(_xsGoToNextCont_seq, 70, 70);//
+
+//     static lv_style_t _xsGoToNextContStyle_seq;
+//     lv_style_init(&_xsGoToNextContStyle_seq);
+//     lv_style_set_bg_color(&_xsGoToNextContStyle_seq, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
+//     lv_style_set_border_width(&_xsGoToNextContStyle_seq, LV_STATE_DEFAULT, 0);
+//     lv_obj_add_style(_xsGoToNextCont_seq, LV_CONT_PART_MAIN, &_xsGoToNextContStyle_seq);
+
+//     lv_obj_t * _xsGoToNextLbl_seq;
+//     _xsGoToNextLbl_seq = lv_label_create(_xsGoToNextCont_seq, NULL);
+//     lv_obj_align(_xsGoToNextLbl_seq, _xsGoToNextCont_seq, LV_ALIGN_IN_TOP_MID, 0, 15);
+//     lv_label_set_text(_xsGoToNextLbl_seq, LV_SYMBOL_PLAY);
+
+//     static lv_style_t _xsGoToNextStyle_seq;
+//     lv_style_init(&_xsGoToNextStyle_seq);
+//     lv_style_set_bg_color(&_xsGoToNextStyle_seq, LV_STATE_DEFAULT, LV_COLOR_YELLOW); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
+//     lv_style_set_text_font(&_xsGoToNextStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_34); //signal_20
+//     lv_style_set_text_color(&_xsGoToNextStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsGoToNextLbl_seq, LV_LABEL_PART_MAIN, &_xsGoToNextStyle_seq);
+
+//     // Create Label to "START:" Text
+
+//     lv_obj_t * _xsStartLabel_seq;
+//     _xsStartLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsStartLabel_seq, _xsBackArrowLabel_seq, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 35 );
+//     lv_label_set_text(_xsStartLabel_seq, "START : ");
+
+//     static lv_style_t _xsStartLabelStyle_seq;
+//     lv_style_init(&_xsStartLabelStyle_seq);
+//     lv_style_set_text_font(&_xsStartLabelStyle_seq, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); //signal_20
+//     lv_style_set_text_color(&_xsStartLabelStyle_seq, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsStartLabel_seq, LV_LABEL_PART_MAIN, &_xsStartLabelStyle_seq);
+
+//     //===============================================================================================================================================
+//     //===============================================================================================================================================
+
+//     //Craete container to hold Date Month & Year Rollers
+
+//     lv_obj_t * _xsDMYCon_seq;
+//     _xsDMYCon_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_set_size(_xsDMYCon_seq, 310, 80);
+//     lv_obj_align(_xsDMYCon_seq, _xsStartLabel_seq, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 5 );
+//     lv_obj_set_style_local_bg_color(_xsDMYCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)
+//     lv_obj_set_style_local_border_width(_xsDMYCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+
+//     // Roller to hold date
+
+//     lv_obj_t * _xsDateroller = lv_roller_create(_xsDMYCon_seq, NULL);
+//     lv_roller_set_options(_xsDateroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                          "  11  \n" "  12  \n" "  13  \n" "  14  \n" "  15  \n" "  16  \n" "  17  \n" "  18  \n" "  19  \n" "  20  \n"
+//                                          "  21  \n" "  22  \n" "  23  \n" "  24  \n" "  25  \n" "  26  \n" "  27  \n" "  28  \n" "  29  \n" "  30  \n"
+//                                          "  31  \n"
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsDateroller, 3);
+//     lv_obj_align(_xsDateroller, _xsDMYCon_seq, LV_ALIGN_IN_LEFT_MID, 8, 25);
+//     lv_obj_set_size(_xsDateroller, 20, 60);
+//     lv_obj_set_click(_xsDateroller, false);
+//     lv_obj_set_style_local_bg_color(_xsDateroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsDateroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsDateroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsDateroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);  //22
+
+//     //lv_obj_set_event_cb(roller1, event_handler);
+
+
+//     // Create label for "/"
+
+//     lv_obj_t * _xsSlashLabel_seq;
+//     _xsSlashLabel_seq = lv_label_create(_xsDMYCon_seq, NULL);
+//     lv_obj_align(_xsSlashLabel_seq, _xsDateroller , LV_ALIGN_OUT_RIGHT_MID, 5, -15);
+//     lv_label_set_text(_xsSlashLabel_seq, "/");
+
+//     static lv_style_t _xsSlashLabelStyle_seq;
+//     lv_style_init(&_xsSlashLabelStyle_seq);
+//     lv_style_set_text_font(&_xsSlashLabelStyle_seq, LV_STATE_DEFAULT, &lv_font_montserrat_40 );
+//     lv_style_set_text_color(&_xsSlashLabelStyle_seq, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+//     lv_obj_add_style(_xsSlashLabel_seq, LV_LABEL_PART_MAIN, &_xsSlashLabelStyle_seq);
+
+//     // Roller to hold Month
+
+//     lv_obj_t * _xsMonthroller = lv_roller_create(_xsDMYCon_seq, NULL);
+//     lv_roller_set_options(_xsMonthroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                          "  11  \n" "  12  \n" 
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsMonthroller, 3);
+//     lv_obj_align(_xsMonthroller, _xsSlashLabel_seq, LV_ALIGN_OUT_RIGHT_MID, 8, 25);
+//     lv_obj_set_size(_xsMonthroller, 20, 60);
+//     lv_obj_set_click(_xsMonthroller, false);
+//     lv_obj_set_style_local_bg_color(_xsMonthroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsMonthroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsMonthroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsMonthroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+//     //lv_obj_set_event_cb(roller1, event_handler);
+
+//     // Create label for "/"
+
+//     lv_obj_t * _xsSlashLabel_seq1;
+//     _xsSlashLabel_seq1 = lv_label_create(_xsDMYCon_seq, NULL);
+//     lv_obj_align(_xsSlashLabel_seq1, _xsMonthroller , LV_ALIGN_OUT_RIGHT_MID, 5, -15);
+//     lv_label_set_text(_xsSlashLabel_seq1, "/");
+
+//     lv_obj_add_style(_xsSlashLabel_seq1, LV_LABEL_PART_MAIN, &_xsSlashLabelStyle_seq);
+
+
+//     // Roller to hold Year
+
+//     lv_obj_t * _xsYearroller = lv_roller_create(_xsDMYCon_seq, NULL);
+//     lv_roller_set_options(_xsYearroller, "2021\n" "2022\n" "2023\n" "2024\n" "2025\n" "2026\n" 
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsYearroller, 3);
+//     lv_obj_align(_xsYearroller, _xsSlashLabel_seq1, LV_ALIGN_OUT_RIGHT_MID, 8, 25);
+//     lv_obj_set_size(_xsYearroller, 20, 60);
+//     lv_obj_set_click(_xsYearroller, false);
+//     lv_obj_set_style_local_bg_color(_xsYearroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsYearroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsYearroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsYearroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+
+//     //===============================================================================================================
+//     //================================================================================================================
+
+//     //lv_obj_set_event_cb(roller1, event_handler);
+
+//     static lv_style_t _xsTextLabelStyle_seq;
+//     lv_style_init(&_xsTextLabelStyle_seq);
+//     lv_style_set_text_font(&_xsTextLabelStyle_seq, LV_STATE_DEFAULT, &lv_font_montserrat_16 );
+//     lv_style_set_text_color(&_xsTextLabelStyle_seq, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+
+//     lv_obj_t * _xsDayTxtLabel_seq;
+//     _xsDayTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsDayTxtLabel_seq, _xsDMYCon_seq, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 0);
+//     lv_label_set_text(_xsDayTxtLabel_seq, "Date");
+//     lv_obj_add_style(_xsDayTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     lv_obj_t * _xsMonthTxtLabel_seq;
+//     _xsMonthTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsMonthTxtLabel_seq, _xsDMYCon_seq, LV_ALIGN_OUT_BOTTOM_MID, -15, 0);
+//     lv_label_set_text(_xsMonthTxtLabel_seq, "Month");
+//     lv_obj_add_style(_xsMonthTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     lv_obj_t * _xsYearTxtLabel_seq;
+//     _xsYearTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsYearTxtLabel_seq, _xsDMYCon_seq, LV_ALIGN_OUT_BOTTOM_RIGHT, -40, 0);
+//     lv_label_set_text(_xsYearTxtLabel_seq, "Year");
+//     lv_obj_add_style(_xsYearTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     //===============================================================================================================
+//     //================================================================================================================
+
+//     //Craete container to hold Hour & Minutes Rollers
+
+//     lv_obj_t * _xsHrMnCon_seq;
+//     _xsHrMnCon_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_set_size(_xsHrMnCon_seq, 310, 70);
+//     lv_obj_align(_xsHrMnCon_seq, _xsMonthTxtLabel_seq, LV_ALIGN_OUT_BOTTOM_MID, -5, 0 );
+//     lv_obj_set_style_local_bg_color(_xsHrMnCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)
+//     lv_obj_set_style_local_border_width(_xsHrMnCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+
+//     // Roller to hold Hour
+
+//     lv_obj_t * _xsHourroller = lv_roller_create(_xsHrMnCon_seq, NULL);
+//     lv_roller_set_options(_xsHourroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                          "  11  \n" "  12  \n" "  13  \n" "  14  \n" "  15  \n" "  16  \n" "  17  \n" "  18  \n" "  19  \n" "  20  \n"
+//                                          "  21  \n" "  22  \n" "  23  \n" "  24  \n" "  25  \n" "  26  \n" "  27  \n" "  28  \n" "  29  \n" "  30  \n"
+//                                          "  31  \n"
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsHourroller, 3);
+//     lv_obj_align(_xsHourroller, _xsHrMnCon_seq, LV_ALIGN_IN_LEFT_MID, 60, 25);
+//     lv_obj_set_size(_xsHourroller, 20, 60);
+//     lv_obj_set_click(_xsHourroller, false);
+//     lv_obj_set_style_local_bg_color(_xsHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+
+//     lv_obj_t * _xsDotLabel_seq;
+//     _xsDotLabel_seq = lv_label_create(_xsHrMnCon_seq, NULL);
+//     lv_obj_align(_xsDotLabel_seq, _xsHourroller , LV_ALIGN_OUT_RIGHT_MID, 5, -20);
+//     lv_label_set_text(_xsDotLabel_seq, ":");
+
+//     lv_obj_add_style(_xsDotLabel_seq, LV_LABEL_PART_MAIN, &_xsSlashLabelStyle_seq);
+
+//     // Roller to hold Minute
+
+//     lv_obj_t * _xsMinutesroller = lv_roller_create(_xsHrMnCon_seq, NULL);
+//     lv_roller_set_options(_xsMinutesroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                          "  11  \n" "  12  \n" "  13  \n" "  14  \n" "  15  \n" "  16  \n" "  17  \n" "  18  \n" "  19  \n" "  20  \n"
+//                                          "  21  \n" "  22  \n" "  23  \n" "  24  \n" "  25  \n" "  26  \n" "  27  \n" "  28  \n" "  29  \n" "  30  \n"
+//                                          "  31  \n"
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsMinutesroller, 3);
+//     lv_obj_align(_xsMinutesroller, _xsDotLabel_seq, LV_ALIGN_OUT_RIGHT_MID, 5, 30);
+//     lv_obj_set_size(_xsMinutesroller, 20, 60);
+//     lv_obj_set_click(_xsMinutesroller, false);
+//     lv_obj_set_style_local_bg_color(_xsMinutesroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsMinutesroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsMinutesroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsMinutesroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+//     //===============================================================================================================
+//     //===============================================================================================================
+
+//     lv_obj_t * _xsHourTxtLabel_seq;
+//     _xsHourTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsHourTxtLabel_seq, _xsHourroller, LV_ALIGN_OUT_BOTTOM_MID, -15, 0);
+//     lv_label_set_text(_xsHourTxtLabel_seq, "hour");
+//     lv_obj_add_style(_xsHourTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     lv_obj_t * _xsMinutesTxtLabel_seq;
+//     _xsMinutesTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsMinutesTxtLabel_seq, _xsMinutesroller, LV_ALIGN_OUT_BOTTOM_MID, -20, 0);
+//     lv_label_set_text(_xsMinutesTxtLabel_seq, "minut");
+//     lv_obj_add_style(_xsMinutesTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+
+//     //===============================================================================================================
+//     //===============================================================================================================
+
+//     //Craete container to hold Set point & Duration Rollers
+
+//     lv_obj_t * _xsSpDurCon_seq;
+//     _xsSpDurCon_seq = lv_cont_create(xsParentContainer_seq, NULL);
+//     lv_obj_set_size(_xsSpDurCon_seq, 310, 70);
+//     lv_obj_align(_xsSpDurCon_seq, _xsHrMnCon_seq, LV_ALIGN_OUT_BOTTOM_MID, 8, 40 );
+//     lv_obj_set_style_local_bg_color(_xsSpDurCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+//     lv_obj_set_style_local_border_width(_xsSpDurCon_seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+
+//     lv_obj_t * _xsSetPTxtLabel_seq;
+//     _xsSetPTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsSetPTxtLabel_seq, _xsSpDurCon_seq, LV_ALIGN_OUT_TOP_LEFT, 8, -5);
+//     lv_label_set_text(_xsSetPTxtLabel_seq, "SETPOINT : ");
+//     lv_obj_add_style(_xsSetPTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsStartLabelStyle_seq);
+
+//     lv_obj_t * _xsSDurTxtLabel_seq;
+//     _xsSDurTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsSDurTxtLabel_seq, _xsSpDurCon_seq, LV_ALIGN_OUT_TOP_RIGHT, -120, -5 );
+//     lv_label_set_text(_xsSDurTxtLabel_seq, "DURATION : ");
+//     lv_obj_add_style(_xsSDurTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsStartLabelStyle_seq);
+
+//     // Roller to hold Setpoint
+
+//     lv_obj_t * _xsSPsroller = lv_roller_create(_xsSpDurCon_seq, NULL);
+//     lv_roller_set_options(_xsSPsroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsSPsroller, 3);
+//     lv_obj_align(_xsSPsroller, _xsSpDurCon_seq, LV_ALIGN_IN_LEFT_MID, 10, 25);
+//     lv_obj_set_size(_xsSPsroller, 20, 60);
+//     lv_obj_set_click(_xsSPsroller, false);
+//     lv_obj_set_style_local_bg_color(_xsSPsroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsSPsroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsSPsroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsSPsroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+//     // Roller to hold Duration Hour
+//     lv_obj_t * _xsDurHoursroller = lv_roller_create(_xsSpDurCon_seq, NULL);
+//     lv_roller_set_options(_xsDurHoursroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsDurHoursroller, 3);
+//     lv_obj_align(_xsDurHoursroller, _xsSDurTxtLabel_seq, LV_ALIGN_OUT_BOTTOM_LEFT, -30, 10);
+//     lv_obj_set_size(_xsDurHoursroller, 20, 60);
+//     lv_obj_set_click(_xsDurHoursroller, false);
+//     lv_obj_set_style_local_bg_color(_xsDurHoursroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsDurHoursroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsDurHoursroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsDurHoursroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+//     lv_obj_t * _xsDotLabel_seq2;
+//     _xsDotLabel_seq2 = lv_label_create(_xsSpDurCon_seq, NULL);
+//     lv_obj_align(_xsDotLabel_seq2, _xsDurHoursroller , LV_ALIGN_OUT_RIGHT_MID, 5, -20);
+//     lv_label_set_text(_xsDotLabel_seq2, ":");
+//     lv_obj_add_style(_xsDotLabel_seq2, LV_LABEL_PART_MAIN, &_xsSlashLabelStyle_seq);
+
+//     // Roller to hold Duration Minute
+
+//     lv_obj_t * _xsDurMinutesroller = lv_roller_create(_xsSpDurCon_seq, NULL);
+//     lv_roller_set_options(_xsDurMinutesroller, "  0  \n" "  1  \n" "  2  \n" "  3  \n" "  4  \n" "  5  \n" "  6  \n" "  7  \n" "  8  \n" "  9  \n" "  10  \n" 
+//                                          "  11  \n" "  12  \n" "  13  \n" "  14  \n" "  15  \n" "  16  \n" "  17  \n" "  18  \n" "  19  \n" "  20  \n"
+//                                          "  21  \n" "  22  \n" "  23  \n" "  24  \n" "  25  \n" "  26  \n" "  27  \n" "  28  \n" "  29  \n" "  30  \n"
+//                                          "  31  \n"
+//                                             , LV_ROLLER_MODE_INIFINITE);
+
+//     lv_roller_set_visible_row_count(_xsDurMinutesroller, 3);
+//     lv_obj_align(_xsDurMinutesroller, _xsDotLabel_seq2, LV_ALIGN_OUT_RIGHT_MID, 5, 30);
+//     lv_obj_set_size(_xsDurMinutesroller, 20, 60);
+//     lv_obj_set_click(_xsDurMinutesroller, false);
+//     lv_obj_set_style_local_bg_color(_xsDurMinutesroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_bg_color(_xsDurMinutesroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
+//     lv_obj_set_style_local_border_width(_xsDurMinutesroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+//     lv_obj_set_style_local_text_font(_xsDurMinutesroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+
+//     //=======================================================================================================================
+//     //=======================================================================================================================
+
+//     lv_obj_t * _xsSPUnitTxtLabel_seq;
+//     _xsSPUnitTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsSPUnitTxtLabel_seq, _xsSPsroller, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 0);
+//     lv_label_set_text(_xsSPUnitTxtLabel_seq, "L/min");
+//     lv_obj_add_style(_xsSPUnitTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     lv_obj_t * _xsDurHrTxtLabel_seq;
+//     _xsDurHrTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsDurHrTxtLabel_seq, _xsDurHoursroller, LV_ALIGN_OUT_BOTTOM_MID, -15, 0);
+//     lv_label_set_text(_xsDurHrTxtLabel_seq, "hour");
+//     lv_obj_add_style(_xsDurHrTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+//     lv_obj_t * _xsMinutTxtLabel_seq;
+//     _xsMinutTxtLabel_seq = lv_label_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsMinutTxtLabel_seq, _xsDurMinutesroller, LV_ALIGN_OUT_BOTTOM_RIGHT, -40, 0);
+//     lv_label_set_text(_xsMinutTxtLabel_seq, "min");
+//     lv_obj_add_style(_xsMinutTxtLabel_seq, LV_LABEL_PART_MAIN, &_xsTextLabelStyle_seq);
+
+
+//     //========================================================================================================================
+//     //========================================================================================================================
+
+//     // Create Valid Button
+
+//     lv_obj_t * _xsValidBtn = lv_btn_create(xsParentContainer_seq, NULL);
+//     lv_obj_align(_xsValidBtn, _xsSpDurCon_seq, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20 );
+//     lv_obj_set_size(_xsValidBtn, 310, 44);
+//     //lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
+//     //lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
+
+//     static lv_style_t _xsValidBtnStyle;
+//     lv_style_init(&_xsValidBtnStyle);
+//     lv_style_set_radius(&_xsValidBtnStyle, LV_STATE_DEFAULT, 10);
+//     //lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEb, 0x3B, 0x5A));
+//     lv_style_set_bg_color(&_xsValidBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D,0xAF,0x48)); //#359Fe2
+//     lv_style_set_border_width(&_xsValidBtnStyle, LV_STATE_DEFAULT, 0);
+//     lv_obj_add_style(_xsValidBtn, LV_BTN_PART_MAIN, &_xsValidBtnStyle);
+
+//     //Creat a Valid Button Label
+
+//     lv_obj_t * _xsValidButtonLabel = lv_label_create(_xsValidBtn, NULL);
+//     lv_obj_align(_xsValidButtonLabel, _xsValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+//     lv_label_set_text(_xsValidButtonLabel, "VALID");
+
+//     static lv_style_t _xsValidButtonLabelStyle;
+//     lv_style_init(&_xsValidButtonLabelStyle);
+//     lv_style_set_text_font(&_xsValidButtonLabelStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); 
+//     lv_style_set_text_color(&_xsValidButtonLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+//     lv_obj_add_style(_xsValidButtonLabel, LV_LABEL_PART_MAIN, &_xsValidButtonLabelStyle);
+
+// }
+
+void xsPresetScreenAdvance(void)
+{
+
+    // Craete a Screen container
+    
+    xaParentContainer_Adv = lv_cont_create(lv_scr_act(), NULL);
+    lv_obj_set_size(xaParentContainer_Adv, 320, 480);
+    lv_obj_set_click(xaParentContainer_Adv, false);
+    lv_obj_align(xaParentContainer_Adv, NULL, LV_ALIGN_CENTER, 0,0);
+    lv_obj_set_style_local_bg_color(xaParentContainer_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) );
+
+    //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
+    
+    _xaContainerStatusBar_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
+    lv_obj_set_size(_xaContainerStatusBar_Adv, 320, 35);
+    lv_obj_align(_xaContainerStatusBar_Adv, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
+    lv_obj_set_style_local_bg_color(_xaContainerStatusBar_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+    lv_obj_set_style_local_border_opa(_xaContainerStatusBar_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
+
+    //Create Watch upper left corner
+    
+    _xaTimeLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
+    lv_obj_align(_xaTimeLabel_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_IN_TOP_LEFT, 12,5);
+    lv_label_set_text(_xaTimeLabel_Adv, "04:55");
+
+    static lv_style_t _xaTimeLabelStyle_Adv;
+    lv_style_init(&_xaTimeLabelStyle_Adv);
+    lv_style_set_text_font(&_xaTimeLabelStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_20); 
+    lv_style_set_text_color(&_xaTimeLabelStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaTimeLabel_Adv, LV_LABEL_PART_MAIN, &_xaTimeLabelStyle_Adv);
+
+    //Create Label for Battery icon
+    
+    _xaBatteryLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
+    lv_obj_align(_xaBatteryLabel_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
+    lv_label_set_text(_xaBatteryLabel_Adv, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
+
+    static lv_style_t _xaBatteryLabelStyle_Adv;
+    lv_style_init(&_xaBatteryLabelStyle_Adv);
+    lv_style_set_text_font(&_xaBatteryLabelStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_24); 
+    lv_style_set_text_color(&_xaBatteryLabelStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaBatteryLabel_Adv, LV_LABEL_PART_MAIN, &_xaBatteryLabelStyle_Adv);
+
+    //Create Label for Wifi icon
+
+    _xaWifiLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
+    lv_obj_align(_xaWifiLabel_Adv, _xaBatteryLabel_Adv, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
+    lv_label_set_text(_xaWifiLabel_Adv, LV_SYMBOL_WIFI);
+
+    static lv_style_t _xaWifiLabelStyle_Adv;
+    lv_style_init(&_xaWifiLabelStyle_Adv);
+    lv_style_set_text_font(&_xaWifiLabelStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); 
+    lv_style_set_text_color(&_xaWifiLabelStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaWifiLabel_Adv, LV_LABEL_PART_MAIN, &_xaWifiLabelStyle_Adv);
+
+    //Create Label for Signal icon
+
+    _xaSignalLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
+    lv_obj_align(_xaSignalLabel_Adv, _xaWifiLabel_Adv, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
+    lv_label_set_text(_xaSignalLabel_Adv, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+
+    static lv_style_t _xaSignalLabelStyle_Adv;
+    lv_style_init(&_xaSignalLabelStyle_Adv);
+    lv_style_set_text_font(&_xaSignalLabelStyle_Adv, LV_STATE_DEFAULT  ,&signal_20); //signal_20
+    lv_style_set_text_color(&_xaSignalLabelStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaSignalLabel_Adv, LV_LABEL_PART_MAIN, &_xaSignalLabelStyle_Adv);
+
+    //==============================================================================================================
+    // Create a container to contain Sequences Header 
+
+    _xaParaHeadingCont_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
+    lv_obj_set_size(_xaParaHeadingCont_Adv, 300, 70);
+    lv_obj_align(_xaParaHeadingCont_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
+    lv_obj_set_style_local_bg_color(_xaParaHeadingCont_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+    lv_obj_set_style_local_border_width(_xaParaHeadingCont_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
+
+    // Create Back arrow img
+    
+    _xaBackArrowLabel_Adv = lv_img_create(_xaParaHeadingCont_Adv, NULL);
+    lv_img_set_src(_xaBackArrowLabel_Adv, &left_arrow_icon);
+    lv_obj_align(_xaBackArrowLabel_Adv, _xaParaHeadingCont_Adv, LV_ALIGN_IN_LEFT_MID, 5 , 0);
+    lv_obj_set_click(_xaBackArrowLabel_Adv, true);
+    lv_obj_set_style_local_image_recolor_opa(_xaBackArrowLabel_Adv, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
+    lv_obj_set_style_local_image_recolor(_xaBackArrowLabel_Adv, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_event_cb(_xaBackArrowLabel_Adv, _xsBackArrow_event_handler);
+    
+    //Create Label for Sequences "Heading"
+    
+    _xaParameterHeading_Adv = lv_label_create(_xaParaHeadingCont_Adv, NULL);
+    lv_obj_align(_xaParameterHeading_Adv, _xaParaHeadingCont_Adv, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
+    lv_label_set_text(_xaParameterHeading_Adv, "Sequence 1");
+
+    static lv_style_t _xaParameterHeadingStyle_Adv;
+    lv_style_init(&_xaParameterHeadingStyle_Adv);
+    lv_style_set_text_font(&_xaParameterHeadingStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); //signal_20
+    lv_style_set_text_color(&_xaParameterHeadingStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaParameterHeading_Adv, LV_LABEL_PART_MAIN, &_xaParameterHeadingStyle_Adv);
+
+    //Create Container for Next Sequence Navigation BTN
+
+    
+    _xaGoToNextCont_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
+    lv_obj_align(_xaGoToNextCont_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_OUT_BOTTOM_RIGHT, 25, 10);
+    lv_obj_set_size(_xaGoToNextCont_Adv, 50, 50);//
+
+    static lv_style_t _xaGoToNextContStyle_Adv;
+    lv_style_init(&_xaGoToNextContStyle_Adv);
+    lv_style_set_bg_color(&_xaGoToNextContStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
+    lv_style_set_border_width(&_xaGoToNextContStyle_Adv, LV_STATE_DEFAULT, 0);
+    lv_obj_add_style(_xaGoToNextCont_Adv, LV_CONT_PART_MAIN, &_xaGoToNextContStyle_Adv);
+
+    // //create next label icon
+
+    _xaGoToNextLbl_Adv = lv_label_create(_xaGoToNextCont_Adv, NULL);
+    lv_obj_align(_xaGoToNextLbl_Adv, _xaGoToNextCont_Adv, LV_ALIGN_IN_TOP_MID, 2, 5);
+    lv_label_set_text(_xaGoToNextLbl_Adv, LV_SYMBOL_PLUS);
+
+    static lv_style_t _xaGoToNextStyle_Adv;
+    lv_style_init(&_xaGoToNextStyle_Adv);
+    //lv_style_set_bg_color(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_YELLOW); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
+    lv_style_set_text_font(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_34); //signal_20
+    lv_style_set_text_color(&_xaGoToNextStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xaGoToNextLbl_Adv, LV_LABEL_PART_MAIN, &_xaGoToNextStyle_Adv);
+
+    // Create Label to "START:" Text
+
+    
+    _xaStartLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    lv_obj_align(_xaStartLabel_Adv, _xaBackArrowLabel_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 30 );
+    lv_label_set_text(_xaStartLabel_Adv, "START : ");
+
+    static lv_style_t _xaStartLabelStyle_Adv;
+    lv_style_init(&_xaStartLabelStyle_Adv);
+    lv_style_set_text_font(&_xaStartLabelStyle_Adv, LV_STATE_DEFAULT  ,&lv_font_montserrat_18); //signal_20
+    lv_style_set_text_color(&_xaStartLabelStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35,0x9F,0xE2));
+    lv_obj_add_style(_xaStartLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
+
+    //Craete container to hold Date Hour & Minut
+
+    
+    _xaDMYCon_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
+    lv_obj_set_size(_xaDMYCon_Adv, 305, 140);
+    lv_obj_align(_xaDMYCon_Adv, _xaStartLabel_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, -5, 5 );
+    lv_obj_set_style_local_bg_color(_xaDMYCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+    lv_obj_set_style_local_border_width(_xaDMYCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+
+    // Roller to hold date
+    
+    _xaDateroller = lv_roller_create(_xaDMYCon_Adv, NULL);
+    lv_obj_align(_xaDateroller, _xaDMYCon_Adv, LV_ALIGN_IN_LEFT_MID,2, 0);
+    lv_roller_set_options(_xaDateroller, "Tue 2 March \n" 
+                                         "Today       \n"
+                                         "Thur 4 March\n"
+                                         "Thur 5 March\n"
+                                            , LV_ROLLER_MODE_INIFINITE);
+
+    lv_roller_set_visible_row_count(_xaDateroller, 3);
+    //lv_obj_align(_xaDateroller, _xaDMYCon_Adv, LV_ALIGN_IN_LEFT_MID, 0, 0);
+    //lv_obj_set_size(_xaDateroller, 100, 100);
+    lv_obj_set_click(_xaDateroller, false);
+    lv_obj_set_style_local_bg_color(_xaDateroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_bg_color(_xaDateroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D));
+    lv_obj_set_style_local_border_width(_xaDateroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    //lv_obj_set_style_local_text_font(_xaDateroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_20);  //22
+    lv_obj_set_style_local_text_color(_xaDateroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    lv_obj_set_style_local_text_color(_xaDateroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    // Roller to hold Hour
+    
+    _xaHourroller = lv_roller_create(_xaDMYCon_Adv, NULL);
+    lv_obj_align(_xaHourroller, _xaDateroller, LV_ALIGN_OUT_RIGHT_MID, 4, 0);
+    lv_roller_set_options(_xaHourroller, " 0 \n" " 1 \n" " 2 \n" " 3 \n" " 4 \n" " 5 \n" " 6 \n" " 7 \n" " 8 \n" " 9 \n" " 10 \n" 
+                                         " 11 \n" " 12 \n" 
+                                            , LV_ROLLER_MODE_INIFINITE);
+
+    lv_roller_set_visible_row_count(_xaHourroller, 3);
+    
+    //lv_obj_set_size(_xaHourroller, 20, 60);
+    //lv_obj_set_click(_xaHourroller, false);
+    lv_obj_set_style_local_bg_color(_xaHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_bg_color(_xaHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D));
+    lv_obj_set_style_local_border_width(_xaHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    //lv_obj_set_style_local_text_font(_xaHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_20);
+    lv_obj_set_style_local_text_color(_xaHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    lv_obj_set_style_local_text_color(_xaHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    // Roller to hold Minut
+    
+    _xaMinutroller = lv_roller_create(_xaDMYCon_Adv, NULL);
+    lv_obj_align(_xaMinutroller, _xaHourroller, LV_ALIGN_OUT_RIGHT_MID, 4, 0);
+    lv_roller_set_options(_xaMinutroller, " 0 \n" " 1 \n" " 2 \n" " 3 \n" " 4 \n" " 5 \n" " 6 \n" " 7 \n" " 8 \n" " 9 \n" " 10 \n" 
+                                         " 11 \n" " 12 \n" " 13 \n" " 14 \n" " 15 \n" " 16 \n" " 17 \n" " 18 \n" " 19 \n" " 20 \n"
+                                         " 21 \n" " 22 \n" " 23 \n" " 24 \n" " 25 \n" " 26 \n" " 27 \n" " 28 \n" " 29 \n" " 30 \n"
+                                         " 31 \n"
+                                            , LV_ROLLER_MODE_INIFINITE);
+
+    lv_roller_set_visible_row_count(_xaMinutroller, 3);
+    //lv_obj_align(_xaMinutroller, _xaHourroller, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
+    //lv_obj_set_size(_xaMinutroller, 18, 100);
+    //lv_obj_set_click(_xaMinutroller, false);
+    lv_obj_set_style_local_bg_color(_xaMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+    lv_obj_set_style_local_bg_color(_xaMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); //LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)
+    lv_obj_set_style_local_border_width(_xaMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    //lv_obj_set_style_local_text_font(_xaMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_20);
+    lv_obj_set_style_local_text_color(_xaMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    lv_obj_set_style_local_text_color(_xaMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+
+    // // Create a label for ":"
+    
+    // _xaDotLabel_Adv = lv_label_create(_xaDMYCon_Adv, NULL);
+    // lv_obj_align(_xaDotLabel_Adv, _xaDMYCon_Adv , LV_ALIGN_CENTER, 100, -13);
+    // lv_label_set_text(_xaDotLabel_Adv, ":");
+
+    // static lv_style_t _xaSlashLabelStyle_Adv;
+    // lv_style_init(&_xaSlashLabelStyle_Adv);
+    // lv_style_set_text_font(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_34 );
+    // lv_style_set_text_color(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    // lv_obj_add_style(_xaDotLabel_Adv, LV_LABEL_PART_MAIN, &_xaSlashLabelStyle_Adv);
+
+    // //Create Horizontal Line between Date & Hour 
+
+    // lv_obj_t * hor_line;
+	// hor_line = lv_line_create(_xaDMYCon_Adv, NULL);
+    // static lv_point_t p[] = {{0, 25}, {0, 300}};
+    // lv_line_set_points(hor_line, p, 2);
+
+    // lv_obj_align(hor_line, _xaDMYCon_Adv, LV_ALIGN_IN_TOP_MID, 30, -50);
+
+    // static lv_style_t style_hor_line;
+    // lv_style_init(&style_hor_line);
+
+    // lv_style_set_line_color(&style_hor_line, LV_STATE_DEFAULT, LV_COLOR_GRAY); //LV_COLOR_MAKE(0xAC, 0xAC, 0xAC)
+    // lv_style_set_line_width(&style_hor_line, LV_STATE_DEFAULT, 1);
+    // lv_style_set_line_rounded(&style_hor_line, LV_STATE_DEFAULT, true);
+
+    // lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
+
+    // //Create Horizontal Line between Hour and Minut
+    // lv_obj_t * hor_line1;
+    // hor_line1 = lv_line_create(_xaDMYCon_Adv, NULL);
+    // static lv_point_t p1[] = {{0, 25}, {0, 300}};
+    // lv_line_set_points(hor_line1, p1, 2);
+
+    // lv_obj_align(hor_line1, _xaDMYCon_Adv, LV_ALIGN_IN_TOP_MID, 95, -50);
+    // lv_obj_add_style(hor_line1, LV_LINE_PART_MAIN, &style_hor_line);
+
+    //Craete container to hold Date Hour & Minut
+
+    
+    // lv_obj_t *_xaSPDurCon_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
+    // lv_obj_set_size(_xaSPDurCon_Adv, 300, 300);
+    // lv_obj_align(_xaSPDurCon_Adv, _xaDMYCon_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0 );
+    // lv_obj_set_style_local_bg_color(_xaSPDurCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
+    // lv_obj_set_style_local_border_width(_xaSPDurCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
+
+    // lv_obj_t * tstObj = lv_cont_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(tstObj,_xaDMYCon_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0  );
+    // lv_obj_set_width(tstObj, 200);
+    // lv_obj_set_size(tstObj, 305, 120);
+
+
+    // Create Label to "SETPOINT:" Text
+
+    
+    // _xaSPLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaSPLabel_Adv, _xaSPDurCon_Adv, LV_ALIGN_OUT_TOP_LEFT, 8, -10 );
+    // lv_label_set_text(_xaSPLabel_Adv, "SETPOINT : ");
+    // lv_obj_add_style(_xaSPLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
+
+    // // Create Label to "DURATION:" Text
+
+    
+    // _xaDurLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaDurLabel_Adv, _xaSPDurCon_Adv, LV_ALIGN_OUT_TOP_MID, 0, -10 );
+    // lv_label_set_text(_xaDurLabel_Adv, "DURATION : ");
+    // lv_obj_add_style(_xaDurLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
+
+    // // Roller to hold SETPOINT Value
+    
+    // _xsSProller = lv_roller_create(_xaSPDurCon_Adv, NULL);
+    // lv_roller_set_options(_xsSProller, "1.00\n" "2.00\n" "3.00\n" "4.00\n" "5.00\n"
+    //                                    "6.00\n" "7.00\n" "8.00\n" "9.00\n" 
+    //                                         , LV_ROLLER_MODE_INIFINITE);
+
+    // lv_roller_set_visible_row_count(_xsSProller, 3);
+    // lv_obj_align(_xsSProller,_xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 8, 0);
+    // //lv_obj_set_size(_xsSProller, 20, 60);
+    // lv_obj_set_click(_xsSProller, false);
+    // lv_obj_set_style_local_bg_color(_xsSProller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    // lv_obj_set_style_local_bg_color(_xsSProller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D));
+    // lv_obj_set_style_local_border_width(_xsSProller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    // lv_obj_set_style_local_text_font(_xsSProller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);  //22
+    // lv_obj_set_style_local_text_color(_xsSProller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    // lv_obj_set_style_local_text_color(_xsSProller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    // // Create Label to "L/Min:" Text
+
+    
+    // _xaLPMTxtLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaLPMTxtLabel_Adv, _xsSProller, LV_ALIGN_OUT_RIGHT_MID, 2, 0 );
+    // lv_label_set_text(_xaLPMTxtLabel_Adv, "L/Min");
+
+    // static lv_style_t xaDurationTxtStyle;
+    // lv_style_init(&xaDurationTxtStyle);
+    // lv_style_set_text_font(&xaDurationTxtStyle, LV_STATE_DEFAULT, &lv_font_montserrat_12);
+    // lv_style_set_text_color(&xaDurationTxtStyle, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+    // lv_obj_add_style(_xaLPMTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle );
+
+
+    // // Roller to hold Duration Hours Value
+    
+    // _xsDurHourroller = lv_roller_create(_xaSPDurCon_Adv, NULL);
+    // lv_roller_set_options(_xsDurHourroller, " 1 \n" " 2 \n" " 3 \n" " 4 \n" " 5 \n"
+    //                                    " 6 \n" " 7 \n" " 8 \n" " 9 \n" "10 \n"
+    //                                         , LV_ROLLER_MODE_INIFINITE);
+
+    // lv_roller_set_visible_row_count(_xsDurHourroller, 3);
+    // lv_obj_align(_xsDurHourroller, _xaLPMTxtLabel_Adv, LV_ALIGN_OUT_RIGHT_MID, 25, 0);
+    // //lv_obj_set_size(_xsSProller, 20, 60);
+    // lv_obj_set_click(_xsDurHourroller, false);
+    // lv_obj_set_style_local_bg_color(_xsDurHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    // lv_obj_set_style_local_bg_color(_xsDurHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D));
+    // lv_obj_set_style_local_border_width(_xsDurHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    // lv_obj_set_style_local_text_font(_xsDurHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);  //22
+    // lv_obj_set_style_local_text_color(_xsDurHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    // lv_obj_set_style_local_text_color(_xsDurHourroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    // // Create Label to "L/Min:" Text
+
+    
+    // _xaDurHourTxtLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaDurHourTxtLabel_Adv, _xsDurHourroller, LV_ALIGN_OUT_RIGHT_MID, 2, 0 );
+    // lv_label_set_text(_xaDurHourTxtLabel_Adv, "hour");
+    // lv_obj_add_style(_xaDurHourTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle );
+
+    // // Roller to hold Duration Minut Value
+    
+    // _xsDurMinutroller = lv_roller_create(_xaSPDurCon_Adv, NULL);
+    // lv_roller_set_options(_xsDurMinutroller, " 1 \n" " 2 \n" " 3 \n" " 4 \n" " 5 \n" " 6 \n" " 7 \n" " 8 \n" " 9 \n" " 10 \n"
+    //                                          " 11\n" " 12\n" " 13\n" " 14\n" " 15\n" " 16\n" " 17\n" " 18\n" " 19\n" " 20\n"
+    //                                         , LV_ROLLER_MODE_INIFINITE);
+
+    // lv_roller_set_visible_row_count(_xsDurMinutroller, 3);
+    // lv_obj_align(_xsDurMinutroller, _xaDurHourTxtLabel_Adv, LV_ALIGN_OUT_RIGHT_MID, 10, 0);
+    // //lv_obj_set_size(_xsSProller, 20, 60);
+    // lv_obj_set_click(_xsDurMinutroller, false);
+    // lv_obj_set_style_local_bg_color(_xsDurMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    // lv_obj_set_style_local_bg_color(_xsDurMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D));
+    // lv_obj_set_style_local_border_width(_xsDurMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, 0);
+    // lv_obj_set_style_local_text_font(_xsDurMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, &lv_font_montserrat_22);  //22
+    // lv_obj_set_style_local_text_color(_xsDurMinutroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
+    // lv_obj_set_style_local_text_color(_xsDurMinutroller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    // // Create Label to "Min:" Text
+
+    
+    // _xaDurMinTxtLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaDurMinTxtLabel_Adv, _xsDurMinutroller, LV_ALIGN_OUT_RIGHT_MID, 2, 0 );
+    // lv_label_set_text(_xaDurMinTxtLabel_Adv, "min");
+    // lv_obj_add_style(_xaDurMinTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle );
+
+    // // Create Vertical Lines 
+
+    // static lv_point_t L[] = {{1, 0}, {70, 0}};
+
+    // lv_obj_t * ver_line = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line, L, 2);
+    // lv_obj_align(ver_line, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 15, -23);
+
+    // static lv_style_t style_ver_line;
+    // lv_style_init(&style_ver_line);
+    // lv_style_set_line_color(&style_ver_line, LV_STATE_DEFAULT, LV_COLOR_GRAY); //LV_COLOR_MAKE(0xAC, 0xAC, 0xAC)
+    // lv_style_set_line_width(&style_ver_line, LV_STATE_DEFAULT, 1);
+    // lv_style_set_line_rounded(&style_ver_line, LV_STATE_DEFAULT, true);
+
+    // lv_obj_add_style(ver_line, LV_LINE_PART_MAIN, &style_ver_line);
+
+
+    // lv_obj_t * ver_line1 = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line1, L, 2);
+    // lv_obj_align(ver_line1, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 15, 23);
+    // lv_obj_add_style(ver_line1, LV_LINE_PART_MAIN, &style_ver_line);
+
+    // static lv_point_t L1[] = {{1, 0}, {40, 0}};
+    // lv_obj_t * ver_line2 = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line2, L1, 2);
+    // lv_obj_align(ver_line2, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 140, -23);
+    // lv_obj_add_style(ver_line2, LV_LINE_PART_MAIN, &style_ver_line);
+
+    // lv_obj_t * ver_line3 = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line3, L1, 2);
+    // lv_obj_align(ver_line3, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 140, 23);
+    // lv_obj_add_style(ver_line3, LV_LINE_PART_MAIN, &style_ver_line);
+
+    // lv_obj_t * ver_line4 = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line4, L1, 2);
+    // lv_obj_align(ver_line4, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 232, -23);
+    // lv_obj_add_style(ver_line4, LV_LINE_PART_MAIN, &style_ver_line);
+
+    // lv_obj_t * ver_line5 = lv_line_create(_xaSPDurCon_Adv, NULL);
+    // lv_line_set_points(ver_line5, L1, 2);
+    // lv_obj_align(ver_line5, _xaSPDurCon_Adv, LV_ALIGN_IN_LEFT_MID, 232, 23);
+    // lv_obj_add_style(ver_line5, LV_LINE_PART_MAIN, &style_ver_line);
+
+
+    // //==========================Valid Button =================================================================
+
+    // // Create Valid Button
+    
+    // _xaValidBtn = lv_btn_create(xaParentContainer_Adv, NULL);
+    // lv_obj_align(_xaValidBtn, _xaSPDurCon_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 5, -1 );
+    // lv_obj_set_size(_xaValidBtn, 300, 44);
+    // //lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
+    // //lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
+
+    // static lv_style_t _xaValidBtnStyle;
+    // lv_style_init(&_xaValidBtnStyle);
+    // lv_style_set_radius(&_xaValidBtnStyle, LV_STATE_DEFAULT, 0);
+    // //lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEb, 0x3B, 0x5A));
+    // lv_style_set_bg_color(&_xaValidBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D,0xAF,0x48)); //#359Fe2
+    // lv_style_set_border_width(&_xaValidBtnStyle, LV_STATE_DEFAULT, 0);
+    // lv_style_set_border_opa(&_xaValidBtnStyle, LV_STATE_DEFAULT, LV_OPA_MIN);
+    // lv_obj_add_style(_xaValidBtn, LV_BTN_PART_MAIN, &_xaValidBtnStyle);
+
+    // //lv_obj_set_event_cb(_xaValidBtn, valid_btn_event_handler);
+
+    // //Creat a Valid Button Label
+    
+    // _xaValidButtonLabel = lv_label_create(_xaValidBtn, NULL);
+    // lv_obj_align(_xaValidButtonLabel, _xaValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+    // lv_label_set_text(_xaValidButtonLabel, "VALID");
+
+    // static lv_style_t _xaValidButtonLabelStyle;
+    // lv_style_init(&_xaValidButtonLabelStyle);
+    // lv_style_set_text_font(&_xaValidButtonLabelStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); 
+    // lv_style_set_text_color(&_xaValidButtonLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    // lv_obj_add_style(_xaValidButtonLabel, LV_LABEL_PART_MAIN, &_xaValidButtonLabelStyle);
+
+}
+
+
+/**********************
+ *   STATIC FUNCTIONS
+ **********************/
+
+static void  _xsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED) 
+    {
+        printf("Back to Dashbord from presetscrn\n");
+        //pxDashboardScreen();
+    }
+}
+
+
+
+static void valid_btn_event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_CLICKED) {
+        
+        printf("Valid BTN Clicked \n");
+        //xssSummaryStartScreen();
+    }
+}
+
+
+// static void event_handler(lv_obj_t * obj, lv_event_t event)
+// {
+//     if(event == LV_EVENT_VALUE_CHANGED) {
+//         char buf[32];
+//         //lv_roller_get_selected_str(obj, buf, sizeof(buf));
+//         printf("Selected month: %s\n", buf);
+//     }
+// }
+
+
+
+/**********************
+ *    ERROR ASSERT
+ **********************/
+
+

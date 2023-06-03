@@ -1,0 +1,225 @@
+#ifndef WIDGETS_INFOWIDGET_H_
+#define WIDGETS_INFOWIDGET_H_
+
+/*********************
+ *      INCLUDES
+ *********************/
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdio.h>
+//#include "lvgl/lvgl.h"
+#include "lvgl.h" 
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+ *      TYPEDEFS
+ **********************/
+typedef struct
+{
+	lv_obj_t * pxContainer;
+	lv_obj_t * pxChart;
+	lv_chart_series_t * pxChartSeries;
+	lv_coord_t * pxData;
+	size_t xDataSize;
+	lv_coord_t xYmin;
+	lv_coord_t xYmax;
+	uint16_t uiPointCount;
+
+	lv_obj_t * pxHeaderNumber;
+	lv_obj_t * pxNumberSymbol;
+	lv_obj_t * pxFooterNumber;
+
+	lv_point_t pxPoints[2];
+	lv_obj_t * pxLine;
+	lv_obj_t * pxVolume;
+	lv_obj_t * pxVolumeUnit;
+	lv_obj_t * pxHours;
+	lv_obj_t * pxHoursUnit;
+
+	lv_obj_t * pxFlowName;
+	lv_obj_t * pxFlowInteger;
+	lv_obj_t * pxFlowDecimal;
+	lv_obj_t * pxFlowUnit;
+	lv_obj_t * pxFlowMinus;
+	lv_obj_t * pxFlowPlus;
+
+	lv_obj_t * pxTempName;
+	lv_obj_t * pxTempInteger;
+	lv_obj_t * pxTempDecimal;
+	lv_obj_t * pxTempUnit;
+	lv_obj_t * pxTempMinus;
+	lv_obj_t * pxTempPlus;
+
+	lv_obj_t * pxPressureName;
+	lv_obj_t * pxPressureInteger;
+	lv_obj_t * pxPressureDecimal;
+	lv_obj_t * pxPressureUnit;
+	lv_obj_t * pxPressureMinus;
+	lv_obj_t * pxPressurePlus;
+
+	lv_obj_t * pxHumidityName;
+	lv_obj_t * pxHumidityInteger;
+	lv_obj_t * pxHumidityDecimal;
+	lv_obj_t * pxHumidityUnit;
+	lv_obj_t * pxHumidityMinus;
+	lv_obj_t * pxHumidityPlus;
+} InfoExt_t;
+
+/**********************
+ *  GLOBAL MACROS
+ **********************/
+
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+
+/**********************
+ *  GLOBAL PROTOTYPES
+ **********************/
+/**
+ * Create a info widget object
+ * @param pxParent pointer to an object, it will be the parent of the new object
+ * @param xSize count of points on the chart
+ * @return pointer to the created object
+ */
+lv_obj_t * pxCreateInfoWidget(lv_obj_t * pxParent, size_t xSize);
+
+/**
+ * Add a point to the chart
+ * @param pxObj pointer to a widget object
+ * @param xData a value of a point
+ */
+void vAddDataInfoWidget(lv_obj_t * pxObj, lv_coord_t xData);
+
+/**
+ * Set a color for the curve
+ * @param pxObj pointer to a widget object
+ * @param xColor a new color for the curve
+ */
+void vSetColorInfoWidget(lv_obj_t * pxObj, lv_color_t xColor);
+
+/**
+ * Set the minimal and maximal y values for the chart
+ * @param pxObj pointer to a widget object
+ * @param xYmin y minimum value
+ * @param xYmax y maximum value
+ */
+void vSetRangeInfoWidget(lv_obj_t * pxObj, lv_coord_t xYmin, lv_coord_t xYmax);
+
+/**
+ * Set a value to volume text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetVolumeInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to hours text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetHoursInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to flow text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetFlowInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to temperature text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetTempInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to pressure text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetPressureInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to humidity text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetHumidityInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to minus flow text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetMinusFlowInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to plus flow text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetPlusFlowInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to minus temperature text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetMinusTempInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to plus temperature text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetPlusTempInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to minus pressure text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetMinusPressureInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to plus pressure text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetPlusPressureInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to minus humidity text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetMinusHumidityInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to plus humidity text label
+ * @param pxObj pointer to a widget object
+ * @param fValue a new value
+ */
+void vSetPlusHumidityInfoWidget(lv_obj_t * pxObj, float fValue);
+
+/**
+ * Set a value to header number
+ * @param pxObj pointer to a widget object
+ * @param usValue a new value
+ */
+void vSetHeaderNumberInfoWidget(lv_obj_t * pxObj, uint16_t usValue);
+
+/**
+ * Set a value to footer number
+ * @param pxObj pointer to a widget object
+ * @param usNumber the first value
+ * @param usAmount the second value
+ */
+void vSetFooterNumberInfoWidget(lv_obj_t * pxObj, uint16_t usNumber, uint16_t usAmount);
+
+#endif /* WIDGETS_INFOWIDGET_H_ */

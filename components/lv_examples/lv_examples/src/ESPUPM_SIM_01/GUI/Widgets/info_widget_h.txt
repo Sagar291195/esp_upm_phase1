@@ -1,0 +1,53 @@
+
+/**
+ * @file 
+ * 
+ * 
+ */
+
+#ifndef INFO_WIDGET_H
+#define INFO_WIDGET_H
+
+
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*********************
+ *      INCLUDES
+ *********************/
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+ *     TYPEDEFS
+ **********************/
+
+/**********************
+ *  GLOBAL MACROS
+ **********************/
+
+/**********************
+ *  GLOBAL VARIABLES
+ **********************/
+
+/**********************
+ *  GLOBAL PROTOTYPES
+ **********************/
+
+
+
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+
+
+
+#endif /*INFO_WIDGET_H*/
+

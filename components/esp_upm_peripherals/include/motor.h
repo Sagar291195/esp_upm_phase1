@@ -1,0 +1,244 @@
+/**
+ * @file motor.h
+ * @author Ankit Bansal (iotdevelope@gmail.com)
+ * @brief This is the header file for motor.c
+ * @version 1.1
+ * @date 2022-05-03
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
+#ifndef __MOTOR_H__
+#define __MOTOR_H__
+
+#include <stdint.h>
+#include <PID.h>
+#include <stdbool.h>
+#include <driver/ledc.h>
+
+/************************************defines**********************************/
+
+#define DUTY_CYCLE_RESOLUTION LEDC_TIMER_16_BIT
+/**
+ * @brief Running frequency of motor
+ *
+ */
+#define MOTOR_FREQ 1000
+
+/**
+ * @brief Gpio of the motor
+ *
+ */
+#ifdef CONFIG_NEW_HW
+#define GPIO_MOTOR 25
+#else
+#define GPIO_MOTOR 4
+#endif
+
+/** Loop delay to wait motor on when interupt is already on (in ms) */
+#define motorWAIT_ON (100)
+/** Number of pulse for a complete rotation */
+#define motorPULSE_BY_CYCLE (3.0)
+
+/** Motor minimum command possible */
+#define motorMIN_SET (0.0)
+/** Motor maximum command possible */
+#define motorMAX_SET (100.0)
+
+#define MINIMUN_FLOW_RATE (1.0)
+
+/** Default PID setpoint config*/
+#define motorPID_DEFAULT_SETPOINT (3.00)
+/** Default Error Config to trig aggressive PID in percentage*/
+#define motorPID_DEFAULT_ERROR (0.05)
+/** Minimum Sample for PID to process output */
+#define motorPID_SAMPLE_MIN (100)
+/** Default PID Sample */
+#define motorPID_DEFAULT_SAMPLE (403)
+/** Default PID aggressive Ki */
+#define motorPID_DEFAULT_AKI (4.8)
+/** Default PID aggressive Kd */
+#define motorPID_DEFAULT_AKD (1.2)
+/** Default PID aggressive Kp */
+#define motorPID_DEFAULT_AKP (15)
+/** Default PID normal Ki */
+#define motorPID_DEFAULT_KI (3.0)
+/** Default PID normal Kd */
+#define motorPID_DEFAULT_KD (1.0)
+/** Default PID normal Kp */
+#define motorPID_DEFAULT_KP (5.0)
+/**
+ * @brief set the entry point for the pid controller
+ *
+ */
+#define motorPID_DEFAULT_ENTRY_POINT (18.0)
+
+/**
+ * @brief pid compute time in ms in aggresive mode
+ *
+ */
+#define PID_COMPUT_TIME_AGGRESIVE_IN_MS 200
+
+/**
+ * @brief pid compute time in ms in stable mode
+ *
+ */
+#define PID_COMPUTE_TIME_STABLE_IN_MS 200
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    /************************************************variables************************************/
+
+    /***************************************************functions*****************************************/
+    /**
+     * @brief This function will initiate the pwm motor
+     *
+     */
+    void initiatePWMMotor();
+
+    /**
+     * @brief this function will set the frequency of the motor
+     *
+     * @param freq frequency of the motor
+     */
+    void motorPWMSetFrequecy(unsigned short freq);
+
+    /**
+     * @brief Start the pwm motor with the given duty cycle
+     *
+     * @param fduty
+     */
+    void MotorPWMStart(float fduty);
+
+    /**
+     * @brief stop the ongoing pwm motor
+     *
+     */
+    void MotorPWMStop();
+
+    /**
+     * @brief set the pwm duty cycle of the motor
+     *
+     * @param duty duty cycle of the motor in %
+     */
+    void motorPWMSetDutyCycle(float duty);
+    /**
+     * @brief initialixe the pid controller for the motor
+     *
+     */
+    void initializePIDController();
+
+    /**
+     * @brief Get the Motor P I D Set Value
+     *
+     * @return float
+     */
+    float getMotorPIDSetTargetValue();
+    /**
+     * @brief Set the Motor P I D target flow value which user give from the screen . pid will compute the flow value and set the duty cycle
+     *
+     * @param setValue
+     */
+    void setMotorPIDSetTargetValue(float setValue);
+
+    /**
+     * @brief Set the Motor P I D Parameters to the pid controller
+     *
+     * @param fKp
+     * @param fKi
+     * @param fKd
+     * @param fAkp
+     * @param fAki
+     * @param fAkd
+     */
+    void setMotorPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd);
+
+    /**
+     * @brief Set the Motor Pid Limits object
+     *
+     * @param fMin min pid value
+     * @param fMax max pid value
+     */
+    void setMotorPidLimits(float fMin, float fMax);
+
+    /**
+     * @brief Get the Is Motor Running
+     *
+     * @return true running else false
+     */
+    bool getIsMotorRunning();
+
+    /**
+     * @brief Set the State Of Motor
+     *
+     * @param state true if running else false
+     */
+    void setStateOfMotor(bool state);
+
+    /**
+     * @brief compute the motor pid output
+     *
+     * @param finput input flow rate
+     */
+    void motorPidComputeAndSetOutput(float finput);
+
+    /**
+     * @brief get the kp value of the motor pid controller
+     *
+     */
+    float fGetPIDParameterKp();
+    /**
+     * @brief get the ki value of the motor pid controller
+     *
+     */
+    float fGetPIDParameterKi();
+
+    /**
+     * @brief get the kd value of the motor pid controller
+     *
+     * @return float
+     */
+    float fGetPIDParameterKd();
+
+    /**
+     * @brief get teh akp value of the motor pid controller
+     *
+     * @return float
+     */
+    float fGetPIDParameterAkp();
+
+    /**
+     * @brief get the aki value of the motor pid controller
+     *
+     * @return float
+     */
+    float fGetPIDParameterAki();
+
+    /**
+     * @brief get the akd value of the motor pid controller
+     * */
+
+    float fGetPIDParameterAkd();
+
+    /**
+     * @brief Get the Motor P I D Sample Compute Time
+     *
+     * @return uint16_t retuns the pid compute time in ms
+     */
+    uint16_t getMotorPIDSampleComputeTime();
+
+    /**
+     * @brief Initailize the motor and pid controller
+     *
+     */
+    void vInitializeMotor();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __MOTOR_H__
