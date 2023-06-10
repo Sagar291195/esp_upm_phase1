@@ -41,10 +41,13 @@ extern "C" {
 #include "screen_summary_sample.h"
 #include "screen_metro_code.h"
 #include "screen_metro_menu.h"
-#include "screen_metro_tempadj.h"
+#include "screen_metro_adjust.h"
 #include "screen_metro_flowadj.h"
 #include "screen_metro_flowcal.h"
 #include "screen_metro_flowsetting.h"
+#include "screen_metro_tempsetting.h"
+#include "screen_metro_pressuresetting.h"
+#include "screen_metro_humiditysetting.h"
 #include "screen_metro_flowparameter.h"
 #include "screen_info.h"
 #include "screen_service.h"
@@ -76,7 +79,28 @@ extern "C" {
 /**********************
  *      TYPEDEFS
  **********************/
+enum{
+    SCR_METROLOGY_MENU,
+    SCR_EXTERNAL_TEMPERATURE_SETTINGS,
+    SCR_EXTERNAL_TEMPERATURE_ADJUST,
+    SCR_EXTERNAL_PRESSURE_SETTINGS,
+    SCR_EXTERNAL_PRESSURE_ADJUST,
+    SCR_EXTERNAL_HUMIDITY_SETTINGS,
+    SCR_EXTERNAL_HUMIDITY_ADJUST,
+    SCR_INTERNAL_TEMPERATURE_SETTINGS,
+    SCR_INTERNAL_TEMPERATURE_ADJUST,
+    SCR_INTERNAL_PRESSURE_SETTINGS,
+    SCR_INTERNAL_PRESSURE_ADJUST,
+    SCR_INTERNAL_HUMIDITY_SETTINGS,
+    SCR_INTERNAL_HUMIDITY_ADJUST,
+    SCR_FLOW_SETTINGS,
+    SCR_FLOW_ADJUST,
+    SCR_FLOW_CALIBRATION,
+    SCR_FLOW_PARAMETER,
+}metrology_screen_t;
 
+
+extern uint8_t screenid ;
 /**********************
  * GLOBAL PROTOTYPES
  **********************/

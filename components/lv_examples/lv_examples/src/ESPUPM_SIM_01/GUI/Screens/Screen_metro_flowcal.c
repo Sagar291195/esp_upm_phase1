@@ -488,6 +488,7 @@ void xCallFlowAdjustScreen(void)
     //=============
 
     crnt_screen = scrFlowcal;
+    screenid = SCR_FLOW_CALIBRATION;
 
 }
 

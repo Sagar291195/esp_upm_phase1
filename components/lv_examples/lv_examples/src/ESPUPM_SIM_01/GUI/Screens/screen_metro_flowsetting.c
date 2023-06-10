@@ -172,6 +172,7 @@ void callMetroFlowSettingScreen(void)
     
     __mfsFlowHeadingLbl = lv_label_create(_mfsFlowHeadingCont, NULL);
     lv_obj_align(__mfsFlowHeadingLbl, _mfsFlowHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -10, -35);
+    lv_label_set_align(__mfsFlowHeadingLbl, LV_LABEL_ALIGN_CENTER);
     lv_label_set_text(__mfsFlowHeadingLbl, "Flow");
 
     static lv_style_t __fasFlowHeadingLblStyle;
@@ -360,11 +361,11 @@ void callMetroFlowSettingScreen(void)
     //Create On / OFF control switch 
 
     lv_obj_t *_mfsOnOffSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
-    lv_obj_align(_mfsOnOffSwitch, _mfsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 130, -10);
+    lv_obj_align(_mfsOnOffSwitch, _mfsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 155, -15);
     lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
     lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_INDIC, &style_switch_indic);
     lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_KNOB, &style_switch_knob);
-    lv_obj_set_height(_mfsOnOffSwitch, 20);
+    lv_obj_set_height(_mfsOnOffSwitch, 25);
     lv_obj_set_width(_mfsOnOffSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
    
@@ -437,11 +438,11 @@ void callMetroFlowSettingScreen(void)
     //Create On / OFF control switch 
 
     lv_obj_t *_mfsActionSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
-    lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 138, 5);
+    lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
     lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
     lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_INDIC, &style_switch_indic);
     lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_KNOB, &style_switch_knob);
-    lv_obj_set_height(_mfsActionSwitch, 20);
+    lv_obj_set_height(_mfsActionSwitch, 25);
     lv_obj_set_width(_mfsActionSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
 
@@ -464,6 +465,8 @@ void callMetroFlowSettingScreen(void)
     lv_obj_set_style_local_border_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_bg_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D,0xAF,0x48));
     lv_obj_set_style_local_border_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_BLUE);
+    lv_obj_set_style_local_border_width(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_border_width(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_event_cb(_mfsValidBtn,  __mfsValidAdjBTN_event_handler);
    
 
@@ -472,13 +475,11 @@ void callMetroFlowSettingScreen(void)
     _mfsValidTxt = lv_label_create(_mfsValidBtn, NULL);
     lv_obj_align(_mfsValidTxt, _mfsValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_mfsValidTxt, "VALID & ADJUST");
-    lv_obj_set_style_local_text_font(_mfsValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
+    lv_obj_set_style_local_text_font(_mfsValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_18);
     lv_obj_set_style_local_text_color(_mfsValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     
-
-
     crnt_screen = scrFlowSetting;
-
+    screenid =  SCR_FLOW_SETTINGS;
 }
 
 /**********************

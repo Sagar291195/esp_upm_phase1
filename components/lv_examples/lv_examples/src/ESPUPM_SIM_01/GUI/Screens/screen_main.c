@@ -9,16 +9,16 @@ void Init_Screen()
     // xMetroPswdScrn();
     // vTestScreen1();
     // cScrTransitCheck();
-    // vCallCodeScreen();	 //---------------------------------------->	        	
+     vCallCodeScreen();	 //---------------------------------------->	        	
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
     // xCallFlowCalibrationScreen();		
-    // xCallFlowAdjustScreen();
-    // callFlowParameterScreen();
-    callMetroFlowSettingScreen();
+     //xCallFlowAdjustScreen();
+     //callFlowParameterScreen();
+    // callMetroFlowSettingScreen();
     // CallMetroMenuScreen();
-    // callMetroTempAdjust();
+    // callMetroAdjust();
     // ppxParameterScreen();
     // xsPresetScreenAdvance();         
     // callServiceSetScreen();
@@ -26,6 +26,9 @@ void Init_Screen()
     // sssSummarySampleScreen();
     // xssSummaryStartScreen();  
     // xCallArchvScreen();
+    // callMetroHumiditySettingScreen();
+    // callMetroPressureSettingScreen();
+    // callMetroTempSettingScreen();
 
     // vTestScreen();
        

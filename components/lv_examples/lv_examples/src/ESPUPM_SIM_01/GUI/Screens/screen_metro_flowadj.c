@@ -278,6 +278,8 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_set_style_local_text_font(_fcsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, &lv_font_montserrat_26);
     lv_obj_set_style_local_bg_color(_fcsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, LV_COLOR_GRAY);
     lv_obj_set_style_local_border_width(_fcsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_border_color(_fcsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_textarea_set_cursor_blink_time(_fcsEnterCalValTA, 0);
 
     // Create valid button
 
@@ -286,7 +288,9 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_align(_fcsValidBtn, _fcsEnterCalValTA, LV_ALIGN_OUT_RIGHT_MID, -5, 0);
     lv_obj_set_style_local_radius(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 10);
     lv_obj_set_event_cb(_fcsValidBtn, __fcsValidBTN_event_handler);
-    lv_obj_set_style_local_scale_border_width(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_border_width(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+     lv_obj_set_style_local_border_color(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_border_color(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_BLUE);
     lv_obj_set_style_local_bg_color(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48));
 
     //CREATE LABEL FOR VALID TXT ON BUTTON
@@ -299,6 +303,8 @@ void xCallFlowCalibrationScreen(void)
     lv_style_init(&_fcsValidBtnLblStyle);
     lv_style_set_text_font(&_fcsValidBtnLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_16);
     lv_style_set_text_color(&_fcsValidBtnLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_style_set_text_color(&_fcsValidBtnLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_style_set_border_width(&_fcsValidBtnLblStyle, LV_LABEL_PART_MAIN, 0);
     lv_obj_add_style(_fcsValidBtnLbl, LV_LABEL_PART_MAIN, &_fcsValidBtnLblStyle);
 
     /* Create a keyboard*/
@@ -323,6 +329,7 @@ void xCallFlowCalibrationScreen(void)
     //lv_obj_set_style_local_
 
     crnt_screen = scrFlowCal;
+    screenid =  SCR_FLOW_ADJUST;
 }
 
 /**********************

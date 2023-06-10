@@ -879,7 +879,7 @@ void callFlowParameterScreen(void)
     //==========================================================================================
 
     crnt_screen = scrFlowPara; //scrFlowPara
-
+    screenid = SCR_FLOW_PARAMETER;
 }
 
 /**********************

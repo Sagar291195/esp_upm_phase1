@@ -285,7 +285,7 @@ void CallMetroMenuScreen(void)
     
     _smmNewCalBtnLbl = lv_label_create(_smmNewCalBtn, NULL);
     lv_obj_align(_smmNewCalBtnLbl, _smmSensorParBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-    lv_label_set_text(_smmNewCalBtnLbl, "FLOW CALIBRATION");
+    lv_label_set_text(_smmNewCalBtnLbl, "CALIBRATION");
 
     static lv_style_t _smmNewCalBtnLbllStyle;
     lv_style_init(&_smmNewCalBtnLbllStyle);
@@ -344,7 +344,7 @@ void CallMetroMenuScreen(void)
 
     
     crnt_screen = scrMetroScreen; //scrMetroScreen
-
+    screenid = SCR_METROLOGY_MENU;
     //===================================
     //===================================
 
@@ -367,10 +367,7 @@ static void  new_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        //printf("Back to Dashbord from presetscrn\n");
-        //callFlowParameterScreen();
-        //xCallFlowCalibrationScreen();
-        callMetroFlowSettingScreen();
+        callMetroTempSettingScreen();
     }
 }
 
