@@ -9,14 +9,14 @@ void Init_Screen()
     // xMetroPswdScrn();
     // vTestScreen1();
     // cScrTransitCheck();
-     vCallCodeScreen();	 //---------------------------------------->	        	
+    // vCallCodeScreen();	 //---------------------------------------->	        	
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
     // xCallFlowCalibrationScreen();		
     // xCallFlowAdjustScreen();
     // callFlowParameterScreen();
-    // callMetroFlowSettingScreen();
+    callMetroFlowSettingScreen();
     // CallMetroMenuScreen();
     // callMetroTempAdjust();
     // ppxParameterScreen();

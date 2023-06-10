@@ -216,19 +216,29 @@ void callMetroFlowSettingScreen(void)
     //```````````````````````````````````````````````````````````
     //
     //```````````````````````````````````````````````````````````
+     static lv_style_t _mfsDropDownStylemain;
+    lv_style_reset(&_mfsDropDownStylemain);
+    lv_style_set_bg_color(&_mfsDropDownStylemain, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_style_set_text_font(&_mfsDropDownStylemain, LV_STATE_DEFAULT, &lv_font_montserrat_14);
+    lv_style_set_text_color(&_mfsDropDownStylemain, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_width(&_mfsDropDownStylemain, LV_STATE_DEFAULT, 0);
+
+    static lv_style_t _mfsDropDownStylelist;
+    lv_style_reset(&_mfsDropDownStylelist);
+    lv_style_set_bg_color(&_mfsDropDownStylelist, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_text_font(&_mfsDropDownStylelist, LV_STATE_DEFAULT, &lv_font_montserrat_14);
+    lv_style_set_text_color(&_mfsDropDownStylelist, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+    lv_style_set_border_width(&_mfsDropDownStylelist, LV_STATE_DEFAULT, 0);
+
+    static lv_style_t _mfsDropDownStyleselected;
+    lv_style_reset(&_mfsDropDownStyleselected);
+    lv_style_set_bg_color(&_mfsDropDownStyleselected, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35,0x9F,0xE2));
+    lv_style_set_text_font(&_mfsDropDownStyleselected, LV_STATE_DEFAULT, &lv_font_montserrat_14);
+    lv_style_set_text_color(&_mfsDropDownStyleselected, LV_STATE_DEFAULT, LV_COLOR_BLACK);
+    lv_style_set_border_width(&_mfsDropDownStyleselected, LV_STATE_DEFAULT, 0);
 
     //Create a Curve selection drop down list
     lv_obj_t * _mfsCurveDropDown = lv_dropdown_create(_mfsCurveUnitCont, NULL);
-    // lv_dropdown_set_options(_mfsCurveDropDown, "Linear1\n"
-    //              "Linear2\n"
-    //              "Linear3\n"
-    //              "Linear4\n"
-    //              "Linear5\n"
-    //              "Linear6\n"
-    //              "Linear7\n"
-    //              "Linear8"
-    //              );
-
     lv_dropdown_set_options(_mfsCurveDropDown, 
                  "Linear4\n"
                  "Linear5\n"
@@ -238,16 +248,11 @@ void callMetroFlowSettingScreen(void)
                  );
                 
 
-    lv_obj_align(_mfsCurveDropDown, _mfsCurveTxt, LV_ALIGN_OUT_RIGHT_TOP, 80, -2);
+    lv_obj_align(_mfsCurveDropDown, _mfsCurveTxt, LV_ALIGN_OUT_RIGHT_TOP, 100, -2);
     lv_obj_set_size(_mfsCurveDropDown, 120, 30);
-    
-    static lv_style_t _mfsCurveDropDownStyle;
-    lv_style_init(&_mfsCurveDropDownStyle);
-    lv_style_set_bg_color(&_mfsCurveDropDownStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_text_font(&_mfsCurveDropDownStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14);
-    lv_style_set_text_color(&_mfsCurveDropDownStyle, LV_DROPDOWN_PART_MAIN, LV_COLOR_WHITE);
-    lv_style_set_border_width(&_mfsCurveDropDownStyle, LV_DROPDOWN_PART_MAIN, 0);
-    lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_MAIN, &_mfsCurveDropDownStyle);
+    lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_MAIN, &_mfsDropDownStylemain);
+    lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
+    lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsCurveDropDown, curve_dropdown_event_handler);
 
     //===-------------------------->----------------->---------------------->------------->
@@ -258,16 +263,11 @@ void callMetroFlowSettingScreen(void)
                                               "LPH");
                 
 
-    lv_obj_align(_mfsUnitDropDown, _mfsUnitTxt, LV_ALIGN_OUT_RIGHT_TOP, 97, -2);
+    lv_obj_align(_mfsUnitDropDown, _mfsUnitTxt, LV_ALIGN_OUT_RIGHT_TOP, 117, -2);
     lv_obj_set_size(_mfsUnitDropDown, 120, 30);
-    
-    static lv_style_t _mfsUnitDropDownStyle;
-    lv_style_init(&_mfsUnitDropDownStyle);
-    lv_style_set_bg_color(&_mfsUnitDropDownStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_text_font(&_mfsUnitDropDownStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14);
-    lv_style_set_text_color(&_mfsUnitDropDownStyle, LV_DROPDOWN_PART_MAIN, LV_COLOR_WHITE);
-    lv_style_set_border_width(&_mfsUnitDropDownStyle, LV_DROPDOWN_PART_MAIN, 0);
-    lv_obj_add_style(_mfsUnitDropDown, LV_DROPDOWN_PART_MAIN, &_mfsUnitDropDownStyle);
+    lv_obj_add_style(_mfsUnitDropDown, LV_DROPDOWN_PART_MAIN, &_mfsDropDownStylemain);
+    lv_obj_add_style(_mfsUnitDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
+    lv_obj_add_style(_mfsUnitDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsUnitDropDown, unit_dropdown_event_handler);
 
     //=================================================================
@@ -299,30 +299,75 @@ void callMetroFlowSettingScreen(void)
     lv_obj_t * _mfsOnOffTxt;
     _mfsOnOffTxt = lv_label_create(_mfsAlarmStPtCont, NULL);
     lv_obj_align(_mfsOnOffTxt, _mfsAlarmSetPointTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-    lv_label_set_text(_mfsOnOffTxt, "ON / OFFF");
+    lv_label_set_text(_mfsOnOffTxt, "ON / OFF");
     lv_obj_add_style(_mfsOnOffTxt, LV_LABEL_PART_MAIN, &_mfsSmallTxtStyle);
 
     //=========================
     //=========================
+    //Write style state: LV_STATE_DEFAULT for style_screen_sw_1_bg
+    static lv_style_t style_switch_bg;
+	lv_style_reset(&style_switch_bg);
+	lv_style_set_radius(&style_switch_bg, LV_STATE_DEFAULT, 20);
+	lv_style_set_bg_color(&style_switch_bg, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+	lv_style_set_bg_grad_color(&style_switch_bg, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+	lv_style_set_bg_grad_dir(&style_switch_bg, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
+	lv_style_set_bg_opa(&style_switch_bg, LV_STATE_DEFAULT, 255);
+    lv_style_set_border_opa(&style_switch_bg, LV_STATE_DEFAULT, 255);
+    lv_style_set_border_color(&style_switch_bg, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_width(&style_switch_bg, LV_STATE_DEFAULT, 2);
+    lv_style_set_outline_width(&style_switch_bg, LV_STATE_DEFAULT, 0);
+    lv_style_set_outline_width(&style_switch_bg, LV_STATE_FOCUSED, 0);
+    lv_style_set_border_opa(&style_switch_bg, LV_STATE_CHECKED, 255);
+    lv_style_set_border_color(&style_switch_bg, LV_STATE_CHECKED, LV_COLOR_WHITE);
+    lv_style_set_border_width(&style_switch_bg, LV_STATE_CHECKED, 2);
+    lv_style_set_outline_width(&style_switch_bg, LV_STATE_CHECKED, 0);
+
+	//Write style LV_SWITCH_PART_INDIC for screen_sw_1
+	static lv_style_t style_switch_indic;
+	lv_style_reset(&style_switch_indic);
+
+	//Write style state: LV_STATE_DEFAULT for style_screen_sw_1_indic
+	lv_style_set_radius(&style_switch_indic, LV_STATE_DEFAULT, 20);
+	lv_style_set_bg_color(&style_switch_indic, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_color(&style_switch_indic, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_dir(&style_switch_indic, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
+	lv_style_set_bg_opa(&style_switch_indic, LV_STATE_DEFAULT, 255);
+    lv_style_set_bg_color(&style_switch_indic, LV_STATE_CHECKED, LV_COLOR_GREEN);
+	lv_style_set_bg_grad_color(&style_switch_indic, LV_STATE_CHECKED, LV_COLOR_GREEN);
+	lv_style_set_bg_grad_dir(&style_switch_indic, LV_STATE_CHECKED, LV_GRAD_DIR_VER);
+	lv_style_set_bg_opa(&style_switch_indic, LV_STATE_CHECKED, 255);
+    lv_style_set_border_opa(&style_switch_indic, LV_STATE_DEFAULT, 255);
+    lv_style_set_border_color(&style_switch_indic, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_width(&style_switch_indic, LV_STATE_DEFAULT, 2);
+    lv_style_set_outline_width(&style_switch_indic, LV_STATE_DEFAULT, 0);
+    lv_style_set_outline_width(&style_switch_indic, LV_STATE_FOCUSED, 0);
+    lv_style_set_border_opa(&style_switch_indic, LV_STATE_CHECKED, 255);
+    lv_style_set_border_color(&style_switch_indic, LV_STATE_CHECKED, LV_COLOR_WHITE);
+    lv_style_set_border_width(&style_switch_indic, LV_STATE_CHECKED, 2);
+    lv_style_set_outline_width(&style_switch_indic, LV_STATE_CHECKED, 0);
+
+	//Write style LV_SWITCH_PART_KNOB for screen_sw_1
+	static lv_style_t style_switch_knob;
+	lv_style_reset(&style_switch_knob);
+
+	//Write style state: LV_STATE_DEFAULT for style_screen_sw_1_knob
+	//lv_style_set_radius(&style_switch_knob, LV_STATE_DEFAULT, 100);
+	lv_style_set_bg_color(&style_switch_knob, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_color(&style_switch_knob, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+	lv_style_set_bg_grad_dir(&style_switch_knob, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
+	lv_style_set_bg_opa(&style_switch_knob, LV_STATE_DEFAULT, 255);
 
     //Create On / OFF control switch 
 
     lv_obj_t *_mfsOnOffSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
-    lv_obj_align(_mfsOnOffSwitch, _mfsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 170, -8);
+    lv_obj_align(_mfsOnOffSwitch, _mfsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 130, -10);
+    lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
+    lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_INDIC, &style_switch_indic);
+    lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_KNOB, &style_switch_knob);
     lv_obj_set_height(_mfsOnOffSwitch, 20);
+    lv_obj_set_width(_mfsOnOffSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
    
-
-    
-    static lv_style_t _mfsOnOffSwitchStle;
-    lv_style_init(&_mfsOnOffSwitchStle);
-    lv_style_set_bg_color(&_mfsOnOffSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_border_width(&_mfsOnOffSwitchStle, LV_STATE_DEFAULT, 2 );
-    lv_style_set_border_color(&_mfsOnOffSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_WHITE);
-    lv_style_set_bg_color(&_mfsOnOffSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_bg_color(&_mfsOnOffSwitchStle,  LV_SWITCH_PART_INDIC, LV_COLOR_GREEN);
-    lv_obj_add_style(_mfsOnOffSwitch, LV_SWITCH_PART_BG, &_mfsOnOffSwitchStle);
-
 
     //==============================
     //==============================
@@ -341,18 +386,11 @@ void callMetroFlowSettingScreen(void)
     lv_obj_t * _mfsLowerLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsLowerLimDropDown, "-10%\n"
                 "-20%");
-                
-
-    lv_obj_align(_mfsLowerLimDropDown, _mfsLowerLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 70, -4);
+    lv_obj_align(_mfsLowerLimDropDown, _mfsLowerLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 60, -4);
     lv_obj_set_size(_mfsLowerLimDropDown, 120, 30);
-    
-    static lv_style_t _mfsLowerLimDropDownStyle;
-    lv_style_init(&_mfsLowerLimDropDownStyle);
-    lv_style_set_bg_color(&_mfsLowerLimDropDownStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_text_font(&_mfsLowerLimDropDownStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14);
-    lv_style_set_text_color(&_mfsLowerLimDropDownStyle, LV_DROPDOWN_PART_MAIN, LV_COLOR_WHITE);
-    lv_style_set_border_width(&_mfsLowerLimDropDownStyle, LV_DROPDOWN_PART_MAIN, 0);
-    lv_obj_add_style(_mfsLowerLimDropDown, LV_DROPDOWN_PART_MAIN, &_mfsLowerLimDropDownStyle);
+    lv_obj_add_style(_mfsLowerLimDropDown, LV_DROPDOWN_PART_MAIN, &_mfsDropDownStylemain);
+    lv_obj_add_style(_mfsLowerLimDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
+    lv_obj_add_style(_mfsLowerLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsLowerLimDropDown, lowerlim_dropdown_event_handler);
 
     //============================
@@ -361,7 +399,7 @@ void callMetroFlowSettingScreen(void)
     lv_obj_t * _mfsHigherLimitTxt;
     _mfsHigherLimitTxt = lv_label_create(_mfsAlarmStPtCont, NULL);
     lv_obj_align(_mfsHigherLimitTxt, _mfsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
-    lv_label_set_text(_mfsHigherLimitTxt, "HIGHETR LIMIT");
+    lv_label_set_text(_mfsHigherLimitTxt, "HIGHER LIMIT");
     lv_obj_add_style(_mfsHigherLimitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
 
     //============================
@@ -371,18 +409,11 @@ void callMetroFlowSettingScreen(void)
     lv_obj_t * _mfsHigherLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsHigherLimDropDown, "10%\n"
                 "20%");
-                
-
     lv_obj_align(_mfsHigherLimDropDown, _mfsHigherLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 60, -4);
     lv_obj_set_size(_mfsHigherLimDropDown, 120, 30);
-    
-    static lv_style_t _mfsHigherLimDropDownStyle;
-    lv_style_init(&_mfsHigherLimDropDownStyle);
-    lv_style_set_bg_color(&_mfsHigherLimDropDownStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_text_font(&_mfsHigherLimDropDownStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14);
-    lv_style_set_text_color(&_mfsHigherLimDropDownStyle, LV_DROPDOWN_PART_MAIN, LV_COLOR_WHITE);
-    lv_style_set_border_width(&_mfsHigherLimDropDownStyle, LV_DROPDOWN_PART_MAIN, 0);
-    lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_MAIN, &_mfsHigherLimDropDownStyle);
+    lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_MAIN, &_mfsDropDownStylemain);
+    lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
+    lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsHigherLimDropDown, higherlim_dropdown_event_handler);
 
     //============================
@@ -406,22 +437,15 @@ void callMetroFlowSettingScreen(void)
     //Create On / OFF control switch 
 
     lv_obj_t *_mfsActionSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
-    lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 178, 5);
+    lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 138, 5);
+    lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
+    lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_INDIC, &style_switch_indic);
+    lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_KNOB, &style_switch_knob);
     lv_obj_set_height(_mfsActionSwitch, 20);
+    lv_obj_set_width(_mfsActionSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
-   
 
     
-    static lv_style_t _mfsActionSwitchStle;
-    lv_style_init(&_mfsActionSwitchStle);
-    lv_style_set_bg_color(&_mfsActionSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_border_width(&_mfsActionSwitchStle, LV_STATE_DEFAULT, 2 );
-    lv_style_set_border_color(&_mfsActionSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_WHITE);
-    lv_style_set_bg_color(&_mfsActionSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_bg_color(&_mfsActionSwitchStle,  LV_SWITCH_PART_INDIC, LV_COLOR_GREEN);
-    lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_BG, &_mfsActionSwitchStle);
-
-
     //==============================
     //==============================
     
@@ -437,6 +461,9 @@ void callMetroFlowSettingScreen(void)
     lv_obj_set_size(_mfsValidBtn, 300, 44);
     lv_obj_set_style_local_radius(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_bg_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D,0xAF,0x48));
+    lv_obj_set_style_local_border_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_bg_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D,0xAF,0x48));
+    lv_obj_set_style_local_border_color(_mfsValidBtn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_BLUE);
     lv_obj_set_event_cb(_mfsValidBtn,  __mfsValidAdjBTN_event_handler);
    
 
@@ -447,6 +474,7 @@ void callMetroFlowSettingScreen(void)
     lv_label_set_text(_mfsValidTxt, "VALID & ADJUST");
     lv_obj_set_style_local_text_font(_mfsValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
     lv_obj_set_style_local_text_color(_mfsValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    
 
 
     crnt_screen = scrFlowSetting;
