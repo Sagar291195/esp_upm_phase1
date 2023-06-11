@@ -55,7 +55,9 @@ lv_obj_t *container=NULL;
 lv_obj_t *cstcontainer=NULL;
 //lv_obj_t *xParentcontainer;
 
+static lv_style_t style_btnm_bg;
 static lv_style_t style_btnm;
+static lv_style_t style_btnm_pressed;
 static lv_style_t style_label;
 static lv_style_t style_label1;
 static lv_style_t style_label3;
@@ -103,24 +105,21 @@ static void event_handler(lv_obj_t * obj, lv_event_t event);
 
 void vCallCodeScreen(void)
 {
-    //printf("Calling Code Screen \n");
     vPassword_scr1();
-    //lv_demo_benchmark();
-    //lv_demo_widgets();
-    //vChangeScrTest();
-    //fflush(NULL);
 }
 
 
 
 void vPassword_scr1(void)
 {
-
     scr1 =  lv_obj_create(NULL, NULL);
     lv_scr_load(scr1);
-    //container = lv_cont_create(lv_scr_act(), NULL);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
+
     container = lv_cont_create(scr1, NULL);
-    //lv_scr_load(container);
     lv_obj_set_size(container, 320, 480);
     lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0,0);
 
@@ -131,36 +130,43 @@ void vPassword_scr1(void)
     lv_obj_add_style(container, LV_CONT_PART_MAIN, &style_scr1_container);
 
     btnm = lv_btnmatrix_create(container, NULL);
-    //lv_obj_align(btnm, container, LV_ALIGN_CENTER , 0, -75);
     lv_obj_align(btnm, container, LV_ALIGN_IN_LEFT_MID , 32, -70);
     lv_btnmatrix_set_map(btnm, btnm_map);
-    //lv_btnmatrix_set_btn_width(btnm, 20, 20);
     lv_obj_set_height(btnm, 340);
     lv_obj_set_width(btnm, 250);
-    lv_btnmatrix_set_btn_ctrl_all(btnm, LV_BTNMATRIX_CTRL_CHECK_STATE);
-    lv_btnmatrix_set_recolor(btnm, true);
-    //lv_obj_set_style_local_bg_color(btnm, LV_BTNMATRIX_PART_BTN, LV_STATE_PRESSED , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_event_cb(btnm, event_handler);
 
     //This is style for BTNMATRIX
+    lv_style_init(&style_btnm_bg);
+    lv_style_set_bg_color(&style_btnm_bg, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_style_set_border_opa(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_color(&style_btnm_bg, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_radius(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_width(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_obj_add_style(btnm, LV_BTNMATRIX_PART_BG, &style_btnm_bg);
+    
     lv_style_init(&style_btnm);
     lv_style_set_bg_color(&style_btnm, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_bg_color(&style_btnm,  LV_STATE_FOCUSED , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    //lv_style_set_bg_color(&style_btnm,  LV_STATE_PRESSED , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    //lv_style_set_border_color(&style_btnm, LV_BTNMATRIX_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_border_opa(&style_btnm, LV_BTNMATRIX_PART_BG, LV_OPA_MIN);
+    lv_style_set_bg_opa(&style_btnm, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_color(&style_btnm, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_opa(&style_btnm, LV_STATE_DEFAULT, 255);
+    lv_style_set_radius(&style_btnm, LV_STATE_DEFAULT, 50);
+    lv_style_set_border_width(&style_btnm, LV_STATE_DEFAULT, 2);
+    lv_style_set_text_color(&style_btnm, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_text_font(&style_btnm, LV_STATE_DEFAULT, &lv_font_montserrat_28);
 
-    //Add a border for buttons
-    lv_style_set_border_color(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_COLOR_WHITE);
-    lv_style_set_border_opa(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_OPA_80);
-    lv_style_set_radius(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_RADIUS_CIRCLE);
-    lv_style_set_border_width(&style_btnm, LV_BTNMATRIX_PART_BTN, 2);
-    lv_style_set_bg_color(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    //lv_style_set_bg_color(&style_btnm, LV_STATE_DEFAULT | LV_STATE_PRESSED | LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_style_set_text_font(&style_btnm, LV_BTNMATRIX_PART_BTN, &lv_font_montserrat_28);
-    lv_obj_add_style(btnm, LV_BTNMATRIX_PART_BG, &style_btnm);
-
+    lv_style_init(&style_btnm_pressed);
+    lv_style_set_bg_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_BLUE);
+    lv_style_set_bg_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
+    lv_style_set_border_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_WHITE);
+    lv_style_set_border_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
+    lv_style_set_radius(&style_btnm_pressed, LV_STATE_PRESSED, 50);
+    lv_style_set_border_width(&style_btnm_pressed, LV_STATE_PRESSED, 2);
+    lv_style_set_text_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_WHITE);
+    lv_style_set_text_font(&style_btnm_pressed, LV_STATE_PRESSED, &lv_font_montserrat_28);
+    
     lv_obj_add_style(btnm, LV_BTNMATRIX_PART_BTN, &style_btnm);
+    lv_obj_add_style(btnm, LV_BTNMATRIX_PART_BTN, &style_btnm_pressed);
 
     label = lv_label_create(container, NULL);
     lv_label_set_text(label, "Enter code");
@@ -192,10 +198,7 @@ void vPassword_scr1(void)
     lv_style_set_text_color(&style_label3, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_style_set_text_font(&style_label3, LV_STATE_DEFAULT  ,&lv_font_montserrat_28);
     lv_obj_add_style(label3, LV_LABEL_PART_MAIN, &style_label3);
-    //vPasswordLine();
     crnt_screen = scr1;
-    //printf("Password Screen is Drawn\n");
-    //printf(crnt_screen);
 }
 
 // void vChangeScrTest(void)
@@ -226,23 +229,6 @@ void vClearBTN(void)
     //lv_obj_align(label, btnm, LV_ALIGN_OUT_TOP_MID, 0, -40);
     //printf("pressed : %p", pVal);
 }
-
-// void vTickMark(void)
-// {
-//     static lv_style_t style;
-//     lv_style_init(&style);
-//     lv_style_set_line_color(&style, LV_STATE_DEFAULT, LV_COLOR_GRAY);
-//     lv_style_set_line_width(&style, LV_STATE_DEFAULT, 6);
-//     lv_style_set_line_rounded(&style, LV_STATE_DEFAULT, true);
-// #if LV_USE_LINE
-//     /*Create an object with the new style*/
-//     lv_obj_t * obj = lv_line_create(lv_scr_act(), NULL);
-//     lv_obj_add_style(obj, LV_LINE_PART_MAIN, &style);
-//     static lv_point_t p[] = {{10, 30}, {30, 50}, {100, 0}};
-//     lv_line_set_points(obj, p, 3);
-//     lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
-// #endif
-// }
 
 
 void vPasswordLine(void)
@@ -307,49 +293,24 @@ void vCallTask_Code_Correct(void)
 
 static void event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_VALUE_CHANGED) {
-
-        //pTxt = (char *)lv_btnmatrix_get_active_btn_text(obj);
-        //lv_scr_load(scr1);
+    if(event == LV_EVENT_RELEASED) {
         pTxt = (char *)lv_btnmatrix_get_active_btn_text(obj);
-        //printf("%s was pressed\n", txt );
         pVal = strcat(aPass, pTxt);
-        //lv_label_set_text(label1, pVal );
         number = atoi(pVal); // convert char pointer to number
         lv_label_set_text(label1, pVal );
-        //printf("%d was pressed\n", number );
-
-
-        if( number < 10 )
-        {
-            //printf( "size is: %d \n", sizeof(pVal) );
-
+        if( number < 10 ){
             lv_label_set_text(label1, "*___" );
-        }
-        else if (number > 10 && number< 100)
-        {
-
+        }else if (number > 10 && number< 100){
             lv_label_set_text(label1, "**__" );
-        }
-        else if (number > 100 && number< 1000)
-        {
+        }else if (number > 100 && number< 1000){
             lv_label_set_text(label1, "***_" );
-        }
-        else if (number > 1000 && number< 10000)
-        {
+        }else if (number > 1000 && number< 10000){
             lv_label_set_text(label1, "****" );
-            //printf("check 1\n");
             vTaskDelay(5000/portMAX_DELAY);
             passDetected = true;
-            //printf("check 2\n");
-
-        }
-        else if (number == 0)
-        {
+        }else if (number == 0){
             lv_label_set_text(label1, "" );
-        }
-        else
-        {
+        }else{
             lv_label_set_text(label1, "" );
         }
 

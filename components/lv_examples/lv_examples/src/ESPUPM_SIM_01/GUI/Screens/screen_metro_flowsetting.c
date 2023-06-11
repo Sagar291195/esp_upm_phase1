@@ -82,8 +82,12 @@ void callMetroFlowSettingScreen(void)
     //Create Base container
     
     
-    scrFlowSetting = lv_cont_create(NULL, NULL);
+    scrFlowSetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowSetting);
+     if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     //lv_scr_load(scrFlowSetting);
     mfsParentCont = lv_cont_create(scrFlowSetting, NULL);
     lv_obj_set_size(mfsParentCont, 320, 480);
@@ -499,7 +503,7 @@ static void  __mfsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen\n");
+        printf("Back to Metrology Menu Screen from flow settings\n");
         CallMetroMenuScreen();
     }
 }

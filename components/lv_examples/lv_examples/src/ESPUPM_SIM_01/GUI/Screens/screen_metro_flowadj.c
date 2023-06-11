@@ -139,7 +139,10 @@ void xCallFlowCalibrationScreen(void)
     
     scrFlowCal = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowCal);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     fcsParentCont = lv_obj_create(scrFlowCal, NULL);
     lv_obj_set_size(fcsParentCont, 320, 480);
     lv_obj_align(fcsParentCont, NULL, LV_ALIGN_CENTER, 0, 0);

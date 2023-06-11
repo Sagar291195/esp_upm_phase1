@@ -134,9 +134,12 @@ lv_obj_t * _sstActionSwitch123;
 void callServiceSetScreen(void)
 {
     
-    sstParentCont = lv_cont_create(NULL, NULL);
+    sstParentCont = lv_obj_create(NULL, NULL);
     lv_scr_load(sstParentCont);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     lv_obj_set_size(sstParentCont, 320, 480);
     lv_obj_set_click(sstParentCont, false);
     lv_obj_align(sstParentCont, NULL, LV_ALIGN_CENTER, 0,0);

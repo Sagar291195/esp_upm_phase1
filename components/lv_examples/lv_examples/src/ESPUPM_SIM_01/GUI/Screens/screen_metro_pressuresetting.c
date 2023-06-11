@@ -82,8 +82,12 @@ void callMetroPressureSettingScreen(void)
     //Create Base container
     
     
-    scrPressureSetting = lv_cont_create(NULL, NULL);
+    scrPressureSetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrPressureSetting);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
 
     mpsParentCont = lv_cont_create(scrPressureSetting, NULL);
     lv_obj_set_size(mpsParentCont, 320, 480);

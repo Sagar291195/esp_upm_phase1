@@ -85,9 +85,13 @@ lv_task_t *inforefresherTask;
 void CallScreenInfo(void)
 {
     
-    scrInfo = lv_cont_create(NULL, NULL);
+    scrInfo = lv_obj_create(NULL, NULL);
     lv_scr_load(scrInfo);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
+
     infoParentCont = lv_cont_create(scrInfo, NULL);
     lv_obj_set_size(infoParentCont, 320, 480);
     lv_obj_align(infoParentCont, NULL, LV_ALIGN_CENTER, 0,0);

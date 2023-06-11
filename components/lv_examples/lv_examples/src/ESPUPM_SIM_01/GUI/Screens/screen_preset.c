@@ -176,9 +176,12 @@ void xsPresetScreenAdvance(void)
     sprintf(_xsDurHourrollerbuf, "%s", _xsDurHourrollerNull);
     sprintf(_xsDurMinutrollerbuf, "%s", _xsDurMinutrollerNull);
 
-    scr_preset = lv_cont_create(NULL, NULL);
+    scr_preset = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_preset);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xaParentContainer_Adv = lv_cont_create(scr_preset, NULL);
     // lv_scr_load(xaParentContainer_Adv);
     lv_obj_set_size(xaParentContainer_Adv, 320, 480);

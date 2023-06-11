@@ -82,8 +82,12 @@ void callMetroHumiditySettingScreen(void)
     //Create Base container
     
     
-    scrHumiditySetting = lv_cont_create(NULL, NULL);
+    scrHumiditySetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrHumiditySetting);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
 
     mhsParentCont = lv_cont_create(scrHumiditySetting, NULL);
     lv_obj_set_size(mhsParentCont, 320, 480);
@@ -173,7 +177,14 @@ void callMetroHumiditySettingScreen(void)
     __mhsHumidityHeadingLbl = lv_label_create(_mhsHumidityHeadingCont, NULL);
     lv_obj_align(__mhsHumidityHeadingLbl, _mhsHumidityHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
     lv_label_set_align(__mhsHumidityHeadingLbl, LV_LABEL_ALIGN_CENTER);
-    lv_label_set_text(__mhsHumidityHeadingLbl, "External \nHumidity");
+    if(screenid == SCR_EXTERNAL_PRESSURE_ADJUST){
+        lv_label_set_text(__mhsHumidityHeadingLbl, "External \nHumidity");
+        screenid = SCR_EXTERNAL_HUMIDITY_SETTINGS;
+    }else if(screenid == SCR_INTERNAL_PRESSURE_ADJUST){
+        lv_label_set_text(__mhsHumidityHeadingLbl, "Internal \nHumidity");
+        screenid = SCR_INTERNAL_HUMIDITY_SETTINGS;
+    }
+
 
     static lv_style_t __fasFlowHeadingLblStyle;
     lv_style_init(&__fasFlowHeadingLblStyle);
@@ -260,8 +271,7 @@ void callMetroHumiditySettingScreen(void)
 
     //Create a Unit selection drop down list
     lv_obj_t * _mhsUnitDropDown = lv_dropdown_create(_mhsCurveUnitCont, NULL);
-    lv_dropdown_set_options(_mhsUnitDropDown, "LPM\n"
-                                              "LPH");
+    lv_dropdown_set_options(_mhsUnitDropDown, "%\n");
                 
 
     lv_obj_align(_mhsUnitDropDown, _mhsUnitTxt, LV_ALIGN_OUT_RIGHT_TOP, 117, -2);
@@ -385,8 +395,8 @@ void callMetroHumiditySettingScreen(void)
 
     //Create a Curve selection drop down list
     lv_obj_t * _mhsLowerLimDropDown = lv_dropdown_create(_mhsAlarmStPtCont, NULL);
-    lv_dropdown_set_options(_mhsLowerLimDropDown, "-10%\n"
-                "-20%");
+    lv_dropdown_set_options(_mhsLowerLimDropDown, "0%\n"
+                "1%");
     lv_obj_align(_mhsLowerLimDropDown, _mhsLowerLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 60, -4);
     lv_obj_set_size(_mhsLowerLimDropDown, 120, 30);
     lv_obj_add_style(_mhsLowerLimDropDown, LV_DROPDOWN_PART_MAIN, &_mhsDropDownStylemain);
@@ -408,8 +418,8 @@ void callMetroHumiditySettingScreen(void)
 
     //Create a Curve selection drop down list
     lv_obj_t * _mhsHigherLimDropDown = lv_dropdown_create(_mhsAlarmStPtCont, NULL);
-    lv_dropdown_set_options(_mhsHigherLimDropDown, "10%\n"
-                "20%");
+    lv_dropdown_set_options(_mhsHigherLimDropDown, "90%\n"
+                "100%");
     lv_obj_align(_mhsHigherLimDropDown, _mhsHigherLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 60, -4);
     lv_obj_set_size(_mhsHigherLimDropDown, 120, 30);
     lv_obj_add_style(_mhsHigherLimDropDown, LV_DROPDOWN_PART_MAIN, &_mhsDropDownStylemain);
@@ -486,9 +496,9 @@ void callMetroHumiditySettingScreen(void)
     _mhsValidBtn = lv_btn_create(mhsParentCont, NULL);
     lv_obj_align(_mhsValidBtn, mhsParentCont, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10 );
     lv_obj_set_size(_mhsValidBtn, 300, 44);
-    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mpsValidBtnLblStyle);
-    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mpsValidBtnLblStylepressed);
-    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mpsValidBtnLblStylefocused);
+    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mhsValidBtnLblStyle);
+    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mhsValidBtnLblStylepressed);
+    lv_obj_add_style(_mhsValidBtn, LV_BTN_PART_MAIN, &_mhsValidBtnLblStylefocused);
     lv_obj_set_event_cb(_mhsValidBtn,  __mhsValidAdjBTN_event_handler);
    
 
@@ -510,9 +520,8 @@ void callMetroHumiditySettingScreen(void)
 
 static void  __mhsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
-    {
-
+    if(event == LV_EVENT_CLICKED) {
+        callMetroAdjust();
     }
 }
 
@@ -602,15 +611,10 @@ static void  unit_dropdown_event_handler(lv_obj_t * obj, lv_event_t event)
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
         fflush(NULL);
-        if( ! strcmp( buf, "LPH"))
+        if( ! strcmp( buf, "%"))
         {
             metrohumidityUnit = 0;
-            printf("Flow Unit selected is LPH = %d\n", metrohumidityUnit);
-        }
-        if( ! strcmp( buf, "LPM"))
-        {
-            metrohumidityUnit = 1;
-            printf("Flow Unit selected is LPM = %d\n", metrohumidityUnit);
+            printf("Humidity Unit selected is %% = %d\n", metrohumidityUnit);
         }
     }
 }

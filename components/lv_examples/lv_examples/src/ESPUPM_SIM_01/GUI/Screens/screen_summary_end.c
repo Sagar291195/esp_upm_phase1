@@ -171,9 +171,12 @@ bool iArchORSummaryScrn;
 void xseSummaryEndScreen(void)
 {
 
-    scrSummaryEnd = lv_cont_create(NULL, NULL);
+    scrSummaryEnd = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEnd);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
     // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_se, 320, 480);

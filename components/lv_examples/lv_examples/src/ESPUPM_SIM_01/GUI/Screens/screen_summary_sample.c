@@ -215,9 +215,12 @@ sequenceSummary_t xSequenceSummary;
 void sssSummarySampleScreen(void)
 {
 
-        scrSummarySample = lv_cont_create(NULL, NULL);
+        scrSummarySample = lv_obj_create(NULL, NULL);
         lv_scr_load(scrSummarySample);
-        lv_obj_del(crnt_screen);
+        if(crnt_screen != NULL){
+                lv_obj_del(crnt_screen);
+                crnt_screen = NULL;
+        }
         sssParentContainer = lv_cont_create(scrSummarySample, NULL);
         // lv_scr_load(sssParentContainer);
         lv_obj_set_size(sssParentContainer, 320, 480);

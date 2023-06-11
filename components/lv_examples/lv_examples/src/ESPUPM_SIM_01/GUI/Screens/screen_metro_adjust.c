@@ -106,10 +106,12 @@ void callMetroAdjust(void)
     //Create Base container
     
     
-    scrMetroTmpAdj = lv_cont_create(NULL, NULL);
+    scrMetroTmpAdj = lv_obj_create(NULL, NULL);
     lv_scr_load(scrMetroTmpAdj);
-    lv_obj_del(crnt_screen);
-    crnt_screen = NULL;
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     mtaPatrentCont = lv_cont_create(scrMetroTmpAdj, NULL);
     lv_obj_set_size(mtaPatrentCont, 320, 480);
     lv_obj_set_click(mtaPatrentCont, false);
@@ -196,36 +198,35 @@ void callMetroAdjust(void)
     //Create Label for External Temperature "Heading"
     
     __mtaMetroHeadingLbl = lv_label_create(_mtaMetroHeadingCont, NULL);
-    lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
     if(screenid == SCR_EXTERNAL_TEMPERATURE_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "External \nTemperature");
         screenid = SCR_EXTERNAL_TEMPERATURE_ADJUST;
     }else if(screenid == SCR_EXTERNAL_PRESSURE_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -40, -35);
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "External \nPressure");
         screenid = SCR_EXTERNAL_PRESSURE_ADJUST;
     }else if(screenid == SCR_EXTERNAL_HUMIDITY_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -40, -35);
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "External  \nHumidity");  
-        screenid = SCR_EXTERNAL_PRESSURE_ADJUST;  
-    }else if(screenid == SCR_EXTERNAL_HUMIDITY_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
+        screenid = SCR_EXTERNAL_HUMIDITY_ADJUST;  
+    }else if(screenid == SCR_INTERNAL_TEMPERATURE_SETTINGS){
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "Internal  \nTemperature");  
         screenid = SCR_INTERNAL_TEMPERATURE_ADJUST;  
-    }else if(screenid == SCR_EXTERNAL_HUMIDITY_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -40, -35);
+    }else if(screenid == SCR_INTERNAL_PRESSURE_SETTINGS){
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "Internal  \nPressure");  
         screenid = SCR_INTERNAL_PRESSURE_ADJUST;  
-    }else if(screenid == SCR_EXTERNAL_HUMIDITY_SETTINGS){
-        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -40, -35);
+    }else if(screenid == SCR_INTERNAL_HUMIDITY_SETTINGS){
+        lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
         lv_label_set_text(__mtaMetroHeadingLbl, "Internal  \nHumidity");  
         screenid = SCR_INTERNAL_HUMIDITY_ADJUST;  
     }
     
     static lv_style_t __mteMetroHeadingLblStyle;
     lv_style_init(&__mteMetroHeadingLblStyle);
-    lv_style_set_text_font(&__mteMetroHeadingLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_20); //signal_20
+    lv_style_set_text_font(&__mteMetroHeadingLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); //signal_20
     lv_style_set_text_color(&__mteMetroHeadingLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mtaMetroHeadingLbl, LV_LABEL_PART_MAIN, &__mteMetroHeadingLblStyle);
     lv_label_set_align(__mtaMetroHeadingLbl, LV_LABEL_ALIGN_CENTER);
@@ -391,9 +392,12 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t * ta, lv_event_t event)
             callMetroPressureSettingScreen();
         }else if(screenid == SCR_EXTERNAL_PRESSURE_ADJUST || screenid == SCR_INTERNAL_PRESSURE_ADJUST){
             callMetroHumiditySettingScreen();
-        }else if(screenid == SCR_EXTERNAL_HUMIDITY_ADJUST || screenid == SCR_INTERNAL_HUMIDITY_ADJUST){
+        }else if(screenid == SCR_EXTERNAL_HUMIDITY_ADJUST){
+            callMetroTempSettingScreen();
+        }else if(screenid == SCR_INTERNAL_HUMIDITY_ADJUST){
             callMetroFlowSettingScreen();
         }
+
     }
 }
 

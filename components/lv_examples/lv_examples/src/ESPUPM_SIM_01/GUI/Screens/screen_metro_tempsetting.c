@@ -79,8 +79,12 @@ int metroTempUnit;
 void callMetroTempSettingScreen(void)
 {
     //Create Base container
-    scrTempSetting = lv_cont_create(NULL, NULL);
+    scrTempSetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrTempSetting);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
 
     mtsParentCont = lv_cont_create(scrTempSetting, NULL);
     lv_obj_set_size(mtsParentCont, 320, 480);

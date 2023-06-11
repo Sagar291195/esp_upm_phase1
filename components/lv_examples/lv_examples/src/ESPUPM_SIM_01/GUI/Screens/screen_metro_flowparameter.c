@@ -136,9 +136,12 @@ void callFlowParameterScreen(void)
 {
     
     
-    scrFlowPara = lv_cont_create(NULL, NULL);
+    scrFlowPara = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowPara);
-    lv_obj_del(crnt_screen);
+     if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     fpsParentCont = lv_obj_create(scrFlowPara, NULL);
     lv_obj_set_size(fpsParentCont, 320, 480);
     lv_obj_align(fpsParentCont, NULL, LV_ALIGN_CENTER, 0,0);
@@ -891,7 +894,7 @@ static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Clicked\n");
+        printf("Back to Metrology Menu Screen from flow parameter\n");
         CallMetroMenuScreen();
     }
     

@@ -88,11 +88,13 @@ char *pVal_metro = "";
 
 void metroCodeScreen(void)
 {
-
-    
-    scrMetroCode = lv_cont_create(NULL, NULL);
+    scrMetroCode = lv_obj_create(NULL, NULL);
     lv_scr_load(scrMetroCode);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
+    
     metroBaseCont = lv_cont_create(scrMetroCode, NULL);
     lv_obj_set_size(metroBaseCont, 320, 480);
     lv_obj_align(metroBaseCont, NULL, LV_ALIGN_CENTER, 0,0);
@@ -104,30 +106,45 @@ void metroCodeScreen(void)
     _metroBtnm = lv_btnmatrix_create(metroBaseCont, NULL);
     lv_obj_align(_metroBtnm, metroBaseCont, LV_ALIGN_CENTER , 0, -75);
     lv_btnmatrix_set_map(_metroBtnm, btnm_map);
-    //lv_btnmatrix_set_btn_width(btnm, 20, 20);
     lv_obj_set_height(_metroBtnm, 340);
     lv_obj_set_width(_metroBtnm, 250);
-
-    lv_btnmatrix_set_btn_ctrl_all(_metroBtnm, LV_BTNMATRIX_CTRL_CHECK_STATE);
-    lv_btnmatrix_set_recolor(_metroBtnm, true);
     lv_obj_set_event_cb(_metroBtnm, event_handler);
 
     //This is style for BTNMATRIX
+    static lv_style_t style_btnm_bg;
+    lv_style_init(&style_btnm_bg);
+    lv_style_set_bg_color(&style_btnm_bg, LV_STATE_DEFAULT, MetroScreenBGColor);
+    lv_style_set_border_opa(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_color(&style_btnm_bg, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_radius(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_width(&style_btnm_bg, LV_STATE_DEFAULT, 0);
+    lv_obj_add_style(_metroBtnm, LV_BTNMATRIX_PART_BG, &style_btnm_bg);
+    
     static lv_style_t style_btnm;
     lv_style_init(&style_btnm);
-    lv_style_set_bg_color(&style_btnm,LV_STATE_DEFAULT, MetroScreenBGColor);
-    lv_style_set_border_color(&style_btnm, LV_BTNMATRIX_PART_BG, MetroScreenBGColor);
-    lv_style_set_border_opa(&style_btnm, LV_BTNMATRIX_PART_BG, LV_OPA_MIN);
-    lv_obj_add_style(_metroBtnm, LV_BTNMATRIX_PART_BG, &style_btnm);
-    //Add a border for buttons
-    lv_style_set_border_color(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_COLOR_WHITE);
-    lv_style_set_border_opa(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_OPA_80);
-    lv_style_set_radius(&style_btnm, LV_BTNMATRIX_PART_BTN, LV_RADIUS_CIRCLE);
-    lv_style_set_border_width(&style_btnm, LV_BTNMATRIX_PART_BTN, 2);
-    lv_style_set_bg_color(&style_btnm, LV_BTNMATRIX_PART_BTN, MetroScreenBGColor);
-    lv_style_set_text_font(&style_btnm, LV_BTNMATRIX_PART_BTN, &lv_font_montserrat_28);
+    lv_style_set_bg_color(&style_btnm, LV_STATE_DEFAULT, MetroScreenBGColor);
+    lv_style_set_bg_opa(&style_btnm, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_color(&style_btnm, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_border_opa(&style_btnm, LV_STATE_DEFAULT, 255);
+    lv_style_set_radius(&style_btnm, LV_STATE_DEFAULT, 50);
+    lv_style_set_border_width(&style_btnm, LV_STATE_DEFAULT, 2);
+    lv_style_set_text_color(&style_btnm, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_text_font(&style_btnm, LV_STATE_DEFAULT, &lv_font_montserrat_28);
+
+    static lv_style_t style_btnm_pressed;
+    lv_style_init(&style_btnm_pressed);
+    lv_style_set_bg_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_style_set_bg_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
+    lv_style_set_border_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_WHITE);
+    lv_style_set_border_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
+    lv_style_set_radius(&style_btnm_pressed, LV_STATE_PRESSED, 50);
+    lv_style_set_border_width(&style_btnm_pressed, LV_STATE_PRESSED, 2);
+    lv_style_set_text_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_WHITE);
+    lv_style_set_text_font(&style_btnm_pressed, LV_STATE_PRESSED, &lv_font_montserrat_28);
 
     lv_obj_add_style(_metroBtnm, LV_BTNMATRIX_PART_BTN, &style_btnm);
+    lv_obj_add_style(_metroBtnm, LV_BTNMATRIX_PART_BTN, &style_btnm_pressed);
+
 
     _metroCodeMsgLbl = lv_label_create(metroBaseCont, NULL);
     lv_label_set_text(_metroCodeMsgLbl, "Enter code");
@@ -185,11 +202,11 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
         pVal_metro = strcat(aPass_metro, pTxt_metro);   
         //lv_label_set_text(label1, pVal );
         number = atoi(pVal_metro); // convert char pointer to number
-        printf("%d was pressed\n", number );
+        //printf("%d was pressed\n", number );
 
         if( number < 10 )
         {
-            printf( "size is: %d \n", sizeof(pVal_metro) );
+            //printf( "size is: %d \n", sizeof(pVal_metro) );
             //lv_obj_align(_metroPassSpaceLbl, _metroBtnm, LV_ALIGN_OUT_TOP_MID, -30, -30);
             lv_label_set_text(_metroPassSpaceLbl, "*___" );  //label1 
         } 

@@ -222,11 +222,12 @@ static void Sleep_event_handler(lv_obj_t * obj, lv_event_t event)
 void ppxParameterScreen(void)
 {
     // Parent Container
-    
-    
     scrParameter = lv_obj_create(NULL, NULL);
     lv_scr_load(scrParameter);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xParentcontainer_par = lv_cont_create(scrParameter, NULL);
     lv_obj_set_size(xParentcontainer_par, 320, 480);
     lv_obj_align(xParentcontainer_par, NULL, LV_ALIGN_CENTER, 0,0);

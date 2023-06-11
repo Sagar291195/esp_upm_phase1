@@ -149,9 +149,12 @@ void xssSummaryStartScreen(void)
 {
     // printf("default parameter = %d\n", defaultParaSelected);
 
-    scrSummaryStart = lv_cont_create(NULL, NULL);
+    scrSummaryStart = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryStart);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xssParentContainer_ss = lv_cont_create(scrSummaryStart, NULL);
     // lv_scr_load(xssParentContainer_ss);
     lv_obj_set_size(xssParentContainer_ss, 320, 480);

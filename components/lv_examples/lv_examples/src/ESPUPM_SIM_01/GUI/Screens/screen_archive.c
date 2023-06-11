@@ -69,9 +69,12 @@ lv_obj_t *	__xseSignalLabel_seArch;
 
 void xCallArchvScreen(void)
 {
-    scrSummaryEndArch = lv_cont_create(NULL, NULL);
+    scrSummaryEndArch = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEndArch);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xseParentContainer_seArch = lv_cont_create(scrSummaryEndArch, NULL);
     //lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_seArch, 320, 480);
