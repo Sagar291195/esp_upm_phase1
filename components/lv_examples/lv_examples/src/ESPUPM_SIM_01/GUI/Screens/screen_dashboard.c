@@ -169,16 +169,10 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 
         if (!strcmp(btntext, MenuBTN_SERVICE))
         {
-            printf("button clicked : SERVICE\n");
-            fflush(NULL);
-            // lv_task_del(refresherTask);
-            // callServiceSetScreen();
             xScreenPidTune();
         }
         if (!strcmp(btntext, MenuBTN_ARCHIV))
         {
-            printf("button clicked : ARCHIV\n");
-            fflush(NULL);
             iArchORSummaryScrn = 1;
             lv_task_del(refresherTask);
             refresherTask = NULL;
@@ -187,17 +181,12 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         }
         if (!strcmp(btntext, MenuBTN_METROLOGY))
         {
-            printf("button clicked : METROLOGY\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
-
             metroCodeScreen();
         }
         if (!strcmp(btntext, MenuBTN_PARAMETER))
         {
-            printf("button clicked : PARAMETER\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
 
@@ -205,8 +194,6 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         }
         if (!strcmp(btntext, MenuBTN_INFO))
         {
-            printf("button clicked : INFO\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
             CallScreenInfo();
@@ -222,8 +209,6 @@ static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
     {
         lv_obj_set_hidden(xMenulist1, true);
         lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0, 0);
-        // lv_anim_start(&a);
-        // lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0,0);
     }
 }
 
@@ -235,7 +220,6 @@ static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event)
 
     if (event == LV_EVENT_CLICKED)
     {
-        printf("Clicked\n");
 
         if (bxCatchMenuClick == 0)
         {
@@ -264,20 +248,19 @@ void pxDashboardScreen(void)
 
     scr_dashbord = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_dashbord);
-    // lv_obj_del(scr1);
+
     if ((dashboardflg != 1) && (crnt_screen != NULL))
     {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+    
     xParentcontainer = lv_cont_create(scr_dashbord, NULL);
     lv_obj_set_size(xParentcontainer, 320, 480);
     lv_obj_align(xParentcontainer, NULL, LV_ALIGN_CENTER, 0, 0);                                                            //====================>>>>>
     lv_obj_set_style_local_bg_color(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // 0x39, 0x89, 0xBD,, 0x5D, 0x5D, 0x5D
     lv_obj_set_style_local_border_opa(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_radius(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-    // lv_style_set_border_opa(&style_scr1_container, LV_STATE_DEFAULT, 0);
-    // lv_style_set_radius(&style_scr1_container, LV_STATE_DEFAULT, 0);
 
     container = lv_cont_create(xParentcontainer, NULL);
     lv_obj_set_size(container, 320, 480);

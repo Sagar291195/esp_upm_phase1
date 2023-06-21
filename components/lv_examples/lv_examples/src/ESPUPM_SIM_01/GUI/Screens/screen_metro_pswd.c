@@ -162,10 +162,6 @@ static void  passwordcheck_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) 
     {
-        //printf("Key Board Clicked\n");
-
-        //passNo
-
         if(!passNo)
         {
             pass    = lv_textarea_get_text(mpsEnterCalValTA);

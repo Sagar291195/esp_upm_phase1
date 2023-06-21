@@ -142,12 +142,9 @@ void vCallTask1(void)
 static void btn1_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
-    {
-        printf("BTN1_SCR1 Clicked\n");       
+    {      
         lv_obj_t *  scr2 = vTestScreen2();
         lv_scr_load(scr2);
-        //lv_task_once(task2); 
-        //vTestScreen2();
     }
 }
 

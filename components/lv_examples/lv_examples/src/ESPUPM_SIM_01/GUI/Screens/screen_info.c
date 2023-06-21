@@ -15,11 +15,13 @@
  *      INCLUDES
  *********************/
 #include "screen_includes.h"
+#include "../lv_lib_qrcode/lv_qrcode.h"
 
 /*********************
  *      DEFINES
  *********************/
 
+#define TAG "SCREEN INFO"
 
 #define SYMBOL_SIGNAL "\uf012"
 
@@ -84,7 +86,7 @@ lv_task_t *inforefresherTask;
 
 void CallScreenInfo(void)
 {
-    
+    ESP_LOGI(TAG, "Loading Screen");
     scrInfo = lv_obj_create(NULL, NULL);
     lv_scr_load(scrInfo);
     if(crnt_screen != NULL){
@@ -252,15 +254,18 @@ void CallScreenInfo(void)
 
     //Put QR image here
     
-    _infoQRcodeImg = lv_img_create(_infoQRCont, NULL);
-    lv_img_set_src(_infoQRcodeImg, &QRcode_logo);
-    lv_obj_align(_infoQRcodeImg, _infoQRCont, LV_ALIGN_CENTER, 0 , 10);
-    lv_obj_set_click(_infoQRcodeImg, true);
+    // _infoQRcodeImg = lv_img_create(_infoQRCont, NULL);
+    // lv_img_set_src(_infoQRcodeImg, &QRcode_logo);
+    // lv_obj_align(_infoQRcodeImg, _infoQRCont, LV_ALIGN_CENTER, 0 , 10);
+    // lv_obj_set_click(_infoQRcodeImg, true);
+    
+	_infoQRcodeImg = lv_qrcode_create(_infoQRCont, 25, 70, 250, LV_COLOR_BLACK, LV_COLOR_WHITE);
+	lv_qrcode_update(_infoQRcodeImg, "hello", strlen("hello"));
 
     //Create label for "DEVICE ID" Text
     
     _infoDeviceIDTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 30, 40);
+    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 10);
     lv_label_set_text(_infoDeviceIDTxtLbl, "DEVICE ID:");
 
     static lv_style_t _infoDeviceIDTxtLblStyle;
@@ -282,7 +287,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoDeviceIDValLbl, LV_LABEL_PART_MAIN, &_infoDeviceIDValLblStyle);
 
     crnt_screen = scrInfo; 
-    
 }
 
 

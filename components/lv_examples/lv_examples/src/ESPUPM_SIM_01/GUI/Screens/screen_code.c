@@ -156,8 +156,8 @@ void vPassword_scr1(void)
     lv_style_set_text_font(&style_btnm, LV_STATE_DEFAULT, &lv_font_montserrat_28);
 
     lv_style_init(&style_btnm_pressed);
-    lv_style_set_bg_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_BLUE);
-    lv_style_set_bg_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
+    lv_style_set_bg_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_NAVY);
+    lv_style_set_bg_opa(&style_btnm_pressed, LV_STATE_PRESSED, 200);
     lv_style_set_border_color(&style_btnm_pressed, LV_STATE_PRESSED, LV_COLOR_WHITE);
     lv_style_set_border_opa(&style_btnm_pressed, LV_STATE_PRESSED, 255);
     lv_style_set_radius(&style_btnm_pressed, LV_STATE_PRESSED, 50);
@@ -346,28 +346,16 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
 
         if(  i == 0)   //Check if Ok button is pressed
         {
-            //printf( "OK Button Pressed\n" );
-
             if(number == iUserPass )
             {
-                //printf("Password Correct");
                 lv_label_set_text(label3, LV_SYMBOL_OK);
                 strcpy(pVal, "");
-                //vTickMark();
-                // delay(1);
-                //vTestScreen();
             }
             else
             {
-
-                //printf("Password incorrect");
-                //lv_label_set_recolor(label, true);
                 lv_label_set_text(label, "Wrong code");
-                //lv_obj_align(label, btnm, LV_ALIGN_OUT_TOP_MID, 0, -50);
                 lv_label_set_text(label3, LV_SYMBOL_WARNING );
                 strcpy(pVal, "");
-                //delay(1);
-                //vClearBTN();
             }
         }
 

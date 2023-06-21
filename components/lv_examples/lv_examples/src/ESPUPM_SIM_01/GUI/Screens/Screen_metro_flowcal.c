@@ -53,16 +53,10 @@ static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
 /**********************
  *  STATIC VARIABLES
  **********************/
-
-
 float flowPoints[10];
-float flowPointXasis[10];
-int __fasValidBTNCount = 0;
-int global_CurveDegree;
 int _fasDutyCycle = 30000;
 bool metroFlowCalStarted ;
-float flow_value;
-//char guiTime[10];
+
 
 
 lv_obj_t * crnt_screen;
@@ -104,8 +98,8 @@ lv_task_t *_fasTimeRefTask;
 lv_obj_t * spinbox;
 
 float percentError;
-float flowPoint;
 
+#define TAG "FLOW CALIBRATION"
 /**********************
  *      MACROS
  **********************/
@@ -118,9 +112,9 @@ float flowPoint;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xCallFlowAdjustScreen(void)
+void xCallFlowCalibrationScreen(void)
 {
-    
+    ESP_LOGI(TAG, "Loading Screen");
     scrFlowcal = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowcal);
      if(crnt_screen != NULL){
@@ -288,12 +282,9 @@ void xCallFlowAdjustScreen(void)
     lv_obj_set_style_local_border_width(_fasRefValCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     //Create Label for Int par of Reference value
-    
     _fasRefValInt = lv_label_create(_fasRefValCont, NULL);
     lv_obj_align(_fasRefValInt, _fasRefValCont, LV_ALIGN_IN_TOP_LEFT, 20 ,6);
     lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[0]);
-
-    flowPoint   = flowPoints[0];
 
     static lv_style_t __fasRefValIntStyle;
     lv_style_init(&__fasRefValIntStyle);
@@ -302,7 +293,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasRefValInt, LV_LABEL_PART_MAIN, &__fasRefValIntStyle);
 
     //Create Label for Int part of Reference value
-    
     _fasRefValPoint = lv_label_create(_fasRefValCont, NULL);
     lv_obj_align(_fasRefValPoint, _fasRefValInt, LV_ALIGN_OUT_RIGHT_MID, 0 ,-7);
     lv_label_set_text(_fasRefValPoint, "");
@@ -314,7 +304,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasRefValPoint, LV_LABEL_PART_MAIN, &_fasRefValPointStyle);
 
     //Create Label for Float part of Reference value
-    
     _fasRefValFloat = lv_label_create(_fasRefValCont, NULL);
     lv_obj_align(_fasRefValFloat, _fasRefValInt, LV_ALIGN_OUT_RIGHT_MID, 7 , 0);
     lv_label_set_text(_fasRefValFloat, "");
@@ -326,7 +315,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasRefValFloat, LV_LABEL_PART_MAIN, &_fasRefValFloatStyle);
 
     //Create Label for LPM Text
-    
     _fasLPMTxtLbl = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasLPMTxtLbl, _fasRefValCont, LV_ALIGN_OUT_RIGHT_BOTTOM, 40 , -15);
     lv_label_set_text(_fasLPMTxtLbl, "LPM");
@@ -338,7 +326,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasLPMTxtLbl, LV_LABEL_PART_MAIN, &_fasLPMTxtLblStyle);
 
     // Create Label For "CORRECTION" Text
-    
     _fasCorrectionTxtLbl = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasCorrectionTxtLbl, _fasRefValCont, LV_ALIGN_OUT_BOTTOM_LEFT, 40, 30);
     lv_label_set_text(_fasCorrectionTxtLbl, "CORRECTION:");
@@ -350,7 +337,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasCorrectionTxtLbl, LV_LABEL_PART_MAIN, &_fasCorrectionTxtLblStyle);
 
     // Create Label For "CORRECTION" Text
-    
     _fasCorrectionValueLbl = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasCorrectionValueLbl, _fasCorrectionTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 10, -5);
     lv_label_set_text_fmt(_fasCorrectionValueLbl, "%0.2f", percentError);
@@ -362,7 +348,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasCorrectionValueLbl, LV_LABEL_PART_MAIN, &_fasCorrValueLblStyle);
 
     // Create Label For "%" Text
-    
     _fasPercentTxtLbl = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasPercentTxtLbl, _fasCorrectionValueLbl, LV_ALIGN_OUT_RIGHT_MID, 10, -5);
     lv_label_set_text(_fasPercentTxtLbl, "  %");
@@ -374,13 +359,11 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasPercentTxtLbl, LV_LABEL_PART_MAIN, &_fasPercentTxtLblStyle);
 
     // Create OK Icon
-    
     _fasStatusIcon = lv_img_create(fasParentCont, NULL);
     lv_img_set_src(_fasStatusIcon, &ok_icon);
     lv_obj_align(_fasStatusIcon, _fasPercentTxtLbl, LV_ALIGN_OUT_RIGHT_MID, 20 , 4);
 
     // Create Label for "Adjust Flow" Text
-    
     _fasAdjustFlowLbl = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasAdjustFlowLbl, _fasCorrectionTxtLbl, LV_ALIGN_OUT_BOTTOM_MID, -40, 20);
     lv_label_set_text(_fasAdjustFlowLbl, "ADJUST PUMP SPEED :");
@@ -392,7 +375,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasAdjustFlowLbl, LV_LABEL_PART_MAIN, &_fasAdjustFlowLblStyle);
 
     //Create "-" minus button
-
     _fasMinusBtn = lv_btn_create(fasParentCont, NULL);
     lv_obj_align(_fasMinusBtn, _fasAdjustFlowLbl, LV_ALIGN_OUT_BOTTOM_LEFT, -25, 20);
     lv_obj_set_size(_fasMinusBtn, 100, 50);
@@ -412,7 +394,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fasMinusTxt, LV_LABEL_PART_MAIN, &_fasMinusTxtStyle);
 
     //Create "+" Plus button
-
     _fasPlusBtn = lv_btn_create(fasParentCont, NULL);
     lv_obj_align(_fasPlusBtn, _fasMinusBtn, LV_ALIGN_OUT_RIGHT_TOP, 80, 0);
     lv_obj_set_size(_fasPlusBtn, 100, 50);
@@ -434,8 +415,6 @@ void xCallFlowAdjustScreen(void)
 
     //====================
     //====================
-   
-
     // spinbox = lv_spinbox_create(fasParentCont, NULL);
     // //lv_spinbox_set_range(spinbox, -1000, 90000);
     // lv_spinbox_set_range(spinbox, -1, +10000);
@@ -463,8 +442,6 @@ void xCallFlowAdjustScreen(void)
 
     //====================
     //====================
-
-
     // Creat a stop Button
     _fasValidBtn = lv_btn_create(fasParentCont, NULL);
     lv_obj_align(_fasValidBtn, fasParentCont, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10 );
@@ -485,28 +462,15 @@ void xCallFlowAdjustScreen(void)
 
     metroFlowCalStarted = true;
 
-    //_fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
-
-    //=============
-    //=============
-
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
 }
 
 
-// void _fas_MotorTask_Call(lv_task_t _fasMotorTask) 
-// {
-//    ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, _fasDutyCycle));
-//    ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2));
-// }
-// _fasTimeRefTask
-
-
 void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask) 
 {
 
-    if(lv_obj_get_screen(__fasTimeLabel) == lv_scr_act())
+    if(screenid == SCR_FLOW_CALIBRATION)
     {
         lv_label_set_text(__fasTimeLabel, guiTime);
         lv_label_set_text_fmt(_fasCorrectionValueLbl, "%0.2f", percentError);
@@ -532,7 +496,8 @@ static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen from flow calibration\n");
+        set_pointcount(1);
+        lv_task_del(_fasTimeRefTask);
         CallMetroMenuScreen();
     }
 }
@@ -541,11 +506,11 @@ static void  __fasPlusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Plus BTN Clicked\n");
-        fflush(NULL);
-
-        if(_fasDutyCycle < 65536){_fasDutyCycle = _fasDutyCycle + 500;}
-        else{_fasDutyCycle = 30000;}
+        if(_fasDutyCycle < 65536){
+            _fasDutyCycle = _fasDutyCycle + 500;
+        }else{
+            _fasDutyCycle = 30000;
+        }
         
     }
 }
@@ -554,59 +519,32 @@ static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Minus BTN Clicked\n");
-        fflush(NULL);
-        if(_fasDutyCycle > 30000){_fasDutyCycle = _fasDutyCycle - 500;}
-        else{}
+        if(_fasDutyCycle > 30000){
+            _fasDutyCycle = _fasDutyCycle - 500;
+        }else{
+
+        }
         
     }
 }
 
 static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        
-        __fasValidBTNCount++;
-
-        if(__fasValidBTNCount >= global_CurveDegree)
-        {
-            flowPointXasis[__fasValidBTNCount-1] = flow_value;
-            
-            __fasValidBTNCount = 0;
-
-            //xCallFlowCalibrationScreen();
-            metroFlowCalStarted = false;
-            int i;
-            printf("X & Y Points are following : \n");
-            for( i=0; i<=global_CurveDegree-1; i++)
-            {
-                printf("Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
-                fflush(NULL);
-                
-            }
-            //Calculate Coefficients
-            int pts = global_CurveDegree;
-            int deg = global_CurveDegree;
-            iPolynomialNew(deg, pts, flowPoints, flowPointXasis);
-            // iWriteNVSIntNum(global_CurveDegree, "cDeg");
-            printf("Open Screen  Flow Calibration\n");
-            callMetroFlowSettingScreen();
-
-        }else{
-
-            lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
-            flowPoint   = flowPoints[__fasValidBTNCount];
-            flowPointXasis[__fasValidBTNCount-1] = flow_value;
-
-        }
-
+        ESP_LOGI(TAG, "Valid button released");
+        uint8_t pointcount = get_pointcount();
+        pointcount++;
+        set_pointcount(pointcount);
+        lv_task_del(_fasTimeRefTask);
+        callMetroFlowSettingScreen();
     }
 }
 
 
 static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
 {
+    ESP_LOGI(TAG, "spin box event");
     if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
         lv_spinbox_increment(spinbox);
 

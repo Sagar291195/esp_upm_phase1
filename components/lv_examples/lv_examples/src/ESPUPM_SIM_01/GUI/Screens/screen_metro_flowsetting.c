@@ -18,13 +18,13 @@
 /*********************
  *      DEFINES
  *********************/
+#define TAG "FLOW SETTINGS"
 #define SYMBOL_SIGNAL "\uf012"
 
 //Declare Fonts here
 LV_FONT_DECLARE(signal_20)
 
 //Declare Images Here
-
 LV_IMG_DECLARE(left_arrow_icon)	
 LV_IMG_DECLARE(fan_icon)
 
@@ -80,8 +80,6 @@ int metroflowUnit;    // for LPH flowUnit == 0, For LPM == 1
 void callMetroFlowSettingScreen(void)
 {
     //Create Base container
-    
-    
     scrFlowSetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowSetting);
      if(crnt_screen != NULL){
@@ -173,7 +171,6 @@ void callMetroFlowSettingScreen(void)
     lv_obj_set_event_cb(__mfsBackArrowLabel, __mfsBackArrow_event_handler);
 
     //Create Label for FLOW "Heading"
-    
     __mfsFlowHeadingLbl = lv_label_create(_mfsFlowHeadingCont, NULL);
     lv_obj_align(__mfsFlowHeadingLbl, _mfsFlowHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -10, -35);
     lv_label_set_align(__mfsFlowHeadingLbl, LV_LABEL_ALIGN_CENTER);
@@ -186,7 +183,6 @@ void callMetroFlowSettingScreen(void)
     lv_obj_add_style(__mfsFlowHeadingLbl, LV_LABEL_PART_MAIN, &__fasFlowHeadingLblStyle);
 
     //Create FAN Logo
-    
     _mfsFlowLogo = lv_img_create(mfsParentCont, NULL);
     lv_img_set_src(_mfsFlowLogo, &fan_icon);
     lv_obj_align(_mfsFlowLogo, mfsParentCont, LV_ALIGN_IN_TOP_RIGHT, -25 , 55);
@@ -194,7 +190,6 @@ void callMetroFlowSettingScreen(void)
 
     //===============================================================
     //===============================================================
-
     _mfsCurveUnitCont = lv_cont_create(mfsParentCont, NULL);
     lv_obj_set_size(_mfsCurveUnitCont, 300, 110);
     lv_obj_align(_mfsCurveUnitCont, _mfsFlowHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0,10);
@@ -277,7 +272,6 @@ void callMetroFlowSettingScreen(void)
 
     //=================================================================
     //=================================================================
-
     lv_obj_t * _mfsAlarmStPtCont;
     _mfsAlarmStPtCont = lv_cont_create(mfsParentCont, NULL);
     lv_obj_set_size(_mfsAlarmStPtCont, 300, 180);
@@ -386,7 +380,6 @@ void callMetroFlowSettingScreen(void)
 
     //============================
     //============================
-
     //Create a Curve selection drop down list
     lv_obj_t * _mfsLowerLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsLowerLimDropDown, "-10%\n"
@@ -409,7 +402,6 @@ void callMetroFlowSettingScreen(void)
 
     //============================
     //============================
-
     //Create a Curve selection drop down list
     lv_obj_t * _mfsHigherLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsHigherLimDropDown, "10%\n"
@@ -438,9 +430,7 @@ void callMetroFlowSettingScreen(void)
 
     //=========================
     //=========================
-
     //Create On / OFF control switch 
-
     lv_obj_t *_mfsActionSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
     lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
     lv_obj_add_style(_mfsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -450,15 +440,9 @@ void callMetroFlowSettingScreen(void)
     lv_obj_set_width(_mfsActionSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
 
-    
-    //==============================
-    //==============================
-    
-
 
     //===================================================================
     //===================================================================
-
     //Creat a stop Button
     lv_obj_t * _mfsValidBtn;
     _mfsValidBtn = lv_btn_create(mfsParentCont, NULL);
@@ -494,8 +478,8 @@ static void  __mfsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen\n");
-        xCallFlowCalibrationScreen();
+        ESP_LOGI(TAG, "Valid and Adjust button pressed");
+        xCallFlowAdjustScreen();
     }
 }
 
@@ -503,7 +487,7 @@ static void  __mfsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen from flow settings\n");
+        set_pointcount(1);
         CallMetroMenuScreen();
     }
 }
@@ -514,8 +498,6 @@ static void  curve_dropdown_event_handler(lv_obj_t * obj, lv_event_t event)
     {
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        printf("Option: %s\n", buf);
-        fflush(NULL);
         if(  strcmp (buf, "Linear1") == 0)
         {
             global_CurveDegree = 1;
@@ -604,8 +586,6 @@ static void  lowerlim_dropdown_event_handler(lv_obj_t * obj, lv_event_t event)
     {
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 
@@ -615,8 +595,6 @@ static void  higherlim_dropdown_event_handler(lv_obj_t * obj, lv_event_t event)
     {
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 

@@ -302,7 +302,7 @@ void vClearBTN_metro(void)
     lv_obj_align(_metroCodeMsgLbl, _metroBtnm, LV_ALIGN_OUT_TOP_MID, 0, -45);
     lv_label_set_text(_metroCodeMsgLbl, "Enter code");
     //lv_obj_align(_metroCodeMsgLbl, _metroBtnm, LV_ALIGN_OUT_TOP_MID, 0, -40);
-    printf("pressed : %p", pVal_metro);
+    //printf("pressed : %p", pVal_metro);
 
 }
 

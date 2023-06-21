@@ -529,7 +529,6 @@ static void  __mhsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen\n");
         CallMetroMenuScreen();
     }
 }

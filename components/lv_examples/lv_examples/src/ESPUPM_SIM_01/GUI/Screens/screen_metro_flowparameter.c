@@ -894,7 +894,6 @@ static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Back to Metrology Menu Screen from flow parameter\n");
         CallMetroMenuScreen();
     }
     
@@ -904,7 +903,6 @@ static void _fpsEraseBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Clicked\n");
         callMetroFlowSettingScreen();
     }
     

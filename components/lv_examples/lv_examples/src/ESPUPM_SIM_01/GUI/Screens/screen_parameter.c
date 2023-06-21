@@ -166,7 +166,6 @@ static void _xBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_CLICKED) 
     {
-        printf("Clicked\n");
         pxDashboardScreen();
     }
    
