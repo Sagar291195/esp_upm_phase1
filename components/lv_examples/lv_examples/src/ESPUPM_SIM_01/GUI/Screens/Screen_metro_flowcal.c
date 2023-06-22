@@ -54,8 +54,13 @@ static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
  *  STATIC VARIABLES
  **********************/
 float flowPoints[10];
+float flowPointXasis[10];
+int __fasValidBTNCount = 0;
+int global_CurveDegree;
 int _fasDutyCycle = 30000;
-
+bool metroFlowCalStarted ;
+float flow_value;
+//char guiTime[10];
 
 
 lv_obj_t * crnt_screen;
@@ -97,6 +102,7 @@ lv_task_t *_fasTimeRefTask;
 lv_obj_t * spinbox;
 
 float percentError;
+float flowPoint;
 
 #define TAG "FLOW CALIBRATION"
 /**********************
@@ -111,7 +117,7 @@ float percentError;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xCallFlowCalibrationScreen(void)
+void CallMetroFlowCalibrationScreen(void)
 {
     ESP_LOGI(TAG, "Loading Screen");
     scrFlowcal = lv_obj_create(NULL, NULL);
@@ -270,6 +276,8 @@ void xCallFlowCalibrationScreen(void)
     _fasRefValInt = lv_label_create(_fasRefValCont, NULL);
     lv_obj_align(_fasRefValInt, _fasRefValCont, LV_ALIGN_IN_TOP_LEFT, 20 ,6);
     lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[0]);
+
+    flowPoint   = flowPoints[0];
 
     static lv_style_t __fasRefValIntStyle;
     lv_style_init(&__fasRefValIntStyle);
@@ -444,6 +452,14 @@ void xCallFlowCalibrationScreen(void)
 
     //=============
     //=============
+
+    metroFlowCalStarted = true;
+
+    //_fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
+
+    //=============
+    //=============
+
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
 }
@@ -512,17 +528,34 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_RELEASED) 
     {
-        ESP_LOGI(TAG, "Valid button released");
-        uint8_t pointcount = get_pointcount();
-        lv_task_del(_fasTimeRefTask);
-        if(pointcount < 3){
-            pointcount++;
-            set_pointcount(pointcount);
-            callMetroFlowAdjustScreen();
+        
+        __fasValidBTNCount++;
+
+        if(__fasValidBTNCount >= global_CurveDegree)
+        {
+            flowPointXasis[__fasValidBTNCount-1] = flow_value;
+            __fasValidBTNCount = 0;
+            metroFlowCalStarted = false;
+            int i;
+            printf("X & Y Points are following : \n");
+            for( i=0; i<=global_CurveDegree-1; i++)
+            {
+                printf("Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
+                fflush(NULL);
+                
+            }
+            //Calculate Coefficients
+            int pts = global_CurveDegree;
+            int deg = global_CurveDegree;
+            iPolynomialNew(deg, pts, flowPoints, flowPointXasis);
+            // iWriteNVSIntNum(global_CurveDegree, "cDeg");
+            callMetroFlowSettingScreen();
+
         }else{
-            pointcount = 1;
-            set_pointcount(pointcount);
-            callMetroFlowParameterScreen();
+
+            lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
+            flowPoint   = flowPoints[__fasValidBTNCount];
+            flowPointXasis[__fasValidBTNCount-1] = flow_value;
         }
     }
 }
@@ -533,7 +566,6 @@ static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
     ESP_LOGI(TAG, "spin box event");
     if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
         lv_spinbox_increment(spinbox);
-
         //_fasDutyCycle = (int)lv_spinbox_get_value(spinbox);
 
         //   y  ^
@@ -550,9 +582,7 @@ static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
         // Y1 =     Lower limit of duty cycle, Y2 = Highest Limit of Dutycycle
         //point 1 (0, 20000) , Point 2 (100, 65535)
         //Equation y = 455.36 *x + 20000
-
         float IncBTN = 455.36 * (float)lv_spinbox_get_value(spinbox) + 20000;
-
         _fasDutyCycle = (int)IncBTN;
     }
 }
@@ -561,13 +591,8 @@ static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e)
 {
     if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
         lv_spinbox_decrement(spinbox);
-        
         //_fasDutyCycle = (int)lv_spinbox_get_value(spinbox);
-
-
-
         float DecBTN = 455.36 * (float)lv_spinbox_get_value(spinbox) + 20000;
-
         _fasDutyCycle = (int)DecBTN;
 
     }

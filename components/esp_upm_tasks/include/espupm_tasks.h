@@ -62,6 +62,11 @@ extern "C"
     /**********************
      *  GLOBAL VARIABLES
      **********************/
+  
+    extern bool metroFlowCalStarted;
+    extern int _fasDutyCycle;
+    extern float flowPoint;
+    extern int workProgress;
     extern volatile int Job_Rem_Hr;
     extern volatile int Job_Rem_Min;
     extern float TotalLit;
@@ -80,7 +85,9 @@ extern "C"
     extern int HourCount;
     extern bool buzzer_on;
     extern uint8_t cr, cg, cb;
+
     extern float kp, ki, kd;
+
 
     typedef struct log_guiDate_t
     {

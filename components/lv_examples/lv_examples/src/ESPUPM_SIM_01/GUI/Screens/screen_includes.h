@@ -110,8 +110,7 @@ extern uint8_t screenid ;
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-uint8_t get_pointcount(void);
-void set_pointcount(uint8_t value);
+
 
 /**********************
  *      MACROS

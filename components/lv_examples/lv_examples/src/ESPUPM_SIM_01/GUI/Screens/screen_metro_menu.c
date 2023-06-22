@@ -343,8 +343,6 @@ void CallMetroMenuScreen(void)
     screenid = SCR_METROLOGY_MENU;
     //===================================
     //===================================
-    set_pointcount(1);
-
 }
 
 /**********************

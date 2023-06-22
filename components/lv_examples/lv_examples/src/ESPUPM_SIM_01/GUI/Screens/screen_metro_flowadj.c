@@ -44,7 +44,13 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
-static uint8_t pointCount = 1;
+
+int global_CurveDegree;
+int metroflowUnit;
+float flowPoints[10];
+static int validBTNCount = 0;
+
+char *getSetPt;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scrFlowAdj;
@@ -235,7 +241,7 @@ void callMetroFlowAdjustScreen(void)
     _fcsCalPtXLbl = lv_label_create(fcsParentCont, NULL);
     lv_obj_align(_fcsCalPtXLbl, _fcsMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_MID, -60, 0);
     //lv_label_set_align(_fcsCalPtXLbl, LV_LABEL_ALIGN_CENTER);
-    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X%d", pointCount);
+    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X");
 
     static lv_style_t _fcsCalPtXLblStyle;
     lv_style_init(&_fcsCalPtXLblStyle);
@@ -312,29 +318,51 @@ void callMetroFlowAdjustScreen(void)
 
 static void __fcsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_RELEASED){
-        pointCount = 1;
-        CallMetroMenuScreen();
+    if (event == LV_EVENT_RELEASED)
+    {
+        CallMetroFlowCalibrationScreen();
     }
 }
 
 static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_RELEASED){
-        xCallFlowCalibrationScreen();
+    if (event == LV_EVENT_RELEASED)
+    {
+        float SetPt;
+        validBTNCount++;
+        printf("Button pressed %d\n", validBTNCount);
+        getSetPt = lv_textarea_get_text(_fcsEnterCalValTA);
+        //SetPt = atof(getSetPt);
+
+        char *toCompare = "";
+        if (!strcmp(getSetPt, toCompare))
+        {
+            SetPt = 0;
+        }
+        else
+        {
+
+            SetPt = atof(getSetPt);
+        }
+
+        printf("Entered Set Point Value is: %f\n", SetPt);
+
+        flowPoints[validBTNCount - 1] = SetPt;
+
+        lv_textarea_set_text(_fcsEnterCalValTA, "");
+        if (validBTNCount >= global_CurveDegree)
+        {
+            for (int j = 0; j < global_CurveDegree; j++)
+            {
+                printf("flowPoints[%d] = %f\n", j, flowPoints[j]);
+            }
+            //global_CurveDegree = 0;
+            validBTNCount = 0;
+            CallMetroFlowCalibrationScreen();
+        }
     }
 }
 
-
-uint8_t get_pointcount(void)
-{
-    return pointCount;
-}
-
-void set_pointcount(uint8_t value)
-{
-    pointCount = value;
-}
 
 
 /**********************

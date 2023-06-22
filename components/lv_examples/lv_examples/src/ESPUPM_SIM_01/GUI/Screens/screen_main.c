@@ -13,7 +13,7 @@ void Init_Screen(void)
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
-    // xCallFlowCalibrationScreen();		
+    // CallMetroFlowCalibrationScreen();		
     // callMetroFlowAdjustScreen();
     // callMetroFlowParameterScreen();
     // callMetroFlowSettingScreen();

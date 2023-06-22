@@ -49,7 +49,7 @@ extern "C" {
  * @return None
  */
 
-void xCallFlowCalibrationScreen(void);
+void callMetroFlowAdjustScreen(void);
 
 /**********************
  *    ERROR ASSERT
