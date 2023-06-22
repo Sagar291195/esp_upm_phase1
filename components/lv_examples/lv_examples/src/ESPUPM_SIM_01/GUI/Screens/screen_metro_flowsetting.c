@@ -60,9 +60,6 @@ lv_obj_t * __mfsFlowHeadingLbl;
 lv_obj_t * _mfsFlowLogo;
 lv_obj_t * _mfsCurveUnitCont;
 
-
-int global_CurveDegree;
-
 int metroflowUnit;    // for LPH flowUnit == 0, For LPM == 1
 
 /**********************
@@ -253,6 +250,7 @@ void callMetroFlowSettingScreen(void)
     lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_MAIN, &_mfsDropDownStylemain);
     lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
     lv_obj_add_style(_mfsCurveDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
+    lv_dropdown_set_selected(_mfsCurveDropDown, global_CurveDegree);
     lv_obj_set_event_cb(_mfsCurveDropDown, curve_dropdown_event_handler);
 
     //===-------------------------->----------------->---------------------->------------->

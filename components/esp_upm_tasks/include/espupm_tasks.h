@@ -87,6 +87,7 @@ extern "C"
     extern uint8_t cr, cg, cb;
 
     extern float kp, ki, kd;
+    
 
 
     typedef struct log_guiDate_t

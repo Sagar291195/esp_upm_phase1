@@ -20,8 +20,8 @@
  *      DEFINES
  *********************/
 
-#define SYMBOL_SIGNAL "\uf012"
-#define TAG "FLOW ADJUST"
+#define SYMBOL_SIGNAL   "\uf012"
+#define TAG             "FLOW ADJUST"
 
 //Declare Fonts here
 LV_FONT_DECLARE(signal_20)
@@ -45,7 +45,7 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event);
  *  STATIC VARIABLES
  **********************/
 
-int global_CurveDegree;
+int global_CurveDegree = 4;
 int metroflowUnit;
 float flowPoints[10];
 static int validBTNCount = 0;
@@ -330,36 +330,28 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         float SetPt;
         validBTNCount++;
-        printf("Button pressed %d\n", validBTNCount);
+        ESP_LOGI(TAG, "Button pressed %d\n", validBTNCount);
         getSetPt = lv_textarea_get_text(_fcsEnterCalValTA);
-        //SetPt = atof(getSetPt);
-
+     
         char *toCompare = "";
-        if (!strcmp(getSetPt, toCompare))
-        {
+        if (!strcmp(getSetPt, toCompare)){
             SetPt = 0;
-        }
-        else
-        {
-
+        }else {
             SetPt = atof(getSetPt);
         }
 
-        printf("Entered Set Point Value is: %f\n", SetPt);
+        ESP_LOGI(TAG, "Entered Set Point Value is: %f\n", SetPt);
 
         flowPoints[validBTNCount - 1] = SetPt;
 
         lv_textarea_set_text(_fcsEnterCalValTA, "");
-        if (validBTNCount >= global_CurveDegree)
-        {
-            for (int j = 0; j < global_CurveDegree; j++)
-            {
-                printf("flowPoints[%d] = %f\n", j, flowPoints[j]);
+        if (validBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT){
+            for (int j = 0; j < NUM_OF_FLOW_CALIBRATION_POINT; j++){
+                ESP_LOGI(TAG, "flowPoints[%d] = %f\n", j, flowPoints[j]);
             }
-            //global_CurveDegree = 0;
             validBTNCount = 0;
-            CallMetroFlowCalibrationScreen();
-        }
+        } 
+        CallMetroFlowCalibrationScreen();
     }
 }
 

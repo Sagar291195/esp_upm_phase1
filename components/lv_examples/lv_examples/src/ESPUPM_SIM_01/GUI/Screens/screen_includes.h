@@ -68,7 +68,7 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-
+#define NUM_OF_FLOW_CALIBRATION_POINT   3
 /**********************
  *      TYPEDEFS
  **********************/
@@ -107,6 +107,7 @@ enum{
 
 
 extern uint8_t screenid ;
+extern int global_CurveDegree;
 /**********************
  * GLOBAL PROTOTYPES
  **********************/

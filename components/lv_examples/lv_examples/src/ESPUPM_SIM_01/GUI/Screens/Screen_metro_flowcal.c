@@ -56,7 +56,6 @@ static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
 float flowPoints[10];
 float flowPointXasis[10];
 int __fasValidBTNCount = 0;
-int global_CurveDegree;
 int _fasDutyCycle = 30000;
 bool metroFlowCalStarted ;
 float flow_value;
@@ -538,7 +537,7 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
             metroFlowCalStarted = false;
             int i;
             printf("X & Y Points are following : \n");
-            for( i=0; i<=global_CurveDegree-1; i++)
+            for( i=0; i<=NUM_OF_FLOW_CALIBRATION_POINT; i++)
             {
                 printf("Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
                 fflush(NULL);
@@ -556,6 +555,7 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
             lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
             flowPoint   = flowPoints[__fasValidBTNCount];
             flowPointXasis[__fasValidBTNCount-1] = flow_value;
+            callMetroFlowAdjustScreen();
         }
     }
 }
