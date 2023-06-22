@@ -177,6 +177,7 @@ void xseSummaryEndScreen(void)
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+    
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
     // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_se, 320, 480);
@@ -207,7 +208,6 @@ void xseSummaryEndScreen(void)
     __xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create Label for Battery icon
-
     __xseBatteryLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseBatteryLabel_se, _xseContStatusBar_se, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__xseBatteryLabel_se, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
@@ -219,7 +219,6 @@ void xseSummaryEndScreen(void)
     lv_obj_add_style(__xseBatteryLabel_se, LV_LABEL_PART_MAIN, &_xseBatteryLabelStyle_se);
 
     // Create Label for Wifi icon
-
     __xseWifiLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseWifiLabel_se, __xseBatteryLabel_se, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xseWifiLabel_se, LV_SYMBOL_WIFI);
@@ -231,7 +230,6 @@ void xseSummaryEndScreen(void)
     lv_obj_add_style(__xseWifiLabel_se, LV_LABEL_PART_MAIN, &_xseWifiLabelStyle_se);
 
     // Create Label for Signal icon
-
     __xseSignalLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseSignalLabel_se, __xseWifiLabel_se, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xseSignalLabel_se, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -428,7 +426,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_text_color(_xseSampleNumVal_se, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     // Create style for Fix Text Parameters //+++++++++++++++++++Style+++++++++++++++++++++++++++++++++
-
     static lv_style_t _xFixTxtStyle_se;
     lv_style_init(&_xFixTxtStyle_se);
     lv_style_set_text_font(&_xFixTxtStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_14);
@@ -440,7 +437,6 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_color(&_xVarTxtStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
     // Create Container to Flow Set Point
-
     _xseContFSP_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContFSP_se, _xseSampleNumTxt_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_obj_set_size(_xseContFSP_se, 282, 20);
@@ -449,7 +445,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContFSP_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // // Create label for flow set point text
-
     __xseFLPTxtLbl_se = lv_label_create(_xseContFSP_se, NULL);
     lv_obj_align(__xseFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseFLPTxtLbl_se, "FLOW SET POINT:");
@@ -457,7 +452,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->5
     // Put Var Text label here
-
     __xseVarFLPTxtLbl_se = lv_label_create(_xseContFSP_se, NULL);
     lv_obj_align(__xseVarFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0); //# define x_align  -70
     char _xFLP_se[30];
@@ -467,7 +461,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for Sequence number
-
     _xseContSQNum_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContSQNum_se, _xseContFSP_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContSQNum_se, 282, 20);
@@ -476,7 +469,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContSQNum_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create label for Sequence number text
-
     __xseSQNumLbl_se = lv_label_create(_xseContSQNum_se, NULL);
     lv_obj_align(__xseSQNumLbl_se, _xseContSQNum_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseSQNumLbl_se, "SEQUENCE NUMBER:");
@@ -484,7 +476,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarSQNumLbl_se = lv_label_create(_xseContSQNum_se, NULL);
     lv_obj_align(__xseVarSQNumLbl_se, _xseContSQNum_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     char _xSQNum_se[30];
@@ -493,7 +484,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for DURATION Text
-
     _xseContSQDur_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContSQDur_se, _xseContSQNum_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContSQDur_se, 282, 20);
@@ -502,7 +492,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContSQDur_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // // Create label for DURATION text
-
     __xseSQDurLbl_se = lv_label_create(_xseContSQDur_se, NULL);
     lv_obj_align(__xseSQDurLbl_se, _xseContSQDur_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseSQDurLbl_se, "DURATION:");
@@ -510,7 +499,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarSQDurLbl_se = lv_label_create(_xseContSQDur_se, NULL);
     lv_obj_align(__xseVarSQDurLbl_se, _xseContSQDur_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     // lv_label_set_text_fmt(__xseVarSQDurLbl_se, "%sH%sM", _xsDurHourrollerbuf, _xsDurMinutrollerbuf );
@@ -533,7 +521,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarStartLbl_se = lv_label_create(_xseContStart_se, NULL);
     lv_obj_align(__xseVarStartLbl_se, _xseContStart_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     lv_label_set_text(__xseVarStartLbl_se, xSampleSummary.cStartPerson); // start person
@@ -541,7 +528,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for END BY Text
-
     _xseContEndBy_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContEndBy_se, _xseContStart_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContEndBy_se, 282, 20);
@@ -550,7 +536,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContEndBy_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for END BY Text
-
     __xseContEndByLbl_se = lv_label_create(_xseContEndBy_se, NULL);
     lv_obj_align(__xseContEndByLbl_se, _xseContEndBy_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseContEndByLbl_se, "END BY:");
@@ -558,7 +543,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarEndByLbl_se = lv_label_create(_xseContEndBy_se, NULL);
     lv_obj_align(__xseVarEndByLbl_se, _xseContEndBy_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     lv_label_set_text(__xseVarEndByLbl_se, xSampleSummary.cEndPerson); // end by person
@@ -566,7 +550,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for START PERSON Text
-
     _xseContStrtPerson_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContStrtPerson_se, _xseContEndBy_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContStrtPerson_se, 282, 20);
@@ -575,7 +558,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContStrtPerson_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for START PERSON Text
-
     __xseStrtPersonLbl_se = lv_label_create(_xseContStrtPerson_se, NULL);
     lv_obj_align(__xseStrtPersonLbl_se, _xseContStrtPerson_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseStrtPersonLbl_se, "START PERSON:");
@@ -583,7 +565,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarStrtPersonLbl_se = lv_label_create(_xseContStrtPerson_se, NULL);
     lv_obj_align(__xseVarStrtPersonLbl_se, _xseContStrtPerson_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     lv_label_set_text(__xseVarStrtPersonLbl_se, "Mark");
@@ -591,7 +572,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for STOP PERSON Text
-
     _xseContStopPerson_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContStopPerson_se, _xseContStrtPerson_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContStopPerson_se, 282, 20);
@@ -600,7 +580,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContStopPerson_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for STOP PERSON Text
-
     __xseStopPersonLbl_se = lv_label_create(_xseContStopPerson_se, NULL);
     lv_obj_align(__xseStopPersonLbl_se, _xseContStopPerson_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseStopPersonLbl_se, "STOP PERSON:");
@@ -608,7 +587,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarStopPersonLbl_se = lv_label_create(_xseContStopPerson_se, NULL);
     lv_obj_align(__xseVarStopPersonLbl_se, _xseContStopPerson_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     lv_label_set_text(__xseVarStopPersonLbl_se, "Steve");
@@ -616,7 +594,6 @@ void xseSummaryEndScreen(void)
     //------------------->
 
     // Create Container for PROBLEM Text
-
     _xseContProblem_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContProblem_se, _xseContStopPerson_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_size(_xseContProblem_se, 282, 20);
@@ -625,7 +602,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContProblem_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for PROBLEM Text
-
     __xseProblemLbl_se = lv_label_create(_xseContProblem_se, NULL);
     lv_obj_align(__xseProblemLbl_se, _xseContProblem_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseProblemLbl_se, "PROBLEM:");
@@ -633,7 +609,6 @@ void xseSummaryEndScreen(void)
 
     //------------------->
     // Put Var Text label here
-
     __xseVarProblemLbl_se = lv_label_create(_xseContProblem_se, NULL);
     lv_obj_align(__xseVarProblemLbl_se, _xseContProblem_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
     lv_label_set_text(__xseVarProblemLbl_se, xSampleSummary.hasProblem); // problem descriptors
@@ -642,7 +617,6 @@ void xseSummaryEndScreen(void)
 
     // Seprator line
     // Create Horizontal Line
-
     hor_line = lv_line_create(_xseSummaryParent_se, NULL);
     static lv_point_t p[] = {{-20, 5}, {238, 5}};
     lv_line_set_points(hor_line, p, 2);
@@ -660,7 +634,6 @@ void xseSummaryEndScreen(void)
     //=========================================================================================================================
 
     // Create a container for Volume Counter Heading
-
     _xseContVolumeCount_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContVolumeCount_se, _xseContProblem_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 30);
     lv_obj_set_size(_xseContVolumeCount_se, 282, 20);
@@ -669,7 +642,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContVolumeCount_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for VOLUME COUNTER Text
-
     __xseVolCountLbl_se = lv_label_create(_xseContVolumeCount_se, NULL);
     lv_obj_align(__xseVolCountLbl_se, _xseContVolumeCount_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseVolCountLbl_se, "VOLUME COUNTER:");
@@ -680,7 +652,6 @@ void xseSummaryEndScreen(void)
     //==========================================================================================================================
 
     // Create Container for Start Stop Text & Value
-
     _xseStartStopTxtValCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseStartStopTxtValCont_se, _xseContVolumeCount_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_obj_set_size(_xseStartStopTxtValCont_se, 282, 20);
@@ -689,70 +660,60 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseStartStopTxtValCont_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // STYLE FOR TEXTS Under _xseStartStopTxtValCont_se Container
-
     static lv_style_t _xStartStopTxtValStyle_se;
     lv_style_init(&_xStartStopTxtValStyle_se);
     lv_style_set_text_font(&_xStartStopTxtValStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_14);
     lv_style_set_text_color(&_xStartStopTxtValStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
     // Create a label for start text
-
     __xseStartTxt_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStartTxt_se, _xseStartStopTxtValCont_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseStartTxt_se, "START:  ");
     lv_obj_add_style(__xseStartTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for start Value
-
     __xseStartVal_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStartVal_se, __xseStartTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     lv_label_set_text_fmt(__xseStartVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fStartVolume); // start volume counter
     lv_obj_add_style(__xseStartVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Stop text
-
     __xseStopTxt_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStopTxt_se, __xseStartVal_se, LV_ALIGN_OUT_RIGHT_MID, 20, 0);
     lv_label_set_text(__xseStopTxt_se, "STOP:  ");
     lv_obj_add_style(__xseStopTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for stop Value
-
     __xseStopVal_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStopVal_se, __xseStopTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     lv_label_set_text_fmt(__xseStopVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fEndVolume); //  stop vlume counter
     lv_obj_add_style(__xseStopVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Target Value
-
     __xseTargetVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseTargetVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 10, 10);
     lv_label_set_text_fmt(__xseTargetVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fTargetVolume); // target volume counter
     lv_obj_add_style(__xseTargetVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a Target Heading
-
     __xseTargetTxt_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseTargetTxt_se, __xseTargetVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -2, 0);
     lv_label_set_text(__xseTargetTxt_se, "TARGET");
     lv_obj_add_style(__xseTargetTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Value
-
     __xseEffectiveVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseEffectiveVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_MID, -10, 10);
     lv_label_set_text_fmt(__xseEffectiveVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fEffectiveVolume); // effective volume counter
     lv_obj_add_style(__xseEffectiveVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Text
-
     __xseEffectiveTxt_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseEffectiveTxt_se, __xseEffectiveVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 0);
     lv_label_set_text(__xseEffectiveTxt_se, "EFFECTIVE");
     lv_obj_add_style(__xseEffectiveTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for VARIATION Value
-
     __xseVariationVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseVariationVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_RIGHT, -30, 10);
     lv_label_set_text_fmt(__xseVariationVal_se, "%0.2f ", xSampleSummary.xGenericSummary.xVolumeCounter.fVariation); // variation for the volume
@@ -764,7 +725,6 @@ void xseSummaryEndScreen(void)
     lv_obj_add_style(varPerSymb, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for VARIATION TEXT
-
     __xseVariationText_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseVariationText_se, __xseVariationVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 0);
     lv_label_set_text(__xseVariationText_se, "VARIATION");
@@ -772,7 +732,6 @@ void xseSummaryEndScreen(void)
 
     // Seprator line
     // Create Horizontal Line
-
     hor_line1 = lv_line_create(_xseSummaryParent_se, NULL);
     static lv_point_t p1[] = {{-20, 5}, {238, 5}};
     lv_line_set_points(hor_line1, p1, 2);
@@ -784,7 +743,6 @@ void xseSummaryEndScreen(void)
     //=========================================================================================================================
 
     // Create a container for HOUR COUNTER Heading
-
     _xseContHourCount_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContHourCount_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);
     lv_obj_set_size(_xseContHourCount_se, 282, 20);
@@ -793,7 +751,6 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseContHourCount_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label for HOUR COUNTER Text
-
     __xseHourCountLbl_se = lv_label_create(_xseContHourCount_se, NULL);
     lv_obj_align(__xseHourCountLbl_se, _xseContHourCount_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseHourCountLbl_se, "HOUR COUNTER:");
@@ -804,7 +761,6 @@ void xseSummaryEndScreen(void)
     //==========================================================================================================================
 
     // Create Container for Start Stop Text & Value
-
     _xseHrStartStopTxtValCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseHrStartStopTxtValCont_se, _xseContHourCount_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_obj_set_size(_xseHrStartStopTxtValCont_se, 282, 20);
@@ -813,21 +769,18 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_border_width(_xseHrStartStopTxtValCont_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create a label for start text
-
     __xseHrStartTxt_se = lv_label_create(_xseHrStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseHrStartTxt_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xseHrStartTxt_se, "START:  ");
     lv_obj_add_style(__xseHrStartTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for start Value
-
     __xseHrStartVal_se = lv_label_create(_xseHrStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseHrStartVal_se, __xseHrStartTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     lv_label_set_text_fmt(__xseHrStartVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fStartHour); // start hour
     lv_obj_add_style(__xseHrStartVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Stop text
-
     __xseHrStopTxt_se = lv_label_create(_xseHrStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseHrStopTxt_se, __xseHrStartVal_se, LV_ALIGN_OUT_RIGHT_MID, 20, 0);
     lv_label_set_text(__xseHrStopTxt_se, "STOP:  ");
@@ -841,42 +794,36 @@ void xseSummaryEndScreen(void)
     lv_obj_add_style(__xseHrStopVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Target Value
-
     __xseHrTargetVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrTargetVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 10, 10);
     lv_label_set_text_fmt(__xseHrTargetVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fTargetHour); // target hour
     lv_obj_add_style(__xseHrTargetVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a Target Heading
-
     __xseHrTargetTxt_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrTargetTxt_se, __xseHrTargetVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -2, 0);
     lv_label_set_text(__xseHrTargetTxt_se, "TARGET");
     lv_obj_add_style(__xseHrTargetTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Value
-
     __xseHrEffectiveVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrEffectiveVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_MID, -10, 10);
     lv_label_set_text_fmt(__xseHrEffectiveVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fEffectiveHour); // effective hour
     lv_obj_add_style(__xseHrEffectiveVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Text
-
     __xseHrEffectiveTxt_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrEffectiveTxt_se, __xseHrEffectiveVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 0);
     lv_label_set_text(__xseHrEffectiveTxt_se, "EFFECTIVE");
     lv_obj_add_style(__xseHrEffectiveTxt_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for VARIATION Value
-
     __xseHrVariationVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrVariationVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_RIGHT, -30, 10);
     lv_label_set_text_fmt(__xseHrVariationVal_se, "%0.2f%%", xSampleSummary.xGenericSummary.xHourCounter.fVariation); // variation in hour  in %age
     lv_obj_add_style(__xseHrVariationVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for VARIATION TEXT
-
     __xseHrVariationText_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrVariationText_se, __xseHrVariationVal_se, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 0);
     lv_label_set_text(__xseHrVariationText_se, "VARIATION");
@@ -887,7 +834,6 @@ void xseSummaryEndScreen(void)
 
     // Seprator line
     // Create Horizontal Line
-
     hor_line2 = lv_line_create(_xseSummaryParent_se, NULL);
     static lv_point_t p2[] = {{-20, 5}, {238, 5}};
     lv_line_set_points(hor_line2, p2, 2);
@@ -959,6 +905,7 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_text_color(_xseBTNValidLbl_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     crnt_screen = scrSummaryEnd; // scrSummaryEnd
+    screenid = SCR_SUMMARY_END;
 }
 
 void xDrawSummaryHeading(void)
@@ -1204,7 +1151,7 @@ void __xseTimeLabel_se_refr_func(lv_task_t __xserefresherTask)
 
 static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xserefresherTask);
         // printf("Back to Dashbord from presetscrn\n");
@@ -1217,26 +1164,22 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
 
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         // Function
         lv_task_del(__xserefresherTask);
-        // sssSummarySampleScreen();
         dashboardflg = 0;
         iArchORSummaryScrn = 0;
         pxDashboardScreen();
-        // writeSampleDataNVS();
     }
 }
 
 static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
 
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         sequenceSummary_t xSequnceSummary;
-      
-        
         // printf("%d\n", (int)lv_obj_get_user_data(obj));
         /**
          * @brief if sample exits in the database then sho

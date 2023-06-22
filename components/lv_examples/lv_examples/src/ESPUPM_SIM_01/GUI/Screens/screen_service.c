@@ -133,13 +133,13 @@ lv_obj_t * _sstActionSwitch123;
  **********************/
 void callServiceSetScreen(void)
 {
-    
     sstParentCont = lv_obj_create(NULL, NULL);
     lv_scr_load(sstParentCont);
     if(crnt_screen != NULL){
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+
     lv_obj_set_size(sstParentCont, 320, 480);
     lv_obj_set_click(sstParentCont, false);
     lv_obj_align(sstParentCont, NULL, LV_ALIGN_CENTER, 0,0);
@@ -147,7 +147,6 @@ void callServiceSetScreen(void)
     lv_obj_set_style_local_border_opa(sstParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
     lv_obj_set_style_local_radius(sstParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
      
-    
     _sstContStausBar = lv_cont_create(sstParentCont, NULL);
     lv_obj_set_size(_sstContStausBar, 320, 35);
     lv_obj_align(_sstContStausBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -155,7 +154,6 @@ void callServiceSetScreen(void)
     lv_obj_set_style_local_border_opa(_sstContStausBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __sstTimeLabel = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(__sstTimeLabel, _sstContStausBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__sstTimeLabel, guiTime);
@@ -167,7 +165,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(__sstTimeLabel, LV_LABEL_PART_MAIN, &_sstTimeLabelStyle);
 
     //Create Label for Battery icon
-    
     _sstBatteryLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstBatteryLbl, _sstContStausBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(_sstBatteryLbl, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -179,7 +176,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstBatteryLbl, LV_LABEL_PART_MAIN, &_sstBatteryLblStyle);
 
     //Create Label for Wifi icon
-    
     _sstWiFiLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstWiFiLbl, _sstBatteryLbl, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_sstWiFiLbl, LV_SYMBOL_WIFI);
@@ -191,7 +187,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstWiFiLbl, LV_LABEL_PART_MAIN, &_xWifiLabelStyle_par);
 
     //Create Label for Signal icon
-    
     _sstSignalLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstSignalLbl, _sstWiFiLbl, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_sstSignalLbl, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -205,8 +200,6 @@ void callServiceSetScreen(void)
     //================================================================================
 
     // Create a container to put all the parameters
-
-    
     _sstSliderPage = lv_page_create(sstParentCont, NULL);
     lv_obj_set_size(_sstSliderPage, 320, 430);
     lv_obj_align(_sstSliderPage, _sstContStausBar, LV_ALIGN_OUT_BOTTOM_MID, 0, 1);
@@ -214,7 +207,6 @@ void callServiceSetScreen(void)
     lv_obj_set_style_local_bg_color(_sstSliderPage, LV_PAGE_PART_BG, LV_STATE_DEFAULT,LV_COLOR_MAKE(0x39, 0x89, 0xBD) ); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
     lv_obj_set_style_local_border_width(_sstSliderPage, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0 );
 
-    
     _sstHeadingCont = lv_cont_create(_sstSliderPage, NULL);
     lv_obj_set_size(_sstHeadingCont, 300, 70);
     lv_obj_set_width(_sstHeadingCont, lv_page_get_width_fit(_sstSliderPage));
@@ -225,7 +217,6 @@ void callServiceSetScreen(void)
     //=============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //=============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    
     _sstBackArrowCont = lv_cont_create(_sstHeadingCont, NULL);
     lv_obj_set_size(_sstBackArrowCont, 60, 60);
     lv_obj_align(_sstBackArrowCont, _sstHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -233,8 +224,6 @@ void callServiceSetScreen(void)
     lv_obj_set_style_local_border_width(_sstBackArrowCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
     lv_obj_set_event_cb(_sstBackArrowCont, _xsBackArrow_event_handler);
 
-
-   
     _sstBackArrowLabel = lv_img_create( _sstBackArrowCont, NULL);
     lv_img_set_src(_sstBackArrowLabel, &left_arrow_icon);
     lv_obj_align(_sstBackArrowLabel,  _sstBackArrowCont, LV_ALIGN_IN_LEFT_MID, 0 , 0);
@@ -273,7 +262,6 @@ void callServiceSetScreen(void)
     //            Hour Service alert Pallet 
     //
     //===================================================================
-    
     _sstHourServiceCont = lv_cont_create(_sstSliderPage, NULL);
     lv_obj_set_size(_sstHourServiceCont, 300, 220);
     lv_obj_set_click(_sstHourServiceCont, false);
@@ -285,7 +273,6 @@ void callServiceSetScreen(void)
     //++++++++++++++++++++++++++++++++++++++
     //++++++++++++++++++++++++++++++++++++++
 
-    
     _sstHourServiceTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstHourServiceTxt, _sstHourServiceCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text(_sstHourServiceTxt, "HOUR SERVICE");
@@ -296,7 +283,6 @@ void callServiceSetScreen(void)
     lv_style_set_text_color(&_sstBlueTxtStyle, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
     lv_obj_add_style(_sstHourServiceTxt, LV_LABEL_PART_MAIN, &_sstBlueTxtStyle);
 
-    
     _sstAlertTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstAlertTxt, _sstHourServiceTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_sstAlertTxt, "Alert");
@@ -307,7 +293,6 @@ void callServiceSetScreen(void)
     lv_style_set_text_color(&_sstWhiteBigTxtStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_sstAlertTxt, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstOnOffTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstOnOffTxt, _sstAlertTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text(_sstOnOffTxt, "ON / OFF");
@@ -319,7 +304,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstOnOffTxt, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstAlertSwitch = lv_switch_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstAlertSwitch, _sstOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 180, -20);
     lv_obj_set_height(_sstAlertSwitch, 25);
@@ -332,20 +316,17 @@ void callServiceSetScreen(void)
     lv_style_set_border_color(&_sstAlertSwitchStyle, LV_SWITCH_PART_BG, LV_COLOR_WHITE);
     lv_obj_add_style(_sstAlertSwitch, LV_SWITCH_PART_BG, &_sstAlertSwitchStyle);
 
-    
     _sstINTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstINTxt, _sstOnOffTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
     lv_label_set_text(_sstINTxt, "IN :");
     lv_obj_add_style(_sstINTxt, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstINValue = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstINValue, _sstINTxt, LV_ALIGN_OUT_RIGHT_TOP, 30, 0);
     lv_label_set_text(_sstINValue, "3500");
     lv_obj_add_style(_sstINValue, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
     // Create custom Button
-   
     _sstCustomBTN = lv_btn_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstCustomBTN, _sstINValue, LV_ALIGN_OUT_RIGHT_TOP, 90, -5 );
     lv_obj_set_size(_sstCustomBTN, 100, 30);
@@ -360,7 +341,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstCustomBTN, LV_BTN_PART_MAIN, &_sstCustomBTNStyle);
 
     //Creat a CUSTOM Button Label Style
-    
     _sstCustomBTNLabel = lv_label_create(_sstCustomBTN, NULL);
     lv_obj_align(_sstCustomBTNLabel, _sstCustomBTN, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_sstCustomBTNLabel, "CUSTOM");
@@ -370,29 +350,23 @@ void callServiceSetScreen(void)
     lv_style_set_text_font(&_sstCustomBTNLabelStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_12); 
     lv_style_set_text_color(&_sstCustomBTNLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_sstCustomBTNLabel, LV_LABEL_PART_MAIN, &_sstCustomBTNLabelStyle);
-
-
     
     _sstHoursTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstHoursTxt, _sstINValue, LV_ALIGN_OUT_RIGHT_TOP, 5, 0);
     lv_label_set_text(_sstHoursTxt, "HOURS");
     lv_obj_add_style(_sstHoursTxt, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstReminderTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstReminderTxt, _sstINTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 18);
     lv_label_set_text(_sstReminderTxt, "Reminder");
     lv_obj_add_style(_sstReminderTxt, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstBeforeAlertTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstBeforeAlertTxt, _sstReminderTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
     lv_label_set_text(_sstBeforeAlertTxt, "BEFORE ALERT:");
     lv_obj_add_style(_sstBeforeAlertTxt, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create a Hours selection drop down list
-    
-    
     _sstHourDropDown = lv_dropdown_create(_sstHourServiceCont, NULL);
     lv_dropdown_set_options(_sstHourDropDown, "100 HOUR\n"
                 "200 HOUR\n"
@@ -410,32 +384,26 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstHourDropDown, LV_DROPDOWN_PART_MAIN, &_sstHourDropDownStyle);
     //lv_obj_set_event_cb(_xLangDropDown_par, lang_DD_event_handler);
 
-    
     _sstActionTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstActionTxt, _sstBeforeAlertTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
     lv_label_set_text(_sstActionTxt, "Action");
     lv_obj_add_style(_sstActionTxt, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstMsgTxt = lv_label_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstMsgTxt, _sstActionTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text(_sstMsgTxt, "DISABLE DEVICE AFTER ALERT");
     lv_obj_add_style(_sstMsgTxt, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstActionSwitch = lv_switch_create(_sstHourServiceCont, NULL);
     lv_obj_align(_sstActionSwitch, _sstActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 180, 0);
     lv_obj_set_height(_sstActionSwitch, 25);
     //lv_obj_set_event_cb(_sstAlertSwitch, Buzzer_switch_event_handler);
     lv_obj_add_style(_sstActionSwitch, LV_SWITCH_PART_BG, &_sstAlertSwitchStyle);
-
-
+       
+       
         //++++++++++++++++++++++++++++++++++++++
         //++++++++++++++++++++++++++++++++++++++
-
-
-
 
     //===================================================================
     //
@@ -443,7 +411,6 @@ void callServiceSetScreen(void)
     //           Date Service alert Pallet 
     //
     //===================================================================
-    
     _sstDateServiceCont = lv_cont_create(_sstSliderPage, NULL);
     lv_obj_set_size(_sstDateServiceCont, 300, 220);
     lv_obj_set_click(_sstDateServiceCont, false);
@@ -454,8 +421,6 @@ void callServiceSetScreen(void)
 
         //++++++++++++++++++++++++++++++++++++++
         //++++++++++++++++++++++++++++++++++++++
-
-    
     _sstDateServiceTxt = lv_label_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstDateServiceTxt, _sstDateServiceCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text(_sstDateServiceTxt, "DATE SERVICE");
@@ -467,21 +432,18 @@ void callServiceSetScreen(void)
     lv_label_set_text(_sstAlertTxt1, "Alert");
     lv_obj_add_style(_sstAlertTxt1, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
-    
     _sstOnOffTxt1 = lv_label_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstOnOffTxt1, _sstAlertTxt1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text(_sstOnOffTxt1, "ON / OFF");
     lv_obj_add_style(_sstOnOffTxt1, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstAlertSwitch1 = lv_switch_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstAlertSwitch1, _sstOnOffTxt1, LV_ALIGN_OUT_RIGHT_TOP, 180, -20);
     lv_obj_set_height(_sstAlertSwitch1, 25);
     //lv_obj_set_event_cb(_sstAlertSwitch, Buzzer_switch_event_handler);
     lv_obj_add_style(_sstAlertSwitch1, LV_SWITCH_PART_BG, &_sstAlertSwitchStyle);
 
-    
     _sstINTxt1 = lv_label_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstINTxt1, _sstOnOffTxt1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
     lv_label_set_text(_sstINTxt1, "IN :");
@@ -494,7 +456,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstINValue1, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
     // Create custom Button
-    
     _sstCustomBTN1 = lv_btn_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstCustomBTN1, _sstINValue1, LV_ALIGN_OUT_RIGHT_TOP, 35, -5 );
     lv_obj_set_size(_sstCustomBTN1, 100, 30);
@@ -502,7 +463,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstCustomBTN1, LV_BTN_PART_MAIN, &_sstCustomBTNStyle);
 
     //Creat a CUSTOM Button Label Style
-    
     _sstCustomBTNLabel1 = lv_label_create(_sstCustomBTN1, NULL);
     lv_obj_align(_sstCustomBTNLabel1, _sstCustomBTN1, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_sstCustomBTNLabel1, "CUSTOM");
@@ -528,8 +488,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstBeforeAlertTxt1, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create a Hours selection drop down list
-    
-    
     _sstHourDropDown1 = lv_dropdown_create(_sstDateServiceCont, NULL);
     lv_dropdown_set_options(_sstHourDropDown1, "100 HOUR\n"
                 "200 HOUR\n"
@@ -540,7 +498,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstHourDropDown1, LV_DROPDOWN_PART_MAIN, &_sstHourDropDownStyle);
     //lv_obj_set_event_cb(_xLangDropDown_par, lang_DD_event_handler);
 
-    
     _sstActionTxt1 = lv_label_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstActionTxt1, _sstBeforeAlertTxt1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
     lv_label_set_text(_sstActionTxt1, "Action");
@@ -553,7 +510,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstMsgTxt1, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstActionSwitch1 = lv_switch_create(_sstDateServiceCont, NULL);
     lv_obj_align(_sstActionSwitch1, _sstActionTxt1, LV_ALIGN_OUT_RIGHT_TOP, 180, 0);
     lv_obj_set_height(_sstActionSwitch1, 25);
@@ -571,7 +527,6 @@ void callServiceSetScreen(void)
     //           Volume Service alert Pallet 
     //
     //===================================================================
-    
     _sstVolumeServiceCont = lv_cont_create(_sstSliderPage, NULL);
     lv_obj_set_size(_sstVolumeServiceCont, 300, 220);
     lv_obj_set_click(_sstVolumeServiceCont, false);
@@ -583,7 +538,6 @@ void callServiceSetScreen(void)
     //++++++++++++++++++++++++++++++++++++++
     //++++++++++++++++++++++++++++++++++++++
 
-    
     _sstVolumeServiceTxt = lv_label_create(_sstVolumeServiceCont, NULL);
     lv_obj_align(_sstVolumeServiceTxt, _sstVolumeServiceCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text(_sstVolumeServiceTxt, "VOLUME SERVICE");
@@ -602,7 +556,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstOnOffTxt12, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstAlertSwitch12 = lv_switch_create(_sstVolumeServiceCont, NULL);
     lv_obj_align(_sstAlertSwitch12, _sstOnOffTxt12, LV_ALIGN_OUT_RIGHT_TOP, 180, -20);
     lv_obj_set_height(_sstAlertSwitch12, 25);
@@ -622,7 +575,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstINValue12, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
     // Create custom Button
-    
     _sstCustomBTN12 = lv_btn_create(_sstVolumeServiceCont, NULL);
     lv_obj_align(_sstCustomBTN12, _sstINValue12, LV_ALIGN_OUT_RIGHT_TOP, 80, -5 );
     lv_obj_set_size(_sstCustomBTN12, 100, 30);
@@ -681,7 +633,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstMsgTxt12, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstActionSwitch12 = lv_switch_create(_sstVolumeServiceCont, NULL);
     lv_obj_align(_sstActionSwitch12, _sstActionTxt12, LV_ALIGN_OUT_RIGHT_TOP, 180, 0);
     lv_obj_set_height(_sstActionSwitch12, 25);
@@ -749,7 +700,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstINValue123, LV_LABEL_PART_MAIN, &_sstWhiteBigTxtStyle);
 
     // Create custom Button
-    
     _sstCustomBTN123 = lv_btn_create(_sstFilterServiceCont, NULL);
     lv_obj_align(_sstCustomBTN123, _sstINValue123, LV_ALIGN_OUT_RIGHT_TOP, 90, -5 );
     lv_obj_set_size(_sstCustomBTN123, 100, 30);
@@ -757,7 +707,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstCustomBTN123, LV_BTN_PART_MAIN, &_sstCustomBTNStyle);
 
     //Creat a CUSTOM Button Label Style
-    
     _sstCustomBTNLabel123 = lv_label_create(_sstCustomBTN123, NULL);
     lv_obj_align(_sstCustomBTNLabel123, _sstCustomBTN123, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_sstCustomBTNLabel123, "CUSTOM");
@@ -785,7 +734,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstHourDropDown123, LV_DROPDOWN_PART_MAIN, &_sstHourDropDownStyle);
     //lv_obj_set_event_cb(_xLangDropDown_par, lang_DD_event_handler);
 
-    
     _sstActionTxt123 = lv_label_create(_sstFilterServiceCont, NULL);
     lv_obj_align(_sstActionTxt123, _sstBeforeAlertTxt123, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
     lv_label_set_text(_sstActionTxt123, "Action");
@@ -798,7 +746,6 @@ void callServiceSetScreen(void)
     lv_obj_add_style(_sstMsgTxt123, LV_LABEL_PART_MAIN, &_sstWhiteSmallTxtStyle);
 
     //Create Alert control switch 
-    
     _sstActionSwitch123 = lv_switch_create(_sstFilterServiceCont, NULL);
     lv_obj_align(_sstActionSwitch123, _sstActionTxt123, LV_ALIGN_OUT_RIGHT_TOP, 180, 0);
     lv_obj_set_height(_sstActionSwitch123, 25);
@@ -810,7 +757,7 @@ void callServiceSetScreen(void)
         //++++++++++++++++++++++++++++++++++++++
 
     crnt_screen = sstParentCont;   //sstParentCont
-
+    screenid = SCR_SERVICE;
 }
 
 
@@ -822,7 +769,7 @@ void callServiceSetScreen(void)
 
 static void  _xsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
         pxDashboardScreen();

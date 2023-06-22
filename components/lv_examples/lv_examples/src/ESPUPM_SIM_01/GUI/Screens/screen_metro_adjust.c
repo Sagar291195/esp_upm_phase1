@@ -104,8 +104,6 @@ lv_obj_t * _mtaPercentTxtLbl;
 void callMetroAdjust(void)
 {
     //Create Base container
-    
-    
     scrMetroTmpAdj = lv_obj_create(NULL, NULL);
     lv_scr_load(scrMetroTmpAdj);
     if(crnt_screen != NULL){
@@ -121,8 +119,6 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_radius(mtaPatrentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
-    
     _mtaContStatusBar = lv_cont_create(mtaPatrentCont, NULL);
     lv_obj_set_size(_mtaContStatusBar, 320, 35);
     lv_obj_align(_mtaContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -130,7 +126,6 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_border_opa(_mtaContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __mtaTimeLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaTimeLabel, _mtaContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__mtaTimeLabel, guiTime);
@@ -142,7 +137,6 @@ void callMetroAdjust(void)
     lv_obj_add_style(__mtaTimeLabel, LV_LABEL_PART_MAIN, &_mtaTimeLabelStyle);
 
     //Create Label for Battery icon
-    
     __mtaBatteryLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaBatteryLabel, _mtaContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__mtaBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -153,8 +147,7 @@ void callMetroAdjust(void)
     lv_style_set_text_color(&__mtaBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mtaBatteryLabel, LV_LABEL_PART_MAIN, &__mtaBatteryLabelStyle);
 
-    //Create Label for Wifi icon
-    
+    //Create Label for Wifi icon 
     __mtaWifiLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaWifiLabel, __mtaBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mtaWifiLabel, LV_SYMBOL_WIFI);
@@ -166,7 +159,6 @@ void callMetroAdjust(void)
     lv_obj_add_style(__mtaWifiLabel, LV_LABEL_PART_MAIN, &__mtaWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     __mtaSignalLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaSignalLabel, __mtaSignalLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mtaSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -186,7 +178,6 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_border_width(_mtaMetroHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Back arrow img
-    
     __mtaBackArrowLabel = lv_img_create(mtaPatrentCont, NULL);
     lv_img_set_src(__mtaBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__mtaBackArrowLabel, _mtaMetroHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -196,7 +187,6 @@ void callMetroAdjust(void)
     lv_obj_set_event_cb(__mtaBackArrowLabel, __mtaBackArrow_event_handler);
 
     //Create Label for External Temperature "Heading"
-    
     __mtaMetroHeadingLbl = lv_label_create(_mtaMetroHeadingCont, NULL);
     if(screenid == SCR_EXTERNAL_TEMPERATURE_SETTINGS){
         lv_obj_align(__mtaMetroHeadingLbl, _mtaMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
@@ -232,26 +222,22 @@ void callMetroAdjust(void)
     lv_label_set_align(__mtaMetroHeadingLbl, LV_LABEL_ALIGN_CENTER);
 
     //Create Label for "POINT:" Text
-    
     _mtaPointTxtLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaPointTxtLbl, _mtaMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_mtaPointTxtLbl, "POINT:");
 
     //Create Label for "POINT" Value
-    
     _mtaPointValLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaPointValLbl, _mtaMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_MID, 15, 10);
     lv_label_set_text(_mtaPointValLbl, "1");
     lv_obj_set_style_local_text_color(_mtaPointValLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     //Create Label for "FACTORY VALUE:" Text
-    
     _mtaFactoryValTxtLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaFactoryValTxtLbl, _mtaPointTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text(_mtaFactoryValTxtLbl, "FACTORY VALUE:");
 
     //Create Label for "FACTORY VALUE:" Value
-    
     _mtaFactoryValueLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaFactoryValueLbl, _mtaPointValLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text(_mtaFactoryValueLbl, "24,67");
@@ -261,7 +247,6 @@ void callMetroAdjust(void)
     //============================================================================================================
     //============================================================================================================
 
-    
     _mtaEnterRefValTA = lv_textarea_create(mtaPatrentCont, NULL);
     lv_obj_set_size( _mtaEnterRefValTA, 210, 50);
     lv_obj_align(  _mtaEnterRefValTA,  _mtaFactoryValTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
@@ -280,7 +265,6 @@ void callMetroAdjust(void)
     //============================================================================================================
 
     // Create valid button
-    
     _mtaValidBtn = lv_btn_create(mtaPatrentCont, NULL);
     lv_obj_set_size(_mtaValidBtn, 90, 54);
     lv_obj_align(  _mtaValidBtn,  _mtaEnterRefValTA, LV_ALIGN_OUT_RIGHT_MID, -5, 0);
@@ -291,7 +275,6 @@ void callMetroAdjust(void)
     lv_obj_align(_mtaValidBtnLbl, _mtaValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_mtaValidBtnLbl, "VALID");
     
-
     static lv_style_t _mtaValidBtnLblStyle;
     lv_style_init(&_mtaValidBtnLblStyle);
     lv_style_set_text_font(&_mtaValidBtnLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); 
@@ -323,7 +306,6 @@ void callMetroAdjust(void)
     lv_obj_set_event_cb(_mtaValidBtn, _mtavalidbuttoncalled_event_cb);
 
     // Create Label For "CORRECTION" Text
-    
     _mtaCorrectionTxtLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaCorrectionTxtLbl, _mtaEnterRefValTA, LV_ALIGN_OUT_BOTTOM_LEFT, 70, 10);
     lv_label_set_text(_mtaCorrectionTxtLbl, "CORRECTION:");
@@ -335,7 +317,6 @@ void callMetroAdjust(void)
     lv_obj_add_style(_mtaCorrectionTxtLbl, LV_LABEL_PART_MAIN, &_mtaCorrectionTxtLblStyle);
 
     // Create Label For "CORRECTION" Text
-    
     _mtaCorrectionValueLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaCorrectionValueLbl, _mtaCorrectionTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 10, -5);
     lv_label_set_text(_mtaCorrectionValueLbl, "__,__");
@@ -347,7 +328,6 @@ void callMetroAdjust(void)
     lv_obj_add_style(_mtaCorrectionValueLbl, LV_LABEL_PART_MAIN, &_mtaCorrValueLblStyle);
 
     // Create Label For "%" Text
-    
     _mtaPercentTxtLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaPercentTxtLbl, _mtaCorrectionValueLbl, LV_ALIGN_OUT_RIGHT_MID, 10, -5);
     lv_label_set_text(_mtaPercentTxtLbl, "%");
@@ -359,7 +339,6 @@ void callMetroAdjust(void)
     lv_obj_add_style(_mtaPercentTxtLbl, LV_LABEL_PART_MAIN, &_mtaPercentTxtLblStyle);
 
     /* Create a keyboard*/
-    
     _mtaKeyBord = lv_keyboard_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaKeyBord,_mtaCorrectionTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, -70,15 );
     lv_obj_set_size(_mtaKeyBord,  300, 290);
@@ -376,8 +355,7 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_border_width(_mtaKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
     
 
-    crnt_screen = scrMetroTmpAdj; //scrMetroTmpAdj
-          
+    crnt_screen = scrMetroTmpAdj; //scrMetroTmpAdj    
 }
 
 /**********************
@@ -385,7 +363,7 @@ void callMetroAdjust(void)
  **********************/
 static void _mtavalidbuttoncalled_event_cb(lv_obj_t * ta, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         if(screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST || screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
         {
@@ -403,7 +381,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t * ta, lv_event_t event)
 
 static void  __mtaBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         CallMetroMenuScreen();
     }
@@ -411,7 +389,7 @@ static void  __mtaBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void _mtaEnterRefValTA_event_cb(lv_obj_t * ta, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) {
+    if(event == LV_EVENT_RELEASED) {
         /* Focus on the clicked text area */
         lv_textarea_set_text(_mtaEnterRefValTA, "");
         if(_mtaKeyBord != NULL)

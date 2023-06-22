@@ -520,14 +520,14 @@ void callMetroHumiditySettingScreen(void)
 
 static void  __mhsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) {
+    if(event == LV_EVENT_RELEASED) {
         callMetroAdjust();
     }
 }
 
 static void  __mhsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         CallMetroMenuScreen();
     }

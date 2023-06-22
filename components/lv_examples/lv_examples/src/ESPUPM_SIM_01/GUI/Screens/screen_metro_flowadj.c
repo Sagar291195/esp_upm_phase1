@@ -119,7 +119,7 @@ static const lv_btnmatrix_ctrl_t fcs_tgl_kb_ctrl[] = {
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xCallFlowAdjustScreen(void)
+void callMetroFlowAdjustScreen(void)
 {
     ESP_LOGI(TAG, "Loading Screen");
     scrFlowAdj = lv_obj_create(NULL, NULL);
@@ -136,7 +136,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_set_style_local_radius(fcsParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
     _fcsContStatusBar = lv_cont_create(fcsParentCont, NULL);
     lv_obj_set_size(_fcsContStatusBar, 320, 35);
     lv_obj_align(_fcsContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
@@ -144,7 +143,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_set_style_local_border_opa(_fcsContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     //Create Watch upper left corner
-
     __fcsTimeLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsTimeLabel, _fcsContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12, 5);
     lv_label_set_text(__fcsTimeLabel, guiTime);
@@ -156,7 +154,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(__fcsTimeLabel, LV_LABEL_PART_MAIN, &_fcsTimeLabelStyle);
 
     //Create Label for Battery icon
-
     __fcsBatteryLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsBatteryLabel, _fcsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__fcsBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -168,7 +165,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(__fcsBatteryLabel, LV_LABEL_PART_MAIN, &_fcsBatteryLabelStyle);
 
     //Create Label for Wifi icon
-
     __fcsWifiLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsWifiLabel, __fcsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fcsWifiLabel, LV_SYMBOL_WIFI);
@@ -180,7 +176,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(__fcsWifiLabel, LV_LABEL_PART_MAIN, &_fcsWifiLabelStyle);
 
     //Create Label for Signal icon
-
     __fcsSignalLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsSignalLabel, __fcsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__fcsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -194,7 +189,6 @@ void xCallFlowAdjustScreen(void)
     //============================================================================================
 
     //Crate a container to contain FLOW Header
-
     _fcsMetroHeadingCont = lv_cont_create(fcsParentCont, NULL);
     lv_obj_set_size(_fcsMetroHeadingCont, 300, 70);
     lv_obj_align(_fcsMetroHeadingCont, _fcsContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
@@ -276,7 +270,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_set_style_local_bg_color(_fcsValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48));
 
     //CREATE LABEL FOR VALID TXT ON BUTTON
-
     _fcsValidBtnLbl = lv_label_create(_fcsValidBtn, NULL);
     lv_obj_align(_fcsValidBtnLbl, _fcsValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_fcsValidBtnLbl, "VALID");
@@ -290,7 +283,6 @@ void xCallFlowAdjustScreen(void)
     lv_obj_add_style(_fcsValidBtnLbl, LV_LABEL_PART_MAIN, &_fcsValidBtnLblStyle);
 
     /* Create a keyboard*/
-
     _fcsKeyBord = lv_keyboard_create(fcsParentCont, NULL);
     lv_obj_align(_fcsKeyBord, _fcsEnterCalValTA, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 40);
     lv_obj_set_size(_fcsKeyBord, 300, 290); // (300, 290)
@@ -320,8 +312,7 @@ void xCallFlowAdjustScreen(void)
 
 static void __fcsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
-    {
+    if (event == LV_EVENT_RELEASED){
         pointCount = 1;
         CallMetroMenuScreen();
     }
@@ -329,8 +320,7 @@ static void __fcsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_RELEASED)
-    {
+    if (event == LV_EVENT_RELEASED){
         xCallFlowCalibrationScreen();
     }
 }

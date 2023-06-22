@@ -4,13 +4,6 @@
  *  @date      2021-04-01
  */
 
-/**
-*  @file 
-*  @brief This Screen is for 
-*  @details 
-*/
-
-
 /*********************
  *      INCLUDES
  *********************/
@@ -21,20 +14,14 @@
  *      DEFINES
  *********************/
 
-#define TAG "SCREEN INFO"
-
-#define SYMBOL_SIGNAL "\uf012"
-
-
+#define TAG             "SCREEN INFO"
+#define SYMBOL_SIGNAL   "\uf012"
 
 //Declare Fonts here
 LV_FONT_DECLARE(signal_20)
 
-
 //Declare Images Here
-
 LV_IMG_DECLARE(left_arrow_icon)	
-LV_IMG_DECLARE(QRcode_logo)	
 
 /**********************
  *      TYPEDEFS
@@ -109,7 +96,6 @@ void CallScreenInfo(void)
     lv_obj_set_style_local_border_opa(_infoContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     infoTimeLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(infoTimeLabel, _infoContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(infoTimeLabel, guiTime);
@@ -124,9 +110,7 @@ void CallScreenInfo(void)
 
     inforefresherTask = lv_task_create(infoTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
-
     //Create Label for Battery icon
-    
     _infoBatteryLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoBatteryLabel, _infoContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(_infoBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -138,7 +122,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoBatteryLabel, LV_LABEL_PART_MAIN, &_smmBatteryLabelStyle);
 
     //Create Label for Wifi icon
-    
     _infoWifiLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoWifiLabel, _infoBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_infoWifiLabel, LV_SYMBOL_WIFI);
@@ -150,7 +133,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoWifiLabel, LV_LABEL_PART_MAIN, &infoWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     _infoSignalLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoSignalLabel, _infoWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_infoSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -164,8 +146,6 @@ void CallScreenInfo(void)
     //===============================================================================================================
 
     //Crate a container to contain Info Header
-
-    
     _infoHeadingCont = lv_cont_create(infoParentCont, NULL);
     lv_obj_set_size(_infoHeadingCont, 300, 70);
     lv_obj_align(_infoHeadingCont, _infoContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -173,7 +153,6 @@ void CallScreenInfo(void)
     lv_obj_set_style_local_border_width(_infoHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Back arrow img
-    
     _infoBackArrowLabel = lv_img_create(_infoHeadingCont, NULL);
     lv_img_set_src(_infoBackArrowLabel, &left_arrow_icon);
     lv_obj_align(_infoBackArrowLabel, _infoHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -183,8 +162,6 @@ void CallScreenInfo(void)
     lv_obj_set_event_cb(_infoBackArrowLabel, _infoBackArrow_event_handler);
 
     //Create Label for Sequences "Heading"
-    
-    
     _infoHedingLbl = lv_label_create(_infoHeadingCont, NULL);
     lv_obj_align(_infoHedingLbl, _infoHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -10, -35);
     lv_label_set_text(_infoHedingLbl, "Info");
@@ -196,7 +173,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoHedingLbl, LV_LABEL_PART_MAIN, &_infoHeadingLblStyle);
 
     // Create a container for QR Image
-    
     _infoQRCont = lv_cont_create(infoParentCont,  NULL);
     lv_obj_set_size(_infoQRCont, 300, 360);
     lv_obj_align(_infoQRCont, _infoHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0,0);
@@ -205,7 +181,6 @@ void CallScreenInfo(void)
 
 
     //Create a label for "DEVICE NUMBER" text
-    
     _infoDeviceNumTxtLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceNumTxtLbl, _infoQRCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text(_infoDeviceNumTxtLbl, "DEVICE NUMBER:");
@@ -217,7 +192,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoDeviceNumTxtLbl, LV_LABEL_PART_MAIN, &_infoDeviceNumTxtLblStyle);
 
     //Create a label for Device number
-    
     _infoDeviceNumValLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceNumValLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text(_infoDeviceNumValLbl, "68-356");
@@ -229,7 +203,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoDeviceNumValLbl, LV_LABEL_PART_MAIN, &_infoDeviceNumValLblStyle);
 
     //Create a label for Lab Name
-    
     _infoLabNameTxtLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoLabNameTxtLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_infoLabNameTxtLbl, "Lab NAME:");
@@ -241,7 +214,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoLabNameTxtLbl, LV_LABEL_PART_MAIN, &_infoLabNameTxtLblStyle);
 
     //Create a label for lab number
-    
     _infoLabNameValLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoLabNameValLbl, _infoLabNameTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 150, 0);
     lv_label_set_text(_infoLabNameValLbl, "1356");
@@ -253,17 +225,10 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoLabNameValLbl, LV_LABEL_PART_MAIN, &_infoLabNameValLblStyle);
 
     //Put QR image here
-    
-    // _infoQRcodeImg = lv_img_create(_infoQRCont, NULL);
-    // lv_img_set_src(_infoQRcodeImg, &QRcode_logo);
-    // lv_obj_align(_infoQRcodeImg, _infoQRCont, LV_ALIGN_CENTER, 0 , 10);
-    // lv_obj_set_click(_infoQRcodeImg, true);
-    
 	_infoQRcodeImg = lv_qrcode_create(_infoQRCont, 25, 70, 250, LV_COLOR_BLACK, LV_COLOR_WHITE);
 	lv_qrcode_update(_infoQRcodeImg, "hello", strlen("hello"));
 
     //Create label for "DEVICE ID" Text
-    
     _infoDeviceIDTxtLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 10);
     lv_label_set_text(_infoDeviceIDTxtLbl, "DEVICE ID:");
@@ -275,7 +240,6 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoDeviceIDTxtLbl, LV_LABEL_PART_MAIN, &_infoDeviceIDTxtLblStyle);
 
     //Create a label for device ID number 
-    
     _infoDeviceIDValLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceIDValLbl, _infoDeviceIDTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
     lv_label_set_text(_infoDeviceIDValLbl, "68-356");
@@ -287,6 +251,7 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoDeviceIDValLbl, LV_LABEL_PART_MAIN, &_infoDeviceIDValLblStyle);
 
     crnt_screen = scrInfo; 
+    screenid = SCR_INFO;
 }
 
 
@@ -299,11 +264,6 @@ void infoTimeLabel_refr_func(lv_task_t inforefresherTask)
     
 }
 
-//infoTimeLabel_refr_func
-// void infoTimeLabel_refr_func(void* p)
-// {
-//     lv_label_set_text(infoTimeLabel, guiTime);
-// }
 
 /**********************
  *   STATIC FUNCTIONS
@@ -311,10 +271,9 @@ void infoTimeLabel_refr_func(lv_task_t inforefresherTask)
 
 static void  _infoBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         lv_task_del(inforefresherTask);
-        //printf("Back to Dashbord from presetscrn\n");
         pxDashboardScreen();
     }
 }

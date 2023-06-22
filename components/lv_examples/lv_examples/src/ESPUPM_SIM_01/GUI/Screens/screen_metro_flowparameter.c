@@ -132,7 +132,7 @@ lv_obj_t * _fasEraseBtnLabel;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void callFlowParameterScreen(void)
+void callMetroFlowParameterScreen(void)
 {
     
     
@@ -892,7 +892,7 @@ void callFlowParameterScreen(void)
 //_xBackArrow_event_handler
 static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         CallMetroMenuScreen();
     }
@@ -901,7 +901,7 @@ static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void _fpsEraseBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         callMetroFlowSettingScreen();
     }

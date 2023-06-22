@@ -95,8 +95,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_style_local_radius(mtsParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
-    
     _mtsContStatusBar = lv_cont_create(mtsParentCont, NULL);
     lv_obj_set_size(_mtsContStatusBar, 320, 35);
     lv_obj_align(_mtsContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -104,7 +102,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_style_local_border_opa(_mtsContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __mtsTimeLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsTimeLabel, _mtsContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__mtsTimeLabel, guiTime);
@@ -116,7 +113,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(__mtsTimeLabel, LV_LABEL_PART_MAIN, &_mhsTimeLabelStyle);
 
     //Create Label for Battery icon
-    
     __mtsBatteryLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsBatteryLabel, _mtsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__mtsBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -139,7 +135,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(__mtsWifiLabel, LV_LABEL_PART_MAIN, &__mtsWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     __mtsSignalLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsSignalLabel, __mtsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mtsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -151,8 +146,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(__mtsSignalLabel, LV_LABEL_PART_MAIN, &__mtsSignalLabelStyle);
 
     //Crate a container to contain FLOW Header
-
-    
     _mtsTempHeadingCont = lv_cont_create(mtsParentCont, NULL);
     lv_obj_set_size(_mtsTempHeadingCont, 300, 70);
     lv_obj_align(_mtsTempHeadingCont, _mtsContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -160,7 +153,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_style_local_border_width(_mtsTempHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Back arrow img
-    
     __mtsBackArrowLabel = lv_img_create(mtsParentCont, NULL);
     lv_img_set_src(__mtsBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__mtsBackArrowLabel, _mtsTempHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -170,7 +162,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_event_cb(__mtsBackArrowLabel, __mtsBackArrow_event_handler);
 
     //Create Label for FLOW "Heading"
-    
     __mtsTempHeadingLbl = lv_label_create(_mtsTempHeadingCont, NULL);
     lv_obj_align(__mtsTempHeadingLbl, _mtsTempHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
     lv_label_set_align(__mtsTempHeadingLbl, LV_LABEL_ALIGN_CENTER);   
@@ -366,7 +357,6 @@ void callMetroTempSettingScreen(void)
 	lv_style_set_bg_opa(&style_switch_knob, LV_STATE_DEFAULT, 255);
 
     //Create On / OFF control switch 
-
     lv_obj_t *_mtsOnOffSwitch = lv_switch_create(_mtsAlarmStPtCont, NULL);
     lv_obj_align(_mtsOnOffSwitch, _mtsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 155, -15);
     lv_obj_add_style(_mtsOnOffSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -515,7 +505,7 @@ void callMetroTempSettingScreen(void)
 
 static void  __mtsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         callMetroAdjust();
     }
@@ -523,7 +513,7 @@ static void  __mtsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  __mtsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         CallMetroMenuScreen();
     }

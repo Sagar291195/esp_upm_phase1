@@ -55,7 +55,6 @@ static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
  **********************/
 float flowPoints[10];
 int _fasDutyCycle = 30000;
-bool metroFlowCalStarted ;
 
 
 
@@ -129,7 +128,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_set_style_local_radius(fasParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
     _fasContStatusBar = lv_cont_create(fasParentCont, NULL);
     lv_obj_set_size(_fasContStatusBar, 320, 35);
     lv_obj_align(_fasContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -137,7 +135,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_set_style_local_border_opa(_fasContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __fasTimeLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasTimeLabel, _fasContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__fasTimeLabel, guiTime);
@@ -152,7 +149,6 @@ void xCallFlowCalibrationScreen(void)
     _fasTimeRefTask = lv_task_create(_fasTimeRefTask_Call, 100, LV_TASK_PRIO_LOW, NULL);
 
     //Create Label for Battery icon
-    
     __fasBatteryLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasBatteryLabel, _fasContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__fasBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -164,7 +160,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(__fasBatteryLabel, LV_LABEL_PART_MAIN, &_fasBatteryLabelStyle);
 
     //Create Label for Wifi icon
-    
     __fasWifiLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasWifiLabel, __fasBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fasWifiLabel, LV_SYMBOL_WIFI);
@@ -176,7 +171,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(__fasWifiLabel, LV_LABEL_PART_MAIN, &__fasWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     __fasSignalLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasSignalLabel,  __fasWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__fasSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -190,7 +184,6 @@ void xCallFlowCalibrationScreen(void)
     //============================================================================================
 
     //Crate a container to contain FLOW Header
-
     _fasFlowHeadingCont = lv_cont_create(fasParentCont, NULL);
     lv_obj_set_size(_fasFlowHeadingCont, 300, 70);
     lv_obj_align(_fasFlowHeadingCont, _fasContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -198,7 +191,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_set_style_local_border_width(_fasFlowHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     //Black arrow Container
-
     lv_obj_t *_fasBlackArrowCont;
     _fasBlackArrowCont =  lv_cont_create(_fasFlowHeadingCont, NULL);
     lv_obj_set_size(_fasBlackArrowCont, 60, 60);
@@ -209,7 +201,6 @@ void xCallFlowCalibrationScreen(void)
 
 
     // Create Back arrow img
-
     __fasBackArrowLabel = lv_img_create(_fasBlackArrowCont, NULL);
     lv_img_set_src(__fasBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__fasBackArrowLabel, _fasFlowHeadingCont, LV_ALIGN_IN_LEFT_MID, 0 , 0);
@@ -219,7 +210,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_set_event_cb(__fasBackArrowLabel, __fasBackArrow_event_handler);
 
     //Create Label for FLOW "Heading"
-    
     __fasFlowHeadingLbl = lv_label_create(_fasFlowHeadingCont, NULL);
     lv_obj_align(__fasFlowHeadingLbl, _fasFlowHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -10, -35);
     lv_label_set_text(__fasFlowHeadingLbl, "Flow");
@@ -231,14 +221,12 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(__fasFlowHeadingLbl, LV_LABEL_PART_MAIN, &__fasFlowHeadingLblStyle);
 
     //Create FAN Logo
-    
     _fasFlowLogo = lv_img_create(fasParentCont, NULL);
     lv_img_set_src(_fasFlowLogo, &fan_icon);
     lv_obj_align(_fasFlowLogo, fasParentCont, LV_ALIGN_IN_TOP_RIGHT, -25 , 55);
     lv_img_set_auto_size(_fasFlowLogo, true);
 
     // Create label for "Factory Value" Text 
-    
     _fasFactoryValTxt = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasFactoryValTxt, _fasFlowHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 5 ,20);
     lv_label_set_text(_fasFactoryValTxt, "FACTORY VALUE:");
@@ -250,7 +238,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(_fasFactoryValTxt, LV_LABEL_PART_MAIN, &_fasFactoryValTxtStyle);
 
     // Create label for "Factory Value" Value
-    
     _fasFactoryValVar = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasFactoryValVar, _fasFactoryValTxt, LV_ALIGN_OUT_RIGHT_MID, 15 ,0);
     lv_label_set_text(_fasFactoryValVar, "7,56");
@@ -262,7 +249,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(_fasFactoryValVar, LV_LABEL_PART_MAIN, &_fasFactoryValVarStyle);
 
     // Create label for "Factory Value" Value
-    
     _fasReferenceValTxt = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasReferenceValTxt, _fasFactoryValTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0 ,20);
     lv_label_set_text(_fasReferenceValTxt, "REFERENCE VALUE:");
@@ -274,7 +260,6 @@ void xCallFlowCalibrationScreen(void)
     lv_obj_add_style(_fasReferenceValTxt, LV_LABEL_PART_MAIN, &_fasReferenceValTxtStyle);
 
     //Create reference Value Number Containers
-    
     _fasRefValCont = lv_cont_create(fasParentCont, NULL);
     lv_obj_align(_fasRefValCont, _fasReferenceValTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
     lv_obj_set_size(_fasRefValCont, 150, 50);
@@ -459,9 +444,6 @@ void xCallFlowCalibrationScreen(void)
 
     //=============
     //=============
-
-    metroFlowCalStarted = true;
-
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
 }
@@ -469,7 +451,6 @@ void xCallFlowCalibrationScreen(void)
 
 void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask) 
 {
-
     if(screenid == SCR_FLOW_CALIBRATION)
     {
         lv_label_set_text(__fasTimeLabel, guiTime);
@@ -494,9 +475,8 @@ void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask)
 
 static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        set_pointcount(1);
         lv_task_del(_fasTimeRefTask);
         CallMetroMenuScreen();
     }
@@ -504,7 +484,7 @@ static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  __fasPlusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         if(_fasDutyCycle < 65536){
             _fasDutyCycle = _fasDutyCycle + 500;
@@ -517,7 +497,7 @@ static void  __fasPlusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         if(_fasDutyCycle > 30000){
             _fasDutyCycle = _fasDutyCycle - 500;
@@ -534,10 +514,16 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
     {
         ESP_LOGI(TAG, "Valid button released");
         uint8_t pointcount = get_pointcount();
-        pointcount++;
-        set_pointcount(pointcount);
         lv_task_del(_fasTimeRefTask);
-        callMetroFlowSettingScreen();
+        if(pointcount < 3){
+            pointcount++;
+            set_pointcount(pointcount);
+            callMetroFlowAdjustScreen();
+        }else{
+            pointcount = 1;
+            set_pointcount(pointcount);
+            callMetroFlowParameterScreen();
+        }
     }
 }
 

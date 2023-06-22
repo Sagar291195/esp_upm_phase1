@@ -12,7 +12,6 @@
 #include "../../../../../../lvgl/lvgl.h"
 #include "../Screens/screen_includes.h"
 
-//C:/esp/esp-idf/myPrograms/lvgl_esp_codes/lv_port_esp32_old/components/lvgl/lvgl.h
 /*********************
  *      DEFINES
  *********************/

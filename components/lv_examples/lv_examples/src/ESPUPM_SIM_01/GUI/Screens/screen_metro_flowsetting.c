@@ -476,18 +476,17 @@ void callMetroFlowSettingScreen(void)
 
 static void  __mfsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         ESP_LOGI(TAG, "Valid and Adjust button pressed");
-        xCallFlowAdjustScreen();
+        callMetroFlowAdjustScreen();
     }
 }
 
 static void  __mfsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        set_pointcount(1);
         CallMetroMenuScreen();
     }
 }

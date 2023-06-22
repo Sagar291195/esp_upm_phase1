@@ -32,8 +32,7 @@
  *  STATIC VARIABLES
  **********************/
 lv_obj_t *crnt_screen;
-lv_obj_t * scr1=NULL;
-lv_obj_t * testscr1=NULL;
+lv_obj_t *passwordscreen=NULL;
 
 
 
@@ -93,10 +92,6 @@ char str2[] = LV_SYMBOL_BACKSPACE ;
 
 
 static void event_handler(lv_obj_t * obj, lv_event_t event);
-//static void DC_PIn_Check(void);
-
-
-
 
 
 /**********************
@@ -112,14 +107,14 @@ void vCallCodeScreen(void)
 
 void vPassword_scr1(void)
 {
-    scr1 =  lv_obj_create(NULL, NULL);
-    lv_scr_load(scr1);
+    passwordscreen =  lv_obj_create(NULL, NULL);
+    lv_scr_load(passwordscreen);
     if(crnt_screen != NULL){
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
 
-    container = lv_cont_create(scr1, NULL);
+    container = lv_cont_create(passwordscreen, NULL);
     lv_obj_set_size(container, 320, 480);
     lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0,0);
 
@@ -198,36 +193,19 @@ void vPassword_scr1(void)
     lv_style_set_text_color(&style_label3, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_style_set_text_font(&style_label3, LV_STATE_DEFAULT  ,&lv_font_montserrat_28);
     lv_obj_add_style(label3, LV_LABEL_PART_MAIN, &style_label3);
-    crnt_screen = scr1;
+
+    crnt_screen = passwordscreen;
+    screenid = SCR_PASSWORD;
 }
 
-// void vChangeScrTest(void)
-// {
 
-//     //lv_obj_invalidate(scr1);
-//     //lv_obj_set_hidden(scr1, true);
-//     //lv_obj_del(scr1);
-//     testscr1 =  lv_obj_create(NULL, NULL);
-//     //lv_scr_load(scr1);
-//     //lv_obj_del(container);
-//     lv_scr_load(testscr1);
-//     cstcontainer = lv_cont_create(testscr1, NULL);
-//     lv_obj_set_size(cstcontainer, 320, 480);
-//     lv_obj_align(cstcontainer, NULL, LV_ALIGN_CENTER, 0,0);
-//     //lv_obj_invalidate(scr1);
-//     //lv_obj_del(scr1);
-// }
 
 void vClearBTN(void)
 {
-    //strcpy(pVal, "");
     strcpy(pVal, "");
     lv_label_set_text(label1, "____" );
     lv_label_set_text(label3, LV_SYMBOL_EDIT );
-    //lv_label_set_text(label, "Wrong code");
     lv_label_set_text(label, "Enter code");
-    //lv_obj_align(label, btnm, LV_ALIGN_OUT_TOP_MID, 0, -40);
-    //printf("pressed : %p", pVal);
 }
 
 
@@ -256,9 +234,7 @@ void vPasswordLine(void)
 
 void task_cb(lv_task_t *t)
 {
-
     vClearBTN();
-
 }
 
 void vCallTask(void)
@@ -266,15 +242,11 @@ void vCallTask(void)
 	//The code to display the startup information is written here
 	task = lv_task_create(task_cb, 10000, LV_TASK_PRIO_MID, NULL);
     lv_task_once(task);
-
 }
 
 void task_cb_Code_Correct(lv_task_t *t)
 {
-
     pxDashboardScreen();
-    //lv_scr_load(xParentcontainer);
-
 }
 
 void vCallTask_Code_Correct(void)
@@ -282,7 +254,6 @@ void vCallTask_Code_Correct(void)
 	//The code to display the startup information is written here
 	task = lv_task_create(task_cb_Code_Correct, 10000, LV_TASK_PRIO_MID, NULL);
     lv_task_once(task);
-
 }
 
 
@@ -293,7 +264,7 @@ void vCallTask_Code_Correct(void)
 
 static void event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_RELEASED) {
+    if(event == LV_EVENT_RELEASED){
         pTxt = (char *)lv_btnmatrix_get_active_btn_text(obj);
         pVal = strcat(aPass, pTxt);
         number = atoi(pVal); // convert char pointer to number
@@ -314,45 +285,31 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
             lv_label_set_text(label1, "" );
         }
 
-        if(number == iUserPass && passDetected == true )
-            {
-                lv_label_set_text(label3, LV_SYMBOL_OK);
-                lv_label_set_text(label1, "****" );
-                lv_label_set_text(label, "Right Code");
-                //printf("Password Detected\n");
-
-                global_DashbordBTNflag = 1;
-                //pxDashboardScreen();
-                vCallTask_Code_Correct();
+        if(number == iUserPass && passDetected == true ){
+            lv_label_set_text(label3, LV_SYMBOL_OK);
+            lv_label_set_text(label1, "****" );
+            lv_label_set_text(label, "Right Code");
+            global_DashbordBTNflag = 1;
+            vCallTask_Code_Correct();
+        }
+        else
+        {
+            if(number > 1000 && number< 10000 ){
+                lv_label_set_text(label, "Wrong code");
+                lv_obj_align(label, btnm, LV_ALIGN_OUT_TOP_MID, 0, -50);
+                lv_label_set_text(label3, LV_SYMBOL_WARNING );
+                strcpy(pVal, "");
+                vCallTask();
             }
-            else
-            {
-                if(number > 1000 && number< 10000 )
-                {
-                    //printf("wrong Password\n");
-                    //lv_label_set_recolor(label, true);
-                    lv_label_set_text(label, "Wrong code");
-                    lv_obj_align(label, btnm, LV_ALIGN_OUT_TOP_MID, 0, -50);
-                    lv_label_set_text(label3, LV_SYMBOL_WARNING );
-                    //delay(1);
-                    //vClearBTN();
-                    strcpy(pVal, "");
-                    vCallTask();
-                }
-            }
-//#if 0
+        }
 
         bool i = strcmp(pTxt, str1); //OK Button Flag check
-
         if(  i == 0)   //Check if Ok button is pressed
         {
-            if(number == iUserPass )
-            {
+            if(number == iUserPass ){
                 lv_label_set_text(label3, LV_SYMBOL_OK);
                 strcpy(pVal, "");
-            }
-            else
-            {
+            }else{
                 lv_label_set_text(label, "Wrong code");
                 lv_label_set_text(label3, LV_SYMBOL_WARNING );
                 strcpy(pVal, "");
@@ -360,34 +317,11 @@ static void event_handler(lv_obj_t * obj, lv_event_t event)
         }
 
         bool j = strcmp(pTxt, str2); //Clear Button Flag check
-        if (j == 0)
-        {
+        if (j == 0){
             vClearBTN();
         }
-
-        //printf("btn_matrix_cb _complete\n");
-
-//#endif
      }
 }
-
-
-
-
-// static void DC_PIn_Check(void)
-// {
-//     // Set GPIO as OUTPUT
-//     gpio_pad_select_gpio(14);
-//     gpio_set_direction(14, GPIO_MODE_OUTPUT);     // WakeMode
-//     gpio_set_level(14, 0);
-//     printf("Hi DC Pin Check LOW \n");
-
-//     vTaskDelay(1/10);
-
-//     gpio_set_level(14, 1);
-//     printf("Hi DC Pin Check HIGH \n");
-
-// }
 
 /**********************
  *    ERROR ASSERT

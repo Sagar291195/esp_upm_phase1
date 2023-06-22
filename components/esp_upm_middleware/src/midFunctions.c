@@ -60,7 +60,7 @@ extern void readTotalLiters(void)
     TotalLiterFloat = (total_liters1 - (float)TotalliterInt)*100;
 }
 
-void Init_Periferals(void)
+void Init_Buzzer(void)
 {
     gpio_pad_select_gpio(BUZZER);
     gpio_set_direction(BUZZER, GPIO_MODE_OUTPUT);

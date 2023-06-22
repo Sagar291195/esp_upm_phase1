@@ -65,31 +65,32 @@ static const lv_btnmatrix_ctrl_t fcs_tgl_kb_ctrl[] = {
 
 char * pass ;
 char * Re_pass;
-
 int iPass;
 int iRe_pass;
-
 bool passNo = false;
 int iUserPass;
 
 
-lv_obj_t * pswdmsg;
+lv_obj_t *pswdmsg;
 lv_obj_t *mpsEnterCalValTA; 
-
+lv_obj_t *mpsMetroPswd;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
 void xMetroPswdScrn(void)
 {
-    lv_obj_t * mpsMetroPswd;
+    
     mpsMetroPswd = lv_cont_create(NULL, NULL);
     lv_scr_load(mpsMetroPswd);
-    //lv_obj_del(crnt_screen);
+     if(crnt_screen != NULL)
+    {
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
 
 
-    lv_obj_t * mpsPatrentCont
-    ;
+    lv_obj_t * mpsPatrentCont;
     mpsPatrentCont = lv_cont_create(mpsMetroPswd, NULL);
     lv_obj_set_size(mpsPatrentCont, 320, 480);
     lv_obj_set_click(mpsPatrentCont, false);
@@ -106,7 +107,6 @@ void xMetroPswdScrn(void)
     lv_obj_set_style_local_text_color( pswdmsg, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE );
 
     // Create Text Area
-    
     mpsEnterCalValTA = lv_textarea_create(mpsPatrentCont, NULL); 
     lv_obj_set_size( mpsEnterCalValTA, 210, 45); 
     lv_obj_align(  mpsEnterCalValTA,  pswdmsg, LV_ALIGN_OUT_BOTTOM_LEFT, 18, 5); 
@@ -151,6 +151,9 @@ void xMetroPswdScrn(void)
     lv_obj_set_style_local_border_opa(mpsKeyBoard,   LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, 200                            );
     lv_obj_set_style_local_pad_all(mpsKeyBoard,      LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 170                            );
     //lv_obj_set_event_cb(mpsKeyBoard, passwordcheck_event_handler);
+    
+    crnt_screen = mpsMetroPswd;
+    screenid = SCR_METROLOGY_PASSWORD;
 
 }
 
@@ -162,62 +165,39 @@ static void  passwordcheck_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_VALUE_CHANGED) 
     {
-        if(!passNo)
-        {
+        if(!passNo){
             pass    = lv_textarea_get_text(mpsEnterCalValTA);
-
             int passLength = strlen(pass);
-
             printf("%s \n" , pass);
-
-            if(passLength == 4)
-            {
+            if(passLength == 4){
                 iPass = atoi(pass);
                 lv_textarea_set_text(mpsEnterCalValTA, "");
                 lv_label_set_text(pswdmsg,"         Re-Enter        \nMetrology Password");
                 printf("Password entered \n");
                 passNo = true;
             }
-
         }
 
-        if( passNo)
-        {
+        if( passNo){
             Re_pass = lv_textarea_get_text(mpsEnterCalValTA);
-
             int RepassLength = strlen(Re_pass);
-
             printf("%s \n" , Re_pass);
-
-            if(RepassLength == 4)
-            {
+            if(RepassLength == 4){
                 iRe_pass = atoi(Re_pass);
                 lv_textarea_set_text(mpsEnterCalValTA, "");
                 lv_label_set_text(pswdmsg,"       Enter-NEW        \nMetrology Password");
                 printf("Password Re entered \n");
                 passNo = false;
-                //pass = "";
 
-                if(iPass ==  iRe_pass)
-                {
+                if(iPass ==  iRe_pass) {
                     printf("Password matched \n");
-
                     iUserPass = iPass;
-
                     metroCodeScreen();
-
                 }else{
-
                     printf("Password not matched \n");
-
                 }
-                
             }
-
         }
-        
-        
-
     }
 }
 

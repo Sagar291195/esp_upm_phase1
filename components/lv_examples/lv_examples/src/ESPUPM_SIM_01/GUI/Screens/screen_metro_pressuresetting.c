@@ -80,8 +80,6 @@ int metropressureUnit;    // for LPH flowUnit == 0, For LPM == 1
 void callMetroPressureSettingScreen(void)
 {
     //Create Base container
-    
-    
     scrPressureSetting = lv_obj_create(NULL, NULL);
     lv_scr_load(scrPressureSetting);
     if(crnt_screen != NULL){
@@ -98,8 +96,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_style_local_radius(mpsParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
-    
     _mpsContStatusBar = lv_cont_create(mpsParentCont, NULL);
     lv_obj_set_size(_mpsContStatusBar, 320, 35);
     lv_obj_align(_mpsContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -107,7 +103,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_style_local_border_opa(_mpsContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __mpsTimeLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsTimeLabel, _mpsContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__mpsTimeLabel, guiTime);
@@ -119,7 +114,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(__mpsTimeLabel, LV_LABEL_PART_MAIN, &_mhsTimeLabelStyle);
 
     //Create Label for Battery icon
-    
     __mpsBatteryLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsBatteryLabel, _mpsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__mpsBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -142,7 +136,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(__mpsWifiLabel, LV_LABEL_PART_MAIN, &__mpsWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     __mpsSignalLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsSignalLabel, __mpsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mpsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -154,8 +147,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(__mpsSignalLabel, LV_LABEL_PART_MAIN, &__mpsSignalLabelStyle);
 
     //Crate a container to contain FLOW Header
-
-    
     _mpsPressureHeadingCont = lv_cont_create(mpsParentCont, NULL);
     lv_obj_set_size(_mpsPressureHeadingCont, 300, 70);
     lv_obj_align(_mpsPressureHeadingCont, _mpsContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -163,7 +154,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_style_local_border_width(_mpsPressureHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Back arrow img
-    
     __mpsBackArrowLabel = lv_img_create(mpsParentCont, NULL);
     lv_img_set_src(__mpsBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__mpsBackArrowLabel, _mpsPressureHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -173,7 +163,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_event_cb(__mpsBackArrowLabel, __mpsBackArrow_event_handler);
 
     //Create Label for FLOW "Heading"
-    
     __mpsPressureHeadingLbl = lv_label_create(_mpsPressureHeadingCont, NULL);
     lv_obj_align(__mpsPressureHeadingLbl, _mpsPressureHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
     lv_label_set_align(__mpsPressureHeadingLbl, LV_LABEL_ALIGN_CENTER);
@@ -193,7 +182,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(__mpsPressureHeadingLbl, LV_LABEL_PART_MAIN, &__mpsPressureHeadingLblStyle);
 
     // //Create FAN Logo
-    
     // _mpsPressureLogo = lv_img_create(mpsParentCont, NULL);
     // lv_img_set_src(_mpsPressureLogo, &fan_icon);
     // lv_obj_align(_mpsPressureLogo, mpsParentCont, LV_ALIGN_IN_TOP_RIGHT, -25 , 55);
@@ -369,7 +357,6 @@ void callMetroPressureSettingScreen(void)
 	lv_style_set_bg_opa(&style_switch_knob, LV_STATE_DEFAULT, 255);
 
     //Create On / OFF control switch 
-
     lv_obj_t *_mpsOnOffSwitch = lv_switch_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsOnOffSwitch, _mpsOnOffTxt, LV_ALIGN_OUT_RIGHT_TOP, 155, -15);
     lv_obj_add_style(_mpsOnOffSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -383,7 +370,6 @@ void callMetroPressureSettingScreen(void)
     //==============================
     //==============================
 
-
     lv_obj_t * _mpsLowerLimitTxt;
     _mpsLowerLimitTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsLowerLimitTxt, _mpsOnOffTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
@@ -392,7 +378,6 @@ void callMetroPressureSettingScreen(void)
 
     //============================
     //============================
-
     //Create a Curve selection drop down list
     lv_obj_t * _mpsLowerLimDropDown = lv_dropdown_create(_mpsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mpsLowerLimDropDown, "-300\n"
@@ -406,7 +391,6 @@ void callMetroPressureSettingScreen(void)
 
     //============================
     //============================
-
     lv_obj_t * _mpsHigherLimitTxt;
     _mpsHigherLimitTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsHigherLimitTxt, _mpsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
@@ -415,7 +399,6 @@ void callMetroPressureSettingScreen(void)
 
     //============================
     //============================
-
     //Create a Curve selection drop down list
     lv_obj_t * _mpsHigherLimDropDown = lv_dropdown_create(_mpsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mpsHigherLimDropDown, "700\n"
@@ -429,7 +412,6 @@ void callMetroPressureSettingScreen(void)
 
     //============================
     //============================
-
     lv_obj_t * _mpsActionTxt;
     _mpsActionTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsActionTxt, _mpsHigherLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
@@ -446,7 +428,6 @@ void callMetroPressureSettingScreen(void)
     //=========================
 
     //Create On / OFF control switch 
-
     lv_obj_t *_mpsActionSwitch = lv_switch_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsActionSwitch, _mpsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
     lv_obj_add_style(_mpsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -459,8 +440,6 @@ void callMetroPressureSettingScreen(void)
     
     //==============================
     //==============================
-    
-
 
     //===================================================================
     //===================================================================
@@ -519,14 +498,14 @@ void callMetroPressureSettingScreen(void)
 
 static void  __mpsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED){
+    if(event == LV_EVENT_RELEASED){
         callMetroAdjust();
     }
 }
 
 static void  __mpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) {
+    if(event == LV_EVENT_RELEASED) {
         CallMetroMenuScreen();
     }
 }

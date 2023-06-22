@@ -518,10 +518,7 @@ void vSetTotalSequenceCountFromNvs()
 
 void vGetSequceManagementFromNVS()
 {
-    esp_log_level_set(TAG, ESP_LOG_DEBUG);
-
     vGetTotalSequenceCountFromNvs();
-
     vGetSequenceFromNvsToArray();
 }
 

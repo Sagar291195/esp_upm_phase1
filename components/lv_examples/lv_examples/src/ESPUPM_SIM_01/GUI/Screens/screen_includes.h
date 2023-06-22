@@ -30,8 +30,6 @@ extern "C" {
 
 #include "screen_code.h"
 #include "screen_main.h"
-#include "abhai_test1.h" 
-#include "screen_test.h"
 #include "screen_common.h"
 #include "screen_dashboard.h"
 #include "screen_parameter.h"
@@ -51,17 +49,12 @@ extern "C" {
 #include "screen_metro_flowparameter.h"
 #include "screen_info.h"
 #include "screen_service.h"
-#include "screen_test_esptft.h"
-#include "screen_names.h"
 #include "screen_metro_pswd.h"
-#include "screen_WTPrgTran.h"
 #include "screen_PIDtune.h"
 #include "screen_archive.h"
 
 #include "../Widgets/ResumeInfoWidget.h"
-//#include "../Widgets/InfoWidget.h"
 #include "../Widgets/sequence_widget.h"
-//#include "../../Language/language.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -80,6 +73,9 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 enum{
+    SCR_PASSWORD,
+    SCR_DASHBOARD,
+    SCR_METROLOGY_CODE,
     SCR_METROLOGY_MENU,
     SCR_EXTERNAL_TEMPERATURE_SETTINGS,
     SCR_EXTERNAL_TEMPERATURE_ADJUST,
@@ -97,6 +93,16 @@ enum{
     SCR_FLOW_ADJUST,
     SCR_FLOW_CALIBRATION,
     SCR_FLOW_PARAMETER,
+    SCR_ARCHIEVE,
+    SCR_INFO,
+    SCR_METROLOGY_PASSWORD,
+    SCR_PARAMETER,
+    SCR_PIDTUNE,
+    SCR_PRESET,
+    SCR_SERVICE,
+    SCR_SUMMARY_START,
+    SCR_SUMMARY_END,
+    SCR_SUMMARY_SAMPLE,
 }metrology_screen_t;
 
 

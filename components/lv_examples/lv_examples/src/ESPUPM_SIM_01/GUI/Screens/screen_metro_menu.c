@@ -343,7 +343,7 @@ void CallMetroMenuScreen(void)
     screenid = SCR_METROLOGY_MENU;
     //===================================
     //===================================
-
+    set_pointcount(1);
 
 }
 
@@ -352,7 +352,7 @@ void CallMetroMenuScreen(void)
  **********************/
 static void  __smmBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
         pxDashboardScreen();
@@ -361,7 +361,7 @@ static void  __smmBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  new_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         callMetroTempSettingScreen();
     }
@@ -369,7 +369,7 @@ static void  new_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  flow_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         xMetroPswdScrn();
     }
@@ -377,19 +377,19 @@ static void  flow_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  flow_adjust_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
-        //xCallFlowAdjustScreen();
+        //callMetroFlowAdjustScreen();
     }
 }
 
 static void  __smmTriangeBtn_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
-        //callFlowParameterScreen();
+        //callMetroFlowParameterScreen();
     }
 }
 /**********************
