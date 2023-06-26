@@ -42,15 +42,8 @@ extern int durMin;
 
 extern int global_DashbordBTNflag;
 extern int global_InfoWidgetStateflag;
-
-extern int global_CurveDegree;
-
 extern bool startTimeLabelAdgFlg;
 
-extern int metroflowUnit;
-
-extern float flowPoints[10];
-extern float flowPointXasis[10];
 
 extern char guiTime[25];
 extern struct tm navier_time;

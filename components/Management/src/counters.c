@@ -234,7 +234,6 @@ uint8_t uGetTotalHoursFloatPart()
 
 void vGetTheCounterValuesFromNvsFlash()
 {
-
   vGetTotalLitersFromNvs();
   vGetTotalHoursFromNvs();
 }

@@ -30,8 +30,6 @@ extern "C" {
 
 #include "screen_code.h"
 #include "screen_main.h"
-#include "abhai_test1.h" 
-#include "screen_test.h"
 #include "screen_common.h"
 #include "screen_dashboard.h"
 #include "screen_parameter.h"
@@ -41,24 +39,22 @@ extern "C" {
 #include "screen_summary_sample.h"
 #include "screen_metro_code.h"
 #include "screen_metro_menu.h"
-#include "screen_metro_tempadj.h"
+#include "screen_metro_adjust.h"
 #include "screen_metro_flowadj.h"
 #include "screen_metro_flowcal.h"
 #include "screen_metro_flowsetting.h"
+#include "screen_metro_tempsetting.h"
+#include "screen_metro_pressuresetting.h"
+#include "screen_metro_humiditysetting.h"
 #include "screen_metro_flowparameter.h"
 #include "screen_info.h"
 #include "screen_service.h"
-#include "screen_test_esptft.h"
-#include "screen_names.h"
 #include "screen_metro_pswd.h"
-#include "screen_WTPrgTran.h"
 #include "screen_PIDtune.h"
 #include "screen_archive.h"
 
 #include "../Widgets/ResumeInfoWidget.h"
-//#include "../Widgets/InfoWidget.h"
 #include "../Widgets/sequence_widget.h"
-//#include "../../Language/language.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -72,11 +68,46 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-
+#define NUM_OF_FLOW_CALIBRATION_POINT   3
 /**********************
  *      TYPEDEFS
  **********************/
+enum{
+    SCR_PASSWORD,
+    SCR_DASHBOARD,
+    SCR_METROLOGY_CODE,
+    SCR_METROLOGY_MENU,
+    SCR_EXTERNAL_TEMPERATURE_SETTINGS,
+    SCR_EXTERNAL_TEMPERATURE_ADJUST,
+    SCR_EXTERNAL_PRESSURE_SETTINGS,
+    SCR_EXTERNAL_PRESSURE_ADJUST,
+    SCR_EXTERNAL_HUMIDITY_SETTINGS,
+    SCR_EXTERNAL_HUMIDITY_ADJUST,
+    SCR_INTERNAL_TEMPERATURE_SETTINGS,
+    SCR_INTERNAL_TEMPERATURE_ADJUST,
+    SCR_INTERNAL_PRESSURE_SETTINGS,
+    SCR_INTERNAL_PRESSURE_ADJUST,
+    SCR_INTERNAL_HUMIDITY_SETTINGS,
+    SCR_INTERNAL_HUMIDITY_ADJUST,
+    SCR_FLOW_SETTINGS,
+    SCR_FLOW_ADJUST,
+    SCR_FLOW_CALIBRATION,
+    SCR_FLOW_PARAMETER,
+    SCR_ARCHIEVE,
+    SCR_INFO,
+    SCR_METROLOGY_PASSWORD,
+    SCR_PARAMETER,
+    SCR_PIDTUNE,
+    SCR_PRESET,
+    SCR_SERVICE,
+    SCR_SUMMARY_START,
+    SCR_SUMMARY_END,
+    SCR_SUMMARY_SAMPLE,
+}metrology_screen_t;
 
+
+extern uint8_t screenid ;
+extern int global_CurveDegree;
 /**********************
  * GLOBAL PROTOTYPES
  **********************/

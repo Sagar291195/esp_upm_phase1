@@ -1,5 +1,13 @@
-#ifndef CODE_SCREEN_H
-#define CODE_SCREEN_H
+/**
+ *  @copyright "License Name" described in the LICENSE file.
+ *  @author    ABHAI TIWARI
+ *  @date      2021-03-16
+ */
+
+
+
+#ifndef SCREEN_METRO_ADJUST_H
+#define SCREEN_METRO_ADJUST_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,29 +25,16 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 
-
-
+/*******************************
+ * EXTERN  Variables
+ *******************************/
 
 
 
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
-void vChangeScrTest(void);
-void vClearBTN(void);
-void vTickMark(void);
-void vPasswordLine(void);
-void vPassword_scr1(void);
-void vCallCodeScreen(void);
-
-
-void vCallTask(void); 
-void task_cb(lv_task_t *t);
-
-void vCallTask_Code_Correct(void) ;
-void task_cb_Code_Correct(lv_task_t *t); 
-
-
+void callMetroAdjust(void);
 
 
 
@@ -51,4 +46,5 @@ void task_cb_Code_Correct(lv_task_t *t);
 } /* extern "C" */
 #endif
 
-#endif /*CODE_SCREEN_H*/
+#endif /*SCREEN_METRO_ADJUST_H*/
+

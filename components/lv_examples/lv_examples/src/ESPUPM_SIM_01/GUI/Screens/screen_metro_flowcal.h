@@ -45,7 +45,7 @@ extern "C" {
  **********************/
 
 void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask) ;
-void xCallFlowAdjustScreen(void);
+void CallMetroFlowCalibrationScreen(void);
 
 
 

@@ -931,7 +931,7 @@ void xScreenPidTune(void)
 
 
     crnt_screen = xPidMainParentCont;
-
+    screenid = SCR_PIDTUNE;
 }
 
 /**********************
@@ -1069,7 +1069,7 @@ static void SecRoller_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void pidSaveBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         printf("Set Kp_n Value is = %s\n", KpRollerBuf);
         printf("Set Ki_n Value is = %s\n", KiRollerBuf);
@@ -1113,7 +1113,7 @@ static void pidSaveBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void _pidBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         printf("PID Tune Screen Back Arrow Pressed\n");
         fflush(NULL);
@@ -1124,10 +1124,8 @@ static void _pidBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void timeSaveBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        
-
         if(!strcmp(day_Roller_Val, rollerNullVal)){ sprintf(day_Roller_Val, day_Roller_Default);}
         if(!strcmp(month_Roller_Val, rollerNullVal)){sprintf(month_Roller_Val,month_Roller_Default);}
         if(!strcmp(year_Roller_Val, rollerNullVal)){sprintf(year_Roller_Val,year_Roller_Default);}
@@ -1153,9 +1151,6 @@ static void timeSaveBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         min_Roller_int   = atoi(min_Roller_Val);
         sec_Roller_int   = atoi(sec_Roller_Val);
 
-        
-
-                
         navier_set_time = true;
         
         fflush(NULL);

@@ -43,7 +43,6 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-//void xMetroPswdScrn(void);
 void xMetroPswdScrn(void);
 
 /**********************

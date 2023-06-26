@@ -78,13 +78,15 @@ lv_obj_t * _smmVTC;
  **********************/
 void CallMetroMenuScreen(void)
 {
-    //Create Base container
-    
-    
-    scrMetroScreen = lv_cont_create(NULL,NULL);
+    scrMetroScreen = lv_obj_create(NULL, NULL);
     lv_scr_load(scrMetroScreen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
+
+    //Create Base container
     smmPatrentCont = lv_cont_create(scrMetroScreen, NULL);
-    lv_obj_del(crnt_screen);
     lv_obj_set_size(smmPatrentCont, 320, 480);
     lv_obj_align(smmPatrentCont, NULL, LV_ALIGN_CENTER, 0,0);
     lv_obj_set_style_local_bg_color( smmPatrentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD) ); //3989BD
@@ -93,7 +95,6 @@ void CallMetroMenuScreen(void)
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
 
-    
     _smmContStatusBar = lv_cont_create(smmPatrentCont, NULL);
     lv_obj_set_size(_smmContStatusBar, 320, 35);
     lv_obj_align(_smmContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -112,7 +113,6 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_color(&_smmTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmTimeLabel, LV_LABEL_PART_MAIN, &_smmTimeLabelStyle);
 
-    
     //Create Label for Battery icon
     __smmBatteryLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmBatteryLabel, _smmContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
@@ -125,7 +125,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(__smmBatteryLabel, LV_LABEL_PART_MAIN, &_smmBatteryLabelStyle);
 
     //Create Label for Wifi icon
-    
     __smmWifiLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmWifiLabel, __smmBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__smmWifiLabel, LV_SYMBOL_WIFI);
@@ -151,7 +150,6 @@ void CallMetroMenuScreen(void)
     //===============================================================================================================
 
     //Crate a container to contain Summary Start Header
-
     _smmMetroHeadingCont = lv_cont_create(smmPatrentCont, NULL);
     lv_obj_set_size(_smmMetroHeadingCont, 300, 70);
     lv_obj_align(_smmMetroHeadingCont, _smmContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -180,7 +178,6 @@ void CallMetroMenuScreen(void)
     lv_obj_set_event_cb(__smmBackArrowLabel, __smmBackArrow_event_handler);
 
     //Create Label for Sequences "Heading"
-    
     __smmMetroHeadingLbl = lv_label_create(_smmMetroHeadingCont, NULL);
     lv_obj_align(__smmMetroHeadingLbl, _smmMetroHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
     lv_label_set_text(__smmMetroHeadingLbl, "Metrology");
@@ -285,7 +282,7 @@ void CallMetroMenuScreen(void)
     
     _smmNewCalBtnLbl = lv_label_create(_smmNewCalBtn, NULL);
     lv_obj_align(_smmNewCalBtnLbl, _smmSensorParBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-    lv_label_set_text(_smmNewCalBtnLbl, "FLOW CALIBRATION");
+    lv_label_set_text(_smmNewCalBtnLbl, "CALIBRATION");
 
     static lv_style_t _smmNewCalBtnLbllStyle;
     lv_style_init(&_smmNewCalBtnLbllStyle);
@@ -329,7 +326,6 @@ void CallMetroMenuScreen(void)
     lv_obj_set_style_local_bg_color(_smmValidationTestCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); //_xColorBGParas
     lv_obj_set_style_local_border_width(_smmValidationTestCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
-    
     _smmVTC = sqCreateSequence(_smmValidationTestCont,0);
     lv_obj_align(_smmVTC, NULL, LV_ALIGN_CENTER, 0,0 );
     lv_obj_set_style_local_bg_color(_smmVTC, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_MAKE(0x38, 0x38, 0x38) ); //LV_COLOR_MAKE(0x38, 0x38, 0x38)
@@ -344,11 +340,9 @@ void CallMetroMenuScreen(void)
 
     
     crnt_screen = scrMetroScreen; //scrMetroScreen
-
+    screenid = SCR_METROLOGY_MENU;
     //===================================
     //===================================
-
-
 }
 
 /**********************
@@ -356,7 +350,7 @@ void CallMetroMenuScreen(void)
  **********************/
 static void  __smmBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
         pxDashboardScreen();
@@ -365,40 +359,35 @@ static void  __smmBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  new_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        //printf("Back to Dashbord from presetscrn\n");
-        //callFlowParameterScreen();
-        //xCallFlowCalibrationScreen();
-        callMetroFlowSettingScreen();
+        callMetroTempSettingScreen();
     }
 }
 
 static void  flow_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        printf("Go to password change screen\n");
-        //xCallFlowCalibrationScreen();
         xMetroPswdScrn();
     }
 }
 
 static void  flow_adjust_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
-        //xCallFlowAdjustScreen();
+        //callMetroFlowAdjustScreen();
     }
 }
 
 static void  __smmTriangeBtn_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
         //printf("Back to Dashbord from presetscrn\n");
-        //callFlowParameterScreen();
+        //callMetroFlowParameterScreen();
     }
 }
 /**********************

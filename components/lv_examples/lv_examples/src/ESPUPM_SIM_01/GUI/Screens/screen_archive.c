@@ -21,11 +21,11 @@
  *********************/
 
 #define SYMBOL_SIGNAL "\uf012"
+
 // Declare Fonts
 LV_FONT_DECLARE(signal_20)
 
 //Declare Images Here
-
 LV_IMG_DECLARE(left_arrow_icon)	
 LV_IMG_DECLARE(cross_icon)
 LV_IMG_DECLARE(archiv_icon)
@@ -69,9 +69,13 @@ lv_obj_t *	__xseSignalLabel_seArch;
 
 void xCallArchvScreen(void)
 {
-    scrSummaryEndArch = lv_cont_create(NULL, NULL);
+    scrSummaryEndArch = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEndArch);
-    lv_obj_del(crnt_screen);
+    
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xseParentContainer_seArch = lv_cont_create(scrSummaryEndArch, NULL);
     //lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_seArch, 320, 480);
@@ -102,8 +106,7 @@ void xCallArchvScreen(void)
 
     //__xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
-    //Create Label for Battery icon
-    
+    //Create Label for Battery icon    
     __xseBatteryLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseBatteryLabel_seArch, _xseContStatusBar_seArch, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__xseBatteryLabel_seArch, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -116,7 +119,6 @@ void xCallArchvScreen(void)
 
     
     //Create Label for Wifi icon
-    
     __xseWifiLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseWifiLabel_seArch, __xseBatteryLabel_seArch, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xseWifiLabel_seArch, LV_SYMBOL_WIFI);
@@ -127,9 +129,7 @@ void xCallArchvScreen(void)
     lv_style_set_text_color(&_xseWifiLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseWifiLabel_seArch, LV_LABEL_PART_MAIN, &_xseWifiLabelStyle_se);
 
-    
     //Create Label for Signal icon
-    
     __xseSignalLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseSignalLabel_seArch, __xseWifiLabel_seArch, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xseSignalLabel_seArch, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -150,7 +150,6 @@ void xCallArchvScreen(void)
     //lv_obj_set_event_cb(_xseBackArrowContainerArch, __xseBackArrow_event_handler);
 
     // Create Back arrow img
-    
     lv_obj_t *___xseBackArrowLabel_seArch;
     ___xseBackArrowLabel_seArch = lv_img_create(_xseBackArrowContainerArch, NULL);
     lv_img_set_src(___xseBackArrowLabel_seArch, &left_arrow_icon);
@@ -205,7 +204,6 @@ void xCallArchvScreen(void)
     lv_obj_set_style_local_text_color(xSampleNoLblArch, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     // Create Sliding page
-
     lv_obj_t * _xScrollPageArch;
     _xScrollPageArch = lv_page_create(xseParentContainer_seArch, NULL);
     lv_obj_set_size(_xScrollPageArch, 320, 330);
@@ -215,7 +213,6 @@ void xCallArchvScreen(void)
     lv_obj_set_style_local_border_width(_xScrollPageArch, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0 );
 
     // Create Big Back Container
-
     lv_obj_t * _xBigBlankContArch;
     _xBigBlankContArch = lv_cont_create(_xScrollPageArch, NULL);
     lv_obj_set_size(_xBigBlankContArch, 310, 350);
@@ -226,7 +223,6 @@ void xCallArchvScreen(void)
     lv_obj_set_style_local_border_width(_xBigBlankContArch, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Small Black Container
-
     lv_obj_t * _xSmallBlankContArch;
     _xSmallBlankContArch = lv_cont_create(_xScrollPageArch, NULL);
     lv_obj_set_size(_xSmallBlankContArch, 310, 100);
@@ -237,7 +233,7 @@ void xCallArchvScreen(void)
     lv_obj_set_style_local_border_width(_xSmallBlankContArch, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     crnt_screen = scrSummaryEndArch; 
-
+    screenid = SCR_ARCHIEVE;
 }
 
 

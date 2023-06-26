@@ -214,10 +214,12 @@ sequenceSummary_t xSequenceSummary;
 
 void sssSummarySampleScreen(void)
 {
-
-        scrSummarySample = lv_cont_create(NULL, NULL);
+        scrSummarySample = lv_obj_create(NULL, NULL);
         lv_scr_load(scrSummarySample);
-        lv_obj_del(crnt_screen);
+        if(crnt_screen != NULL){
+                lv_obj_del(crnt_screen);
+                crnt_screen = NULL;
+        }
         sssParentContainer = lv_cont_create(scrSummarySample, NULL);
         // lv_scr_load(sssParentContainer);
         lv_obj_set_size(sssParentContainer, 320, 480);
@@ -821,7 +823,6 @@ void sssSummarySampleScreen(void)
         lv_obj_set_style_local_border_width(___sssAmbTempCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
         // Create Status icon img
-
         ___sssStatusMark_AT = lv_img_create(___sssAmbTempCont, NULL);
         /**
          * @brief set the icon for the air flow, either ok or not ok
@@ -844,28 +845,24 @@ void sssSummarySampleScreen(void)
         lv_obj_add_style(___sssAmbTempTxtLbl, LV_LABEL_PART_MAIN, &_sssBlueHeadingTxtStyle);
 
         // Create label for Set Point Text
-
         _sssLIMITTxt_AT = lv_label_create(___sssAmbTempCont, NULL);
         lv_obj_align(_sssLIMITTxt_AT, ___sssAmbTempTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 4);
         lv_label_set_text(_sssLIMITTxt_AT, "LIMIT:");
         lv_obj_add_style(_sssLIMITTxt_AT, LV_LABEL_PART_MAIN, &_sssSamllFixTxtStyle);
 
         // Create label for Satrt limit value
-
         _sssLimitLower_AT = lv_label_create(___sssAmbTempCont, NULL);
         lv_obj_align(_sssLimitLower_AT, _sssLIMITTxt_AT, LV_ALIGN_OUT_RIGHT_MID, 20, 0);
         lv_label_set_text_fmt(_sssLimitLower_AT, "%d", EXTERNAL_SENSOR_TEMPERATURE_MIN_VALUE); // display external sensor min value"
         lv_obj_add_style(_sssLimitLower_AT, LV_LABEL_PART_MAIN, &_sssSamllVarTxtStyle);
 
         // Create label for to text
-
         _ssstoTxt_AT = lv_label_create(___sssAmbTempCont, NULL);
         lv_obj_align(_ssstoTxt_AT, _sssLimitLower_AT, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text(_ssstoTxt_AT, "to");
         lv_obj_add_style(_ssstoTxt_AT, LV_LABEL_PART_MAIN, &_sssSamllVarTxtStyle);
 
         // Create label for last limit value
-
         _sssLimitllast_AT = lv_label_create(___sssAmbTempCont, NULL);
         lv_obj_align(_sssLimitllast_AT, _ssstoTxt_AT, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text_fmt(_sssLimitllast_AT, "%d", EXTERNAL_SENSOR_TEMPERATURE_MAX_VALUE); // display external sensor max value"
@@ -1136,21 +1133,18 @@ void sssSummarySampleScreen(void)
         lv_obj_add_style(___sssAmbHumiTxtLbl, LV_LABEL_PART_MAIN, &_sssBlueHeadingTxtStyle);
 
         // Create label for Set Point Text
-
         _sssLIMITTxt_AH = lv_label_create(___sssAmbHumiCont, NULL);
         lv_obj_align(_sssLIMITTxt_AH, ___sssAmbHumiTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 4);
         lv_label_set_text(_sssLIMITTxt_AH, "LIMIT:");
         lv_obj_add_style(_sssLIMITTxt_AH, LV_LABEL_PART_MAIN, &_sssSamllFixTxtStyle);
 
         // Create label for Satrt limit value
-
         _sssLimitLower_AH = lv_label_create(___sssAmbHumiCont, NULL);
         lv_obj_align(_sssLimitLower_AH, _sssLIMITTxt_AH, LV_ALIGN_OUT_RIGHT_MID, 20, 0);
         lv_label_set_text_fmt(_sssLimitLower_AH, "%d", EXTERNAL_SENSOR_HUMIDITY_MIN_VALUE); // setting the ambient humidity lower limit value
         lv_obj_add_style(_sssLimitLower_AH, LV_LABEL_PART_MAIN, &_sssSamllVarTxtStyle);
 
         // Create label for to text
-
         _ssstoTxt_AH = lv_label_create(___sssAmbHumiCont, NULL);
         lv_obj_align(_ssstoTxt_AH, _sssLimitLower_AH, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text(_ssstoTxt_AH, "to");
@@ -1224,7 +1218,6 @@ void sssSummarySampleScreen(void)
         //------------------------------------------------
 
         // Create label for VARIATION Fix Txt
-
         _sssVariationTxt_AH = lv_label_create(___sssAmbHumiCont, NULL);
         lv_obj_align(_sssVariationTxt_AH, _sssMinValTxt_AH, LV_ALIGN_OUT_RIGHT_TOP, 35, 0);
         lv_label_set_text(_sssVariationTxt_AH, "VARIATION");
@@ -1425,6 +1418,7 @@ void sssSummarySampleScreen(void)
         lv_obj_add_style(_sssQuitBtnLabel, LV_LABEL_PART_MAIN, &_sssQuitBtnLabelStyle);
 
         crnt_screen = scrSummarySample; // scrSummarySample
+        screenid = SCR_SUMMARY_SAMPLE;
 }
 
 void __sssTimeLabel_refr_func(lv_task_t __sssrefresherTask)
@@ -1441,7 +1435,7 @@ void __sssTimeLabel_refr_func(lv_task_t __sssrefresherTask)
 
 static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-        if (event == LV_EVENT_CLICKED)
+        if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
                 xseSummaryEndScreen();
@@ -1450,7 +1444,7 @@ static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void QuitBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-        if (event == LV_EVENT_CLICKED)
+        if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
                 // xseSummaryEndScreen();

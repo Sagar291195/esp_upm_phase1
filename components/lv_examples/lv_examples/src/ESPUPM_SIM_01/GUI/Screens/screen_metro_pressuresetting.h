@@ -2,18 +2,18 @@
 
 /**
  *  @copyright "License Name" described in the LICENSE file.
- *  @author    Abhai Tiwari
- *  @date      2021-03-22
+ *  @author    Name (mail or git)
+ *  @date      Year
  */
 
 /**
-*  @file        screen_flow_calibration.h
-*  @brief       Header file for screen_flow_calibration.c
-*  @details     Header file for screen_flow_calibration.c
+*  @file file
+*  @brief Short description
+*  @details Long description
 */
 
-#ifndef SCREEN_METRO_FLOWADJ_H
-#define SCREEN_METRO_FLOWADJ_H
+#ifndef SCREEN_METRO_PRESSURESETTING_H
+#define SCREEN_METRO_PRESSURESETTING_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,20 +43,17 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-
-/**
- * This function is to call Flow Calibration Screen
- * @return None
- */
-
-void callMetroFlowAdjustScreen(void);
+void callMetroPressureSettingScreen(void);
 
 /**********************
  *    ERROR ASSERT
  **********************/
-
+ 
+ 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*SCREEN_METRO_FLOWADJ_H*/
+#endif /*SCREEN_METRO_PRESSURESETTING_H*/
+
+

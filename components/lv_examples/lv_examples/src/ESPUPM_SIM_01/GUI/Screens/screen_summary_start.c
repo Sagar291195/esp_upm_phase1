@@ -147,11 +147,12 @@ lv_task_t *infoWidgetUpdateTask;          // Task to be called after Job time is
 
 void xssSummaryStartScreen(void)
 {
-    // printf("default parameter = %d\n", defaultParaSelected);
-
-    scrSummaryStart = lv_cont_create(NULL, NULL);
+    scrSummaryStart = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryStart);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xssParentContainer_ss = lv_cont_create(scrSummaryStart, NULL);
     // lv_scr_load(xssParentContainer_ss);
     lv_obj_set_size(xssParentContainer_ss, 320, 480);
@@ -170,7 +171,6 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_opa(_xssContStatusBar_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create Watch upper left corner
-
     __xssTimeLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssTimeLabel_ss, _xssContStatusBar_ss, LV_ALIGN_IN_TOP_LEFT, 12, 5);
     lv_label_set_text(__xssTimeLabel_ss, guiTime);
@@ -183,7 +183,6 @@ void xssSummaryStartScreen(void)
     __xssTMrefresherTask = lv_task_create(__xssTimeLabel_ss_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create Label for Battery icon
-
     __xssBatteryLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssBatteryLabel_ss, _xssContStatusBar_ss, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__xssBatteryLabel_ss, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
@@ -195,7 +194,6 @@ void xssSummaryStartScreen(void)
     lv_obj_add_style(__xssBatteryLabel_ss, LV_LABEL_PART_MAIN, &_xssBatteryLabelStyle_ss);
 
     // Create Label for Wifi icon
-
     __xssWifiLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssWifiLabel_ss, __xssBatteryLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xssWifiLabel_ss, LV_SYMBOL_WIFI);
@@ -207,7 +205,6 @@ void xssSummaryStartScreen(void)
     lv_obj_add_style(__xssWifiLabel_ss, LV_LABEL_PART_MAIN, &_xssWifiLabelStyle_ss);
 
     // Create Label for Signal icon
-
     __xssSignalLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssSignalLabel_ss, __xssWifiLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xssSignalLabel_ss, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -222,7 +219,6 @@ void xssSummaryStartScreen(void)
     //===================================================================
 
     // Crate a container to contain Summary Start Header
-
     _xssParaHeadingCont_ss = lv_cont_create(xssParentContainer_ss, NULL);
     lv_obj_set_size(_xssParaHeadingCont_ss, 300, 70);
     lv_obj_align(_xssParaHeadingCont_ss, _xssContStatusBar_ss, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
@@ -233,7 +229,6 @@ void xssSummaryStartScreen(void)
     //===============>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     // Create Back Arrow container
-
     _xssBlackArrowCont = lv_cont_create(_xssParaHeadingCont_ss, NULL);
     lv_obj_set_size(_xssBlackArrowCont, 60, 60);
     lv_obj_align(_xssBlackArrowCont, _xssParaHeadingCont_ss, LV_ALIGN_IN_LEFT_MID, 5, 0);
@@ -242,7 +237,6 @@ void xssSummaryStartScreen(void)
     lv_obj_set_event_cb(_xssBlackArrowCont, __xssBackArrow_event_handler);
 
     // Create Back arrow img
-
     __xssBackArrowLabel_ss = lv_img_create(_xssBlackArrowCont, NULL);
     lv_img_set_src(__xssBackArrowLabel_ss, &left_arrow_icon);
     lv_obj_align(__xssBackArrowLabel_ss, _xssBlackArrowCont, LV_ALIGN_IN_LEFT_MID, 0, 0);
@@ -255,7 +249,6 @@ void xssSummaryStartScreen(void)
     //======================================================================
 
     // Create Label for Sequences "Heading"
-
     __xssSummaryHeadingLbl_ss = lv_label_create(_xssParaHeadingCont_ss, NULL);
     lv_obj_align(__xssSummaryHeadingLbl_ss, _xssParaHeadingCont_ss, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
     lv_label_set_text(__xssSummaryHeadingLbl_ss, "Summary Start");
@@ -269,7 +262,6 @@ void xssSummaryStartScreen(void)
     //=======================================================================
 
     // Create a container to put summary massage
-
     _xssSummayCont_ss = lv_cont_create(xssParentContainer_ss, NULL);
     lv_obj_set_size(_xssSummayCont_ss, 300, 310);
     lv_obj_align(_xssSummayCont_ss, _xssParaHeadingCont_ss, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
@@ -277,28 +269,24 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssSummayCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create style for Start Stop text
-
     static lv_style_t xssStartStopLblStyle_ss;
     lv_style_init(&xssStartStopLblStyle_ss);
     lv_style_set_text_font(&xssStartStopLblStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_14);
     lv_style_set_text_color(&xssStartStopLblStyle_ss, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
     // Create Label for Start  text
-
     __xssStartTxtLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStartTxtLbl_ss, _xssSummayCont_ss, LV_ALIGN_IN_TOP_LEFT, 10, 20);
     lv_label_set_text(__xssStartTxtLbl_ss, "START:");
     lv_obj_add_style(__xssStartTxtLbl_ss, LV_LABEL_PART_MAIN, &xssStartStopLblStyle_ss);
 
     // Create Label for Stop  text
-
     __xssStopTxtLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStopTxtLbl_ss, __xssStartTxtLbl_ss, LV_ALIGN_OUT_RIGHT_MID, 100, 0);
     lv_label_set_text(__xssStopTxtLbl_ss, "STOP:");
     lv_obj_add_style(__xssStopTxtLbl_ss, LV_LABEL_PART_MAIN, &xssStartStopLblStyle_ss);
 
     // Create style for Start Stop Date
-
     static lv_style_t xssStSpDateLblStyle_ss;
     lv_style_init(&xssStSpDateLblStyle_ss);
     lv_style_set_text_font(&xssStSpDateLblStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_20);
@@ -319,7 +307,6 @@ void xssSummaryStartScreen(void)
     lv_obj_add_style(__xssStartDateLbl_ss, LV_LABEL_PART_MAIN, &xssStSpDateLblStyle_ss);
 
     // Create Label for Stop Date
-
     char endDate[50];
     char endTime[50];
     /**
@@ -333,11 +320,9 @@ void xssSummaryStartScreen(void)
     // printf("--------------------------------------\n");
     // printf("Stop Date : %s\n", stopDate);
     // printf("--------------------------------------\n");
-
     lv_obj_add_style(__xssStopDateLbl_ss, LV_LABEL_PART_MAIN, &xssStSpDateLblStyle_ss);
 
     // Create style for start stop time label
-
     static lv_style_t xssStSpTimeLblStyle_ss;
     lv_style_init(&xssStSpTimeLblStyle_ss);
     lv_style_set_text_font(&xssStSpTimeLblStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_12);
@@ -377,21 +362,18 @@ void xssSummaryStartScreen(void)
     lv_obj_add_style(__xssStopTimeLbl_ss, LV_LABEL_PART_MAIN, &xssStSpTimeLblStyle_ss);
 
     // Create style for Sample Number label
-
     static lv_style_t xssSampleNumLblStyle_ss;
     lv_style_init(&xssSampleNumLblStyle_ss);
     lv_style_set_text_font(&xssSampleNumLblStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_18);
     lv_style_set_text_color(&xssSampleNumLblStyle_ss, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
     // Create Sample Number Label
-
     __xssSampleNunLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssSampleNunLbl_ss, __xssStartTxtLbl_ss, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 60);
     lv_label_set_text_fmt(__xssSampleNunLbl_ss, "SAMPLE N° %d", uGetCurrentSampleNumber() + 1); // visible sample number is current sample number + 1
     lv_obj_add_style(__xssSampleNunLbl_ss, LV_LABEL_PART_MAIN, &xssSampleNumLblStyle_ss);
 
     //===============++++++======================++++++=================================================
-
     static lv_style_t xssBlueFixTextStyle_ss;
     lv_style_init(&xssBlueFixTextStyle_ss);
     lv_style_set_text_font(&xssBlueFixTextStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_14);
@@ -412,7 +394,6 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssFlowStPBaseCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Flow Set Point Txt Label
-
     __xssFlowStPTxtLbl_ss = lv_label_create(_xssFlowStPBaseCont_ss, NULL);                   //_xssSummayCont_ss
     lv_obj_align(__xssFlowStPTxtLbl_ss, _xssFlowStPBaseCont_ss, LV_ALIGN_IN_LEFT_MID, 0, 0); // xSpacebwline
     lv_label_set_text(__xssFlowStPTxtLbl_ss, "FLOW SET POINT");
@@ -435,14 +416,12 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssSeqNumBaseCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Sequence Number Txt Label
-
     __xssSeqNumTxtLbl_ss = lv_label_create(_xssSeqNumBaseCont_ss, NULL);
     lv_obj_align(__xssSeqNumTxtLbl_ss, _xssSeqNumBaseCont_ss, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xssSeqNumTxtLbl_ss, "SEQUENCE NUMBER");
     lv_obj_add_style(__xssSeqNumTxtLbl_ss, LV_LABEL_PART_MAIN, &xssBlueFixTextStyle_ss);
 
     // Create SEQUENCE NUMBER Value Label
-
     __xssSeqNumValueLbl_ss = lv_label_create(_xssSeqNumBaseCont_ss, NULL);
     lv_obj_align(__xssSeqNumValueLbl_ss, _xssSeqNumBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     char seqNum[4];
@@ -459,14 +438,12 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssDurationCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create DURATION Txt Label
-
     __xssDurationTxtLbl_ss = lv_label_create(_xssDurationCont_ss, NULL);
     lv_obj_align(__xssDurationTxtLbl_ss, _xssDurationCont_ss, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xssDurationTxtLbl_ss, "DURATION");
     lv_obj_add_style(__xssDurationTxtLbl_ss, LV_LABEL_PART_MAIN, &xssBlueFixTextStyle_ss);
 
     // Create SEQUENCE NUMBER Value Label
-
     __xssDurationValueLbl_ss = lv_label_create(_xssDurationCont_ss, NULL);
     lv_obj_align(__xssDurationValueLbl_ss, _xssDurationCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     // lv_label_set_text(__xssDurationValueLbl_ss, _pDurationVal_);
@@ -482,14 +459,12 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssPersonBaseCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create START PERSON Txt Label
-
     __xssPersonTxtLbl_ss = lv_label_create(_xssPersonBaseCont_ss, NULL);
     lv_obj_align(__xssPersonTxtLbl_ss, _xssPersonBaseCont_ss, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xssPersonTxtLbl_ss, "START PERSON");
     lv_obj_add_style(__xssPersonTxtLbl_ss, LV_LABEL_PART_MAIN, &xssBlueFixTextStyle_ss);
 
     // Create  Person Name Label
-
     __xssPersonNameLbl_ss = lv_label_create(_xssPersonBaseCont_ss, NULL);
     lv_obj_align(__xssPersonNameLbl_ss, _xssPersonBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     lv_label_set_text(__xssPersonNameLbl_ss, seq[0].cStartPerson);
@@ -511,7 +486,6 @@ void xssSummaryStartScreen(void)
     lv_obj_add_style(__xssLtrCntrTxtLbl_ss, LV_LABEL_PART_MAIN, &xssBlueFixTextStyle_ss);
 
     // Create  Liter Counter value Label
-
     __xssLtrCntrValLbl_ss = lv_label_create(_xssLtrCntrBaseCont_ss, NULL);
     lv_obj_align(__xssLtrCntrValLbl_ss, _xssLtrCntrBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     lv_label_set_text_fmt(__xssLtrCntrValLbl_ss, "%0.2lf", fGetTotalLiterCount()); // total_liters1 ,, _pLtrCountVal_
@@ -526,14 +500,12 @@ void xssSummaryStartScreen(void)
     lv_obj_set_style_local_border_width(_xssHrCntrBaseCont_ss, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Hour COUNTER Txt Label
-
     __xssHrCntrTxtLbl_ss = lv_label_create(_xssHrCntrBaseCont_ss, NULL);
     lv_obj_align(__xssHrCntrTxtLbl_ss, _xssHrCntrBaseCont_ss, LV_ALIGN_IN_LEFT_MID, 0, 0);
     lv_label_set_text(__xssHrCntrTxtLbl_ss, "HOUR COUNTER");
     lv_obj_add_style(__xssHrCntrTxtLbl_ss, LV_LABEL_PART_MAIN, &xssBlueFixTextStyle_ss);
 
     // Create  Hour Counter value Label
-
     __xssHrCntrValLbl_ss = lv_label_create(_xssHrCntrBaseCont_ss, NULL);
     lv_obj_align(__xssHrCntrValLbl_ss, _xssHrCntrBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     // totalhourVal = read_Totalhour(HrCntKey);
@@ -545,7 +517,6 @@ void xssSummaryStartScreen(void)
     //=========================="START JOB Button"=================================================================
 
     // Create Start Job Button
-
     _xssValidJobBtn_ss = lv_btn_create(xssParentContainer_ss, NULL);
     lv_obj_align(_xssValidJobBtn_ss, _xssSummayCont_ss, LV_ALIGN_OUT_BOTTOM_MID, -85, 7);
     lv_obj_set_size(_xssValidJobBtn_ss, 300, 44);
@@ -590,6 +561,7 @@ void xssSummaryStartScreen(void)
     lv_style_set_text_color(&__xssStartJobTxtLabelStyle_ss, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xssValidJobBtn_ss, LV_LABEL_PART_MAIN, &__xssStartJobTxtLabelStyle_ss);
     crnt_screen = scrSummaryStart; // scrSummaryStart
+    screenid = SCR_SUMMARY_START;
 }
 
 // This is the task to GUI Time label updating
@@ -648,7 +620,7 @@ void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
 
 static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xssTMrefresherTask);
         lv_task_del(__xssStartBTNCountTask);
@@ -669,7 +641,7 @@ static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
  */
 static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xssTMrefresherTask);
         if (__xssStartBTNCountTask != NULL)

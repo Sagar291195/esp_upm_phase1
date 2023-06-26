@@ -164,8 +164,8 @@ typedef struct {
   * @retval None
   */
 esp_err_t ft6x36_init_desc(ft6x36_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio);
-static esp_err_t read_reg_16(ft6x36_t *dev, uint8_t reg, uint16_t *val);
-static esp_err_t read_reg_8(ft6x36_t *dev, uint8_t reg, uint8_t *val);
+esp_err_t read_reg_16(ft6x36_t *dev, uint8_t reg, uint16_t *val);
+esp_err_t read_reg_8(ft6x36_t *dev, uint8_t reg, uint8_t *val);
 
 void ft6x06_init(uint16_t dev_addr);
 

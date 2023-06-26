@@ -98,7 +98,7 @@ bool rollerMovCkFlag = false;
 char *Seq_Name = "Sequence";
 char *Seq_Number = "1";
 int SeqCounter = 0;
-
+char _xaSecondrollerbuf[5] = "00";
 char _xaDaterollerbuf[40];
 char _xaHourMinrollerbuf[130];
 char _xaHourrollerbuf[60];
@@ -160,10 +160,6 @@ bool defaultParaSelected;
 
 void xsPresetScreenAdvance(void)
 {
-    /**
-     * @brief  Controller Initialize Sample Array
-     *
-     */
     vControllerInitializeSampleArray();
     Seq_Number = "1";
     SeqCounter=0;
@@ -176,9 +172,12 @@ void xsPresetScreenAdvance(void)
     sprintf(_xsDurHourrollerbuf, "%s", _xsDurHourrollerNull);
     sprintf(_xsDurMinutrollerbuf, "%s", _xsDurMinutrollerNull);
 
-    scr_preset = lv_cont_create(NULL, NULL);
+    scr_preset = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_preset);
-    lv_obj_del(crnt_screen);
+    if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     xaParentContainer_Adv = lv_cont_create(scr_preset, NULL);
     // lv_scr_load(xaParentContainer_Adv);
     lv_obj_set_size(xaParentContainer_Adv, 320, 480);
@@ -189,7 +188,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_style_local_radius(xaParentContainer_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
     _xaContainerStatusBar_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
     lv_obj_set_size(_xaContainerStatusBar_Adv, 320, 35);
     lv_obj_align(_xaContainerStatusBar_Adv, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
@@ -197,7 +195,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_style_local_border_opa(_xaContainerStatusBar_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create Watch upper left corner
-
     _xaTimeLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
     lv_obj_align(_xaTimeLabel_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_IN_TOP_LEFT, 12, 5);
     // lv_label_set_text(_xaTimeLabel_Adv, "04:55");
@@ -233,7 +230,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaWifiLabel_Adv, LV_LABEL_PART_MAIN, &_xaWifiLabelStyle_Adv);
 
     // Create Label for Signal icon
-
     _xaSignalLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
     lv_obj_align(_xaSignalLabel_Adv, _xaWifiLabel_Adv, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_xaSignalLabel_Adv, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -246,7 +242,6 @@ void xsPresetScreenAdvance(void)
 
     //==============================================================================================================
     // Create a container to contain Sequences Header
-
     _xaParaHeadingCont_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
     lv_obj_set_size(_xaParaHeadingCont_Adv, 300, 70);
     lv_obj_align(_xaParaHeadingCont_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
@@ -264,7 +259,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xaBackArrowCont, _xsBackArrow_event_handler);
 
     // Create Back arrow img
-
     _xaBackArrowLabel_Adv = lv_img_create(_xaBackArrowCont, NULL);
     lv_img_set_src(_xaBackArrowLabel_Adv, &left_arrow_icon);
     lv_obj_align(_xaBackArrowLabel_Adv, _xaBackArrowCont, LV_ALIGN_IN_LEFT_MID, 0, 0);
@@ -277,13 +271,11 @@ void xsPresetScreenAdvance(void)
     //+++++++++++++++++>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     // Create Label for Sequences "Heading"
-
     _xaParameterHeading_Adv = lv_label_create(_xaParaHeadingCont_Adv, NULL);
     lv_obj_align(_xaParameterHeading_Adv, _xaParaHeadingCont_Adv, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
     lv_label_set_text(_xaParameterHeading_Adv, Seq_Name);
 
     // Create Label for Sequences "Number"
-
     _xaSeq_Num_Adv = lv_label_create(_xaParaHeadingCont_Adv, NULL);
     lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 32, 0);
     
@@ -309,7 +301,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaGoToNextCont_Adv, LV_CONT_PART_MAIN, &_xaGoToNextContStyle_Adv);
 
     // create next label icon
-
     _xaGoToNextLbl_Adv = lv_label_create(_xaGoToNextCont_Adv, NULL);
     lv_obj_align(_xaGoToNextLbl_Adv, _xaGoToNextCont_Adv, LV_ALIGN_IN_TOP_MID, 3, 5);
     lv_label_set_text(_xaGoToNextLbl_Adv, LV_SYMBOL_PLUS);
@@ -322,7 +313,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaGoToNextLbl_Adv, LV_LABEL_PART_MAIN, &_xaGoToNextStyle_Adv);
 
     // Create Label to "START:" Text
-
     _xaStartLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaStartLabel_Adv, _xaBackArrowLabel_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 30);
     lv_label_set_text(_xaStartLabel_Adv, "START : ");
@@ -334,7 +324,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaStartLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
 
     // Craete container to hold Date Hour & Minut
-
     _xaDMYCon_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
     lv_obj_set_size(_xaDMYCon_Adv, 310, 120);
     lv_obj_align(_xaDMYCon_Adv, _xaStartLabel_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, -10, 5);
@@ -342,7 +331,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_style_local_border_width(_xaDMYCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Roller to hold date
-
     _xaDateroller = lv_roller_create(_xaDMYCon_Adv, NULL);
     lv_roller_set_options(_xaDateroller, GuiDateRollerStr, LV_ROLLER_MODE_INIFINITE);
     // lv_roller_set_options(_xaDateroller, guiDateNext1 /*guiDateNext2 guiDateNext3*/ , LV_ROLLER_MODE_INIFINITE);
@@ -412,7 +400,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xaHourroller, _xaHourroller_event_handler);
 
     // Roller to hold Minut
-
     _xaMinutroller = lv_roller_create(_xaDMYCon_Adv, NULL);
     lv_roller_set_options(_xaMinutroller, " - \n"
                                           "00\n"
@@ -491,7 +478,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xaMinutroller, _xaMinutroller_event_handler);
 
     // Create a label for ":"
-
     _xaDotLabel_Adv = lv_label_create(_xaDMYCon_Adv, NULL);
     lv_obj_align(_xaDotLabel_Adv, _xaDMYCon_Adv, LV_ALIGN_CENTER, 100, -13);
     lv_label_set_text(_xaDotLabel_Adv, ":");
@@ -503,7 +489,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaDotLabel_Adv, LV_LABEL_PART_MAIN, &_xaSlashLabelStyle_Adv);
 
     // Create Horizontal Line between Date & Hour
-
     lv_obj_t *hor_line;
     hor_line = lv_line_create(_xaDMYCon_Adv, NULL);
     static lv_point_t p[] = {{0, 25}, {0, 300}};
@@ -521,7 +506,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
 
     // Create Horizontal Line between Hour and Minut
-
     lv_obj_t *hor_line1;
     hor_line1 = lv_line_create(_xaDMYCon_Adv, NULL);
     static lv_point_t p1[] = {{0, 25}, {0, 300}};
@@ -530,7 +514,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(hor_line1, LV_LINE_PART_MAIN, &style_hor_line);
 
     // Craete container to hold Date Hour & Minut
-
     _xaSPDurCon_Adv = lv_cont_create(xaParentContainer_Adv, NULL);
     lv_obj_set_size(_xaSPDurCon_Adv, 310, 120);
     lv_obj_align(_xaSPDurCon_Adv, _xaDMYCon_Adv, LV_ALIGN_OUT_BOTTOM_MID, 0, 50);
@@ -538,14 +521,12 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_style_local_border_width(_xaSPDurCon_Adv, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Label to "SETPOINT:" Text
-
     _xaSPLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaSPLabel_Adv, _xaSPDurCon_Adv, LV_ALIGN_OUT_TOP_LEFT, 8, -10);
     lv_label_set_text(_xaSPLabel_Adv, "SETPOINT : ");
     lv_obj_add_style(_xaSPLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
 
     // Create Label to "DURATIO:" Text
-
     _xaDurLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaDurLabel_Adv, _xaSPDurCon_Adv, LV_ALIGN_OUT_TOP_MID, 0, -10);
     lv_label_set_text(_xaDurLabel_Adv, "DURATION : ");
@@ -671,7 +652,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaLPMTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle);
 
     // Roller to hold Duration Hours Value
-
     _xsDurHourroller = lv_roller_create(_xaSPDurCon_Adv, NULL);
     lv_roller_set_options(_xsDurHourroller, " 24 \n"
                                             " 0 \n"
@@ -713,14 +693,12 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xsDurHourroller, _xsDurHourroller_event_handler);
 
     // Create Label to "L/Min:" Text
-
     _xaDurHourTxtLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaDurHourTxtLabel_Adv, _xsDurHourroller, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
     lv_label_set_text(_xaDurHourTxtLabel_Adv, "hour");
     lv_obj_add_style(_xaDurHourTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle);
 
     // Roller to hold Duration Minut Value
-
     _xsDurMinutroller = lv_roller_create(_xaSPDurCon_Adv, NULL);
     lv_roller_set_options(_xsDurMinutroller,
                           " 00 \n"
@@ -797,14 +775,12 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xsDurMinutroller, _xsDurMinutroller_event_handler);
 
     // Create Label to "Min:" Text
-
     _xaDurMinTxtLabel_Adv = lv_label_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaDurMinTxtLabel_Adv, _xsDurMinutroller, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
     lv_label_set_text(_xaDurMinTxtLabel_Adv, "min");
     lv_obj_add_style(_xaDurMinTxtLabel_Adv, LV_LABEL_PART_MAIN, &xaDurationTxtStyle);
 
     // Create Vertical Lines
-
     static lv_point_t L[] = {{1, 0}, {70, 0}};
 
     lv_obj_t *ver_line = lv_line_create(_xaSPDurCon_Adv, NULL);
@@ -848,7 +824,6 @@ void xsPresetScreenAdvance(void)
     //==========================Valid Button =================================================================
 
     // Create Valid Button
-
     _xaValidBtn = lv_btn_create(xaParentContainer_Adv, NULL);
     lv_obj_align(_xaValidBtn, _xaSPDurCon_Adv, LV_ALIGN_OUT_BOTTOM_LEFT, 5, -1);
     lv_obj_set_size(_xaValidBtn, 300, 44);
@@ -865,7 +840,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_set_event_cb(_xaValidBtn, valid_btn_event_handler);
 
     // Creat a Valid Button Label
-
     _xaValidButtonLabel = lv_label_create(_xaValidBtn, NULL);
     lv_obj_align(_xaValidButtonLabel, _xaValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_xaValidButtonLabel, "VALID");
@@ -876,6 +850,7 @@ void xsPresetScreenAdvance(void)
     lv_style_set_text_color(&_xaValidButtonLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xaValidButtonLabel, LV_LABEL_PART_MAIN, &_xaValidButtonLabelStyle);
     crnt_screen = scr_preset; // scr_preset
+    screenid = SCR_PRESET;
 }
 
 // void _xaTimeLabel_Adv_refr_func(void* p) //*_xarefresherTask
@@ -936,7 +911,7 @@ void setRollerParameterNull(void)
 
 static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(_xarefresherTask); //_xarefresherTask
         // printf("Back to Dashbord from Preset Screen\n");
@@ -951,7 +926,7 @@ static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         SeqCounter++;
         lv_task_del(_xarefresherTask);
@@ -1096,23 +1071,21 @@ void defaultParametrs(void)
  */
 static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         SeqCounter++;
         // save value of previous sequence
         vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
 
         ESP_LOGD(TAG, "_NextSeq_event_handler call = %d", SeqCounter);
-        
         lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
         lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
-        // ESP_LOGI(TAG, "%d,%s,%d,%d,%0.2f,%d,%d",SeqCounter,_xaDaterollerbuf,atoi(_xaHourrollerbuf),atoi(_xaMinutrollerbuf),atof(_xsSProllerbuf),atoi(_xsDurHourrollerbuf),atoi(_xsDurMinutrollerbuf));
+    
         switch (SeqCounter)
         {
         case 1:
             Seq_Number = "2";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1120,7 +1093,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 2:
             Seq_Number = "3";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1128,7 +1100,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 3:
             Seq_Number = "4";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1136,7 +1107,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 4:
             Seq_Number = "5";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1144,7 +1114,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 5:
             Seq_Number = "6";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1152,7 +1121,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 6:
             Seq_Number = "7";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1161,14 +1129,12 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
             Seq_Number = "8";
             sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 8:
             Seq_Number = "9";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1176,7 +1142,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 9:
             Seq_Number = "10";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1184,7 +1149,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 10:
             Seq_Number = "11";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1192,7 +1156,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 11:
             Seq_Number = "12";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1200,7 +1163,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 12:
             Seq_Number = "13";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1208,7 +1170,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 13:
             Seq_Number = "14";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1216,7 +1177,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 14:
             Seq_Number = "15";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1224,7 +1184,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 15:
             Seq_Number = "16";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1232,7 +1191,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 16:
             Seq_Number = "17";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1240,7 +1198,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 17:
             Seq_Number = "18";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1248,7 +1205,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 18:
             Seq_Number = "19";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1256,7 +1212,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 19:
             Seq_Number = "20";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1264,7 +1219,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         case 20:
             Seq_Number = "1";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1272,7 +1226,6 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         default:
             Seq_Number = "1";
             sprintf(WseqNum1, "%s", Seq_Number);
-            // printf("Updated Sequence Number is: %s\n", WseqNum1);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
@@ -1286,10 +1239,7 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xaDateroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-
-    // char now[5] = "Now";
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaDaterollerbuf, sizeof(_xaDaterollerbuf));
         // printf("Selected month: %s\n", _xaDaterollerbuf);
@@ -1298,20 +1248,17 @@ static void _xaDateroller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xaHourroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaHourrollerbuf, sizeof(_xaHourrollerbuf));
         startHr = atoi(_xaHourrollerbuf);
     }
 }
 
-char _xaSecondrollerbuf[5] = "00";
 
 static void _xaMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaMinutrollerbuf, sizeof(_xaMinutrollerbuf));
         sprintf(_xaHourMinrollerbuf, "%s:%s:%s", _xaHourrollerbuf, _xaMinutrollerbuf, _xaSecondrollerbuf);
@@ -1321,8 +1268,7 @@ static void _xaMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xsSProller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsSProllerbuf, sizeof(_xsSProllerbuf));
     }
@@ -1330,23 +1276,19 @@ static void _xsSProller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xsDurHourroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsDurHourrollerbuf, sizeof(_xsDurHourrollerbuf));
         durHr = atoi(_xsDurHourrollerbuf);
-        // printf("Selected month: %s\n", _xsDurHourrollerbuf);
     }
 }
 
 static void _xsDurMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED)
-    {
+    if (event == LV_EVENT_VALUE_CHANGED){
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsDurMinutrollerbuf, sizeof(_xsDurMinutrollerbuf));
         durMin = atoi(_xsDurMinutrollerbuf);
-        // printf("Selected month: %s\n", _xsDurMinutrollerbuf);
     }
 }
 

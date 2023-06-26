@@ -21,7 +21,7 @@
 
 /************************************defines******************************************************/
 
-#define TAG "controller"
+#define TAG                 "controller"
 
 extern SemaphoreHandle_t xGuiSemaphore1;
 

@@ -3,22 +3,22 @@
 #include "screen_metro_pswd.h"
 
 
-void Init_Screen()
+void Init_Screen(void)
 {
     // xScreenPidTune();
     // xMetroPswdScrn();
     // vTestScreen1();
     // cScrTransitCheck();
-     vCallCodeScreen();	 //---------------------------------------->	        	
+    vCallCodeScreen();	 
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
-    // xCallFlowCalibrationScreen();		
-    // xCallFlowAdjustScreen();
-    // callFlowParameterScreen();
+    // CallMetroFlowCalibrationScreen();		
+    // callMetroFlowAdjustScreen();
+    // callMetroFlowParameterScreen();
     // callMetroFlowSettingScreen();
     // CallMetroMenuScreen();
-    // callMetroTempAdjust();
+    // callMetroAdjust();
     // ppxParameterScreen();
     // xsPresetScreenAdvance();         
     // callServiceSetScreen();
@@ -26,6 +26,9 @@ void Init_Screen()
     // sssSummarySampleScreen();
     // xssSummaryStartScreen();  
     // xCallArchvScreen();
+    // callMetroHumiditySettingScreen();
+    // callMetroPressureSettingScreen();
+    // callMetroTempSettingScreen();
 
     // vTestScreen();
        
