@@ -21,7 +21,7 @@
  *********************/
 
 #define SYMBOL_SIGNAL "\uf012"
-
+#define TAG "FLOW CALIBRATION"
 //Declare Fonts here
 LV_FONT_DECLARE(signal_20);
 
@@ -103,7 +103,7 @@ lv_obj_t * spinbox;
 float percentError;
 float flowPoint;
 
-#define TAG "FLOW CALIBRATION"
+
 /**********************
  *      MACROS
  **********************/
@@ -530,16 +530,16 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         
         __fasValidBTNCount++;
 
-        if(__fasValidBTNCount >= global_CurveDegree)
+        if(__fasValidBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT)
         {
             flowPointXasis[__fasValidBTNCount-1] = flow_value;
             __fasValidBTNCount = 0;
             metroFlowCalStarted = false;
             int i;
-            printf("X & Y Points are following : \n");
+            ESP_LOGI(TAG, "X & Y Points are following : \n");
             for( i=0; i<=NUM_OF_FLOW_CALIBRATION_POINT; i++)
             {
-                printf("Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
+                ESP_LOGI(TAG, "Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
                 fflush(NULL);
                 
             }
@@ -548,14 +548,14 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
             int deg = global_CurveDegree;
             iPolynomialNew(deg, pts, flowPoints, flowPointXasis);
             // iWriteNVSIntNum(global_CurveDegree, "cDeg");
-            callMetroFlowSettingScreen();
+            CallMetroMenuScreen();
 
         }else{
 
             lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
             flowPoint   = flowPoints[__fasValidBTNCount];
             flowPointXasis[__fasValidBTNCount-1] = flow_value;
-            callMetroFlowAdjustScreen();
+            callMetroFlowAdjustScreen(); 
         }
     }
 }

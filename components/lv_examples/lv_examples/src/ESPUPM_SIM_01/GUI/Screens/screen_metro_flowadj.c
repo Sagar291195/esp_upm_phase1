@@ -241,7 +241,7 @@ void callMetroFlowAdjustScreen(void)
     _fcsCalPtXLbl = lv_label_create(fcsParentCont, NULL);
     lv_obj_align(_fcsCalPtXLbl, _fcsMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_MID, -60, 0);
     //lv_label_set_align(_fcsCalPtXLbl, LV_LABEL_ALIGN_CENTER);
-    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X");
+    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X%d", (validBTNCount+1));
 
     static lv_style_t _fcsCalPtXLblStyle;
     lv_style_init(&_fcsCalPtXLblStyle);
@@ -320,7 +320,7 @@ static void __fcsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        CallMetroFlowCalibrationScreen();
+        CallMetroMenuScreen();
     }
 }
 
