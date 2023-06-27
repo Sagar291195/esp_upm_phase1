@@ -439,6 +439,8 @@ void ota_task(void *pvParameters)
     BaseType_t actual_event = 0x00;
     char running_partition_label[sizeof(((esp_partition_t *)0)->label)];
     event_group = xEventGroupCreate();
+    ESP_LOGE(TAG, "Running Firmware: %s", FIRMWARE_VERSION);
+
     while (1)
     {
         if (state != STATE_INITIAL && state != STATE_APP_LOOP)
