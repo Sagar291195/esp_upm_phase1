@@ -29,7 +29,6 @@
 #include <dataMangement.h>
 #include <sensorManagement.h>
 
-
 #include "esp_timer.h" // added this to check High resolution timer
 
 /* Littlevgl specific */
@@ -51,18 +50,18 @@
 
 #include <sampleManagement.h>
 
-
+#include "ota.h"
 /*********************
  *      DEFINES
  *********************/
-#define TAG                 "Demo"
-#define LV_TICK_PERIOD_MS   1
+#define TAG "Demo"
+#define LV_TICK_PERIOD_MS 1
 // #define WAKEMODE 32
 
 #ifdef CONFIG_NEW_HW
-#define WAKEMODE   GPIO_NUM_27
+#define WAKEMODE GPIO_NUM_27
 #else
-#define WAKEMODE   GPIO_NUM_32
+#define WAKEMODE GPIO_NUM_32
 #endif
 
 int result1 = 1;
@@ -142,7 +141,6 @@ static void create_demo_application(void);
  */
 static void wakeupmodeInit(void);
 
-
 /**********************
  * CODE
  **********************/
@@ -170,33 +168,38 @@ static void wakeupmodeInit(void)
  **********************/
 void app_main()
 {
-    esp_err_t err = nvs_flash_init();     //Initializing the nvs for save and retriving the data
-    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND){
+    esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
         // NVS partition was truncated and needs to be erased
         // Retry nvs_flash_init
         ESP_ERROR_CHECK(nvs_flash_erase());
         err = nvs_flash_init();
-    }else if(err != ESP_OK){
+    }
+    else if (err != ESP_OK)
+    {
         ESP_LOGI(TAG, "Nvs cannot be initialized due to %s", esp_err_to_name(err));
-    }else{
+    }
+    else
+    {
         ESP_LOGD(TAG, "Nvs initialized");
     }
 
     xGuiSemaphore = xSemaphoreCreateMutex();
     xGuiSemaphore1 = xSemaphoreCreateMutex();
 
-    wakeupmodeInit();                   //enabling the device from the wake mode
-    vInitiateTheStateMachine();         //initaiting the state machine of the device
-    Init_Buzzer();                      //This will initiate the buzze in the system
+    wakeupmodeInit();           // enabling the device from the wake mode
+    vInitiateTheStateMachine(); // initaiting the state machine of the device
+    Init_Buzzer();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    vInitializeDataManagementApi();     //Initiating the data managament api
-    vInitiateSensorsOnBoard();          //Initiating all i2c sensors on the board
-    vGetTheCounterValuesFromNvsFlash(); //loading the various conter values from the nvs flash
-    vGetSequceManagementFromNVS();      //Before loading  sample management we need to load the sequence of the sample
-    vInitializeTimeManagement();        //Initializing the time management of the device
-    vStartSampleManagementService();    //Installing the sample management service
-    vInitializeMotor();                 //Installing the sample management service
+    vInitializeDataManagementApi();     // Initiating the data managament api
+    vInitiateSensorsOnBoard();          // Initiating all i2c sensors on the board
+    vGetTheCounterValuesFromNvsFlash(); // loading the various conter values from the nvs flash
+    vGetSequceManagementFromNVS();      // Before loading  sample management we need to load the sequence of the sample
+    vInitializeTimeManagement();        // Initializing the time management of the device
+    vStartSampleManagementService();    // Installing the sample management service
+    vInitializeMotor();                 // Installing the sample management service
     vTaskDelay(500 / portTICK_PERIOD_MS);
     // readTotalLiters();                //Reading the tolal volume in the system from nvs flash
 
@@ -214,6 +217,7 @@ void app_main()
 
     xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
     xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
+    xTaskCreatePinnedToCore(ota_task, "ota_task", 8192, NULL, 1, NULL, 1);
 }
 
 /* Creates a semaphore to handle concurrent call to lvgl stuff*****
@@ -262,7 +266,7 @@ static void guiTask(void *pvParameter)
     indev_drv.read_cb = touch_driver_read; // function process touch
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     lv_indev_drv_register(&indev_drv);
-    //#endif
+    // #endif
 
     /* Create and start a periodic timer interrupt to call lv_tick_inc */
     const esp_timer_create_args_t periodic_timer_args = {
@@ -295,7 +299,3 @@ static void guiTask(void *pvParameter)
 #endif
     vTaskDelete(NULL);
 }
-
-
-
-
