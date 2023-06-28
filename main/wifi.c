@@ -58,8 +58,8 @@ void initialise_wifi(const char *running_partition_label)
     if (wifi_config.sta.ssid[0] == '\0' || wifi_config.sta.password[0] == '\0')
     {
         ESP_LOGW(TAG, "Flash memory doesn't contain any Wi-Fi credentials");
-        if (strcmp(FACTORY_PARTITION_LABEL, running_partition_label) == 0)
-        {
+        // if (strcmp(FACTORY_PARTITION_LABEL, running_partition_label) == 0)
+        // {
             ESP_LOGW(TAG, "Factory partition is running, Wi-Fi credentials from config are used and will be saved to the flash memory");
             wifi_sta_config_t wifi_sta_config = {
                 .ssid = WIFI_SSID,
@@ -67,12 +67,12 @@ void initialise_wifi(const char *running_partition_label)
             };
 
             wifi_config.sta = wifi_sta_config;
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Wi-Fi credentials were not found, running partition is not '%s'", FACTORY_PARTITION_LABEL);
-            APP_ABORT_ON_ERROR(ESP_FAIL);
-        }
+        // }
+        // else
+        // {
+        //     ESP_LOGE(TAG, "Wi-Fi credentials were not found, running partition is not '%s'", FACTORY_PARTITION_LABEL);
+        //     APP_ABORT_ON_ERROR(ESP_FAIL);
+        // }
     }
     else
     {

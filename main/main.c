@@ -210,13 +210,13 @@ void app_main()
      * NOTE: When not using Wi-Fi nor Bluetooth you can pin the guiTask to core 0
      * */
 
-    xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    // xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
+    // vTaskDelay(500 / portTICK_PERIOD_MS);
 
-    xTaskCreatePinnedToCore(ds3231_task, "ds3231_task", 2048, NULL, 1, NULL, 1); //  RTS
+    // xTaskCreatePinnedToCore(ds3231_task, "ds3231_task", 2048, NULL, 1, NULL, 1); //  RTS
 
-    xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
-    xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
+    // xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
+    // xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
     xTaskCreatePinnedToCore(ota_task, "ota_task", 8192, NULL, 1, NULL, 1);
 }
 
