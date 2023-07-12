@@ -7,8 +7,11 @@
 /*********************
  *      INCLUDES
  *********************/
+#include <stdlib.h>
 #include "screen_includes.h"
 
+#include <sensorManagement.h>
+#include <calibration.h>
 /*********************
  *      DEFINES
  *********************/
@@ -95,12 +98,6 @@ lv_obj_t * _mtaPercentTxtLbl;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-
-
-
-
-
-
 void callMetroAdjust(void)
 {
     //Create Base container
@@ -260,17 +257,12 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_border_width(_mtaEnterRefValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, 0);
     lv_textarea_set_cursor_blink_time(_mtaEnterRefValTA, 0);
 
-    //============================================================================================================
-    //============================================================================================================
-    //============================================================================================================
-
     // Create valid button
     _mtaValidBtn = lv_btn_create(mtaPatrentCont, NULL);
     lv_obj_set_size(_mtaValidBtn, 90, 54);
     lv_obj_align(  _mtaValidBtn,  _mtaEnterRefValTA, LV_ALIGN_OUT_RIGHT_MID, -5, 0);
     lv_obj_set_style_local_radius(_mtaValidBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 10);
-    //CREATE LABEL FOR VALID TXT ON BUTTON
-    
+
     _mtaValidBtnLbl = lv_label_create(_mtaValidBtn, NULL);
     lv_obj_align(_mtaValidBtnLbl, _mtaValidBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_mtaValidBtnLbl, "VALID");
@@ -363,16 +355,42 @@ void callMetroAdjust(void)
  **********************/
 static void _mtavalidbuttoncalled_event_cb(lv_obj_t * ta, lv_event_t event)
 {
+    const char *tempbuffer;
+    float referencevalue;
+    float calibrationvalue;
+    external_sensor_data_t external_sensordata;
+
     if(event == LV_EVENT_RELEASED) 
     {
-        if(screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST || screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
-        {
+        tempbuffer = lv_textarea_get_text(_mtaEnterRefValTA);
+        referencevalue = atof(tempbuffer);
+         
+        if(screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST){
+            vGetExternalSensorData(&external_sensordata);
+            calibrationvalue = (external_sensordata.fTemperature - referencevalue);
+            setcalibrationvalue_ext_temperature(calibrationvalue);
             callMetroPressureSettingScreen();
-        }else if(screenid == SCR_EXTERNAL_PRESSURE_ADJUST || screenid == SCR_INTERNAL_PRESSURE_ADJUST){
+        }else if(screenid == SCR_INTERNAL_TEMPERATURE_ADJUST){
+            calibrationvalue = (fGetBme280TemperatureAverages() - referencevalue);
+            setcalibrationvalue_int_temperature(calibrationvalue);
+            callMetroPressureSettingScreen();
+        }else if(screenid == SCR_EXTERNAL_PRESSURE_ADJUST ){
+            vGetExternalSensorData(&external_sensordata);
+            calibrationvalue = (external_sensordata.fPressure - referencevalue);
+            setcalibrationvalue_ext_pressure(calibrationvalue);
+            callMetroHumiditySettingScreen();
+        }else if( screenid == SCR_INTERNAL_PRESSURE_ADJUST){
+            calibrationvalue = (fGetBme280PressureAverages() - referencevalue);
+            setcalibrationvalue_int_pressure(calibrationvalue);
             callMetroHumiditySettingScreen();
         }else if(screenid == SCR_EXTERNAL_HUMIDITY_ADJUST){
+            vGetExternalSensorData(&external_sensordata);
+            calibrationvalue = (external_sensordata.fHumidity - referencevalue);
+            setcalibrationvalue_ext_humidity(calibrationvalue);
             callMetroTempSettingScreen();
         }else if(screenid == SCR_INTERNAL_HUMIDITY_ADJUST){
+            calibrationvalue = (fGetBme280HumidityAverages() - referencevalue);
+            setcalibrationvalue_int_humidity(calibrationvalue);
             callMetroFlowSettingScreen();
         }
 

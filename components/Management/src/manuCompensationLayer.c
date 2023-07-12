@@ -15,6 +15,7 @@
 #include <string.h>
 #include <featureData.h>
 
+#include <calibration.h>
 
 
 /*************************************defines****************************************/
@@ -29,10 +30,7 @@ void vGetMaufCompensatedExternalSensorData(external_sensor_data_t *xManuCompenst
 {
     external_sensor_data_t xAverageData;
     vGetExternalSensorData(&xAverageData);
-    /**
-     * @brief DO some calculation to get the manufacturing compensation values
-     */
-
+    /*  DO some calculation to get the manufacturing compensation values */
      memcpy(xManuCompenstedValues,&xAverageData,sizeof(external_sensor_data_t));
 
     ESP_LOGD(TAG,"Manufactrue compensated external sensor values are temp %0.2f humidiy %0.2f pressure %0.2f",xManuCompenstedValues->fTemperature,xManuCompenstedValues->fHumidity,xManuCompenstedValues->fPressure);
@@ -42,9 +40,7 @@ float fGetVolumeFlowFromManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetVolumetricFlow_featureData();
-    /**
-     * @brief do some calulation to get the volume flow
-     */
+    /* do some calulation to get the volume flow */
     return fResult;
 }
 
@@ -52,9 +48,7 @@ float fGetMassFlowManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetSdp32DiffPressureAverageValue();
-    /**
-     * @brief do some calulation to get the mass flow
-     */
+    /*  do some calulation to get the mass flow  */
     return fResult;
 }
 
@@ -62,9 +56,7 @@ float fGetAirDensityManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetAirDesity_featureData();
-    /**
-     * @brief do some calulation to get the air density
-     */
+    /* do some calulation to get the air density */
     return fResult;
 }
 
@@ -72,9 +64,7 @@ float fGetInternalPressureManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetBme280PressureAverages();
-    /**
-     * @brief do some calulation to get the internal pressure
-     */
+    /* do some calulation to get the internal pressure */
     return fResult;
 }
 
@@ -82,9 +72,7 @@ float fGetInternalTempretureManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetBme280TemperatureAverages();
-    /**
-     * @brief do some calulation to get the internal temperature
-     */
+    /* do some calulation to get the internal temperature */
     return fResult;
 
 }
@@ -93,9 +81,7 @@ float fGetInternalHumidityManuCompensationLayer()
 {
     float fResult = 0.0;
     fResult = fGetBme280HumidityAverages();
-    /**
-     * @brief do some calulation to get the internal humidity
-     */
+    /* do some calulation to get the internal humidity */
     return fResult;
 }
 
@@ -104,7 +90,7 @@ float fGetInternalAirDensityManuCompensationLayer()
 {
     float fResult = 0;
     fResult = fGetInternalAirDensity_featureData();
-
+    
     return fResult;
 
 }

@@ -39,18 +39,14 @@
 #else
 #include "lvgl/lvgl.h"
 #endif
-
 #include "lvgl_helpers.h"
-
-#include "esp_upm_sensors.h"
-
 #include "../components/lv_examples/lv_examples/src/ESPUPM_SIM_01/GUI/Screens/screen_includes.h"
 
 #include "espupm_tasks.h"
-
 #include "middlewareTest.h"
-
 #include <sampleManagement.h>
+#include "esp_upm_sensors.h"
+#include <calibration.h>
 
 
 /*********************
@@ -192,12 +188,14 @@ void app_main()
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
     vInitializeDataManagementApi();     //Initiating the data managament api
+    nvsread_calibrationdata();          //Read calibration data from flash
     vInitiateSensorsOnBoard();          //Initiating all i2c sensors on the board
     vGetTheCounterValuesFromNvsFlash(); //loading the various conter values from the nvs flash
     vGetSequceManagementFromNVS();      //Before loading  sample management we need to load the sequence of the sample
     vInitializeTimeManagement();        //Initializing the time management of the device
     vStartSampleManagementService();    //Installing the sample management service
     vInitializeMotor();                 //Installing the sample management service
+    
     vTaskDelay(500 / portTICK_PERIOD_MS);
     // readTotalLiters();                //Reading the tolal volume in the system from nvs flash
 

@@ -673,10 +673,7 @@ void vAverageBMPValue(void *pvParameters)
     while (1)
     {
 
-        /**
-         * @brief initializing the average values to 0
-         *
-         */
+        /*  initializing the average values to 0 */
         temp_bme280_temperature_average = 0;
         temp_bme280_pressure_average = 0;
         temp_bme280_humidity_average = 0;
@@ -685,18 +682,12 @@ void vAverageBMPValue(void *pvParameters)
 
         for (uint8_t i = 0; i < NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP; i++)
         {
-            /**
-             * @brief calculating values for the bme280
-             *
-             */
+            /*  calculating values for the bme280 */
             temp_bme280_temperature_average += bme280_temperature_array[i];
             temp_bme280_pressure_average += bme280_pressure_array[i];
             temp_bme280_humidity_average += bme280_humidity_array[i];
 
-            /**
-             * @brief calculating values for the bme680
-             *
-             */
+            /* calculating values for the bme680 */
             temp_external_sensor_data_average.fTemperature += external_sensor_data[i].fTemperature;
             temp_external_sensor_data_average.fPressure += external_sensor_data[i].fPressure;
             temp_external_sensor_data_average.fHumidity += external_sensor_data[i].fHumidity;

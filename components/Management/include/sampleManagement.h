@@ -29,20 +29,11 @@
  */
 typedef struct sampleHeader
 {   
-    /**
-     * @brief sample start total number of liters
-     * 
-     */
+    /* sample start total number of liters */
     float fTotalLitersStart;
-    /**
-     * @brief samples hour start 
-     * 
-     */
+    /* samples hour start */
     float fToatlHoursStart;
-    /**
-     * @brief sample start person
-     * 
-     */
+    /* sample start person */
     char cStartPerson[40];
 } sampleHeader_t;
 
@@ -51,15 +42,9 @@ typedef struct sampleHeader
  * 
  */
 typedef struct sampleFooter
-{   /**
-     * @brief sample end total number of liters
-     * 
-     */
+{   /* sample end total number of liters */
     float ftotalLitersEnd;
-    /**
-     * @brief sample end hour
-     * 
-     */
+    /* sample end hour */
     float ftoatlHoursEnd;
     char cEndPerson[40];
 } sampleFooter_t;
@@ -70,65 +55,26 @@ typedef struct sampleFooter
  */
 typedef struct xSampleSummary
 {   
-    /**
-     * @brief generic summary 
-     * 
-     */
+    /* generic summary */
     xGenericSummary_t xGenericSummary;
-    /**
-     * @brief sample start time
-     * 
-     */
+    /* sample start time */
     char cStartTime[10];
-    /**
-     * @brief sample stop time
-     * 
-     */
+    /* sample stop time */
     char cStopTime[10];
-
-    /**
-     * @brief sample number to which this summary belongs
-     * 
-     */
+    /* sample number to which this summary belongs */
     uint16_t uSampleNumber;
-
-    /**
-     * @brief flow set point
-     * 
-     */
+    /* flow set point */
     float fFlowSetPoint;
-
-    /**
-     * @brief sequence number of the sample 
-     * 
-     */
+    /* sequence number of the sample */
     uint8_t uSequenceNumber;
-
-    /**
-     * @brief duration of sample in 15H 30M
-     * 
-     */
+    /* duration of sample in 15H 30M */
     char cDuration[10];
-
-    /**
-     * @brief start person of the sample
-     * 
-     */
+    /* start person of the sample */
     char cStartPerson[40];
-
-    /**
-     * @brief end person of the sample
-     * 
-     */
+    /* end person of the sample */
     char cEndPerson[40];
-
-    /**
-     * @brief check whether the sample has problem or not.It has only 2 values yes or no
-     * 
-     */
+    /* check whether the sample has problem or not.It has only 2 values yes or no */
     char hasProblem[5];
-    
-
 }xSampleSummary_t;
 
 
