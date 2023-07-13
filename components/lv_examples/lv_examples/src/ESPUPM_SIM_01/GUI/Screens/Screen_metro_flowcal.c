@@ -537,7 +537,7 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
             metroFlowCalStarted = false;
             int i;
             ESP_LOGI(TAG, "X & Y Points are following : \n");
-            for( i=0; i<=NUM_OF_FLOW_CALIBRATION_POINT; i++)
+            for( i=0; i < NUM_OF_FLOW_CALIBRATION_POINT; i++)
             {
                 ESP_LOGI(TAG, "Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
                 fflush(NULL);

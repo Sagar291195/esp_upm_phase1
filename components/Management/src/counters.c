@@ -67,14 +67,14 @@ void vSetTotalLitersValueToNvs()
   err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     return;
   }
 
   err = nvs_set_blob(my_handle, TOTAL_LITER_STORAGE_KEY, &totalLitersCounter, sizeof(totalLitersCounter));
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
     return;
   }
 
@@ -82,7 +82,7 @@ void vSetTotalLitersValueToNvs()
   err = nvs_commit(my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
   }
   // Close
   nvs_close(my_handle);
@@ -97,7 +97,7 @@ void vGetTotalLitersFromNvs()
   err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
     return;
   }
@@ -109,7 +109,7 @@ void vGetTotalLitersFromNvs()
   err = nvs_get_blob(my_handle, TOTAL_LITER_STORAGE_KEY, NULL, &required_size);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
   }
 
   if (required_size == 0)
@@ -132,7 +132,7 @@ void vSetTotalHoursValueToNvs()
   err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     return;
   }
   /**
@@ -142,7 +142,7 @@ void vSetTotalHoursValueToNvs()
   err = nvs_set_blob(my_handle, TOTAL_HOUR_STORAGE_KEY, &totalHoursCounter, sizeof(totalHoursCounter));
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
     return;
   }
 
@@ -150,7 +150,7 @@ void vSetTotalHoursValueToNvs()
   err = nvs_commit(my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
   }
   // Close
   nvs_close(my_handle);
@@ -177,7 +177,7 @@ void vGetTotalHoursFromNvs()
   err = nvs_get_blob(my_handle, TOTAL_HOUR_STORAGE_KEY, NULL, &required_size);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
   }
 
   if (required_size == 0)

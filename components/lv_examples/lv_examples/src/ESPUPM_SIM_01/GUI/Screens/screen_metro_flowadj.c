@@ -330,7 +330,6 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         float SetPt;
         validBTNCount++;
-        ESP_LOGI(TAG, "Button pressed %d\n", validBTNCount);
         getSetPt = lv_textarea_get_text(_fcsEnterCalValTA);
      
         char *toCompare = "";
@@ -340,14 +339,14 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             SetPt = atof(getSetPt);
         }
 
-        ESP_LOGI(TAG, "Entered Set Point Value is: %f\n", SetPt);
+        ESP_LOGI(TAG, "Entered Set Point Value is: %f", SetPt);
 
         flowPoints[validBTNCount - 1] = SetPt;
 
         lv_textarea_set_text(_fcsEnterCalValTA, "");
         if (validBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT){
             for (int j = 0; j < NUM_OF_FLOW_CALIBRATION_POINT; j++){
-                ESP_LOGI(TAG, "flowPoints[%d] = %f\n", j, flowPoints[j]);
+                ESP_LOGI(TAG, "flowPoints[%d] = %f", j, flowPoints[j]);
             }
             validBTNCount = 0;
         } 

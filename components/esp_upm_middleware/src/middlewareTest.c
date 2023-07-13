@@ -675,7 +675,7 @@ void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
   err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     return;
   }
   /**
@@ -685,7 +685,7 @@ void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
   err = nvs_set_blob(my_handle, STORAGE_KEY, (void *)paramaters, sizeof(struct_PID_parameters_t));
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
     return;
   }
 
@@ -693,7 +693,7 @@ void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
   err = nvs_commit(my_handle);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
   }
   // Close
   nvs_close(my_handle);
@@ -720,7 +720,7 @@ void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters)
   err = nvs_get_blob(my_handle, STORAGE_KEY, NULL, &required_size);
   if (err != ESP_OK)
   {
-    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+    ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
      /**
      * @brief setting the default value of pid parameters, if storage is not set yet
      *

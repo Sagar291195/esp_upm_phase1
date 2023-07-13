@@ -107,14 +107,14 @@ void vSetSampleNumberToNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
         err = nvs_set_u32(nvsHandle, SAMPLE_STORAGE_KEY, uUniqueSampleNumber);
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+            ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         }
         else
         {
@@ -134,14 +134,14 @@ void vGetSampleNumberFromNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
         err = nvs_get_u32(nvsHandle, SAMPLE_STORAGE_KEY, &uUniqueSampleNumber);
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s\n", esp_err_to_name(err), __func__);
+            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
         }
         nvs_close(nvsHandle);
     }
@@ -164,7 +164,7 @@ void vSetCurrentSequenceNumberToNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
@@ -172,7 +172,7 @@ void vSetCurrentSequenceNumberToNvsFlash()
         err = nvs_set_u8(nvsHandle, SEQUENCE_STORAGE_KEY, uCurrentRunningSequenceNumber);
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+            ESP_LOGE(TAG, "Error (%s) setting NVS value", esp_err_to_name(err));
         }
         else
 
@@ -181,7 +181,7 @@ void vSetCurrentSequenceNumberToNvsFlash()
             err = nvs_commit(nvsHandle);
             if (err != ESP_OK)
             {
-                ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+                ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
             }
         }
 
@@ -195,14 +195,14 @@ void vGetCurrentSequenceNumberFromNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
         err = nvs_get_u8(nvsHandle, SEQUENCE_STORAGE_KEY, &uCurrentRunningSequenceNumber);
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s\n", esp_err_to_name(err), __func__);
+            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
         }
         ESP_LOGD(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
         nvs_close(nvsHandle);
@@ -416,21 +416,21 @@ void vSaveEndSummaryToNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
         err = nvs_set_blob(nvsHandle, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+            ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         }
         else
         {
             err = nvs_commit(nvsHandle);
             if (err != ESP_OK)
             {
-                ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+                ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
             }
         }
         nvs_close(nvsHandle);
@@ -443,7 +443,7 @@ void vGetEndSummaryFromNvsFlash()
     esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
     }
     else
     {
@@ -451,7 +451,7 @@ void vGetEndSummaryFromNvsFlash()
         err = nvs_get_blob(nvsHandle, END_SUMMARY_STORAGE_KEY, &xEndSummary, &requiredSize);
         if (err != ESP_OK)
         {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s\n", esp_err_to_name(err), __func__);
+            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
         }
         nvs_close(nvsHandle);
     }

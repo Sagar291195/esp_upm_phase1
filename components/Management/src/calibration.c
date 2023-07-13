@@ -45,14 +45,14 @@ static bool nvsread_value_calibration(char *key, float *value){
 
     err = nvs_open(CALIBRATION_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK){
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
         return false;
     }
 
     size_t required_size = 0; 
     err = nvs_get_blob(my_handle, key, NULL, &required_size);
     if (err != ESP_OK){
-        ESP_LOGE(TAG, "Error (%s) getting size NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) getting size NVS handle!", esp_err_to_name(err));
         return false;
     }
 
@@ -61,7 +61,7 @@ static bool nvsread_value_calibration(char *key, float *value){
 
     err = nvs_get_blob(my_handle, key, value, &required_size);
     if (err != ESP_OK){
-        ESP_LOGE(TAG, "Error (%s) getting value NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) getting value NVS handle!", esp_err_to_name(err));
         return false;
     }
 
@@ -108,26 +108,38 @@ void nvsread_calibrationdata(void)
     ret = nvsread_value_calibration(ext_temperaturekey, &calibrationdata.external_temperature_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "External Temperature value read error");
+    }else{
+        ESP_LOGI(TAG, "External Temperature Calibration : %.02f", calibrationdata.external_temperature_calibration);
     }
     ret = nvsread_value_calibration(ext_humiditykey, &calibrationdata.external_humidity_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "External Humidity value read error");
+    }else{
+        ESP_LOGI(TAG, "External Humidity Calibration : %.02f", calibrationdata.external_humidity_calibration);
     }
-    ret = nvsread_value_calibration(ext_humiditykey, &calibrationdata.external_pressure_calibration);
+    ret = nvsread_value_calibration(ext_pressurekey, &calibrationdata.external_pressure_calibration);
     if(ret == false){
-        ESP_LOGE(TAG, "External Pressure value read error");
+        ESP_LOGE(TAG, "External pressure value read error");
+    }else{
+        ESP_LOGI(TAG, "External pressure Calibration : %.02f", calibrationdata.external_pressure_calibration);
     }
     ret = nvsread_value_calibration(int_temperaturekey, &calibrationdata.internal_temperature_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "Internal Temperature value read error");
+    }else{
+        ESP_LOGI(TAG, "Internal Temperature Calibration : %.02f", calibrationdata.internal_temperature_calibration);
     }
     ret = nvsread_value_calibration(int_pressurekey, &calibrationdata.internal_pressure_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "Internal Pressure value read error");
+    }else{
+        ESP_LOGI(TAG, "Internal Pressure Calibration : %.02f", calibrationdata.internal_pressure_calibration);
     }
     ret = nvsread_value_calibration(int_huniditykey, &calibrationdata.internal_humidity_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "Internal Humidity value read error");
+    }else{
+        ESP_LOGI(TAG, "Internal humidity Calibration : %.02f", calibrationdata.internal_humidity_calibration);
     }
 }
 
@@ -162,7 +174,7 @@ void setcalibrationvalue_ext_temperature(float value){
 
 void setcalibrationvalue_ext_pressure(float value){
     calibrationdata.external_pressure_calibration = value;
-    nvswrite_value_calibration(ext_humiditykey, calibrationdata.external_pressure_calibration);
+    nvswrite_value_calibration(ext_pressurekey, calibrationdata.external_pressure_calibration);
 }   
 
 void setcalibrationvalue_ext_humidity(float value){

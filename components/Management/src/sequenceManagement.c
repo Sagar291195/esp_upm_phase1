@@ -222,7 +222,7 @@ void vSetSequenceArrayToNVS()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
         return;
     }
 
@@ -233,7 +233,7 @@ void vSetSequenceArrayToNVS()
     err = nvs_set_blob(my_handle, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         return;
     }
 
@@ -241,7 +241,7 @@ void vSetSequenceArrayToNVS()
     err = nvs_commit(my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
     }
     // Close
     nvs_close(my_handle);
@@ -257,7 +257,7 @@ void vGetSequenceFromNvsToArray()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
         return;
     }
@@ -281,7 +281,7 @@ void vGetSequenceFromNvsToArray()
 
     if (err != ESP_OK)
     {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
 
     nvs_close(my_handle);
@@ -459,7 +459,7 @@ void vGetTotalSequenceCountFromNvs()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
         return;
     }
@@ -471,7 +471,7 @@ void vGetTotalSequenceCountFromNvs()
     err = nvs_get_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, &length);
     if (err != ESP_OK)
     {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
 
     nvs_close(my_handle);
@@ -491,7 +491,7 @@ void vSetTotalSequenceCountFromNvs()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
         return;
     }
@@ -502,7 +502,7 @@ void vSetTotalSequenceCountFromNvs()
     err = nvs_set_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         return;
     }
 
@@ -766,15 +766,10 @@ static void vMonitorSensorDataTask(void *pvParameters)
     uint64_t uCounterForCalculatingMeanValues = 0;
 
     TickType_t last_wakeup = xTaskGetTickCount();
-
-    TickType_t xTimeForCheckingFlowRate = xTaskGetTickCount();
     external_sensor_data_t external_sensor_data;
     INA3231_sensor_data_t xInaSensorData[INA3221_CHANNEL];
-    float fAvgExternalTemp = 0;
-    float fAvgExternaHumidity = 0;
-    float fAvgExternalPressure = 0;
-
     bool bOneTime = false;
+
     while (1)
     {
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(1000));
