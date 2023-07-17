@@ -182,12 +182,6 @@ void initializeSDPartSEcond()
     const char mount_point[] = DB_LOCATION;
     ESP_LOGI(TAG, "Initializing SD card");
 
-    // Use settings defined above to initialize SD card and mount FAT filesystem.
-    // Note: esp_vfs_fat_sdmmc/sdspi_mount is all-in-one convenience functions.
-    // Please check its source code and implement error recovery when developing
-    // production applications.
-    ESP_LOGI(TAG, "Using SPI peripheral");
-
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     spi_bus_config_t bus_cfg = {
         .mosi_io_num = PIN_NUM_MOSI,
@@ -197,12 +191,6 @@ void initializeSDPartSEcond()
         .quadhd_io_num = -1,
         .max_transfer_sz = 4000,
     };
-    // ret = spi_bus_initialize(host.slot, &bus_cfg, SPI_DMA_CHAN);
-    // if (ret != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG, "Failed to initialize bus.");
-    //     return;
-    // }
 
     // This initializes the slot without card detect (CD) and write protect (WP) signals.
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
@@ -299,20 +287,12 @@ void initializeSDPartSEcond()
 
 void vInitializeDataManagementApi()
 {
-    // ESP_ERROR_CHECK_WITHOUT_ABORT(initializeSDCard());
     //  initializeSDPartSEcond();
     esp_log_level_set(TAG,ESP_LOG_WARN);
-    /**
-     * @brief initializing our spiffs
-     *
-     */
 
+    /* initializing our spiffs */
     esp_err_t err = vInitializeSpiffs();
-
-    /**
-     * @brief Creating the db only when we have initialize the spiffs sucessfully
-     *
-     */
+    /* Creating the db only when we have initialize the spiffs sucessfully */
     if (err == ESP_OK)
     {
         vCreateDataBase();
@@ -322,13 +302,6 @@ void vInitializeDataManagementApi()
 esp_err_t vInitializeSpiffs()
 {
     ESP_LOGW(TAG, "Initializing SPIFFS, for first time it will take 5-10 mins to format....");
-
-    // esp_vfs_spiffs_conf_t conf = {
-    //     .base_path = BASE_PATH,
-    //     .partition_label = NULL,
-    //     .max_files = 5,
-    //     .format_if_mount_failed = true};
-
     esp_vfs_littlefs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = "storage",
@@ -337,31 +310,7 @@ esp_err_t vInitializeSpiffs()
         .dont_mount = false,
     };
 
-    /**
-     * @brief registering our spiffs
-     *
-     */
-    // esp_err_t ret = esp_vfs_spiffs_register(&conf);
-
-    // if (ret != ESP_OK)
-    // {
-    //     if (ret == ESP_FAIL)
-    //     {
-    //         ESP_LOGE(TAG, "Failed to mount or format filesystem");
-    //     }
-    //     else if (ret == ESP_ERR_NOT_FOUND)
-    //     {
-    //         ESP_LOGE(TAG, "Failed to find SPIFFS partition");
-    //     }
-    //     else
-    //     {
-    //         ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
-    //     }
-    //     return ret;
-    // }
-
     esp_err_t ret = esp_vfs_littlefs_register(&conf);
-
     if (ret != ESP_OK)
     {
         if (ret == ESP_FAIL)
@@ -379,28 +328,12 @@ esp_err_t vInitializeSpiffs()
         return;
     }
 
-    //     size_t total = 0, used = 0;
-    //     ret = esp_spiffs_info(conf.partition_label, &total, &used);
-    //     if (ret != ESP_OK)
-    //     {
-    //         ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
-    //     }
-    //     else
-    //     {
-    //         ESP_LOGI(TAG, "Partition size: total: %d bytes, used: %d bytes", total, used);
-    //     }
-    //     return ret;
-    // }
-
     size_t total = 0, used = 0;
     ret = esp_littlefs_info("storage", &total, &used);
-    if (ret != ESP_OK)
-    {
+    if (ret != ESP_OK){
         ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
         return ret;
-    }
-    else
-    {
+    }else{
         ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
         return ret;
     }
@@ -409,7 +342,6 @@ esp_err_t vInitializeSpiffs()
 
 /**
  * @brief Open the database
- *
  * @param filename filename in the spiffs, sdcard or flash. File contain the database.
  * @param db double pointer to the database name
  * @return int error code
@@ -485,11 +417,7 @@ void vCreateDataBase()
     mutexForTheDb = xSemaphoreCreateMutex();
 
     sqlite3_initialize(); // initializing the sqlite3
-
-    /**
-     * @brief checks if file is present or not, if not present, it will create the file
-     *
-     */
+    /* checks if file is present or not, if not present, it will create the file */
     FILE *dbFile = fopen(DB_FILENAME, "r");
     if (dbFile == NULL)
     {
@@ -498,42 +426,26 @@ void vCreateDataBase()
     }
     fclose(dbFile);
 
-    /**
-     * @brief opening the file for the writing purposes
-     *
-     */
+    /* opening the file for the writing purposes */
     dbFile = fopen(DB_FILENAME, "rw");
 
-    /**
-     * @brief opening the database at the given location
-     *
-     */
+    /*  opening the database at the given location */
     db_open(DB_FILENAME, &dbRawMeasurement);
 
-    /**
-     * @brief creating the raw measurement database
-     *
-     */
-
+    /* creating the raw measurement database */
     char cCreateRawMeasurementTable[] = "CREATE TABLE IF NOT EXISTS rawValuesDataBase(Sample_number INT PRIMARY KEY,Sequence_number INT,timestamp TEXT,average_sdp_value REAL,flowrate REAL,Internal_Pressure_BME REAL,Internal_Temperature_BME REAL,Internal_Humidity_BME REAL,AirDensity REAL,TotalLiters REAL,totalHour REAL,C1BusVolt REAL,C1ShuntVolt REAL,C1ShuntCurr REAL,C2BusVolt REAL,C2ShuntVolt REAL,C2ShuntCur  REAL,C3BusVolt REAL,C3ShuntVolt REAL,C3ShuntCurr REAL,External_Pressure_BME REAL,External_Temperature_BME REAL,External_Humidity_BME REAL);";
 
     int rc = db_exec(dbRawMeasurement, cCreateRawMeasurementTable);
-    if (!rc)
-    {
+    if (!rc){
         ESP_LOGI(TAG, "Raw data table created");
     }
 
     sqlite3_close(dbRawMeasurement); // closing the database
 
-    /**
-     * @brief creating the data base for the archived data
-     *
-     */
-
+    /* creating the data base for the archived data */
     db_open(DB_FILENAME, &dbArchivedMeasurement);
 
     char cCreateArchiveTable[] = "CREATE TABLE IF NOT EXISTS archiveData(Sample_number INT,Sequence_number INT, SequenceSummary BLOB);";
-
     rc = db_exec(dbArchivedMeasurement, cCreateArchiveTable);
     if (!rc)
     {
@@ -553,22 +465,12 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
 
     if (xSemaphoreTake(mutexForTheDb, portMAX_DELAY) == pdPASS)
     {
-        /**
-         * @brief opening the database
-         *
-         */
+        /* opening the database */
         db_open(DB_FILENAME, &dbArchivedMeasurement);
-
         ESP_LOGI(TAG, "Inserting data into database");
-
         char *command = "INSERT INTO archiveData values (?,?,?);";
-
         ESP_LOGI(TAG, "SQLite command for archive data  value is %s", command);
-
-        /**
-         * @brief preparing the statement for the execution
-         *
-         */
+        /* preparing the statement for the execution */
         int rc = sqlite3_prepare_v2(dbArchivedMeasurement, command, -1, &stmt, NULL);
 
         if (rc != SQLITE_OK)
@@ -577,10 +479,8 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
             xSemaphoreGive(mutexForTheDb);
             return;
         }
-        /**
-         * @brief binding the sample number to the satement
-         *
-         */
+
+        /* binding the sample number to the satement */
         sqlite3_bind_int(stmt, 1, sampleNumber);
         if (rc != SQLITE_OK)
         {
@@ -589,10 +489,7 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
             return;
         }
 
-        /**
-         * @brief binding the sequence number to the satement
-         *
-         */
+        /* binding the sequence number to the satement */
         sqlite3_bind_int(stmt, 2, sequenceNumber);
         if (rc != SQLITE_OK)
         {
@@ -601,10 +498,7 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
             return;
         }
 
-        /**
-         * @brief binding the blob values(third values) to the statement.SQLITE_STATIC because the statement is finalized before the buffer is freed:
-         *
-         */
+        /* binding the blob values(third values) to the statement.SQLITE_STATIC because the statement is finalized before the buffer is freed: */
         rc = sqlite3_bind_blob(stmt, 3, &sequenceSummary, sizeof(sequenceSummary), SQLITE_STATIC);
 
         if (rc != SQLITE_OK)
@@ -614,10 +508,7 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
             return;
         }
 
-        /**
-         * @brief executing the statement
-         *
-         */
+        /* executing the statement */
         rc = sqlite3_step(stmt);
         if (rc != SQLITE_OK && rc != SQLITE_DONE)
         {
@@ -626,10 +517,7 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
             return;
         }
 
-        /**
-         * @brief finalizing the statement of sqlite
-         *
-         */
+        /* finalizing the statement of sqlite */
         rc = sqlite3_finalize(stmt);
         if (rc != SQLITE_OK)
         {
@@ -657,18 +545,13 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
     sqlite3_stmt *stmt = NULL;
     if (xSemaphoreTake(mutexForTheDb, portMAX_DELAY) == pdPASS)
     {
-        /**
-         * @brief opening the database
-         *
-         */
+        /* opening the database */
         db_open(DB_FILENAME, &dbArchivedMeasurement);
         ESP_LOGI(TAG, "Getting data from database");
         char *command = "SELECT SequenceSummary FROM archiveData WHERE Sample_number = ? AND Sequence_number = ?;";
         ESP_LOGI(TAG, "SQLite command for archive data  value is %s", command);
-        /**
-         * @brief preparing the statement for the execution
-         *
-         */
+
+        /* preparing the statement for the execution */
         int rc = sqlite3_prepare_v2(dbArchivedMeasurement, command, -1, &stmt, NULL);
         if (rc != SQLITE_OK)
         {
@@ -677,10 +560,7 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
             return false;
         }
 
-        /**
-         * @brief binding the sample number to the satement
-         *
-         */
+        /* binding the sample number to the satement */
         sqlite3_bind_int(stmt, 1, sampleNumber);
         if (rc != SQLITE_OK)
         {
@@ -688,10 +568,8 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
             xSemaphoreGive(mutexForTheDb);
             return false;
         }
-        /**
-         * @brief binding the sequence number to the satement
-         *
-         */
+
+        /* binding the sequence number to the satement */
         sqlite3_bind_int(stmt, 2, sequenceNumber);
         if (rc != SQLITE_OK)
         {
@@ -699,10 +577,8 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
             xSemaphoreGive(mutexForTheDb);
             return false;
         }
-        /**
-         * @brief executing the statement to get the number of rows. Since the number of rows expected are only one, but to be safe, we are using the while loop
-         *
-         */
+
+        /* executing the statement to get the number of rows. Since the number of rows expected are only one, but to be safe, we are using the while loop */
         do
         {
             rc = sqlite3_step(stmt);
@@ -717,10 +593,8 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
 
         } while (rc == SQLITE_ROW);
 
-        /**
-         * @brief finalizing the statement of sqlite
-         *
-         */
+
+        /* finalizing the statement of sqlite */
         rc = sqlite3_finalize(stmt);
         if (rc != SQLITE_OK)
         {

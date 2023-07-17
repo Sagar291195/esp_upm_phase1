@@ -73,14 +73,12 @@ static void vCalculateSequneceEndSummary();
 
 /**
  * @brief This task will monitor analyse the data coming from the sensor and check that is it within the range of the target value
- *
  * @param pvParameters
  */
 static void vMonitorSensorDataTask(void *pvParameters);
 
 /**
  * @brief Calulate variation in the when we need to calculate variation when max and min value are given, with respect to the target value
- *
  * @param fMaxValue  Maximum deviation from the target value in the upper range
  * @param fMinValue  minimum deviation from the target value in the lower range
  * @param fTargetValue target value to be achived
@@ -90,61 +88,25 @@ static float fCalculateVariationInPercentage(float fMaxValue, float fMinValue, f
 
 /*********************************variables********************************************/
 
-/**
- * @brief variable to store the sequence summary data
- *
- */
+/* variable to store the sequence summary data */
 sequenceSummary_t xCurrentSequenceSummary;
-
-/**
- * @brief This semaphore will stop the ongoing sequence. This will be used for the force stop the running sequnences
- *
- */
+/* This semaphore will stop the ongoing sequence. This will be used for the force stop the running sequnence  */
 static SemaphoreHandle_t xStopTheRunningSequenceSemaphore = NULL;
-
-/**
- * @brief semaphore for the gui handle
- *
- */
+/* semaphore for the gui handle  */
 extern SemaphoreHandle_t xGuiSemaphore1;
-
-/**
- * @brief this is the dash board flag to set the mode of the dashboard in the gui, need to set before calling the DashboardInfoWidget() to set the mode.
- *
- */
+/* this is the dash board flag to set the mode of the dashboard in the gui, need to set before calling the DashboardInfoWidget() to set the mode. */
 extern int dashboardflg;
-
-/**
- * @brief this will store all the samples in the system
- *
- */
+/* this will store all the samples in the system */
 static sequence_t totalSequence[MAXIMUM_NO_OF_SAMPLES];
-
-/**
- * @brief total number of samples in the system
- *
- */
+/*  total number of samples in the system */
 uint8_t uTotalSequenceCount = 0;
-
 static TaskHandle_t xTaskHandleUpdateScreenAndSaveValuesEverySecond = NULL;
-
-/**
- * @brief this counts the number of seconds passed since the start of the sequence
- *
- */
+/* this counts the number of seconds passed since the start of the sequence */
 uint16_t uTotalTimePassInSeconds = 0;
-
-/**
- * @brief task handle which contols the sequence task
- *
- */
+/* task handle which contols the sequence task */
 static TaskHandle_t xTaskHandleRunSequnceTask = NULL;
-/**
- * @brief it stores is it safe to delete the task or not
- *
- */
+/* it stores is it safe to delete the task or not */
 bool bDeleteUpdateScreenAndVaulesTask = false;
-
 static TaskHandle_t xTaskHandleMonitorSensorData = NULL;
 
 /*********************************functions***********************************************/
@@ -172,9 +134,6 @@ void vSetSequenceValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStar
 {
 
     totalSequence[uSequenceNumber - 1].uSequenceNo = uSequenceNumber;
-    // memcpy(totalSequence[uSequenceNumber - 1].cStartDate, cStartDate, 40);
-    // ESP_LOGI(TAG,"DATE IS %s", cStartDate);
-    // ESP_LOGI(TAG,"%s",cStartDate);
     strcpy(&totalSequence[uSequenceNumber - 1].cStartDate, pStartDate);
     totalSequence[uSequenceNumber - 1].uStartHour = uStartHour;
     totalSequence[uSequenceNumber - 1].uStartMin = uStartMin;
@@ -186,25 +145,15 @@ void vSetSequenceValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStar
     strcpy(&totalSequence[uSequenceNumber - 1].cStartPerson, pStartPerson);
 
     print_on_terminal();
-    /**
-     * @brief incrementing the total number of samples
-     *
-     */
+    /* incrementing the total number of samples */
     uTotalSequenceCount++;
 }
 
 void vInitializeSequenceArray()
 {
-    /**
-     * @brief initializind the sample arrey to 0
-     *
-     */
+    /* initializind the sample arrey to 0 */
     memset(totalSequence, 0, MAXIMUM_NO_OF_SAMPLES * sizeof(sequence_t));
-
-    /**
-     * @brief setting the number of samples to 0
-     *
-     */
+    /* setting the number of samples to 0 */
     uTotalSequenceCount = 0;
 }
 
@@ -226,10 +175,7 @@ void vSetSequenceArrayToNVS()
         return;
     }
 
-    /**
-     * @brief setting the value to the nvs flash
-     *
-     */
+    /* setting the value to the nvs flash */
     err = nvs_set_blob(my_handle, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
     if (err != ESP_OK)
     {
@@ -262,10 +208,7 @@ void vGetSequenceFromNvsToArray()
         return;
     }
 
-    /**
-     * @brief checking if the values has been present or not. if not then just return
-     *
-     */
+    /* checking if the values has been present or not. if not then just return  */
     size_t required_size = 0; // value will default to 0, if not set yet in NVS
     err = nvs_get_blob(my_handle, STORAGE_KEY, NULL, &required_size);
     if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND)
@@ -273,10 +216,7 @@ void vGetSequenceFromNvsToArray()
 
     ESP_LOGD(TAG, "required size is %d", required_size);
 
-    /**
-     * @brief loading the values from nvs flash to the sample array
-     *
-     */
+    /*  loading the values from nvs flash to the sample array */
     err = nvs_get_blob(my_handle, STORAGE_KEY, (void *)totalSequence, &required_size);
 
     if (err != ESP_OK)
@@ -299,10 +239,7 @@ sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber)
 
 void taskRunSample(void *pvParameters)
 {
-    /**
-     * @brief creating semaphore for stopping the task if, the semaphore handle is NULL
-     *
-     */
+    /* creating semaphore for stopping the task if, the semaphore handle is NULL */
     if (xStopTheRunningSequenceSemaphore == NULL)
     {
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
@@ -319,10 +256,7 @@ void taskRunSample(void *pvParameters)
     memcpy(&usequenceToRun, pvParameters, sizeof(uint8_t));
     ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
 
-    /**
-     * @brief starting the monitor data task
-     *
-     */
+    /* starting the monitor data task */
     if (xTaskHandleMonitorSensorData == NULL)
     {
         xTaskCreate(vMonitorSensorDataTask, "monitor data", 8 * 1024, NULL, 5, &xTaskHandleMonitorSensorData);
@@ -332,43 +266,23 @@ void taskRunSample(void *pvParameters)
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
-    /**
-     * @brief calculating and saving the end summary of the variables
-     *
-     */
-
+    /* calculating and saving the end summary of the variables */
     vInitiateSequenceSummaryStart();
 
-    /**
-     * @brief setting the delete the update value task to false so that task does not deleted when created
-     *
-     */
+    /* setting the delete the update value task to false so that task does not deleted when created */
     bDeleteUpdateScreenAndVaulesTask = false;
 
-    /**
-     * @brief showing the work in progress screen
-     *
-     */
-
+    /*  showing the work in progress screen */
     vShowWorkInProgressScreen();
 
-    /**
-     * @brief creating the task which updates the screen values and saving the values to the nvs flash
-     *
-     */
-
+    /* creating the task which updates the screen values and saving the values to the nvs flash */
     xTaskCreate(vUpdateScreenAndSaveValuesEverySecond, "updateScreen", 4 * 1024, &usequenceToRun, 5, &xTaskHandleUpdateScreenAndSaveValuesEverySecond);
 
-    /**
-     * @brief seting the flow set point
-     *
-     */
+    /*  seting the flow set point */
     setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);
 
-    /**
-     * @brief starting the motor so we have some initial value for sdp sensor and calculate flow rate and the pid controller can compute
-     *
-     */
+    /*  starting the motor so we have some initial value for sdp sensor and calculate flow 
+     * rate and the pid controller can compute  */
     MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);
 
     setStateOfMotor(true); // run the motor
@@ -379,15 +293,10 @@ void taskRunSample(void *pvParameters)
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
     ESP_LOGI(TAG, "Duration in ms %d", udurationInMs);
 
-    /**
-     * @brief delaying the task so that motor can run this time period
-     *
-     */
+    /*  delaying the task so that motor can run this time period */
     // vTaskDelay(pdMS_TO_TICKS(udurationInMs));
-    /**
-     * @brief this will block the task until the semaphore is given or the sequnce has been run to the whole time
-     *
-     */
+
+    /* this will block the task until the semaphore is given or the sequnce has been run to the whole time */
     if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE)
     {
         ESP_LOGW(TAG, "Sequence has been terminated early, due to the force stop");
@@ -397,10 +306,7 @@ void taskRunSample(void *pvParameters)
         ESP_LOGI(TAG, "Sequence has been terminated due to expiry of time");
     }
 
-    /**
-     * @brief now sequence end is reached now stopping the current sequnce and notify the sample management to carry on the task
-     *
-     */
+    /* now sequence end is reached now stopping the current sequnce and notify the sample management to carry on the task  */
     vStopCurrentSequence();
 }
 
@@ -463,10 +369,7 @@ void vGetTotalSequenceCountFromNvs()
 
         return;
     }
-    /**
-     * @brief loading the values from nvs flash to the sample array
-     *
-     */
+    /* loading the values from nvs flash to the sample array  */
     uint8_t length = sizeof(sizeof(uTotalSequenceCount));
     err = nvs_get_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, &length);
     if (err != ESP_OK)
@@ -495,10 +398,8 @@ void vSetTotalSequenceCountFromNvs()
 
         return;
     }
-    /**
-     * @brief setting the value to the nvs flash
-     *
-     */
+
+    /*setting the value to the nvs flash */
     err = nvs_set_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
     if (err != ESP_OK)
     {
@@ -536,11 +437,7 @@ static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
     uint64_t uSequnceDurationInSec = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60));
     float fPercentageOfJobDone = 0;
 
-    /**
-     * @brief setting the total volume and seconds pass in the sequence to zero
-     *
-     */
-
+    /* setting the total volume and seconds pass in the sequence to zero */
     vSetTotalSecondPassesInGivenSequence(0);
     vSetTotalLitersHasBeenPassInGivenSequence(0);
 
@@ -548,37 +445,22 @@ static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
     {
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000)); // ensure that the calling frequnency be constant
 
-        /**
-         * @brief When we delete the task using the task delete function, there may be time that task is in middle of something and holding the semaphore. this varialbe ensure that while delting the task, the task does not hold any semaphore.
-         *
-         */
+        /*  When we delete the task using the task delete function, there may be time that task is in middle of something and holding the semaphore. this varialbe ensure that while delting the task, the task
+         * does not hold any semaphore. */
         if (!bDeleteUpdateScreenAndVaulesTask)
         {
             uTotalTimePassInSec++;
-
-            /**
-             * @brief Setting number of second pass in the sequence
-             *
-             */
+            /* Setting number of second pass in the sequence */
             vSetTotalSecondPassesInGivenSequence(uTotalTimePassInSec);
-
             fPercentageOfJobDone = ((float)uTotalTimePassInSec / (float)uSequnceDurationInSec) * 100;
-
-            /**
-             * @brief Setting the percent of job done
-             *
-             */
+            /* Setting the percent of job done */
             fSetPercentageOfJobDone(fPercentageOfJobDone);
-
             fTotalHourCountTemp = fGetTotalHoursCount();
             /* adding each second pass to the total hours count */
             fTotalHourCountTemp += EACH_SEC_INTO_HOURS;
-
             vSetTotalHoursCount(fTotalHourCountTemp);
-
             /* updating the screen for the total hours and liters */
             vUpdateWorkInProgressScreen();
-
             vSetTotalHoursValueToNvs();
             vSetTotalLitersValueToNvs();
         }
@@ -603,11 +485,7 @@ void vStopCurrentSequence()
 
     /* deleting the task which update the values on the screen and saving to the flash */
     bDeleteUpdateScreenAndVaulesTask = true;
-
-    /**
-     * @brief stopping the monitor task
-     *
-     */
+    /* stopping the monitor task */
     if (xTaskHandleMonitorSensorData)
     {
         ESP_LOGI(TAG, "Deleting the moniotr task");
@@ -615,21 +493,12 @@ void vStopCurrentSequence()
         xTaskHandleMonitorSensorData = NULL;
     }
 
-    /**
-     * @brief calculating the end summary of the sequence
-     */
+    /* calculating the end summary of the sequence */
     vCalculateSequneceEndSummary();
-
-    /**
-     * @brief giving the time to stop the ongoing task to finish
-     *
-     */
+    /* giving the time to stop the ongoing task to finish */
     vTaskDelay(pdMS_TO_TICKS(1500));
 
-    /**
-     * @brief Notify the sample task about the completion of the sequence
-     *
-     */
+    /* Notify the sample task about the completion of the sequence */
     vNotifySampleMangementToProceed();
     vTaskDelay(pdMS_TO_TICKS(50));
     if (xTaskHandleRunSequnceTask != NULL)
@@ -702,12 +571,9 @@ static void vCalculateSequneceEndSummary()
 
     /* copy end date */
     strcpy(xCurrentSequenceSummary.summary.cStopDate, cStopDate);
-
     /* setting  the end volume and the effective volume */
     xCurrentSequenceSummary.summary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
-
     xCurrentSequenceSummary.summary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - xCurrentSequenceSummary.summary.xVolumeCounter.fStartVolume;
-
     /* calculating the variation in volume */
     xCurrentSequenceSummary.summary.xVolumeCounter.fVariation = fabs(((xCurrentSequenceSummary.summary.xVolumeCounter.fTargetVolume - xCurrentSequenceSummary.summary.xVolumeCounter.fEffectiveVolume) / xCurrentSequenceSummary.summary.xVolumeCounter.fTargetVolume) * 100);
 
@@ -723,13 +589,9 @@ static void vCalculateSequneceEndSummary()
 
     /* calculating the variation of extenal sensor data and the air flow */
     xCurrentSequenceSummary.airflowVolumetric.fAirflowVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue, xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue, xCurrentSequenceSummary.airflowVolumetric.fAirflowSetPoint);
-
     xCurrentSequenceSummary.ambientHumidity.fAmbientHumidityVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientHumidity.fMaxAmbientHumidity, xCurrentSequenceSummary.ambientHumidity.fMinAmbientHumidity, xCurrentSequenceSummary.ambientHumidity.fMeanAmbientHumidity);
-
     xCurrentSequenceSummary.ambientPressure.fAmbientPressureVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientPressure.fMaxAmbientPressure, xCurrentSequenceSummary.ambientPressure.fMinAmbientPressure, xCurrentSequenceSummary.ambientPressure.fMeanAmbientPressure);
-
     xCurrentSequenceSummary.ambientTemperature.fTemperatureVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientTemperature.fMaxTemperature, xCurrentSequenceSummary.ambientTemperature.fMinTemperature, xCurrentSequenceSummary.ambientTemperature.fTemperatureVariation);
-
     xCurrentSequenceSummary.headLoss.fHeadLossVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.headLoss.fMaxHeadLoss, xCurrentSequenceSummary.headLoss.fMinHeadLoss, xCurrentSequenceSummary.headLoss.fMeanHeadLoss);
 
     /*  If all sensors values are with in range then the sequence is ok. So we can say that the sequence run sucessfully */
@@ -749,15 +611,8 @@ static void vCalculateSequneceEndSummary()
         totalSequence[uGetCurrentRunningSequenceNumber() - 1].bSucessfullyRun = false;
     }
 
-    /**
-     * @brief save summary to the db
-     *
-     */
+    /*  save summary to the db */
     vInsertSequenceSummaryIntoDataBase(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), xCurrentSequenceSummary);
-    /**
-     * @brief end fo the sequence summary
-     *
-     */
 }
 
 static void vMonitorSensorDataTask(void *pvParameters)
@@ -845,8 +700,6 @@ static void vMonitorSensorDataTask(void *pvParameters)
 static float fCalculateVariationInPercentage(float fMaxValue, float fMinValue, float fTargetValue)
 {
     float fVariationInPercentage = 0;
-
     fVariationInPercentage = fabs((fMaxValue - fMinValue) / (fTargetValue)) * 100;
-
     return fVariationInPercentage;
 }

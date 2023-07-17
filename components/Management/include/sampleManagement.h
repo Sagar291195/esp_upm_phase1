@@ -23,58 +23,35 @@
 
 /************************************struct enum variables********************************************/
 
-/**
- * @brief sample header structure
- * 
- */
+ /* sample header structure */
 typedef struct sampleHeader
 {   
-    /* sample start total number of liters */
-    float fTotalLitersStart;
-    /* samples hour start */
-    float fToatlHoursStart;
-    /* sample start person */
-    char cStartPerson[40];
+    float fTotalLitersStart;     //sample start total number of liters 
+    float fToatlHoursStart;      //samples hour start 
+    char cStartPerson[40];       //sample start person 
 } sampleHeader_t;
 
-/**
- * @brief sample footer structure 
- * 
- */
+/* sample footer structure  */
 typedef struct sampleFooter
-{   /* sample end total number of liters */
-    float ftotalLitersEnd;
-    /* sample end hour */
-    float ftoatlHoursEnd;
+{   
+    float ftotalLitersEnd;  //sample end total number of liters
+    float ftoatlHoursEnd;   //sample end hour
     char cEndPerson[40];
 } sampleFooter_t;
 
-/**
- * @brief structure holds the  end sample summary
- * 
- */
+/* structure holds the  end sample summary */
 typedef struct xSampleSummary
 {   
-    /* generic summary */
-    xGenericSummary_t xGenericSummary;
-    /* sample start time */
-    char cStartTime[10];
-    /* sample stop time */
-    char cStopTime[10];
-    /* sample number to which this summary belongs */
-    uint16_t uSampleNumber;
-    /* flow set point */
-    float fFlowSetPoint;
-    /* sequence number of the sample */
-    uint8_t uSequenceNumber;
-    /* duration of sample in 15H 30M */
-    char cDuration[10];
-    /* start person of the sample */
-    char cStartPerson[40];
-    /* end person of the sample */
-    char cEndPerson[40];
-    /* check whether the sample has problem or not.It has only 2 values yes or no */
-    char hasProblem[5];
+    xGenericSummary_t xGenericSummary;  //generic summary
+    char cStartTime[10];    //sample start time
+    char cStopTime[10];     //sample stop time     
+    uint16_t uSampleNumber; //sample number to which this summary belongs
+    float fFlowSetPoint;    //flow set point 
+    uint8_t uSequenceNumber;    //sequence number of the sample
+    char cDuration[10];     //duration of sample in 15H 30M
+    char cStartPerson[40];  //start person of the sample
+    char cEndPerson[40];    // end person of the sample
+    char hasProblem[5];     //check whether the sample has problem or not.It has only 2 values yes or no 
 }xSampleSummary_t;
 
 
@@ -83,61 +60,52 @@ typedef struct xSampleSummary
 
 /**
  * @brief Get the current sample number in the system
- *
  * @return uint32_t current sample number
  */
 uint32_t uGetCurrentSampleNumber();
 
 /**
  * @brief Set the sample number in the system
- *
  * @param uSampleNumber sample number to be setted
  */
 void vSetCurrentSampleNumber(uint32_t uSampleNumber);
 
 /**
  * @brief Increment the sample number
- * 
  */
 void vIncrementCurrentSampleNumber();
 
 /**
  * @brief save the sample number to the nvs flash
- * 
  */
 void vSetSampleNumberToNvsFlash();
 
 /**
  * @brief get the current sequence number which is either running or will be in delay and will run next time
- * 
  * @return uint8_t Sequnece number of the sequnce 
  */
 uint8_t uGetCurrentRunningSequenceNumber();
 
 /**
  * @brief Get the task handle for the sample management service
- * 
  * @return TaskHandle_t 
  */
 TaskHandle_t xGetHandleSampleManagementService();
 
 /**
  * @brief this fuction start the sample management service
- * 
  */
 void vStartSampleManagementService();
 
 
 /**
  * @brief set the current running sequence number
- * 
  * @param uSequenceNumber sequnce no to be setted
  */
 void vSetCurrentRunningSequenceNumber(uint8_t uSequenceNumber);
 
 /**
  * @brief save the end summary to the nvs flash 
- * 
  */
 void vSaveEndSummaryToNvsFlash();
 
@@ -150,7 +118,6 @@ void vGetEndSummaryFromNvsFlash();
 
 /**
  * @brief checks that the sample runs sucessfully or not. There are some criterias which decides that the sequence runs sucessfully or not. If all the sequnce in the sample runs sucessfully then the sample consider as the sucessful sample or runs without any problem.
- * 
  * @return true if no problem detected in the sample
  * @return false if the given sample is not successful
  */
@@ -158,34 +125,29 @@ bool bIsSampleRunsWithoutProblem();
 
 /**
  * @brief calculate the target volume in the sample
- * 
  * @return float target volume counter
  */
 float fGetTargetVolumeCount();
 
 /**
  * @brief Get the total number of targetd hour in the sample
- * 
  * @return float target hour counter
  */
 float fGetTargetHourCount();
 
 /**
  * @brief Initialize the end summary structure according to the sample gather
- * 
  */
 void vSetInitialCounterValuesToEndSummary();
 
 /**
  * @brief fetch the end summary variable from the back end.
- * 
  * @param xSampleSummary variable which hold the end summary
  */
 void vGetEndSummaryVariable(xSampleSummary_t *xSampleSummary);
 
 /**
  * @brief This function will indicate the sample management to move further. Sample management need the indication either to proceed in the new sample or indicated by the sequnce management regarding the completion of the sequence. 
- * 
  */
 void vNotifySampleMangementToProceed();
 

@@ -23,14 +23,14 @@
 /**********************************************************************
  *                             VARIBALES
 ***********************************************************************/
-char ext_temperaturekey[] = "ext-temp";
-char ext_pressurekey[] = "ext-pressure";
-char ext_humiditykey[] = "ext-humidity";
-char int_temperaturekey[] = "int-temp";
-char int_pressurekey[] = "int-pressure";
-char int_huniditykey[] = "int-humidity";
+char ext_temperaturekey[] = "ext-temp";     // key to store data in flash
+char ext_pressurekey[] = "ext-pressure";    // key to store data in flash
+char ext_humiditykey[] = "ext-humidity";    // key to store data in flash
+char int_temperaturekey[] = "int-temp";     // key to store data in flash
+char int_pressurekey[] = "int-pressure";    // key to store data in flash
+char int_huniditykey[] = "int-humidity";    // key to store data in flash
 
-calibrationt_t calibrationdata;
+calibrationt_t calibrationdata;     //variable to store calibration data
 
 /**********************************************************************
  *                           STATIC PROTOTYPE

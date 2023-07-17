@@ -44,39 +44,30 @@ void vStateMachineEventHandler(void *handler_args, esp_event_base_t base, int32_
         break;
 
     case MODE_WAKEUP:
-
         break;
 
     case MODE_WAIT:
-
         break;
 
     case MODE_SHUT_DOWN_LOW_POWER:
-
         break;
 
     case MODE_LOW_BATTERY_NO_POWER:
-
         break;
 
     case MODE_ETALON:
-
         break;
 
     case MODE_READY:
-
         break;
 
     case MODE_BUSY_SAMPLE_IN_PROGRESS:
-
         break;
 
     case MODE_RECAP_END:
-
         break;
 
     case MODE_AUTO_TEST:
-
         break;
 
     default:
@@ -88,8 +79,6 @@ void vInitiateTheStateMachine()
 {
      // Create the default event loop
     ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-    
     ESP_ERROR_CHECK(esp_event_handler_instance_register(MACHINE_STATE, ESP_EVENT_ANY_ID, vStateMachineEventHandler, NULL, NULL));
 
 }
