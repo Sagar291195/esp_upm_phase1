@@ -28,7 +28,6 @@
 #define MAX_TOLERATION_IN_FLOW_VARIATION 5.0
 
 /***************************************struct and enum *****************************************/
-
 /* structure to store the volume of air flow values of the sequence summary in the system */
 typedef struct volumeCounter
 {
@@ -89,13 +88,10 @@ typedef struct ambientHumidity
     float fMaxAmbientHumidity;      //max ambient Humidity
     float fMinAmbientHumidity;  // min ambient humbidity
     float fAmbientHumidityVariation;    //ambient humidity variation
-    bool bIsInRange;     check whether the values are in the range or not
+    bool bIsInRange;     //check whether the values are in the range or not
 } ambientHumidity_t;
 
-/**
- * @brief structure to hold the headloss
- *
- */
+/*structure to hold the headloss */
 typedef struct headLoss
 {
     float fMeanHeadLoss;    // mean head loss
@@ -105,10 +101,6 @@ typedef struct headLoss
     bool bIsInRange;    //check whether the values are in the range or not
 } headLoss_t;
 
-/**
- * @brief cotainer applicable for both sequece summary and sample summary
- *
- */
 
 /*********************function prototypes**********************/
 /**

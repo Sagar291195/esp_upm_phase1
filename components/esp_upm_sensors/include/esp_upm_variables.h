@@ -28,12 +28,4 @@ typedef struct
     bool buzzer;
 } sensor_present_t;
 
-
-//extern char *guiH = "";
-//extern char *guiM = "";
-//extern char *guiS = "";
-
-
-
-
 #endif // ESP_UPM_VARIABLES_H

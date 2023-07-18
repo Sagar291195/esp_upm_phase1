@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <esp_littlefs.h>
-#include <esp_err.h>>
+#include <esp_err.h>
 
 /****************************************defines**********************************/
 
@@ -47,44 +47,24 @@
 
 #define BASE_PATH "/spiffs"
 
-/**
- * @brief file correspond to the db
- *
- */
+/* file correspond to the db*/
 #define DB_FILENAME "/spiffs/file.db"
 
 /*************************************variables********************************************/
-
-/**
- * @brief Since many task writing to the db at the same time so we need mutual exclusion.
- *
- */
+/* Since many task writing to the db at the same time so we need mutual exclusion */
 SemaphoreHandle_t mutexForTheDb = NULL;
-
-/**
- * @brief db handle for the raw measurement data
- *
- */
+/* db handle for the raw measurement data */
 sqlite3 *dbRawMeasurement = NULL;
-
-/**
- * @brief db handle for the archive data
- *
- */
+/* db handle for the archive data */
 sqlite3 *dbArchivedMeasurement = NULL;
-
 const char *data = "Callback function has been called";
-
 char *zErrMsg;
 
 /*************************************functions prototype********************************************/
-
 void vCreateDataBase();
-
 esp_err_t vInitializeSpiffs();
 
 /*********************************************fucntions****************************************/
-
 esp_err_t initializeSDCard()
 {
     sdmmc_card_t *card;
@@ -108,32 +88,6 @@ esp_err_t initializeSDCard()
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     host.slot = HSPI_HOST;
     // host.max_freq_khz = 10000; // maximum frequecy supported by the sd card module
-
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = PIN_NUM_MOSI,
-        .miso_io_num = PIN_NUM_MISO,
-        .sclk_io_num = PIN_NUM_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = 4000,
-    };
-
-    // spi_bus_config_t bus_cfg;
-
-    // bus_cfg.mosi_io_num = PIN_NUM_MOSI;
-    // bus_cfg.miso_io_num = PIN_NUM_MISO;
-    // bus_cfg.sclk_io_num = PIN_NUM_CLK;
-    // bus_cfg.quadwp_io_num = -1;
-    /**
-     * @brief initializing the spi bus
-     *
-     */
-    // ret = spi_bus_initialize((spi_host_device_t)host.slot, &bus_cfg, SPI_DMA_CHAN);
-    // if (ret != ESP_OK)
-    // {
-    //     ESP_LOGE(TAG, "Failed to initialize bus.");
-    //     return ret;
-    // }
 
     // This initializes the slot without card detect (CD) and write protect (WP) signals.
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
@@ -183,14 +137,6 @@ void initializeSDPartSEcond()
     ESP_LOGI(TAG, "Initializing SD card");
 
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = PIN_NUM_MOSI,
-        .miso_io_num = PIN_NUM_MISO,
-        .sclk_io_num = PIN_NUM_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = 4000,
-    };
 
     // This initializes the slot without card detect (CD) and write protect (WP) signals.
     // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
@@ -325,7 +271,7 @@ esp_err_t vInitializeSpiffs()
         {
             ESP_LOGE(TAG, "Failed to initialize SPIFFS (%s)", esp_err_to_name(ret));
         }
-        return;
+        return ret;
     }
 
     size_t total = 0, used = 0;

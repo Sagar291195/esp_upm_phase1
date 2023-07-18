@@ -59,7 +59,7 @@ float getcalibrationvalue_ext_humidity(void);
  * @return float internal temperature offset
  *   
 */
-loat getcalibrationvalue_int_temperature(void);
+float getcalibrationvalue_int_temperature(void);
 
 /**
  * @brief Get internal pressure calibration data 
