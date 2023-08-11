@@ -81,9 +81,6 @@ char guiDate[40];
 
 lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 {
-
-	bool arcloded = false;
-
 	lv_obj_t *pxContainer = lv_obj_create(pxParent, NULL);
 	lv_obj_set_size(pxContainer, RESUMEINFO_CONTAINER_WIDTH, RESUMEINFO_CONTAINER_HEIGHT);
 
@@ -824,7 +821,6 @@ static void arc_loader(lv_task_t *t)
 	if (a >= 10 + 360)
 	{
 		lv_task_del(t);
-		arcloded = true;
 		lv_obj_set_click(_xStopBtn, true);
 		a = 10;
 		return;

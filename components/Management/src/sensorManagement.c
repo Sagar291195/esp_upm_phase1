@@ -23,64 +23,27 @@
 
 #define TAG "sensorManagement"
 
-/**
- * @brief this will number of values to be average for calculating the average
- *
- */
+/* this will number of values to be average for calculating the average */
 #define NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP 5
+#define BME280_SENSOR_READ_IN_MS                200
+/* bme 280 internal sensor averaging time in ms */
+#define BME_280_AVERAGING_TIME_IN_MS            1000
+/* bme 680 external sensor averating time in ms */
+#define BME_680_AVERAGING_TIME_IN_MS            1000
+#define BME680_SENSOR_READ_IN_MS                200
+/* INA sensor averaging time in ms */
+#define INA3221_CURRENT_SENSOR_IN_MS            1000
+/* This is the duration after which the sensor will update the data into the array. */
+#define SDP32_SENSOR_READ_DURATION_IN_MS        20
+/* sdp sensor average time out */
+#define SDP32_SENSOR_AVERAGE_DURATION_IN_MS     200
+/* scale factor for the sdp32 diff sensor */
+#define SDP32_DIFF_PRESSURE_SCALE_FACTOR        240.0
+/*sdp32 temperater scale factor */
+#define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR     200.0
+#define NO_OF_SAMPLES_SDP32                     10
 
-#define BME280_SENSOR_READ_IN_MS 200
-
-/**
- * @brief bme 280 internal sensor averaging time in ms
- *
- */
-#define BME_280_AVERAGING_TIME_IN_MS 1000
-
-/**
- * @brief bme 680 external sensor averating time in ms
- *
- */
-#define BME_680_AVERAGING_TIME_IN_MS 1000
-
-#define BME680_SENSOR_READ_IN_MS 200
-
-/**
- * @brief INA sensor averaging time in ms
- *
- */
-#define INA3221_CURRENT_SENSOR_IN_MS 1000
-
-/**
- * @brief This is the duration after which the sensor will update the data into the array.
- *
- */
-#define SDP32_SENSOR_READ_DURATION_IN_MS 20
-
-/**
- * @brief sdp sensor average time out
- *
- */
-#define SDP32_SENSOR_AVERAGE_DURATION_IN_MS 200
-
-/**
- * @brief scale factor for the sdp32 diff sensor
- *
- */
-#define SDP32_DIFF_PRESSURE_SCALE_FACTOR 240.0
-
-/**
- * @brief sdp32 temperater scale factor
- *
- */
-#define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR 200.0
-
-#define NO_OF_SAMPLES_SDP32 10
-
-/**
- * @brief i2c bus configuration
- *
- */
+/* i2c bus configuration */
 #define SDA_GPIO 21
 #define SCL_GPIO 22
 
@@ -88,84 +51,33 @@
 
 extern SemaphoreHandle_t xGuiSemaphore;
 
-/**
- * @brief internal temperature sensor
- *
- */
+/* internal temperature sensor */
 float bme280_temperature_average = 0;
-/**
- * @brief internal humidity sensor
- *
- */
+/*  internal humidity sensor */
 float bme280_humidity_average = 0;
-/**
- * @brief internal pressure sensor
- *
- */
+/* internal pressure sensor */
 float bme280_pressure_average = 0;
-
-/**
- * @brief array of values for the internal temperature sensor
- *
- */
+/* array of values for the internal temperature sensor */
 static volatile float bme280_temperature_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/**
- * @brief array of values for the internal humidity sensor
- *
- */
+/* array of values for the internal humidity sensor */
 static volatile float bme280_humidity_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/**
- * @brief array of values for the internal pressure sensor
- *
- */
+/* array of values for the internal pressure sensor */
 static volatile float bme280_pressure_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-
-/**
- * @brief keep track of the sdp sensor read count
- *
- */
+/* keep track of the sdp sensor read count */
 static volatile uint8_t last_update_sensor_value_index = 0;
-
-/**
- * @brief index for calculating the average values
- *
- */
+/* index for calculating the average values */
 static volatile uint8_t last_update_bmp_sensor_value_index = 0;
-
-/**
- * @brief array to hold the raw spd32 values from the sensor
- *
- */
+/* array to hold the raw spd32 values from the sensor */
 static volatile float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};
-
-/**
- * @brief sp32 diff pressure sensor average values
- *
- */
+/* sp32 diff pressure sensor average values */
 float fSdp32_diff_pressure_average = 0;
-
-/**
- * @brief sdp32 average temperature sensor value
- *
- */
+/* sdp32 average temperature sensor value*/
 float fSpd32Temperatuer_average = 0;
-/**
- * @brief Data variable for the bme680 sensor
- *
- */
+/* Data variable for the bme680 sensor */
 static external_sensor_data_t external_sensor_data_average = {0};
-
-/**
- * @brief array for external sensor data for calulating the average values
- *
- */
-
+/* array for external sensor data for calulating the average values */
 static volatile external_sensor_data_t external_sensor_data[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-
-/**
- * @brief array to store the sensor data
- *
- */
+/* array to store the sensor data */
 INA3231_sensor_data_t INA3231_sensor_data[INA3221_CHANNEL];
 
 /**
@@ -323,10 +235,7 @@ void vExternalBME680SensorTask(void *pvParameters)
         xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
         // get the results and do something with them
         if (bme680_get_results_float(&sensor, &values) == ESP_OK)
-        /**
-         * @brief averaging the values over the given time frame
-         *
-         */
+        /* averaging the values over the given time frame */
         {
             external_sensor_data_average.fTemperature = values.temperature;
             external_sensor_data_average.fHumidity = values.humidity;
@@ -516,47 +425,26 @@ void vTaskAverageDiffPressure(void *pvParameters)
  */
 void vSdp32TaskWithAveraging(void *pvParameters)
 {
-
     sdp32_t dev;
-    esp_err_t err;
     memset(&dev, 0, sizeof(sdp32_t));
 
-    /**
-     * @brief read buffer 0 initialized
-     *
-     */
+    /* read buffer 0 initialized */
     uint8_t read_buff[9] = {0};
 
-    /**
-     * @brief variable to store the checksum
-     *
-     */
+    /* variable to store the checksum  */
     uint8_t checksum;
 
-    /**
-     * @brief various sdp32 commands
-     *
-     */
+    /*  various sdp32 commands */
     // uint8_t startContRead_cmd[2] = {0x36, 0x15}; // Start Read in continous Mode
     uint8_t stopContRead_cmd[2] = {0x3F, 0xF9}; // Stop Countinous measure command
-    uint8_t softReset_cmd[2] = {0x00, 0x06};
-    /**
-     * @brief mass flow, temperature compensated diff pressure with average mode
-     *
-     */
+    /* mass flow, temperature compensated diff pressure with average mode */
     uint8_t massFlowRead[2] = {0x36, 0x03};
 
-    /**
-     * @brief initializing spd32 sensor
-     *
-     */
+    /* initializing spd32 sensor */
     ESP_ERROR_CHECK_WITHOUT_ABORT(sdp32_init_desc(&dev, SDP32_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO));
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    /**
-     * @brief sending stop continuous read command
-     *
-     */
+    /* sending stop continuous read command */
     if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
     {
         sdp32_send_cmd_read(&dev, stopContRead_cmd);
@@ -567,21 +455,16 @@ void vSdp32TaskWithAveraging(void *pvParameters)
     ESP_LOGI(TAG, "Starting sdp32 sensor in massflow mode");
     if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
     {
-
         sdp32_send_cmd_read(&dev, massFlowRead);
         xSemaphoreGive(xGuiSemaphore);
     }
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    /**
-     * @brief Creating the task which does the averaging of the samples
-     *
-     */
+    /* Creating the task which does the averaging of the samples */
     xTaskCreate(vTaskAverageDiffPressure, "vTaskAverageDiffPressure", 2048, NULL, 5, NULL);
 
     while (true)
     {
-
         vTaskDelay(pdMS_TO_TICKS(SDP32_SENSOR_READ_DURATION_IN_MS));
         if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
         {
@@ -589,21 +472,12 @@ void vSdp32TaskWithAveraging(void *pvParameters)
             sdp32_read_pressure(&dev, read_buff); // actually reading the mass flow
             xSemaphoreGive(xGuiSemaphore);
         }
-        /**
-         * @brief checksum is the third byte of the array after the first two bytes which ar actual readings
-         *
-         */
+        /* checksum is the third byte of the array after the first two bytes which ar actual readings */
         checksum = read_buff[2];
 
-        /**
-         * @brief checking the checksum, as the values we are getting are correct or not
-         *
-         */
+        /* checking the checksum, as the values we are getting are correct or not */
         bool check = CheckCrc(read_buff, 2, checksum);
-        /**
-         * @brief if checksum failed then continue the loop, else store the value in the array
-         *
-         */
+        /* if checksum failed then continue the loop, else store the value in the array */
         if (!check)
         {
             continue;

@@ -1184,7 +1184,7 @@ void sssSummarySampleScreen(void)
         screenid = SCR_SUMMARY_SAMPLE;
 }
 
-void __sssTimeLabel_refr_func(lv_task_t __sssrefresherTask)
+void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
 {
         if (lv_obj_get_screen(__sssTimeLabel) == lv_scr_act())
         {

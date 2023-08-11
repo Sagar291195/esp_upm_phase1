@@ -107,7 +107,7 @@ typedef struct
  **********************/
 
 extern char * dashboardBTNTxt;
-extern bool arcloded ;
+
 
 /**********************
  *  GLOBAL PROTOTYPES

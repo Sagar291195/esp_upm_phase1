@@ -44,7 +44,7 @@ extern "C" {
  *  GLOBAL PROTOTYPES
  **********************/
 
-void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask) ;
+void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask) ;
 void CallMetroFlowCalibrationScreen(void);
 
 

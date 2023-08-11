@@ -44,9 +44,7 @@ extern "C" {
  *  GLOBAL PROTOTYPES
  **********************/
 void CallScreenInfo(void);
-void infoTimeLabel_refr_func(lv_task_t inforefresherTask);
-//void infoTimeLabel_refr_func(void* p);
-
+void infoTimeLabel_refr_func(lv_task_t *inforefresherTask);
 /**********************
  *    ERROR ASSERT
  **********************/

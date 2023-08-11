@@ -853,7 +853,7 @@ void xsPresetScreenAdvance(void)
 }
 
 // void _xaTimeLabel_Adv_refr_func(void* p) //*_xarefresherTask
-void _xaTimeLabel_Adv_refr_func(lv_task_t _xarefresherTask)
+void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask)
 {
     if (lv_obj_get_screen(_xaTimeLabel_Adv) == lv_scr_act())
     {
@@ -936,20 +936,8 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
         {
             startTimeLabelAdgFlg = true;
             defaultParaSelected = false;
-            // ESP_LOGI(TAG, "Valid BTN Clicked \n");
-            // ESP_LOGI(TAG, "--------------------\n");
-            // ESP_LOGI(TAG, "Date Roller : %s\n", _xaDaterollerbuf);
-            // ESP_LOGI(TAG, "HourBuff : %s\n", _xaHourMinrollerbuf);
 
-            // ESP_LOGI(TAG, "SP roller : %s\n", _xsSProllerbuf);
-            // ESP_LOGI(TAG, "Dur Hour roller : %s\n", _xsDurHourrollerbuf);
-            // ESP_LOGI(TAG, "Dur Minut roller : %s\n", _xsDurMinutrollerbuf);
-            // ESP_LOGI(TAG,"Sequence  Number : %d\n",SeqCounter);
             vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
-
-            //=======Check for no roller touch======
-
-            // setRollerParameterNull();
 
             //======================================
             if (strcmp(_xaDaterollerbuf, _xaDaterollerNull) == 0)

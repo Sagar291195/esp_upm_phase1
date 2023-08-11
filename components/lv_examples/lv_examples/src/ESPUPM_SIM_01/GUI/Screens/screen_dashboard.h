@@ -49,9 +49,9 @@ extern "C"
     void startJobBTN(void);
     void stopBTN(void);
 
-    void _xTimeLabel_refr_func(lv_task_t refresherTask); /*This function wil be called periodically to refresh the guiTime label*/
+    void _xTimeLabel_refr_func(lv_task_t *refresherTask); /*This function wil be called periodically to refresh the guiTime label*/
     void vResInfoPerChangeTask(void);
-    void ResInfoPerChange_task_cb(lv_task_t ResInfoPerChange_task);
+    void ResInfoPerChange_task_cb(lv_task_t *ResInfoPerChange_task);
 
     void vStopUpdatingValuesToDashbordScreen();
 

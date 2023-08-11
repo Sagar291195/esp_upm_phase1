@@ -472,14 +472,14 @@ void xssSummaryStartScreen(void)
     _xssValidJobBtn_ss = lv_btn_create(xssParentContainer_ss, NULL);
     lv_obj_align(_xssValidJobBtn_ss, _xssSummayCont_ss, LV_ALIGN_OUT_BOTTOM_MID, -85, 7);
     lv_obj_set_size(_xssValidJobBtn_ss, 300, 44);
-    if (defaultParametrs == true)
-    {
-        lv_obj_set_click(_xssValidJobBtn_ss, false);
-    }
-    else
-    {
-        lv_obj_set_click(_xssValidJobBtn_ss, true);
-    }
+    // if (defaultParametrs == true)
+    // {
+    //     lv_obj_set_click(_xssValidJobBtn_ss, false);
+    // }
+    // else
+    // {
+    //     lv_obj_set_click(_xssValidJobBtn_ss, true);
+    // }
     lv_obj_set_event_cb(_xssValidJobBtn_ss, stbBTN_event_handler);
     // lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
     static lv_style_t _xssValidJobBtnStyle_ss;
@@ -655,7 +655,7 @@ void start_timer_callback(void *args)
     PumpStopForcefully = false;
 }
 
-void infoWidgetUpdateTask_cb(lv_task_t infoWidgetUpdateTask)
+void infoWidgetUpdateTask_cb(lv_task_t *infoWidgetUpdateTask)
 {
     dashboardflg = 2;
     DashboardInfoWidget();

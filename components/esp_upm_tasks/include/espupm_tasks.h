@@ -158,7 +158,7 @@ extern "C"
     void ResInfoPerCount_task(void *pvParamters);
     void buzzer_task(void *pvParamters);
     void ws2812_task(void *pvParamters);
-    void infoWgtUpdtWaitToProgTask_cb(lv_task_t infoWgtUpdtWaitToProgTask);
+    void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask);
     void vinfoWgtUpdtWaitToProgTask(void); // Task Handled by LV Task
 
     void setSensorTasksTOzeroPriority(void);

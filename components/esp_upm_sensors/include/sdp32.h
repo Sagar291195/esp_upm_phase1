@@ -17,8 +17,8 @@ typedef struct
 } sdp32_t;
 
 esp_err_t sdp32_init_desc(sdp32_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio);
-void sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd);
-void sdp32_read_pressure(sdp32_t *dev, uint8_t *read_data);
+int sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd);
+int sdp32_read_pressure(sdp32_t *dev, uint8_t *read_data);
 
 /**
  * @brief Construct this function will use the crc to check the value of the data from the sdp32 sensor

@@ -259,9 +259,6 @@ char guiSeqDate14[25];
  *  STATIC PROTOTYPES
  **********************/
 
-static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure);
-static float _fFlowCalculation(float fDeltaPressure, float fDensity);
-
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -612,7 +609,7 @@ void iLEDDeActive(void)
 
 
 
-void infoWgtUpdtWaitToProgTask_cb(lv_task_t infoWgtUpdtWaitToProgTask)
+void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask)
 {
     dashboardflg = 1;
 
@@ -631,45 +628,10 @@ void vinfoWgtUpdtWaitToProgTask(void)
     lv_task_once(infoWgtUpdtWaitToProgTask);
 }
 
-
-/**********************
- *   STATIC FUNCTIONS
- **********************/
-static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure)
-{
-    return 1.0 / (287.06 * (fTemperature + 273.15)) *
-           ((fPressure)-230.617 * fHumidity / 100.0 * exp((17.5043 * fTemperature) / (241.2 + fTemperature)));
-}
-
-static float _fFlowCalculation(float fDeltaPressure, float fDensity)
-{
-    float fResult = 0.0;
-    if (isnan(fDeltaPressure))
-    {
-        fResult = 0.0;
-        return fResult;
-    }
-
-    // fResult = sqrt(fabs(fDeltaPressure)) / sqrt(fDensity) * 0.3758940103; // for test
-    // fResult = (fDeltaPressure < 0.0) ? -fResult : fResult;                // check si négatif
-
-    /* using the formula Q= F(dp)* den_char / den_real
-     * Putting F=1 and den_char =1.2
-     */
-    // fResult = .118 * fDeltaPressure * 1.2/fDensity;
-
-    /* updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
-    fResult = 0.759 * pow(fDeltaPressure, 0.5288) * (1.2 / fDensity);
-    return fResult;
-}
-
-
 void motorPWMTask(void *pvParameters)
 {
     float flowRate = 0;
     float fTempVariable = 0;
-    /* volume flow in the single iteration */
-    float fVoulumeFlowInLocalPeriodTime = 0;
 
     pRealFlowRate = &flowRate; // copying  so that we can print on task
 
@@ -687,7 +649,6 @@ void motorPWMTask(void *pvParameters)
         {
             ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
             /* calulating the current flow rate */
-            // flowRate = _fFlowCalculation(fGetSdp32DiffPressureAverageValue(), fGetAirDensityManuCompensationLayer());
             flowRate = fGetVolumetricFlowUserCompensated();
             if (isnan(flowRate))
             {

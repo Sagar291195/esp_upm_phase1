@@ -45,7 +45,6 @@ char MenuBTN_INFO[10] = "INFO";
 // extern var
 int global_DashbordBTNflag;
 bool PumpStopForcefully = false;
-bool arcloded;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scr_dashbord;
@@ -615,7 +614,7 @@ void DashboardInfoWidget(void)
  *
  * @param refresherTask task handle
  */
-void _xTimeLabel_refr_func(lv_task_t refresherTask)
+void _xTimeLabel_refr_func(lv_task_t *refresherTask)
 {
     if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
     {
@@ -691,10 +690,8 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 }
 
 // Update the ResumeInfoPercent Label if the Job is in progress
-void ResInfoPerChange_task_cb(lv_task_t ResInfoPerChange_task)
+void ResInfoPerChange_task_cb(lv_task_t *ResInfoPerChange_task)
 {
-    // if(lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
-    int perZero = 0;
     static int one = 1;
 
     if (workProgress < one)

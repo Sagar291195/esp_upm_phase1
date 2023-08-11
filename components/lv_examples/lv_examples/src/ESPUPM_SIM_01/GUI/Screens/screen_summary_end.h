@@ -155,7 +155,7 @@ void SequenceWidgetArrange(void);
 void xDrawSummaryHeading(void);
 void xDrawArchHeadNav(void);
 
-void __xseTimeLabel_se_refr_func(lv_task_t __xserefresherTask);
+void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask);
 
 /**********************
  *    ERROR ASSERT

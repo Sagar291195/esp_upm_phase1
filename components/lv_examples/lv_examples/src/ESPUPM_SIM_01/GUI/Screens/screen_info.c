@@ -255,7 +255,7 @@ void CallScreenInfo(void)
 }
 
 
-void infoTimeLabel_refr_func(lv_task_t inforefresherTask)
+void infoTimeLabel_refr_func(lv_task_t *inforefresherTask)
 {
     if(lv_obj_get_screen(infoTimeLabel) == lv_scr_act())
     {

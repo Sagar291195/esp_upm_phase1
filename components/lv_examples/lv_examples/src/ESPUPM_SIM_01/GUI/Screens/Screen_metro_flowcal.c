@@ -46,9 +46,6 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event);
 static void  __fasPlusBTN_event_handler( lv_obj_t * obj, lv_event_t event);
 static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event);
 
-static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e);
-static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e);
-
 
 /**********************
  *  STATIC VARIABLES
@@ -378,7 +375,6 @@ void CallMetroFlowCalibrationScreen(void)
     lv_obj_align(_fasMinusTxt, _fasMinusBtn, LV_ALIGN_CENTER, 0, 0); //5,-18
     lv_label_set_text(_fasMinusTxt, "-");
    
-
     static lv_style_t _fasMinusTxtStyle;
     lv_style_init(&_fasMinusTxtStyle);
     lv_style_set_text_font(&_fasMinusTxtStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_40); 
@@ -398,42 +394,12 @@ void CallMetroFlowCalibrationScreen(void)
     lv_obj_align(_fasPlusTxt, _fasPlusBtn, LV_ALIGN_CENTER, 5,-18);
     lv_label_set_text(_fasPlusTxt, "+");
     
-
     static lv_style_t _fasPlusTxtStyle;
     lv_style_init(&_fasPlusTxtStyle);
     lv_style_set_text_font(&_fasPlusTxtStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_40); 
     lv_style_set_text_color(&_fasPlusTxtStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_fasPlusTxt, LV_LABEL_PART_MAIN, &_fasPlusTxtStyle);
 
-    //====================
-    //====================
-    // spinbox = lv_spinbox_create(fasParentCont, NULL);
-    // //lv_spinbox_set_range(spinbox, -1000, 90000);
-    // lv_spinbox_set_range(spinbox, -1, +10000);
-    // lv_spinbox_set_digit_format(spinbox, 5, 3);
-    // lv_spinbox_step_prev(spinbox);
-    // lv_obj_set_width(spinbox, 110);
-    // lv_obj_set_height(spinbox,110);
-    // lv_obj_align(spinbox, _fasAdjustFlowLbl, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
-    // lv_obj_set_style_local_text_font(spinbox, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_24 );
-    // //lv_obj_set_style_local_
-
-    // lv_coord_t h = lv_obj_get_height(spinbox);
-    // lv_obj_t * btn = lv_btn_create(fasParentCont, NULL);
-    // lv_obj_set_size(btn, h+40, h);
-    // lv_obj_align(btn, spinbox, LV_ALIGN_OUT_RIGHT_MID, 10, 0);
-    // lv_theme_apply(btn, LV_THEME_SPINBOX_BTN);
-    // lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_PLUS);
-    // lv_obj_set_event_cb(btn, lv_spinbox_increment_event_cb);
-
-    // btn = lv_btn_create(fasParentCont, btn);
-    // lv_obj_align(btn, spinbox, LV_ALIGN_OUT_LEFT_MID, -10, 0);
-    // lv_obj_set_event_cb(btn, lv_spinbox_decrement_event_cb);
-    // lv_obj_set_style_local_value_str(btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_SYMBOL_MINUS);
-
-
-    //====================
-    //====================
     // Creat a stop Button
     _fasValidBtn = lv_btn_create(fasParentCont, NULL);
     lv_obj_align(_fasValidBtn, fasParentCont, LV_ALIGN_IN_BOTTOM_LEFT, 10, -10 );
@@ -457,7 +423,7 @@ void CallMetroFlowCalibrationScreen(void)
 }
 
 
-void _fasTimeRefTask_Call(lv_task_t _fasTimeRefTask) 
+void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask) 
 {
     if(screenid == SCR_FLOW_CALIBRATION)
     {
@@ -552,45 +518,6 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         }
     }
 }
-
-
-static void lv_spinbox_increment_event_cb(lv_obj_t * btn, lv_event_t e)
-{
-    ESP_LOGI(TAG, "spin box event");
-    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_increment(spinbox);
-        //_fasDutyCycle = (int)lv_spinbox_get_value(spinbox);
-
-        //   y  ^
-        //      |
-        //      |                       * (100, 65535) ~ (X2, Y2)
-        //      |                   *
-        //      |               *
-        //      |           *
-        //      |       *
-        //      |   *
-        //      *(0, 20000) ~ (X1, Y1)
-        //      |______________________________>
-        // X1 =     Lower % Motor Speed, X2 = Highest % Motor Speed
-        // Y1 =     Lower limit of duty cycle, Y2 = Highest Limit of Dutycycle
-        //point 1 (0, 20000) , Point 2 (100, 65535)
-        //Equation y = 455.36 *x + 20000
-        float IncBTN = 455.36 * (float)lv_spinbox_get_value(spinbox) + 20000;
-        _fasDutyCycle = (int)IncBTN;
-    }
-}
-
-static void lv_spinbox_decrement_event_cb(lv_obj_t * btn, lv_event_t e)
-{
-    if(e == LV_EVENT_SHORT_CLICKED || e == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_decrement(spinbox);
-        //_fasDutyCycle = (int)lv_spinbox_get_value(spinbox);
-        float DecBTN = 455.36 * (float)lv_spinbox_get_value(spinbox) + 20000;
-        _fasDutyCycle = (int)DecBTN;
-
-    }
-}
-
 
 /**********************
  *    ERROR ASSERT

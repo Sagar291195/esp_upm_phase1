@@ -258,8 +258,6 @@ static void motorTask(void *pvParameters)
 {
     float flowRate = 0;
     float fTempVariable = 0;
-    /*  volume flow in the single iteration  */
-    float fVoulumeFlowInLocalPeriodTime = 0;
 
     /* intiating the pwm motor */
     initiatePWMMotor();
@@ -268,7 +266,6 @@ static void motorTask(void *pvParameters)
 
     while (1)
     {
-
         vTaskDelay(motorWAIT_ON / portTICK_PERIOD_MS);
 
         /* if motor is runnng then we need to calculate the duty cycle so that to make
@@ -278,10 +275,7 @@ static void motorTask(void *pvParameters)
 
             ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
             /* calulating the current flow rate */
-
-            // flowRate = _fFlowCalculation(fGetSdp32DiffPressureAverageValue(), fGetAirDensityManuCompensationLayer());
             flowRate = fGetVolumetricFlowUserCompensated();
-
             if (isnan(flowRate))
             {
                 ESP_LOGD(TAG, "flow rate is nan");

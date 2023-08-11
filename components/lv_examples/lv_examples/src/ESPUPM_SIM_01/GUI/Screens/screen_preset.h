@@ -41,7 +41,7 @@ extern "C" {
 void xsPresetScreenAdvance(void);
 void defaultParametrs(void);
 void setRollerParameterNull(void);
-void _xaTimeLabel_Adv_refr_func(lv_task_t _xarefresherTask);
+void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask);
 
 /**********************
  *    ERROR ASSERT

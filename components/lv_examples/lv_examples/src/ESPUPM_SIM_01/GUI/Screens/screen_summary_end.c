@@ -1066,7 +1066,7 @@ void SequenceWidgetArrange(void)
     // }
 }
 
-void __xseTimeLabel_se_refr_func(lv_task_t __xserefresherTask)
+void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
 {
     if (lv_obj_get_screen(__xseTimeLabel_se) == lv_scr_act())
     {
@@ -1115,7 +1115,7 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         { 
             lv_task_del(__xserefresherTask);
             // setting the smaple number and sequnce number before showing the sequnce data
-            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary);
+            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t) lv_obj_get_user_data(obj), &xSequnceSummary);
             sssSummarySampleScreen();
         }
         else

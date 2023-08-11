@@ -31,10 +31,7 @@ ESP_EVENT_DEFINE_BASE(MACHINE_STATE);
 void vStateMachineEventHandler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     switch (event_id)
-
     {
-
-        ESP_LOGI(TAG, "event_id: %d", event_id);
     case MODE_STORAGE:
         // make the led blink for 2 seconds
         // buzzer set for a second
