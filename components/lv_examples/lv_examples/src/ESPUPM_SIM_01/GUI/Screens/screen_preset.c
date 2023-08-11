@@ -1007,13 +1007,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             durMin = atoi(_xsDurMinutrollerbuf);
 
             getSeqStopDT(durHr, durMin, startHr, startMin);
-            // getStopDate(durHr);
             getStopDate(durHr, stopHr);
-
-            //-------Write a function to store Sequence Information in NVS----------------------
-            // seqWrite(WseqDate1, WseqTime1, WseqSetPt1, WseqDurHr1, WseqDurMin1, WseqNum1, WseqStatus1);
-            char SeqKey1[5] = "1";
-            // seqRead(SeqKey1);
         }
 
         //=======If only few parameters entered======================

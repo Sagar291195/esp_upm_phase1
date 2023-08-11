@@ -51,10 +51,6 @@ double *totalliterPtr;
  **********************/
 extern void readTotalLiters(void)
 {
-    char TLiterKey1[5] = "tlv";
-    //float TLV = read_TotalLiter(TLiterKey1);
-    // total_liters1 = read_TotalLiter(TLiterKey1);
-    //printf("Toal Liter Val Stored = %0.2lf\n", total_liters1);
     totalliterPtr = &total_liters1;
     TotalliterInt = (int)total_liters1;
     TotalLiterFloat = (total_liters1 - (float)TotalliterInt)*100;

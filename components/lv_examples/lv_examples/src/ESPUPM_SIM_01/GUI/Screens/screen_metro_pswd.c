@@ -166,7 +166,7 @@ static void  passwordcheck_event_handler(lv_obj_t * obj, lv_event_t event)
     if(event == LV_EVENT_VALUE_CHANGED) 
     {
         if(!passNo){
-            pass    = lv_textarea_get_text(mpsEnterCalValTA);
+            pass  = (char *)lv_textarea_get_text(mpsEnterCalValTA);
             int passLength = strlen(pass);
             printf("%s \n" , pass);
             if(passLength == 4){

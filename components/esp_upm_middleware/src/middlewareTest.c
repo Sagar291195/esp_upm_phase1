@@ -276,7 +276,6 @@ float read_TotalLiter(char TLiterKey[5])
   return TLiters.t_Liters;
 }
 
-// char SeqKey1[5] = "1";  // Use this for testing
 
 void seqRead(char SeqKey[5])
 {
