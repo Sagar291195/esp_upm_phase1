@@ -136,7 +136,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(__smmWifiLabel, LV_LABEL_PART_MAIN, &__smmWifiLabelStyle);
     
     //Create Label for Signal icon
-    
     __smmSignalLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmSignalLabel, __smmWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__smmSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -147,8 +146,6 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_color(&__smmSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmSignalLabel, LV_LABEL_PART_MAIN, &__smmSignalLabelStyle);
 
-    //===============================================================================================================
-
     //Crate a container to contain Summary Start Header
     _smmMetroHeadingCont = lv_cont_create(smmPatrentCont, NULL);
     lv_obj_set_size(_smmMetroHeadingCont, 300, 70);
@@ -157,7 +154,6 @@ void CallMetroMenuScreen(void)
     lv_obj_set_style_local_border_width(_smmMetroHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     //Black arrow Container
-
     lv_obj_t *_smmBlackArrowCont;
     _smmBlackArrowCont =  lv_cont_create(_smmMetroHeadingCont, NULL);
     lv_obj_set_size(_smmBlackArrowCont, 60, 60);
@@ -166,9 +162,7 @@ void CallMetroMenuScreen(void)
     lv_obj_set_style_local_border_width(_smmBlackArrowCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
     lv_obj_set_event_cb(_smmBlackArrowCont, __smmBackArrow_event_handler);
 
-
     // Create Back arrow img
-    
     __smmBackArrowLabel = lv_img_create(_smmBlackArrowCont, NULL);
     lv_img_set_src(__smmBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__smmBackArrowLabel, _smmBlackArrowCont, LV_ALIGN_IN_LEFT_MID, 0 , 0);
@@ -189,14 +183,9 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(__smmMetroHeadingLbl, LV_LABEL_PART_MAIN, &__smmMetroHeadingLblStyle);
 
     //Create Metrology Logo
-    
     _smmMetroLogo = lv_img_create(smmPatrentCont, NULL);
     lv_img_set_src(_smmMetroLogo, &metrology_icon);
     lv_obj_align(_smmMetroLogo, smmPatrentCont, LV_ALIGN_IN_TOP_RIGHT, -15 , 50);
-
-    //=====================
-    //=====================
-
 
     lv_obj_t * _smmSensorParBtn1;
     _smmSensorParBtn1 = lv_btn_create(smmPatrentCont, NULL);
@@ -205,7 +194,6 @@ void CallMetroMenuScreen(void)
     lv_obj_set_event_cb(_smmSensorParBtn1, flow_cal_event_handler);
     //lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
   
-
     static lv_style_t _smmSensorParBtnStyle1;
     lv_style_init(&_smmSensorParBtnStyle1);
     lv_style_set_radius(&_smmSensorParBtnStyle1, LV_STATE_DEFAULT, 10);
@@ -225,22 +213,13 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_color(&_smmSensorParBtnLblStyle1, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_smmSensorParBtnLbl1, LV_LABEL_PART_MAIN, &_smmSensorParBtnLblStyle1);
 
-
-
-    //=====================
-    //=====================
-
-
-    // Create Sensor Parameter Button
-
-    
+    // Create Sensor Parameter Button 
     _smmSensorParBtn = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmSensorParBtn,  _smmSensorParBtn1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15 );// _smmSensorParBtn1 ,, _smmMetroHeadingCont
     lv_obj_set_size(_smmSensorParBtn, 300, 44);
     lv_obj_set_event_cb(_smmSensorParBtn, flow_cal_event_handler);
     //lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
   
-
     static lv_style_t _smmSensorParBtnStyle;
     lv_style_init(&_smmSensorParBtnStyle);
     lv_style_set_radius(&_smmSensorParBtnStyle, LV_STATE_DEFAULT, 10);
@@ -250,8 +229,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(_smmSensorParBtn, LV_BTN_PART_MAIN, &_smmSensorParBtnStyle);
 
     //Creat a Sensor Parameter Button Label
-
-    
     _smmSensorParBtnLbl = lv_label_create(_smmSensorParBtn, NULL);
     lv_obj_align(_smmSensorParBtnLbl, _smmSensorParBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_smmSensorParBtnLbl, "SET SERVICE");
@@ -263,7 +240,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(_smmSensorParBtnLbl, LV_LABEL_PART_MAIN, &_smmSensorParBtnLblStyle);
 
     // Create New Calibration Button
-    
     _smmNewCalBtn = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmNewCalBtn, _smmSensorParBtn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15 );
     lv_obj_set_size(_smmNewCalBtn, 300, 44);
@@ -279,7 +255,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(_smmNewCalBtn, LV_BTN_PART_MAIN, &_smmNewCalBtnStyle);
 
     //Creat a Sensor Parameter Button Label
-    
     _smmNewCalBtnLbl = lv_label_create(_smmNewCalBtn, NULL);
     lv_obj_align(_smmNewCalBtnLbl, _smmSensorParBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_smmNewCalBtnLbl, "CALIBRATION");
@@ -306,7 +281,6 @@ void CallMetroMenuScreen(void)
     lv_obj_add_style(_smmNewVerTestBtn, LV_BTN_PART_MAIN, &_smmNewVerTestBtnStyle);
 
     //Creat a Sensor Parameter Button Label
-    
     _smmNewVerTestBtnLbl = lv_label_create(_smmNewVerTestBtn, NULL);
     lv_obj_align(_smmNewVerTestBtnLbl, _smmNewVerTestBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_smmNewVerTestBtnLbl, "NEW VALIDATION TEST");
@@ -316,9 +290,6 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_font(&_smmNewVerTestBtnLbStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); 
     lv_style_set_text_color(&_smmNewVerTestBtnLbStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_smmNewVerTestBtnLbl, LV_LABEL_PART_MAIN, &_smmNewVerTestBtnLbStyle);
-
-    //===================================>>>>>>
-    //===================================>>>>>>
 
     _smmValidationTestCont = lv_cont_create(smmPatrentCont, NULL);
     lv_obj_align(_smmValidationTestCont, _smmNewVerTestBtn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20 );
@@ -338,11 +309,8 @@ void CallMetroMenuScreen(void)
     sqSetHeading(_smmVTC, "VALIDATION TEST");
     lv_obj_set_event_cb(_smmVTC, __smmTriangeBtn_event_handler);
 
-    
     crnt_screen = scrMetroScreen; //scrMetroScreen
     screenid = SCR_METROLOGY_MENU;
-    //===================================
-    //===================================
 }
 
 /**********************

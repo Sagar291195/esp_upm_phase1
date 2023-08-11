@@ -212,9 +212,6 @@ void callMetroTempSettingScreen(void)
     lv_label_set_text(_mtsUnitTxt, "UNIT");
     lv_obj_add_style(_mtsUnitTxt, LV_LABEL_PART_MAIN, &_mtsBlueTxtStyle);
 
-    //```````````````````````````````````````````````````````````
-    //
-    //```````````````````````````````````````````````````````````
     static lv_style_t _mtsDropDownStylemain;
     lv_style_reset(&_mtsDropDownStylemain);
     lv_style_set_bg_color(&_mtsDropDownStylemain, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
@@ -254,23 +251,16 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(_mtsCurveDropDown, LV_DROPDOWN_PART_SELECTED, &_mtsDropDownStyleselected);
     lv_obj_set_event_cb(_mtsCurveDropDown, curve_dropdown_event_handler);
 
-    //===-------------------------->----------------->---------------------->------------->
-
     //Create a Unit selection drop down list
     lv_obj_t * _mtsUnitDropDown = lv_dropdown_create(_mtsCurveUnitCont, NULL);
     lv_dropdown_set_options(_mtsUnitDropDown, "°C\n"
                                               "°F");
-                
-
     lv_obj_align(_mtsUnitDropDown, _mtsUnitTxt, LV_ALIGN_OUT_RIGHT_TOP, 117, -2);
     lv_obj_set_size(_mtsUnitDropDown, 120, 30);
     lv_obj_add_style(_mtsUnitDropDown, LV_DROPDOWN_PART_MAIN, &_mtsDropDownStylemain);
     lv_obj_add_style(_mtsUnitDropDown, LV_DROPDOWN_PART_LIST, &_mtsDropDownStylelist);
     lv_obj_add_style(_mtsUnitDropDown, LV_DROPDOWN_PART_SELECTED, &_mtsDropDownStyleselected);
     lv_obj_set_event_cb(_mtsUnitDropDown, unit_dropdown_event_handler);
-
-    //=================================================================
-    //=================================================================
 
     lv_obj_t * _mtsAlarmStPtCont;
     _mtsAlarmStPtCont = lv_cont_create(mtsParentCont, NULL);
@@ -301,8 +291,6 @@ void callMetroTempSettingScreen(void)
     lv_label_set_text(_mtsOnOffTxt, "ON / OFF");
     lv_obj_add_style(_mtsOnOffTxt, LV_LABEL_PART_MAIN, &_mtsSmallTxtStyle);
 
-    //=========================
-    //=========================
     //Write style state: LV_STATE_DEFAULT for style_screen_sw_1_bg
     static lv_style_t style_switch_bg;
 	lv_style_reset(&style_switch_bg);
@@ -365,20 +353,12 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_height(_mtsOnOffSwitch, 25);
     lv_obj_set_width(_mtsOnOffSwitch, 60);
     //lv_obj_set_event_cb(_mtsOnOffSwitch, Buzzer_switch_event_handler);
-   
-
-    //==============================
-    //==============================
-
-
+ 
     lv_obj_t * _mtsLowerLimitTxt;
     _mtsLowerLimitTxt = lv_label_create(_mtsAlarmStPtCont, NULL);
     lv_obj_align(_mtsLowerLimitTxt, _mtsOnOffTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_mtsLowerLimitTxt, "LOWER LIMIT");
     lv_obj_add_style(_mtsLowerLimitTxt, LV_LABEL_PART_MAIN, &_mtsBlueTxtStyle);
-
-    //============================
-    //============================
 
     //Create a Curve selection drop down list
     lv_obj_t * _mtsLowerLimDropDown = lv_dropdown_create(_mtsAlarmStPtCont, NULL);
@@ -391,17 +371,11 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(_mtsLowerLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mtsDropDownStyleselected);
     lv_obj_set_event_cb(_mtsLowerLimDropDown, lowerlim_dropdown_event_handler);
 
-    //============================
-    //============================
-
     lv_obj_t * _mtsHigherLimitTxt;
     _mtsHigherLimitTxt = lv_label_create(_mtsAlarmStPtCont, NULL);
     lv_obj_align(_mtsHigherLimitTxt, _mtsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
     lv_label_set_text(_mtsHigherLimitTxt, "HIGHER LIMIT");
     lv_obj_add_style(_mtsHigherLimitTxt, LV_LABEL_PART_MAIN, &_mtsBlueTxtStyle);
-
-    //============================
-    //============================
 
     //Create a Curve selection drop down list
     lv_obj_t * _mtsHigherLimDropDown = lv_dropdown_create(_mtsAlarmStPtCont, NULL);
@@ -413,9 +387,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_add_style(_mtsHigherLimDropDown, LV_DROPDOWN_PART_LIST, &_mtsDropDownStylelist);
     lv_obj_add_style(_mtsHigherLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mtsDropDownStyleselected);
     lv_obj_set_event_cb(_mtsHigherLimDropDown, higherlim_dropdown_event_handler);
-
-    //============================
-    //============================
 
     lv_obj_t * _mtsActionTxt;
     _mtsActionTxt = lv_label_create(_mtsAlarmStPtCont, NULL);
@@ -429,11 +400,8 @@ void callMetroTempSettingScreen(void)
     lv_label_set_text(_mtsDisableDeviceTxt, "DISABLE DEVICE AFTER ALERT");
     lv_obj_add_style(_mtsDisableDeviceTxt, LV_LABEL_PART_MAIN, &_mtsSmallTxtStyle);
 
-    //=========================
-    //=========================
 
     //Create On / OFF control switch 
-
     lv_obj_t *_mtsActionSwitch = lv_switch_create(_mtsAlarmStPtCont, NULL);
     lv_obj_align(_mtsActionSwitch, _mtsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
     lv_obj_add_style(_mtsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -443,14 +411,6 @@ void callMetroTempSettingScreen(void)
     lv_obj_set_width(_mtsActionSwitch, 60);
     //lv_obj_set_event_cb(_mtsOnOffSwitch, Buzzer_switch_event_handler);
 
-    
-    //==============================
-    //==============================
-    
-
-
-    //===================================================================
-    //===================================================================
      static lv_style_t _mtsValidBtnLblStyle;
     lv_style_init(&_mtsValidBtnLblStyle);
     lv_style_set_text_font(&_mtsValidBtnLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); 

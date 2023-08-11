@@ -148,7 +148,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_radius(xPidParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Black arrow Container
-
     lv_obj_t *_pidBlackArrowCont;
     _pidBlackArrowCont =  lv_cont_create(xPidParentCont, NULL);
     lv_obj_set_size(_pidBlackArrowCont, 60, 60);
@@ -159,7 +158,6 @@ void xScreenPidTune(void)
 
 
     // Create Back arrow img
-
     lv_obj_t *_pidBlackArrow;
     _pidBlackArrow = lv_img_create(_pidBlackArrowCont, NULL);
     lv_img_set_src(_pidBlackArrow, &left_arrow_icon);
@@ -170,9 +168,7 @@ void xScreenPidTune(void)
     lv_obj_set_event_cb(_pidBlackArrow, _pidBackArrow_event_handler);
 
     // Create Sliding page 
-
     lv_obj_t  * _pidSloderCont;
-
     _pidSloderCont = lv_page_create(xPidParentCont, NULL);
     lv_obj_set_size(_pidSloderCont, 320, 420);
     lv_obj_set_drag(_pidSloderCont, false);
@@ -182,7 +178,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_border_width(_pidSloderCont, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0 );
 
     // Create Main Container inside slider page
-
     lv_obj_t *_pidMainCont;
     _pidMainCont =  lv_cont_create(_pidSloderCont, NULL);
     lv_obj_set_height(_pidMainCont,  1020);
@@ -193,10 +188,7 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_bg_color(_pidMainCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_width(_pidMainCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
     
-
-
     //current Kp Text Label val
-
     lv_obj_t *CurrKpLbl;
     CurrKpLbl = lv_label_create(_pidMainCont, NULL);
     lv_obj_align(CurrKpLbl, _pidMainCont, LV_ALIGN_IN_TOP_LEFT, 20, 5);
@@ -262,12 +254,6 @@ void xScreenPidTune(void)
     lv_label_set_text(nCoffLbl, "00");
     lv_obj_set_style_local_text_font(nCoffLbl, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(nCoffLbl, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-
-
-
-    //================
-    //=================
-    //================
 
     lv_obj_t *CurrKp_aLbl;
     CurrKp_aLbl = lv_label_create(_pidMainCont, NULL);
@@ -341,14 +327,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(aCoffTxtVal, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(aCoffTxtVal, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-  
-
-
-    //================
-    //================
-    //================
-
-
     lv_obj_t *SetKpLbl;
     SetKpLbl = lv_label_create(_pidMainCont, NULL);
     lv_obj_align(SetKpLbl, CurrKdLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 50);
@@ -356,9 +334,6 @@ void xScreenPidTune(void)
     lv_label_set_text(SetKpLbl, "Kp_n");
     lv_obj_set_style_local_text_font(SetKpLbl, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetKpLbl, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-
-    //================
-    //================
 
     lv_obj_t *pidkpRoller;
     pidkpRoller = lv_roller_create(_pidMainCont, NULL);
@@ -389,10 +364,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_color(pidkpRoller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
     lv_obj_set_style_local_text_color(pidkpRoller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_event_cb(pidkpRoller, pidkpRoller_event_handler);
-
-
-    //=================
-    //=================
 
     lv_obj_t *SetKiLbl;
     SetKiLbl = lv_label_create(_pidMainCont, NULL);
@@ -502,12 +473,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_color(pidnCoffRoller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xAC, 0xAC, 0xAC));
     lv_obj_set_style_local_text_color(pidnCoffRoller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_event_cb(pidnCoffRoller, nCoffBuffRoller_event_handler);
-
-
-    //=============================
-    //=============================
-    //============================
-    //============================
 
     lv_obj_t *SetKp_aLbl;
     SetKp_aLbl = lv_label_create(_pidMainCont, NULL);
@@ -653,14 +618,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_color(pidaCoffRoller, LV_ROLLER_PART_SELECTED, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_event_cb(pidaCoffRoller, aCoffBuffRoller_event_handler);
 
-    //=============================
-    //=============================
-    //============================
-    //============================
-
-
-
-
     lv_obj_t *pidSaveBTN;
     pidSaveBTN = lv_btn_create(_pidMainCont, NULL);
     lv_obj_align(pidSaveBTN, pidkpRoller, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 180 );
@@ -695,9 +652,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(SetTimeLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetTimeLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    //===============//==================
-    //===============//==================
-
     lv_obj_t *piddateDDRoller;
     piddateDDRoller = lv_roller_create(_pidMainCont, NULL);
     lv_roller_set_options(piddateDDRoller,  "01\n" "02\n" "03\n" "04\n" "05\n" "06\n" "07\n" "08\n" "09\n" 
@@ -727,12 +681,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(SetDDTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetDDTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    //==============//================
-    //==============//================
-
-        //===============//==================
-    //===============//==================
-
     lv_obj_t *piddateMMRoller;
     piddateMMRoller = lv_roller_create(_pidMainCont, NULL);
     lv_roller_set_options(piddateMMRoller,  "01\n" "02\n" "03\n" "04\n" "05\n" "06\n" "07\n" "08\n" "09\n" 
@@ -759,12 +707,6 @@ void xScreenPidTune(void)
     lv_label_set_text(SetMMTxtLabel, "MM");
     lv_obj_set_style_local_text_font(SetMMTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetMMTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-
-    //==============//================
-    //==============//================
-
-    //===============//==================
-    //===============//==================
 
     lv_obj_t *piddateYYYYRoller;
     piddateYYYYRoller = lv_roller_create(_pidMainCont, NULL);
@@ -793,14 +735,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(SetYYYYTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetYYYYTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    //==============//================
-    //==============//================
-
-    //==============//===============
-    //   Setting Hour Roller
-    //==============//===============
-
-
     lv_obj_t *SetHourRoller;
     SetHourRoller = lv_roller_create(_pidMainCont, NULL);
     lv_roller_set_options(SetHourRoller,  "00\n" "01\n" "02\n" "03\n" "04\n" "05\n" "06\n" "07\n" "08\n" "09\n" 
@@ -828,13 +762,6 @@ void xScreenPidTune(void)
     lv_label_set_text(SetHourTxtLabel, "HOUR");
     lv_obj_set_style_local_text_font(SetHourTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetHourTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-
-    //==============//================
-    //==============//================
-
-    //==============//================
-    //    Setting Minute Roller
-    //==============//================
 
     lv_obj_t *SetMinuteRoller;
     SetMinuteRoller = lv_roller_create(_pidMainCont, NULL);
@@ -867,14 +794,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(SetMinuteTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetMinuteTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-
-    //==============//================
-    //==============//================
-
-    //==============//================
-    //    Setting Second Roller
-    //==============//================
-
     lv_obj_t *SetSecondRoller;
     SetSecondRoller = lv_roller_create(_pidMainCont, NULL);
     lv_roller_set_options(SetSecondRoller,  "00\n" "01\n" "02\n" "03\n" "04\n" "05\n" "06\n" "07\n" "08\n" "09\n" 
@@ -906,10 +825,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(SetSecondTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_obj_set_style_local_text_color(SetSecondTxtLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-
-    //==============//================
-    //==============//================
-
     lv_obj_t *pidTimeSaveBTN;
     pidTimeSaveBTN = lv_btn_create(_pidMainCont, NULL);
     lv_obj_align(pidTimeSaveBTN, _pidMainCont, LV_ALIGN_IN_BOTTOM_LEFT, 10, -30 );
@@ -928,7 +843,6 @@ void xScreenPidTune(void)
     lv_obj_set_style_local_text_font(pidTimeSaveLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_obj_set_style_local_text_color(pidTimeSaveLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     //lv_obj_set_event_cb(SetSecondRoller, timeSaveBTN_event_handler);
-
 
     crnt_screen = xPidMainParentCont;
     screenid = SCR_PIDTUNE;
@@ -1100,13 +1014,8 @@ static void pidSaveBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         Kd_aVal= atof(Kd_aRollerBuf);
         aCoff= atof(aCoffBuf);
 
-        /**
-         * @brief setting the pid parameters 
-         * 
-         */
+        /* setting the pid parameters  */
         vSetPIDParameters(KpVal, KiVal, KdVal, Kp_aVal, Ki_aVal, Kd_aVal, nCoff,aCoff);
-        
-
     }
 }
 

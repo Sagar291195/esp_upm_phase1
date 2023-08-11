@@ -420,7 +420,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xStopBtn, LV_BTN_PART_MAIN, &_xStopBtnStyle);
 
     // Creat a stop Button Label
-
     xStopButtonLabel = lv_label_create(_xStopBtn, NULL);
     lv_obj_align(xStopButtonLabel, _xStopBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(xStopButtonLabel, dashboardBTNTxt); // dashboardBTNTxt
@@ -439,7 +438,6 @@ void pxDashboardScreen(void)
 
     //========================================================================================
     // Create a Menu List list
-
     xMenulist1 = lv_list_create(xParentcontainer, NULL);
     // lv_obj_set_size(xMenulist1, 160, 200);
     lv_obj_align(xMenulist1, xParentcontainer, LV_ALIGN_IN_TOP_LEFT, 0, 0);
@@ -587,10 +585,7 @@ void DashboardInfoWidget(void)
         vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-        /**
-         * @brief Setting the label text to the view summary
-         *
-         */
+        /* Setting the label text to the view summary */
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
         jobFinishedModeBuzzBeep();
@@ -669,57 +664,27 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             // lv_task_del(ResInfoPerChange_task);
             sprintf(stopDateEnd, "%s", guiDate);
             sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
-
-            // //=======================================================>
-
-            // StopLTRCountVal = total_liters;
-            // targetLiters = (totalSecond / 60) * atoi(_xsSProllerbuf);
-            // effectiveLiters = StopLTRCountVal - StartLTRCountVal;
-            // variationLiters = 100 - ((effectiveLiters * 100) / 100);
-
-            // //=======================================================>
-
-            // totalhourVal = totalhourVal + (float)HourCount / 3600.0;
-            // StopHrEND = totalhourVal;
-            // targetHr = (float)totalSecond / 3600.0;
-            // effectiveHr = ((float)HourCount) / 3600.0;
-            // variationHr = 100.0 - ((effectiveHr * 100.0) / targetHr);
-
-            //=======================================================>
-
-            // writeTotalhour(totalhourVal1);
-
-            //=======================================================>
             vControllerSampleStop();
-
             xseSummaryEndScreen();
-
             break;
         case 4:
-            // printf("Wait State\n");
             lv_task_del(refresherTask);
             refresherTask = NULL;
             vControllerSampleStop();
-
             xseSummaryEndScreen();
             break;
         case 5:
-            // printf("Job Finished State\n");
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            // lv_task_del(ResInfoPerChange_task);
             xseSummaryEndScreen();
             break;
         case 6:
-            // printf("Alert Service State\n");
             break;
 
         case 7:
-            // printf("Metrology Needed State\n");
             break;
 
         case 8:
-            // printf("Export Data State\n");
             break;
         }
     }
@@ -730,9 +695,8 @@ void ResInfoPerChange_task_cb(lv_task_t ResInfoPerChange_task)
 {
     // if(lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
     int perZero = 0;
-
-    // printf("value check is:%d\n", workProgress)   ;
     static int one = 1;
+
     if (workProgress < one)
     {
         vSetResumeInfoPercent(IW_create, 0);
@@ -760,10 +724,7 @@ void vResInfoPerChangeTask(void)
  */
 void vCleanupAllDashboardScreen()
 {
-    /**
-     * @brief deleting the refresher task
-     *
-     */
+    /* deleting the refresher task */
     if (refresherTask != NULL){
         lv_task_del(refresherTask);
         refresherTask = NULL;
@@ -788,30 +749,20 @@ void vStopUpdatingValuesToDashbordScreen(void)
 }
 
 void vUpdateDashboardScreen(void){
-    /**
-     * @brief updating the total liters and total hours
-     *
-     */
+    /* updating the total liters and total hours */
     vSetResumeInfoLitersInt(IW_create, uGetTotalLiterIntegerPart());
     vSetResumeInfoLitersFloat(IW_create, uGetTotalLiterFloatPart());
     vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
 
-    /**
-     * @brief updating the pecentage completed
-     *
-     */
+    /* updating the pecentage completed */
     vSetResumeInfoPercent(IW_create, fGetPercentageOfJobDone());
 
-    /**
-     * @brief need to add function to get the remainin hours and minutes from backend
-     *
-     */
+    /* need to add function to get the remainin hours and minutes from backend */
     uint16_t hour = 0;
     uint8_t min = 0;
     vGetNumberOfHourAndMinutesLeftInStartingSequence(&hour, &min);
     vSetResumeInfoRemainingHour(IW_create, hour);
     vSetResumeInfoRemainingMinute(IW_create, min);
-
 }
 
 

@@ -98,8 +98,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_style_local_radius(mhsParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,0);
 
     //Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
-    
     _mhsContStatusBar = lv_cont_create(mhsParentCont, NULL);
     lv_obj_set_size(_mhsContStatusBar, 320, 35);
     lv_obj_align(_mhsContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0,0);
@@ -107,7 +105,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_style_local_border_opa(_mhsContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Watch upper left corner
-    
     __mhsTimeLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsTimeLabel, _mhsContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12,5);
     lv_label_set_text(__mhsTimeLabel, guiTime);
@@ -119,7 +116,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(__mhsTimeLabel, LV_LABEL_PART_MAIN, &_mhsTimeLabelStyle);
 
     //Create Label for Battery icon
-    
     __mhsBatteryLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsBatteryLabel, _mhsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(__mhsBatteryLabel, LV_SYMBOL_BATTERY_FULL); //LV_SYMBOL_BATTERY_FULL
@@ -142,7 +138,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(__mhsWifiLabel, LV_LABEL_PART_MAIN, &__mhsWifiLabelStyle);
 
     //Create Label for Signal icon
-    
     __mhsSignalLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsSignalLabel, __mhsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mhsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -154,8 +149,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(__mhsSignalLabel, LV_LABEL_PART_MAIN, &__mhsSignalLabelStyle);
 
     //Crate a container to contain FLOW Header
-
-    
     _mhsHumidityHeadingCont = lv_cont_create(mhsParentCont, NULL);
     lv_obj_set_size(_mhsHumidityHeadingCont, 300, 70);
     lv_obj_align(_mhsHumidityHeadingCont, _mhsContStatusBar, LV_ALIGN_OUT_BOTTOM_MID, 0,0);
@@ -163,7 +156,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_style_local_border_width(_mhsHumidityHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
     // Create Back arrow img
-    
     __mhsBackArrowLabel = lv_img_create(mhsParentCont, NULL);
     lv_img_set_src(__mhsBackArrowLabel, &left_arrow_icon);
     lv_obj_align(__mhsBackArrowLabel, _mhsHumidityHeadingCont, LV_ALIGN_IN_LEFT_MID, 5 , 0);
@@ -173,7 +165,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_event_cb(__mhsBackArrowLabel, __mhsBackArrow_event_handler);
 
     //Create Label for FLOW "Heading"
-    
     __mhsHumidityHeadingLbl = lv_label_create(_mhsHumidityHeadingCont, NULL);
     lv_obj_align(__mhsHumidityHeadingLbl, _mhsHumidityHeadingCont, LV_ALIGN_IN_BOTTOM_MID, -30, -35);
     lv_label_set_align(__mhsHumidityHeadingLbl, LV_LABEL_ALIGN_CENTER);
@@ -185,7 +176,6 @@ void callMetroHumiditySettingScreen(void)
         screenid = SCR_INTERNAL_HUMIDITY_SETTINGS;
     }
 
-
     static lv_style_t __fasFlowHeadingLblStyle;
     lv_style_init(&__fasFlowHeadingLblStyle);
     lv_style_set_text_font(&__fasFlowHeadingLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); //signal_20
@@ -193,14 +183,10 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(__mhsHumidityHeadingLbl, LV_LABEL_PART_MAIN, &__fasFlowHeadingLblStyle);
 
     // //Create FAN Logo
-    
     // _mhsHumidityLogo = lv_img_create(mhsParentCont, NULL);
     // lv_img_set_src(_mhsHumidityLogo, &fan_icon);
     // lv_obj_align(_mhsHumidityLogo, mhsParentCont, LV_ALIGN_IN_TOP_RIGHT, -25 , 55);
     // lv_img_set_auto_size(_mhsHumidityLogo, true);
-
-    //===============================================================
-    //===============================================================
 
     _mhsCurveUnitCont = lv_cont_create(mhsParentCont, NULL);
     lv_obj_set_size(_mhsCurveUnitCont, 300, 110);
@@ -225,9 +211,6 @@ void callMetroHumiditySettingScreen(void)
     lv_label_set_text(_mhsUnitTxt, "UNIT");
     lv_obj_add_style(_mhsUnitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
 
-    //```````````````````````````````````````````````````````````
-    //
-    //```````````````````````````````````````````````````````````
      static lv_style_t _mhsDropDownStylemain;
     lv_style_reset(&_mhsDropDownStylemain);
     lv_style_set_bg_color(&_mhsDropDownStylemain, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
@@ -281,9 +264,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(_mhsUnitDropDown, LV_DROPDOWN_PART_SELECTED, &_mhsDropDownStyleselected);
     lv_obj_set_event_cb(_mhsUnitDropDown, unit_dropdown_event_handler);
 
-    //=================================================================
-    //=================================================================
-
     lv_obj_t * _mhsAlarmStPtCont;
     _mhsAlarmStPtCont = lv_cont_create(mhsParentCont, NULL);
     lv_obj_set_size(_mhsAlarmStPtCont, 300, 180);
@@ -313,8 +293,6 @@ void callMetroHumiditySettingScreen(void)
     lv_label_set_text(_mhsOnOffTxt, "ON / OFF");
     lv_obj_add_style(_mhsOnOffTxt, LV_LABEL_PART_MAIN, &_mhsSmallTxtStyle);
 
-    //=========================
-    //=========================
     //Write style state: LV_STATE_DEFAULT for style_screen_sw_1_bg
     static lv_style_t style_switch_bg;
 	lv_style_reset(&style_switch_bg);
@@ -379,19 +357,11 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_width(_mhsOnOffSwitch, 60);
     //lv_obj_set_event_cb(_mhsOnOffSwitch, Buzzer_switch_event_handler);
    
-
-    //==============================
-    //==============================
-
-
     lv_obj_t * _mhsLowerLimitTxt;
     _mhsLowerLimitTxt = lv_label_create(_mhsAlarmStPtCont, NULL);
     lv_obj_align(_mhsLowerLimitTxt, _mhsOnOffTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_mhsLowerLimitTxt, "LOWER LIMIT");
     lv_obj_add_style(_mhsLowerLimitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
-
-    //============================
-    //============================
 
     //Create a Curve selection drop down list
     lv_obj_t * _mhsLowerLimDropDown = lv_dropdown_create(_mhsAlarmStPtCont, NULL);
@@ -404,17 +374,11 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(_mhsLowerLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mhsDropDownStyleselected);
     lv_obj_set_event_cb(_mhsLowerLimDropDown, lowerlim_dropdown_event_handler);
 
-    //============================
-    //============================
-
     lv_obj_t * _mhsHigherLimitTxt;
     _mhsHigherLimitTxt = lv_label_create(_mhsAlarmStPtCont, NULL);
     lv_obj_align(_mhsHigherLimitTxt, _mhsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
     lv_label_set_text(_mhsHigherLimitTxt, "HIGHER LIMIT");
     lv_obj_add_style(_mhsHigherLimitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
-
-    //============================
-    //============================
 
     //Create a Curve selection drop down list
     lv_obj_t * _mhsHigherLimDropDown = lv_dropdown_create(_mhsAlarmStPtCont, NULL);
@@ -426,9 +390,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_add_style(_mhsHigherLimDropDown, LV_DROPDOWN_PART_LIST, &_mhsDropDownStylelist);
     lv_obj_add_style(_mhsHigherLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mhsDropDownStyleselected);
     lv_obj_set_event_cb(_mhsHigherLimDropDown, higherlim_dropdown_event_handler);
-
-    //============================
-    //============================
 
     lv_obj_t * _mhsActionTxt;
     _mhsActionTxt = lv_label_create(_mhsAlarmStPtCont, NULL);
@@ -442,11 +403,7 @@ void callMetroHumiditySettingScreen(void)
     lv_label_set_text(_mhsDisableDeviceTxt, "DISABLE DEVICE AFTER ALERT");
     lv_obj_add_style(_mhsDisableDeviceTxt, LV_LABEL_PART_MAIN, &_mhsSmallTxtStyle);
 
-    //=========================
-    //=========================
-
     //Create On / OFF control switch 
-
     lv_obj_t *_mhsActionSwitch = lv_switch_create(_mhsAlarmStPtCont, NULL);
     lv_obj_align(_mhsActionSwitch, _mhsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
     lv_obj_add_style(_mhsActionSwitch, LV_SWITCH_PART_BG, &style_switch_bg);
@@ -456,14 +413,6 @@ void callMetroHumiditySettingScreen(void)
     lv_obj_set_width(_mhsActionSwitch, 60);
     //lv_obj_set_event_cb(_mhsOnOffSwitch, Buzzer_switch_event_handler);
 
-    
-    //==============================
-    //==============================
-    
-
-
-    //===================================================================
-    //===================================================================
     static lv_style_t _mhsValidBtnLblStyle;
     lv_style_init(&_mhsValidBtnLblStyle);
     lv_style_set_text_font(&_mhsValidBtnLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); 

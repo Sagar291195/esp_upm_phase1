@@ -80,16 +80,12 @@ int global_DashbordBTNflag;
 // Define All the Screens Here
 
 // Other Variables
-
 char * pTxt = "\0";
 char * pVal;
-
 unsigned int number;
-
 char aPass[10]; //String to store Password
 char str1[] = LV_SYMBOL_OK ;
 char str2[] = LV_SYMBOL_BACKSPACE ;
-
 
 static void event_handler(lv_obj_t * obj, lv_event_t event);
 

@@ -213,9 +213,6 @@ void callMetroPressureSettingScreen(void)
     lv_label_set_text(_mpsUnitTxt, "UNIT");
     lv_obj_add_style(_mpsUnitTxt, LV_LABEL_PART_MAIN, &_mpsBlueTxtStyle);
 
-    //```````````````````````````````````````````````````````````
-    //
-    //```````````````````````````````````````````````````````````
     static lv_style_t _mpsDropDownStylemain;
     lv_style_reset(&_mpsDropDownStylemain);
     lv_style_set_bg_color(&_mpsDropDownStylemain, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
@@ -255,8 +252,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(_mpsCurveDropDown, LV_DROPDOWN_PART_SELECTED, &_mpsDropDownStyleselected);
     lv_obj_set_event_cb(_mpsCurveDropDown, curve_dropdown_event_handler);
 
-    //===-------------------------->----------------->---------------------->------------->
-
     //Create a Unit selection drop down list
     lv_obj_t * _mpsUnitDropDown = lv_dropdown_create(_mpsCurveUnitCont, NULL);
     lv_dropdown_set_options(_mpsUnitDropDown, "hPA");
@@ -268,9 +263,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(_mpsUnitDropDown, LV_DROPDOWN_PART_LIST, &_mpsDropDownStylelist);
     lv_obj_add_style(_mpsUnitDropDown, LV_DROPDOWN_PART_SELECTED, &_mpsDropDownStyleselected);
     lv_obj_set_event_cb(_mpsUnitDropDown, unit_dropdown_event_handler);
-
-    //=================================================================
-    //=================================================================
 
     lv_obj_t * _mpsAlarmStPtCont;
     _mpsAlarmStPtCont = lv_cont_create(mpsParentCont, NULL);
@@ -301,8 +293,6 @@ void callMetroPressureSettingScreen(void)
     lv_label_set_text(_mpsOnOffTxt, "ON / OFF");
     lv_obj_add_style(_mpsOnOffTxt, LV_LABEL_PART_MAIN, &_mpsSmallTxtStyle);
 
-    //=========================
-    //=========================
     //Write style state: LV_STATE_DEFAULT for style_screen_sw_1_bg
     static lv_style_t style_switch_bg;
 	lv_style_reset(&style_switch_bg);
@@ -366,18 +356,12 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_width(_mpsOnOffSwitch, 60);
     //lv_obj_set_event_cb(_mpsOnOffSwitch, Buzzer_switch_event_handler);
    
-
-    //==============================
-    //==============================
-
     lv_obj_t * _mpsLowerLimitTxt;
     _mpsLowerLimitTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsLowerLimitTxt, _mpsOnOffTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(_mpsLowerLimitTxt, "LOWER LIMIT");
     lv_obj_add_style(_mpsLowerLimitTxt, LV_LABEL_PART_MAIN, &_mpsBlueTxtStyle);
 
-    //============================
-    //============================
     //Create a Curve selection drop down list
     lv_obj_t * _mpsLowerLimDropDown = lv_dropdown_create(_mpsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mpsLowerLimDropDown, "-300\n"
@@ -389,16 +373,12 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(_mpsLowerLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mpsDropDownStyleselected);
     lv_obj_set_event_cb(_mpsLowerLimDropDown, lowerlim_dropdown_event_handler);
 
-    //============================
-    //============================
     lv_obj_t * _mpsHigherLimitTxt;
     _mpsHigherLimitTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsHigherLimitTxt, _mpsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
     lv_label_set_text(_mpsHigherLimitTxt, "HIGHER LIMIT");
     lv_obj_add_style(_mpsHigherLimitTxt, LV_LABEL_PART_MAIN, &_mpsBlueTxtStyle);
 
-    //============================
-    //============================
     //Create a Curve selection drop down list
     lv_obj_t * _mpsHigherLimDropDown = lv_dropdown_create(_mpsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mpsHigherLimDropDown, "700\n"
@@ -410,8 +390,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_add_style(_mpsHigherLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mpsDropDownStyleselected);
     lv_obj_set_event_cb(_mpsHigherLimDropDown, higherlim_dropdown_event_handler);
 
-    //============================
-    //============================
     lv_obj_t * _mpsActionTxt;
     _mpsActionTxt = lv_label_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsActionTxt, _mpsHigherLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
@@ -424,9 +402,6 @@ void callMetroPressureSettingScreen(void)
     lv_label_set_text(_mpsDisableDeviceTxt, "DISABLE DEVICE AFTER ALERT");
     lv_obj_add_style(_mpsDisableDeviceTxt, LV_LABEL_PART_MAIN, &_mpsSmallTxtStyle);
 
-    //=========================
-    //=========================
-
     //Create On / OFF control switch 
     lv_obj_t *_mpsActionSwitch = lv_switch_create(_mpsAlarmStPtCont, NULL);
     lv_obj_align(_mpsActionSwitch, _mpsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
@@ -437,12 +412,6 @@ void callMetroPressureSettingScreen(void)
     lv_obj_set_width(_mpsActionSwitch, 60);
     //lv_obj_set_event_cb(_mpsOnOffSwitch, Buzzer_switch_event_handler);
 
-    
-    //==============================
-    //==============================
-
-    //===================================================================
-    //===================================================================
     static lv_style_t _mpsValidBtnLblStyle;
     lv_style_init(&_mpsValidBtnLblStyle);
     lv_style_set_text_font(&_mpsValidBtnLblStyle, LV_STATE_DEFAULT  ,&lv_font_montserrat_16); 

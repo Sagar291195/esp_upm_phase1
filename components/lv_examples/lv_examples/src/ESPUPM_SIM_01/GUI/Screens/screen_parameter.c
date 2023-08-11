@@ -292,8 +292,6 @@ void ppxParameterScreen(void)
     lv_style_set_text_color(&_xSignalLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xSignalLabel_par, LV_LABEL_PART_MAIN, &_xSignalLabelStyle_par);
 
-    //================================================================================
-
     // Create a container to put all the parameter
     _xParaLabelContainer_par = lv_page_create(container_par, NULL);
     lv_obj_set_size(_xParaLabelContainer_par, 320, 430);
@@ -303,17 +301,13 @@ void ppxParameterScreen(void)
     lv_obj_set_style_local_border_width(_xParaLabelContainer_par, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0 );
 
 
-    //==============================================================================================================
-    // Create a container to contain Parameter Header 
+   // Create a container to contain Parameter Header 
     _xParaHeadingCont_par = lv_cont_create(_xParaLabelContainer_par, NULL);
     lv_obj_set_size(_xParaHeadingCont_par, 300, 70);
     lv_obj_set_width(_xParaHeadingCont_par, lv_page_get_width_fit(_xParaLabelContainer_par));
     lv_obj_align(_xParaHeadingCont_par, _xParaLabelContainer_par, LV_ALIGN_IN_TOP_MID, 0,2);
     lv_obj_set_style_local_bg_color(_xParaHeadingCont_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_width(_xParaHeadingCont_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
-
-    //===================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    //===================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     // Create Back Arrow Container
     _xBackArrowCont = lv_cont_create(_xParaHeadingCont_par, NULL);
@@ -333,9 +327,6 @@ void ppxParameterScreen(void)
     lv_obj_set_style_local_image_recolor(_xBackArrowLabel_par1, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_event_cb(_xBackArrowLabel_par1, _xBackArrow_event_handler);
 
-    //===================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    //===================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
     //Create Label for Parameter "Heading"
     _xParameterHeading_par = lv_label_create(_xParaHeadingCont_par, NULL);
     lv_obj_align(_xParameterHeading_par, _xParaHeadingCont_par, LV_ALIGN_IN_BOTTOM_MID, -50, -35);
@@ -354,7 +345,6 @@ void ppxParameterScreen(void)
     lv_obj_set_style_local_image_recolor_opa(_xParameterIcon_par, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
     lv_obj_set_style_local_image_recolor(_xParameterIcon_par, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35,0x9F,0xE2));
 
-    //+++++++++++++++++++++++++++++++Test+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     _xBaseContainer_par = lv_cont_create(_xParaLabelContainer_par, NULL);
     lv_obj_set_size(_xBaseContainer_par, 300, 670);
     lv_obj_set_click(_xBaseContainer_par, false);
@@ -363,8 +353,6 @@ void ppxParameterScreen(void)
     lv_obj_set_style_local_bg_color(_xBaseContainer_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, _xColorBGParas ); //5f615f, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D), _xColorBGParas
     lv_obj_set_style_local_border_width(_xBaseContainer_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
 
-
-    // //============================================================
     // Create a container to contain buzzer logo, text & toggle switch
     _xParaBuzzerCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaBuzzerCont_par, 300, _ParaContWidth);
@@ -412,8 +400,6 @@ void ppxParameterScreen(void)
     lv_obj_set_height(xBuzzerSwitch, 25);
     lv_obj_set_event_cb(xBuzzerSwitch, Buzzer_switch_event_handler);
    
-
-    
     static lv_style_t _xSwitchStle;
     lv_style_init(&_xSwitchStle);
     lv_style_set_bg_color(&_xSwitchStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
@@ -441,8 +427,6 @@ void ppxParameterScreen(void)
     lv_style_set_line_rounded(&style_hor_line, LV_STATE_DEFAULT, true);
     lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
 
-
-    //============================================================
     // Create a container to contain Led logo, LED text, ON/OFF & switch
     _xParaLedCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaLedCont_par, 300, _ParaContWidth);
@@ -468,7 +452,6 @@ void ppxParameterScreen(void)
     lv_style_set_text_font(&_xLedTextLabelStyle_par, LV_STATE_DEFAULT  ,&lv_font_montserrat_14); 
     lv_style_set_text_color(&_xLedTextLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35,0x9F,0xE2));
     lv_obj_add_style(_xLedTextLabel_par, LV_LABEL_PART_MAIN, &_xLedTextLabelStyle_par);
-
 
     //Create lavel for LED ON/OFF Text
     _xLedOnOffTextLabel_par = lv_label_create(_xParaLedCont_par, NULL);
@@ -503,8 +486,6 @@ void ppxParameterScreen(void)
     lv_style_set_line_rounded(&style_hor_line1, LV_STATE_DEFAULT, true);
     lv_obj_add_style(hor_line1, LV_LINE_PART_MAIN, &style_hor_line1);
 
-
-    //=====================================================================
     // Create a container to contain WiFi logo, Wifi text, ON/OFF & switch
     _xParaWiFiCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaWiFiCont_par, 300, _ParaContWidth);
@@ -512,7 +493,6 @@ void ppxParameterScreen(void)
     lv_obj_align(_xParaWiFiCont_par, hor_line1, LV_ALIGN_OUT_BOTTOM_MID, 0,5);
     lv_obj_set_style_local_bg_color(_xParaWiFiCont_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, _xColorBGParas ); //5f615f , _xColorBGParas, LV_COLOR_WHITE
     lv_obj_set_style_local_border_width(_xParaWiFiCont_par, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
-
 
     //Create Wifi logo
     _xWiFiIcon_par = lv_img_create(_xParaWiFiCont_par, NULL);
@@ -565,7 +545,6 @@ void ppxParameterScreen(void)
     lv_style_set_line_rounded(&style_hor_line2, LV_STATE_DEFAULT, true);
     lv_obj_add_style(hor_line2, LV_LINE_PART_MAIN, &style_hor_line1);
 
-    //=====================================================================
     // Create a container to contain FAN logo, External fan text, ON/OFF & switch
     _xParaFanCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaFanCont_par, 300, _ParaContWidth);
@@ -625,7 +604,6 @@ void ppxParameterScreen(void)
     lv_style_set_line_rounded(&style_hor_line3, LV_STATE_DEFAULT, true);
     lv_obj_add_style(hor_line3, LV_LINE_PART_MAIN, &style_hor_line3);
 
-    //===================================================================================================================
     // Create a container to contain SLEEP logo, SLEEP text, ON/OFF & switch
     _xParaSleepCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaSleepCont_par, 300, _ParaContWidth);
@@ -685,9 +663,7 @@ void ppxParameterScreen(void)
     lv_style_set_line_rounded(&style_hor_line4, LV_STATE_DEFAULT, true);
     lv_obj_add_style(hor_line4, LV_LINE_PART_MAIN, &style_hor_line4);
 
-    //===================================================================================================================
-    // Create a container to contain Language Logo, Language text, Drop down language & switch
-    
+   // Create a container to contain Language Logo, Language text, Drop down language & switch
     _xParaLangCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaLangCont_par, 300, _ParaContWidth);
     lv_obj_set_width(_xParaLangCont_par, lv_page_get_width_fit(_xParaLabelContainer_par));
@@ -725,7 +701,6 @@ void ppxParameterScreen(void)
     lv_obj_add_style(_xSpeakLangTextLabel_par, LV_LABEL_PART_MAIN, &_xSpeakLangTextLabelStyle_par);
 
     //Create a Language selection drop down list
-    
     _xLangDropDown_par = lv_dropdown_create(_xParaLangCont_par, NULL);
     lv_dropdown_set_options(_xLangDropDown_par, "English\n"
                 "French\n"
@@ -752,11 +727,7 @@ void ppxParameterScreen(void)
 
     lv_obj_add_style(hor_line5, LV_LINE_PART_MAIN, &style_hor_line4);
 
-
-
-    //===================================================================================================================
-    // Create a container to contain Sleep Timer Logo, Sleep timer text, Drop down Min value
-    
+   // Create a container to contain Sleep Timer Logo, Sleep timer text, Drop down Min value
     _xParaSlpTmrCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaSlpTmrCont_par, 300, _ParaContWidth);
     lv_obj_set_width(_xParaSlpTmrCont_par, lv_page_get_width_fit(_xParaLabelContainer_par));
@@ -793,13 +764,11 @@ void ppxParameterScreen(void)
     lv_style_set_text_color(&_xAdjTmrTextLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xAdjTmrTextLabel_par, LV_LABEL_PART_MAIN, &_xAdjTmrTextLabelStyle_par);
 
-
     //Create a Language selection drop down list
     _xTimerDropDown_par = lv_dropdown_create(_xParaSlpTmrCont_par, NULL);
     lv_dropdown_set_options(_xTimerDropDown_par, "1 min\n"
                 "30 min\n"
                 "60 min");
-
     lv_obj_align(_xTimerDropDown_par, _xParaSlpTmrCont_par, LV_ALIGN_IN_RIGHT_MID, 30, 0);
     lv_obj_set_size(_xTimerDropDown_par, 80, 30);
     
@@ -821,7 +790,6 @@ void ppxParameterScreen(void)
 
     lv_obj_add_style(hor_line6, LV_LINE_PART_MAIN, &style_hor_line4);
 
-    //===================================================================================================================
     // Create a container to contain LUMINOUS Logo, Lumin text, Adjust slider
     _xParaLuminCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaLuminCont_par, 300, _ParaContWidth);
@@ -870,7 +838,6 @@ void ppxParameterScreen(void)
     lv_style_set_bg_color(&_xSliderStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); 
     lv_obj_add_style(_xLuminslider_par, LV_LABEL_PART_MAIN, &_xSliderStle);
 
-
     //Seprator line
     //Create Horizontal Line
     lv_obj_t * hor_line7 = lv_line_create( _xParaLabelContainer_par, NULL);
@@ -880,7 +847,6 @@ void ppxParameterScreen(void)
  
     lv_obj_add_style(hor_line7, LV_LINE_PART_MAIN, &style_hor_line4);
 
-    //===================================================================================================================
     // Create a container to contain CONTRAST Logo, Contrast text, Adjust slider
     _xParaContrastCont_par = lv_cont_create(_xBaseContainer_par, NULL);
     lv_obj_set_size(_xParaContrastCont_par, 300, _ParaContWidth);
@@ -923,7 +889,6 @@ void ppxParameterScreen(void)
     lv_obj_align(_xContrastslider_par, _xParaContrastCont_par, LV_ALIGN_IN_RIGHT_MID, 170, 0);
     lv_obj_set_width(_xContrastslider_par, 80);
     lv_obj_set_event_cb(_xContrastslider_par, Contrast_Slider_event_handler);
-
     lv_obj_add_style(_xContrastslider_par, LV_LABEL_PART_MAIN, &_xSliderStle);
 
     crnt_screen = scrParameter;    //scrParameter

@@ -376,8 +376,6 @@ void callMetroFlowSettingScreen(void)
     lv_label_set_text(_mfsLowerLimitTxt, "LOWER LIMIT");
     lv_obj_add_style(_mfsLowerLimitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
 
-    //============================
-    //============================
     //Create a Curve selection drop down list
     lv_obj_t * _mfsLowerLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsLowerLimDropDown, "-10%\n"
@@ -389,17 +387,12 @@ void callMetroFlowSettingScreen(void)
     lv_obj_add_style(_mfsLowerLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsLowerLimDropDown, lowerlim_dropdown_event_handler);
 
-    //============================
-    //============================
-
     lv_obj_t * _mfsHigherLimitTxt;
     _mfsHigherLimitTxt = lv_label_create(_mfsAlarmStPtCont, NULL);
     lv_obj_align(_mfsHigherLimitTxt, _mfsLowerLimitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 25);
     lv_label_set_text(_mfsHigherLimitTxt, "HIGHER LIMIT");
     lv_obj_add_style(_mfsHigherLimitTxt, LV_LABEL_PART_MAIN, &_mfsBlueTxtStyle);
 
-    //============================
-    //============================
     //Create a Curve selection drop down list
     lv_obj_t * _mfsHigherLimDropDown = lv_dropdown_create(_mfsAlarmStPtCont, NULL);
     lv_dropdown_set_options(_mfsHigherLimDropDown, "10%\n"
@@ -410,9 +403,6 @@ void callMetroFlowSettingScreen(void)
     lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_LIST, &_mfsDropDownStylelist);
     lv_obj_add_style(_mfsHigherLimDropDown, LV_DROPDOWN_PART_SELECTED, &_mfsDropDownStyleselected);
     lv_obj_set_event_cb(_mfsHigherLimDropDown, higherlim_dropdown_event_handler);
-
-    //============================
-    //============================
 
     lv_obj_t * _mfsActionTxt;
     _mfsActionTxt = lv_label_create(_mfsAlarmStPtCont, NULL);
@@ -426,8 +416,6 @@ void callMetroFlowSettingScreen(void)
     lv_label_set_text(_mfsDisableDeviceTxt, "DISABLE DEVICE AFTER ALERT");
     lv_obj_add_style(_mfsDisableDeviceTxt, LV_LABEL_PART_MAIN, &_mfsSmallTxtStyle);
 
-    //=========================
-    //=========================
     //Create On / OFF control switch 
     lv_obj_t *_mfsActionSwitch = lv_switch_create(_mfsAlarmStPtCont, NULL);
     lv_obj_align(_mfsActionSwitch, _mfsActionTxt, LV_ALIGN_OUT_RIGHT_TOP, 160, 10);
@@ -438,9 +426,6 @@ void callMetroFlowSettingScreen(void)
     lv_obj_set_width(_mfsActionSwitch, 60);
     //lv_obj_set_event_cb(_mfsOnOffSwitch, Buzzer_switch_event_handler);
 
-
-    //===================================================================
-    //===================================================================
     //Creat a stop Button
     lv_obj_t * _mfsValidBtn;
     _mfsValidBtn = lv_btn_create(mfsParentCont, NULL);

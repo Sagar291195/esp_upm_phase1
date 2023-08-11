@@ -449,16 +449,9 @@ void CallMetroFlowCalibrationScreen(void)
     lv_obj_set_style_local_text_font(_fasValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
     lv_obj_set_style_local_text_color(_fasValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    //=============
-    //=============
-
     metroFlowCalStarted = true;
 
     //_fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
-
-    //=============
-    //=============
-
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
 }

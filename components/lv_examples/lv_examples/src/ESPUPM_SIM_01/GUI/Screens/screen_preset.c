@@ -533,7 +533,6 @@ void xsPresetScreenAdvance(void)
     lv_obj_add_style(_xaDurLabel_Adv, LV_LABEL_PART_MAIN, &_xaStartLabelStyle_Adv);
 
     // Roller to hold SETPOINT Value
-
     _xsSProller = lv_roller_create(_xaSPDurCon_Adv, NULL);
     lv_roller_set_options(_xsSProller,
                           "5.0\n"
@@ -1011,7 +1010,6 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             // getStopDate(durHr);
             getStopDate(durHr, stopHr);
 
-
             //-------Write a function to store Sequence Information in NVS----------------------
             // seqWrite(WseqDate1, WseqTime1, WseqSetPt1, WseqDurHr1, WseqDurMin1, WseqNum1, WseqStatus1);
             char SeqKey1[5] = "1";
@@ -1019,7 +1017,6 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
         }
 
         //=======If only few parameters entered======================
-
         if (rollerMovCkFlag == false)
         {
             // startTimeLabelAdgFlg = false;
