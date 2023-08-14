@@ -47,8 +47,8 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 
 int global_CurveDegree = 4;
 int metroflowUnit;
-float flowPoints[10];
-static int validBTNCount = 0;
+float flowPoints[NUM_OF_FLOW_CALIBRATION_POINT];
+static int flow_calibration_point_count = 0;
 
 char *getSetPt;
 
@@ -237,11 +237,10 @@ void callMetroFlowAdjustScreen(void)
     lv_img_set_auto_size(_fcsMetroLogo, true);
 
     //Create Label for "CALIBRATE POINT X" Text
-
     _fcsCalPtXLbl = lv_label_create(fcsParentCont, NULL);
     lv_obj_align(_fcsCalPtXLbl, _fcsMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_MID, -60, 0);
     //lv_label_set_align(_fcsCalPtXLbl, LV_LABEL_ALIGN_CENTER);
-    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X%d", (validBTNCount+1));
+    lv_label_set_text_fmt(_fcsCalPtXLbl, "CALIBRATE POINT X%d", (set_flow_calibration_point_cout+1));
 
     static lv_style_t _fcsCalPtXLblStyle;
     lv_style_init(&_fcsCalPtXLblStyle);
@@ -329,9 +328,8 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         float SetPt;
-        validBTNCount++;
+        
         getSetPt = lv_textarea_get_text(_fcsEnterCalValTA);
-     
         char *toCompare = "";
         if (!strcmp(getSetPt, toCompare)){
             SetPt = 0;
@@ -339,22 +337,20 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             SetPt = atof(getSetPt);
         }
 
-        ESP_LOGI(TAG, "Entered Set Point Value is: %f", SetPt);
-
-        flowPoints[validBTNCount - 1] = SetPt;
-
+        flowPoints[flow_calibration_point_count] = SetPt;
+        ESP_LOGI(TAG, "flowPoints[%d] = %f", flow_calibration_point_count, flowPoints[flow_calibration_point_count]);
         lv_textarea_set_text(_fcsEnterCalValTA, "");
-        if (validBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT){
-            for (int j = 0; j < NUM_OF_FLOW_CALIBRATION_POINT; j++){
-                ESP_LOGI(TAG, "flowPoints[%d] = %f", j, flowPoints[j]);
-            }
-            validBTNCount = 0;
-        } 
         CallMetroFlowCalibrationScreen();
     }
 }
 
+int get_flow_calibration_point_cout(void){
+    return flow_calibration_point_count;
+}
 
+void set_flow_calibration_point_cout(int value){
+    flow_calibration_point_count = value;
+}
 
 /**********************
  *    ERROR ASSERT

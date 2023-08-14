@@ -49,7 +49,7 @@ extern "C" {
 #include "screen_metro_flowparameter.h"
 #include "screen_info.h"
 #include "screen_service.h"
-#include "screen_metro_pswd.h"
+#include "screen_password.h"
 #include "screen_PIDtune.h"
 #include "screen_archive.h"
 
@@ -75,7 +75,8 @@ extern "C" {
 enum{
     SCR_PASSWORD,
     SCR_DASHBOARD,
-    SCR_METROLOGY_CODE,
+    SCR_METROLOGY_PASSWORD,
+    SCR_CHANGE_PASSWORD,
     SCR_METROLOGY_MENU,
     SCR_EXTERNAL_TEMPERATURE_SETTINGS,
     SCR_EXTERNAL_TEMPERATURE_ADJUST,
@@ -95,7 +96,6 @@ enum{
     SCR_FLOW_PARAMETER,
     SCR_ARCHIEVE,
     SCR_INFO,
-    SCR_METROLOGY_PASSWORD,
     SCR_PARAMETER,
     SCR_PIDTUNE,
     SCR_PRESET,

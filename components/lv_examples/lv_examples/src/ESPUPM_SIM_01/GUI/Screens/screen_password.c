@@ -78,17 +78,15 @@ lv_obj_t *mpsMetroPswd;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xMetroPswdScrn(void)
+void Screen_Password(uint8_t screenid)
 {
-    
-    mpsMetroPswd = lv_cont_create(NULL, NULL);
+    //Create Base container
+    mpsMetroPswd = lv_obj_create(NULL, NULL);
     lv_scr_load(mpsMetroPswd);
-     if(crnt_screen != NULL)
-    {
+    if(crnt_screen != NULL){
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
-
 
     lv_obj_t * mpsPatrentCont;
     mpsPatrentCont = lv_cont_create(mpsMetroPswd, NULL);
@@ -102,7 +100,8 @@ void xMetroPswdScrn(void)
     
     pswdmsg = lv_label_create(mpsPatrentCont, NULL);
     lv_obj_align(pswdmsg, mpsPatrentCont, LV_ALIGN_IN_TOP_MID, -100,10);
-    lv_label_set_text(pswdmsg,"           Enter-NEW        \nMetrology Password");
+    lv_label_set_text(pswdmsg,"Enter-NEW\nMetrology Password");
+    lv_label_set_align(pswdmsg, LV_LABEL_ALIGN_CENTER);
     lv_obj_set_style_local_text_font( pswdmsg, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_24 );
     lv_obj_set_style_local_text_color( pswdmsg, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE );
 
@@ -123,38 +122,41 @@ void xMetroPswdScrn(void)
     lv_obj_set_style_local_text_font(mpsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, &lv_font_montserrat_48);
     lv_obj_set_style_local_bg_color(mpsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));//LV_COLOR_MAKE(0x39, 0x89, 0xBD)
     lv_obj_set_style_local_border_width(mpsEnterCalValTA, LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_text_letter_space(mpsEnterCalValTA,  LV_TEXTAREA_PART_BG, LV_STATE_DEFAULT, 8);
     lv_obj_set_event_cb(mpsEnterCalValTA, passwordcheck_event_handler);
 
     lv_obj_t * underlineLbl;
     underlineLbl = lv_label_create(mpsEnterCalValTA, NULL);
-    lv_obj_align(underlineLbl, mpsEnterCalValTA, LV_ALIGN_IN_TOP_MID,10,12);
+    lv_obj_align(underlineLbl, mpsEnterCalValTA, LV_ALIGN_IN_TOP_MID, 10, 12);
     lv_label_set_text(underlineLbl, "____");
+    lv_obj_set_style_local_text_letter_space(underlineLbl,  LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, 8);
     lv_obj_set_style_local_text_color(underlineLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_text_font(underlineLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_38);
 
     /*Create a keyboard*/
     lv_obj_t * mpsKeyBoard;
     mpsKeyBoard = lv_keyboard_create(mpsPatrentCont, NULL);
-    lv_obj_align(mpsKeyBoard,mpsEnterCalValTA, LV_ALIGN_OUT_BOTTOM_LEFT, -20, 5 );
-    lv_obj_set_size(mpsKeyBoard,  250, 320); 
-    lv_keyboard_set_mode(mpsKeyBoard,                LV_KEYBOARD_MODE_NUM                );
-    lv_keyboard_set_map(mpsKeyBoard,                 LV_KEYBOARD_MODE_NUM,     fcs_kb_map);
-    lv_keyboard_set_ctrl_map(mpsKeyBoard,            LV_KEYBOARD_MODE_NUM,    fcs_kb_ctrl);
-    lv_keyboard_set_ctrl_map(mpsKeyBoard,            LV_KEYBOARD_MODE_NUM,fcs_tgl_kb_ctrl);
-    lv_keyboard_set_textarea(mpsKeyBoard,            mpsEnterCalValTA                    );
-    lv_obj_set_style_local_radius(mpsKeyBoard,       LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 120                            ); 
-    lv_obj_set_style_local_bg_color(mpsKeyBoard,     LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
-    lv_obj_set_style_local_bg_color(mpsKeyBoard,     LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
-    lv_obj_set_style_local_text_font(mpsKeyBoard,    LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_32         );
-    lv_obj_set_style_local_text_color(mpsKeyBoard,   LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE                 );
-    lv_obj_set_style_local_border_width(mpsKeyBoard, LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, 0                              );
-    lv_obj_set_style_local_border_opa(mpsKeyBoard,   LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, 200                            );
-    lv_obj_set_style_local_pad_all(mpsKeyBoard,      LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 170                            );
-    //lv_obj_set_event_cb(mpsKeyBoard, passwordcheck_event_handler);
     
-    crnt_screen = mpsMetroPswd;
-    screenid = SCR_METROLOGY_PASSWORD;
+    lv_obj_set_pos(mpsKeyBoard, 0, 140);
+    lv_obj_set_size(mpsKeyBoard,  320, 320); 
+    lv_keyboard_set_mode(mpsKeyBoard, LV_KEYBOARD_MODE_NUM );
+    lv_keyboard_set_map(mpsKeyBoard, LV_KEYBOARD_MODE_NUM, fcs_kb_map);
+    lv_keyboard_set_ctrl_map(mpsKeyBoard, LV_KEYBOARD_MODE_NUM, fcs_kb_ctrl);
+    lv_keyboard_set_ctrl_map(mpsKeyBoard, LV_KEYBOARD_MODE_NUM, fcs_tgl_kb_ctrl);
+    lv_keyboard_set_textarea(mpsKeyBoard, mpsEnterCalValTA);
+    lv_obj_set_style_local_radius(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 140); 
+    lv_obj_set_style_local_bg_color(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
+    lv_obj_set_style_local_bg_color(mpsKeyBoard, LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
+    lv_obj_set_style_local_text_font(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_32);
+    lv_obj_set_style_local_text_color(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_border_width(mpsKeyBoard, LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_border_opa(mpsKeyBoard, LV_KEYBOARD_PART_BG , LV_STATE_DEFAULT, 200);
+    // lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 50);
+    lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
 
+    lv_obj_set_style_local_scale_width(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 5);
+    crnt_screen = mpsMetroPswd;
+    screenid = screenid;
 }
 
 /**********************

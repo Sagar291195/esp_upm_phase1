@@ -337,7 +337,7 @@ static void  flow_cal_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_RELEASED) 
     {
-        xMetroPswdScrn();
+        Screen_Password(SCR_CHANGE_PASSWORD);
     }
 }
 

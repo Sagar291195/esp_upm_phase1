@@ -12,8 +12,8 @@
 *  @details Long description
 */
 
-#ifndef SCREEN_METRO_PSWD_H
-#define SCREEN_METRO_PSWD_H
+#ifndef SCREEN_PASSWORD_H
+#define SCREEN_PASSWORD_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +43,7 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-void xMetroPswdScrn(void);
+void Screen_Password(uint8_t screenid);
 
 /**********************
  *    ERROR ASSERT
@@ -54,4 +54,4 @@ void xMetroPswdScrn(void);
 } /* extern "C" */
 #endif
 
-#endif /*SCREEN_METRO_PSWD_H*/
+#endif /*SCREEN_PASSWORD_H*/

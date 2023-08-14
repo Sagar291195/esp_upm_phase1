@@ -184,7 +184,7 @@ void metroCodeScreen(void)
     //_metroOKSymbol();
 
     crnt_screen = scrMetroCode;
-    screenid = SCR_METROLOGY_CODE;
+    screenid = SCR_METROLOGY_PASSWORD;
 }
 
 /**********************

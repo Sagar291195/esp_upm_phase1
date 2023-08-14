@@ -29,6 +29,7 @@
 
 /***************************************function prototypes***********************************************/
 static void motorTask(void *pvParameters);
+void setMotorPwmPidSetKpKiKd(float fKp, float fKi, float fKd);
 
 /****************************************************variables************************************/
 
@@ -67,10 +68,7 @@ static void settedPIDParameters()
 {
     ESP_LOGI(TAG, "KP %0.2f, KI %0.2f, KD %0.2f, AKP %0.2f, AKI %0.2f, AKD %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd);
 }
-/**
- * @brief set motor pid parameters
- */
-void setMotorPwmPidSetKpKiKd(float fKp, float fKi, float fKd);
+
 
 void initiatePWMMotor()
 {
@@ -93,27 +91,22 @@ void initiatePWMMotor()
     ledc_channel_config(&channel);
 }
 
-void motorPWMSetFrequecy(unsigned short freq)
-{
+void motorPWMSetFrequecy(unsigned short freq){
     ESP_ERROR_CHECK(ledc_set_freq(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, freq));
 }
 
-void MotorPWMStart(float duty)
-{
-
+void MotorPWMStart(float duty){
     motorPWMSetDutyCycle(duty);
 }
 
-void MotorPWMStop()
-{
+void MotorPWMStop(){
     ESP_LOGD(TAG, "stopping the motor PWM");
     // mcpwm_get_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
     motorPWMSetDutyCycle(0);
     setStateOfMotor(false); // setting the state of motor to false
 }
 
-void motorPWMSetDutyCycle(float duty)
-{ 
+void motorPWMSetDutyCycle(float duty){ 
     /*converting % into the duty cycle */
     uint32_t duty_cycle = (((pow(2, DUTY_CYCLE_RESOLUTION)) - 1) * duty) / 100;
     ESP_LOGD(TAG, "duty cycle is %d", duty_cycle);
@@ -121,8 +114,7 @@ void motorPWMSetDutyCycle(float duty)
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
 }
 
-void initializePIDController()
-{
+void initializePIDController(void){
     pid_config.init_param = pid_runtime_param;
     ESP_ERROR_CHECK(pid_new_control_block(&pid_config, &pid_ctrl));
 
@@ -141,48 +133,40 @@ void initializePIDController()
     settedPIDParameters();
 }
 
-float getMotorPIDSetTargetValue()
-{
+float getMotorPIDSetTargetValue(){
     return pid_setTargetVaule;
 }
 
-void setMotorPIDSetTargetValue(float setValue)
-{
+void setMotorPIDSetTargetValue(float setValue){
     ESP_LOGD(TAG, "Target set value is %f", setValue);
     pid_setTargetVaule = setValue;
 }
 
-void setMotorPwmPidSetKpKiKd(float fKpv, float fKiv, float fKdv)
-{
-
+void setMotorPwmPidSetKpKiKd(float fKpv, float fKiv, float fKdv){
     pid_runtime_param.kp = fKpv;
     pid_runtime_param.ki = fKiv;
     pid_runtime_param.kd = fKdv;
     ESP_ERROR_CHECK_WITHOUT_ABORT(pid_update_parameters(pid_ctrl, &pid_runtime_param));
 }
 
-void setMotorPidLimits(float fMin, float fMax)
-{
+void setMotorPidLimits(float fMin, float fMax){
     pid_runtime_param.min_output = fMin;
     pid_runtime_param.max_output = fMax;
 
     ESP_ERROR_CHECK_WITHOUT_ABORT(pid_update_parameters(pid_ctrl, &pid_runtime_param));
 }
 
-bool getIsMotorRunning()
-{
+bool getIsMotorRunning(){
     return isMotorRunning;
 }
 
-void setStateOfMotor(bool state)
-{
+void setStateOfMotor(bool state){
     ESP_LOGD(TAG, "state is %d", state);
     isMotorRunning = state;
-     motorPWMSetDutyCycle(0); // setting the motor to stop
+    motorPWMSetDutyCycle(0); // setting the motor to stop
 }
 
-void motorPidComputeAndSetOutput(float input)
-{
+void motorPidComputeAndSetOutput(float input){
     ESP_LOGD(TAG, "input %f", input);
     ESP_LOGD(TAG, "setpoint %f", pid_setTargetVaule);
     float fOutputDuty = 0;
@@ -191,13 +175,10 @@ void motorPidComputeAndSetOutput(float input)
     float error = (pid_setTargetVaule - input)/pid_setTargetVaule;
     ESP_LOGD(TAG, "ERROR %f", error);
     /* if error is less than the default error then set the normal pid pramaters */
-    if (fabs(error) < motorPID_DEFAULT_ERROR)
-    {
+    if (fabs(error) < motorPID_DEFAULT_ERROR){
         setMotorPwmPidSetKpKiKd(fKp, fKi, fKd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUTE_TIME_STABLE_IN_MS;
-    }
-    else
-    {
+    } else {
         setMotorPwmPidSetKpKiKd(fAkp, fAki, fAkd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
     }
@@ -270,20 +251,14 @@ static void motorTask(void *pvParameters)
 
         /* if motor is runnng then we need to calculate the duty cycle so that to make
          * the constant volume flow */
-        while (getIsMotorRunning())
-        {
-
+        while (getIsMotorRunning()){
             ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
             /* calulating the current flow rate */
             flowRate = fGetVolumetricFlowUserCompensated();
-            if (isnan(flowRate))
-            {
+            if (isnan(flowRate)){
                 ESP_LOGD(TAG, "flow rate is nan");
                 flowRate = MINIMUN_FLOW_RATE;
-            }
-            /* compute the total volume flow in the system */
-            else
-            {
+            } else {
                 fTempVariable = fGetTotalLiterCount();
                 ESP_LOGV(TAG,"FLOW rate IS %0.2f",flowRate);
                 /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
@@ -300,7 +275,6 @@ static void motorTask(void *pvParameters)
 }
 
 
-void vInitializeMotor()
-{
+void vInitializeMotor(){
     xTaskCreate(motorTask, "motorTask", 2*2048, NULL, 5, NULL);
 }

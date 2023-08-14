@@ -96,7 +96,8 @@ static void event_handler(lv_obj_t * obj, lv_event_t event);
 
 void vCallCodeScreen(void)
 {
-    vPassword_scr1();
+    // vPassword_scr1();
+    Screen_Password(SCR_PASSWORD);
 }
 
 

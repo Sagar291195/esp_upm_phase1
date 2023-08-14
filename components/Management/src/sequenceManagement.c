@@ -201,10 +201,8 @@ void vGetSequenceFromNvsToArray()
 
     // Open
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
+    if (err != ESP_OK){
         ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-
         return;
     }
 
@@ -215,38 +213,27 @@ void vGetSequenceFromNvsToArray()
         return;
 
     ESP_LOGD(TAG, "required size is %d", required_size);
-
     /*  loading the values from nvs flash to the sample array */
     err = nvs_get_blob(my_handle, STORAGE_KEY, (void *)totalSequence, &required_size);
-
-    if (err != ESP_OK)
-    {
+    if (err != ESP_OK){
         ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
-
     nvs_close(my_handle);
 }
 
-uint8_t uGetNoOfSequenceInArray()
-{
+uint8_t uGetNoOfSequenceInArray(){
     return uTotalSequenceCount;
 }
 
-sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber)
-{
+sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber){
     return &totalSequence[uSequenceNumber - 1];
 }
 
-void taskRunSample(void *pvParameters)
-{
+void taskRunSample(void *pvParameters){
     /* creating semaphore for stopping the task if, the semaphore handle is NULL */
-    if (xStopTheRunningSequenceSemaphore == NULL)
-    {
+    if (xStopTheRunningSequenceSemaphore == NULL){
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
-    }
-
-    else
-    {
+    } else {
         vSemaphoreDelete(xStopTheRunningSequenceSemaphore);
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
     }
@@ -257,52 +244,36 @@ void taskRunSample(void *pvParameters)
     ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
 
     /* starting the monitor data task */
-    if (xTaskHandleMonitorSensorData == NULL)
-    {
+    if (xTaskHandleMonitorSensorData == NULL) {
         xTaskCreate(vMonitorSensorDataTask, "monitor data", 8 * 1024, NULL, 5, &xTaskHandleMonitorSensorData);
-    }
-    else
-    {
+    } else {
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
     /* calculating and saving the end summary of the variables */
     vInitiateSequenceSummaryStart();
-
     /* setting the delete the update value task to false so that task does not deleted when created */
     bDeleteUpdateScreenAndVaulesTask = false;
-
     /*  showing the work in progress screen */
     vShowWorkInProgressScreen();
-
     /* creating the task which updates the screen values and saving the values to the nvs flash */
     xTaskCreate(vUpdateScreenAndSaveValuesEverySecond, "updateScreen", 4 * 1024, &usequenceToRun, 5, &xTaskHandleUpdateScreenAndSaveValuesEverySecond);
-
     /*  seting the flow set point */
     setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);
-
     /*  starting the motor so we have some initial value for sdp sensor and calculate flow 
      * rate and the pid controller can compute  */
     MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);
-
     setStateOfMotor(true); // run the motor
-
     ESP_LOGD(TAG, "Starting the motor");
     ESP_LOGD(TAG, "get state of motor %d", getIsMotorRunning());
-
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
     ESP_LOGI(TAG, "Duration in ms %d", udurationInMs);
-
     /*  delaying the task so that motor can run this time period */
     // vTaskDelay(pdMS_TO_TICKS(udurationInMs));
-
     /* this will block the task until the semaphore is given or the sequnce has been run to the whole time */
-    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE)
-    {
+    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE) {
         ESP_LOGW(TAG, "Sequence has been terminated early, due to the force stop");
-    }
-    else
-    {
+    } else {
         ESP_LOGI(TAG, "Sequence has been terminated due to expiry of time");
     }
 
@@ -310,20 +281,17 @@ void taskRunSample(void *pvParameters)
     vStopCurrentSequence();
 }
 
-int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber)
-{
+int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber){
     uint64_t uSecondsRemaining = 0;
     uint8_t uStartHour = totalSequence[uSequenceNumber - 1].uStartHour;
     uint8_t uStartMin = totalSequence[uSequenceNumber - 1].uStartMin;
     struct tm timeinfo = {0};
+
     strptime(&totalSequence[uSequenceNumber - 1].cStartDate, "%Y/%m/%e", &timeinfo);
     timeinfo.tm_hour = uStartHour;
     timeinfo.tm_min = uStartMin;
     timeinfo.tm_sec = 0;
-    /**
-     * @brief getting the current time of the system
-     *
-     */
+    /* getting the current time of the system */
     struct tm now = {0};
     vGetCurrentDateAndTime(&now);
     // now.tm_year = now.tm_year - 1900;
@@ -351,10 +319,7 @@ uint8_t uGetSequenceNumberToBeSaved()
     return uTotalSequenceCount + 1;
 }
 
-/**
- * @brief get the total sequene count from the nvs flash
- *
- */
+/* @brief get the total sequene count from the nvs flash */
 void vGetTotalSequenceCountFromNvs()
 {
     ESP_LOGD(TAG, "Getting the total sequence count from NVS");

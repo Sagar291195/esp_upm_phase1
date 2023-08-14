@@ -16,6 +16,8 @@
  *********************/
 #include "screen_includes.h"
 
+#include <userCompensationLayer.h>
+#include <motor.h>
 /*********************
  *      DEFINES
  *********************/
@@ -45,19 +47,15 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event);
 
 static void  __fasPlusBTN_event_handler( lv_obj_t * obj, lv_event_t event);
 static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event);
-
+static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-float flowPoints[10];
-float flowPointXasis[10];
-int __fasValidBTNCount = 0;
+extern float flowPoints[NUM_OF_FLOW_CALIBRATION_POINT];
 int _fasDutyCycle = 30000;
 bool metroFlowCalStarted ;
 float flow_value;
-//char guiTime[10];
-
 
 lv_obj_t * crnt_screen;
 lv_obj_t * scrFlowcal;
@@ -183,8 +181,6 @@ void CallMetroFlowCalibrationScreen(void)
     lv_style_set_text_color(&__fasSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasSignalLabel, LV_LABEL_PART_MAIN, &__fasSignalLabelStyle);
 
-    //============================================================================================
-
     //Crate a container to contain FLOW Header
     _fasFlowHeadingCont = lv_cont_create(fasParentCont, NULL);
     lv_obj_set_size(_fasFlowHeadingCont, 300, 70);
@@ -200,7 +196,6 @@ void CallMetroFlowCalibrationScreen(void)
     lv_obj_set_style_local_bg_color(_fasBlackArrowCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_width(_fasBlackArrowCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
     lv_obj_set_event_cb(_fasBlackArrowCont, __fasBackArrow_event_handler);
-
 
     // Create Back arrow img
     __fasBackArrowLabel = lv_img_create(_fasBlackArrowCont, NULL);
@@ -417,11 +412,17 @@ void CallMetroFlowCalibrationScreen(void)
 
     metroFlowCalStarted = true;
 
-    //_fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
+    _fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
 }
 
+static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask) 
+{
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, _fasDutyCycle));
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
+   
+}
 
 void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask) 
 {
@@ -430,16 +431,11 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
         lv_label_set_text(__fasTimeLabel, guiTime);
         lv_label_set_text_fmt(_fasCorrectionValueLbl, "%0.2f", percentError);
 
-        //if(  -10.0 < percentError < 10.0)
-        if(   percentError > -10.0 &&   percentError < 10.0     )
-        {
+        if(percentError > -10.0 && percentError < 10.0){
             lv_img_set_src(_fasStatusIcon, &ok_icon);
-        }
-        else 
-        {
+        } else {
             lv_img_set_src(_fasStatusIcon, &cross_icon);
         }
-
     }
 }
 
@@ -449,8 +445,7 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
 
 static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_RELEASED) 
-    {
+    if(event == LV_EVENT_RELEASED)  {
         lv_task_del(_fasTimeRefTask);
         CallMetroMenuScreen();
     }
@@ -458,8 +453,7 @@ static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  __fasPlusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_RELEASED) 
-    {
+    if(event == LV_EVENT_RELEASED) {
         if(_fasDutyCycle < 65536){
             _fasDutyCycle = _fasDutyCycle + 500;
         }else{
@@ -487,35 +481,20 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
     if(event == LV_EVENT_RELEASED) 
     {
         
-        __fasValidBTNCount++;
+        // __fasValidBTNCount++;
+        // if(__fasValidBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT)
+        // {
+        //     __fasValidBTNCount = 0;
+        //     metroFlowCalStarted = false;
+          
+        //     //Calculate Coefficients
+        //     CallMetroMenuScreen();
 
-        if(__fasValidBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT)
-        {
-            flowPointXasis[__fasValidBTNCount-1] = flow_value;
-            __fasValidBTNCount = 0;
-            metroFlowCalStarted = false;
-            int i;
-            ESP_LOGI(TAG, "X & Y Points are following : \n");
-            for( i=0; i < NUM_OF_FLOW_CALIBRATION_POINT; i++)
-            {
-                ESP_LOGI(TAG, "Y[%d] = %f, x[%d] = %f\n", i,  flowPoints[i], i,  flowPointXasis[i] );
-                fflush(NULL);
-                
-            }
-            //Calculate Coefficients
-            int pts = global_CurveDegree;
-            int deg = global_CurveDegree;
-            iPolynomialNew(deg, pts, flowPoints, flowPointXasis);
-            // iWriteNVSIntNum(global_CurveDegree, "cDeg");
-            CallMetroMenuScreen();
+        // }else{
 
-        }else{
-
-            lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
-            flowPoint   = flowPoints[__fasValidBTNCount];
-            flowPointXasis[__fasValidBTNCount-1] = flow_value;
-            callMetroFlowAdjustScreen(); 
-        }
+        //     lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
+        //     callMetroFlowAdjustScreen(); 
+        // }
     }
 }
 
