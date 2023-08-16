@@ -47,7 +47,7 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 
 int global_CurveDegree = 4;
 int metroflowUnit;
-float flowPoints[NUM_OF_FLOW_CALIBRATION_POINT];
+float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 static int flow_calibration_point_count = 0;
 
 char *getSetPt;
@@ -337,8 +337,8 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             SetPt = atof(getSetPt);
         }
 
-        flowPoints[flow_calibration_point_count] = SetPt;
-        ESP_LOGI(TAG, "flowPoints[%d] = %f", flow_calibration_point_count, flowPoints[flow_calibration_point_count]);
+        reference_flowcalibration_Points[flow_calibration_point_count] = SetPt;
+        ESP_LOGI(TAG, "Reference flowPoints[%d] = %f", flow_calibration_point_count, reference_flowcalibration_Points[flow_calibration_point_count]);
         lv_textarea_set_text(_fcsEnterCalValTA, "");
         CallMetroFlowCalibrationScreen();
     }

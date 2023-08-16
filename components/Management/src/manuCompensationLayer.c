@@ -47,8 +47,23 @@ float fGetVolumeFlowFromManuCompensationLayer()
 float fGetMassFlowManuCompensationLayer()
 {
     float fResult = 0.0;
+    float coeffA = 0.0;
+    float coeffB = 0.0;
+
     fResult = fGetSdp32DiffPressureAverageValue();
     /*  do some calulation to get the mass flow  */
+    if(fResult > 0 && fResult <= getcalibration_reference_sensorvalue1()){
+        coeffA = getcalibrationvalue_flow_coeffA1();
+        coeffB = getcalibrationvalue_flow_coeffB1();
+    }else if(fResult <= getcalibration_reference_sensorvalue2()){
+        coeffA = getcalibrationvalue_flow_coeffA2();
+        coeffB = getcalibrationvalue_flow_coeffB2(); 
+    }else if(fResult <= getcalibration_reference_sensorvalue3()){
+        coeffA = getcalibrationvalue_flow_coeffA3();
+        coeffB = getcalibrationvalue_flow_coeffB3(); 
+    }
+
+    fResult = ((coeffA*fResult)+coeffB);
     return fResult;
 }
 

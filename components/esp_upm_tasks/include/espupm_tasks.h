@@ -62,7 +62,6 @@ extern "C"
     /**********************
      *  GLOBAL VARIABLES
      **********************/
-  
     extern bool metroFlowCalStarted;
     extern int _fasDutyCycle;
     extern float flowPoint;

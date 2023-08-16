@@ -462,6 +462,7 @@ static void  __mfsValidAdjBTN_event_handler(lv_obj_t * obj, lv_event_t event)
     if(event == LV_EVENT_RELEASED) 
     {
         ESP_LOGI(TAG, "Valid and Adjust button pressed");
+        set_flow_calibration_point_cout(0);
         callMetroFlowAdjustScreen();
     }
 }

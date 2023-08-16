@@ -44,7 +44,7 @@ extern "C" {
  *  GLOBAL PROTOTYPES
  **********************/
 void callMetroFlowAdjustScreen(void);
-int get_flow_calibration_number(void);
+int get_flow_calibration_point_cout(void);
 void set_flow_calibration_point_cout(int value);
 /**********************
  *    ERROR ASSERT

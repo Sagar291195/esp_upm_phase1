@@ -18,6 +18,9 @@
 
 #include <userCompensationLayer.h>
 #include <motor.h>
+#include <sensorManagement.h>
+#include <calibration.h>
+
 /*********************
  *      DEFINES
  *********************/
@@ -52,7 +55,7 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
 /**********************
  *  STATIC VARIABLES
  **********************/
-extern float flowPoints[NUM_OF_FLOW_CALIBRATION_POINT];
+extern float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 int _fasDutyCycle = 30000;
 bool metroFlowCalStarted ;
 float flow_value;
@@ -96,7 +99,13 @@ lv_task_t *_fasTimeRefTask;
 lv_obj_t * spinbox;
 
 float percentError;
-float flowPoint;
+static float flow_coeffA1 = 0;
+static float flow_coeffA2 = 0;
+static float flow_coeffA3 = 0;
+static float flow_coeffB1 = 0;
+static float flow_coeffB2 = 0;
+static float flow_coeffB3 = 0;
+static float reference_sensorValue[NUM_OF_FLOW_CALIBRATION_POINT];
 
 
 /**********************
@@ -226,7 +235,7 @@ void CallMetroFlowCalibrationScreen(void)
     // Create label for "Factory Value" Text 
     _fasFactoryValTxt = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasFactoryValTxt, _fasFlowHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 5 ,20);
-    lv_label_set_text(_fasFactoryValTxt, "FACTORY VALUE:");
+    lv_label_set_text(_fasFactoryValTxt, "REFERENCE VALUE:");
 
     static lv_style_t _fasFactoryValTxtStyle;
     lv_style_init(&_fasFactoryValTxtStyle);
@@ -237,7 +246,8 @@ void CallMetroFlowCalibrationScreen(void)
     // Create label for "Factory Value" Value
     _fasFactoryValVar = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasFactoryValVar, _fasFactoryValTxt, LV_ALIGN_OUT_RIGHT_MID, 15 ,0);
-    lv_label_set_text(_fasFactoryValVar, "7,56");
+    lv_label_set_text_fmt(_fasFactoryValVar, "%0.2f",  reference_flowcalibration_Points[get_flow_calibration_point_cout()]);
+
 
     static lv_style_t _fasFactoryValVarStyle;
     lv_style_init(&_fasFactoryValVarStyle);
@@ -248,7 +258,7 @@ void CallMetroFlowCalibrationScreen(void)
     // Create label for "Factory Value" Value
     _fasReferenceValTxt = lv_label_create(fasParentCont, NULL);
     lv_obj_align(_fasReferenceValTxt, _fasFactoryValTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0 ,20);
-    lv_label_set_text(_fasReferenceValTxt, "REFERENCE VALUE:");
+    lv_label_set_text(_fasReferenceValTxt, "SENSOR VALUE:");
 
     static lv_style_t _fasReferenceValTxtStyle;
     lv_style_init(&_fasReferenceValTxtStyle);
@@ -266,9 +276,7 @@ void CallMetroFlowCalibrationScreen(void)
     //Create Label for Int par of Reference value
     _fasRefValInt = lv_label_create(_fasRefValCont, NULL);
     lv_obj_align(_fasRefValInt, _fasRefValCont, LV_ALIGN_IN_TOP_LEFT, 20 ,6);
-    lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[0]);
-
-    flowPoint   = flowPoints[0];
+    lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  "0.0");
 
     static lv_style_t __fasRefValIntStyle;
     lv_style_init(&__fasRefValIntStyle);
@@ -426,9 +434,17 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask)
 
 void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask) 
 {
+    float sensorvalue = 0; 
+    float reference_value = 0;
+
     if(screenid == SCR_FLOW_CALIBRATION)
     {
+        sensorvalue = fGetSdp32DiffPressureAverageValue();
+        reference_value = reference_flowcalibration_Points[get_flow_calibration_point_cout()];
+        percentError =  (((reference_value-sensorvalue)/reference_value)*100);
+
         lv_label_set_text(__fasTimeLabel, guiTime);
+        lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  sensorvalue); 
         lv_label_set_text_fmt(_fasCorrectionValueLbl, "%0.2f", percentError);
 
         if(percentError > -10.0 && percentError < 10.0){
@@ -442,7 +458,6 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-
 static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_RELEASED)  {
@@ -470,7 +485,7 @@ static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         if(_fasDutyCycle > 30000){
             _fasDutyCycle = _fasDutyCycle - 500;
         }else{
-
+             _fasDutyCycle = 30000;
         }
         
     }
@@ -478,23 +493,67 @@ static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
+    int calibration_count = 0;
+    float previous_sensor_reading = 0;
+    float current_sensor_reading = 0;
+    float previous_reference_value = 0;
+    float current_reference_value = 0;
+    float coeffA = 0;
+    float coeffB = 0;
+
     if(event == LV_EVENT_RELEASED) 
     {
+        lv_task_del(_fasTimeRefTask);
+        calibration_count = get_flow_calibration_point_cout();
+        if(calibration_count == 0){
+            previous_sensor_reading = 0;
+            previous_reference_value = 0;
+        }else{
+            previous_reference_value = reference_flowcalibration_Points[calibration_count-1];
+            previous_sensor_reading = reference_sensorValue[calibration_count-1];
+        }
+
+        current_reference_value = reference_flowcalibration_Points[calibration_count];
+        current_sensor_reading = fGetSdp32DiffPressureAverageValue();
         
-        // __fasValidBTNCount++;
-        // if(__fasValidBTNCount >= NUM_OF_FLOW_CALIBRATION_POINT)
-        // {
-        //     __fasValidBTNCount = 0;
-        //     metroFlowCalStarted = false;
-          
-        //     //Calculate Coefficients
-        //     CallMetroMenuScreen();
+        coeffA = (previous_sensor_reading - current_sensor_reading)/(previous_reference_value - current_reference_value);
+        coeffB = current_reference_value - (flow_coeffA1*current_sensor_reading);  
 
-        // }else{
+        if(calibration_count == 0){
+            flow_coeffA1 = coeffA;
+            flow_coeffB1 = coeffB;
+        }else if(calibration_count == 1){
+            flow_coeffA2 = coeffA;
+            flow_coeffB2 = coeffB;
+        }else if(calibration_count == 2){
+            flow_coeffA3 = coeffA;
+            flow_coeffB3 = coeffB;
+        }
 
-        //     lv_label_set_text_fmt(_fasRefValInt, "%0.2f",  flowPoints[__fasValidBTNCount]);
-        //     callMetroFlowAdjustScreen(); 
-        // }
+        reference_sensorValue[calibration_count] = current_sensor_reading;
+        calibration_count++;
+
+        if(calibration_count >= NUM_OF_FLOW_CALIBRATION_POINT){
+            calibration_count = 0;
+            metroFlowCalStarted = false;
+
+            setcalibrationvalue_flow_coeffA1(flow_coeffA1);
+            setcalibrationvalue_flow_coeffA2(flow_coeffA2);
+            setcalibrationvalue_flow_coeffA3(flow_coeffA3);
+            setcalibrationvalue_flow_coeffB1(flow_coeffB1);
+            setcalibrationvalue_flow_coeffB2(flow_coeffB2);
+            setcalibrationvalue_flow_coeffB3(flow_coeffB3);
+
+            setcalibration_flow_reference_sensorvalue1(reference_sensorValue[0]);
+            setcalibration_flow_reference_sensorvalue2(reference_sensorValue[1]);
+            setcalibration_flow_reference_sensorvalue3(reference_sensorValue[2]);
+
+            set_flow_calibration_point_cout(calibration_count);
+            CallMetroMenuScreen();
+        }else{
+            set_flow_calibration_point_cout(calibration_count);
+            callMetroFlowAdjustScreen();
+        }
     }
 }
 

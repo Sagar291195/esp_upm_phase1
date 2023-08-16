@@ -23,18 +23,21 @@
 /**********************************************************************
  *                             VARIBALES
 ***********************************************************************/
-char ext_temperaturekey[] = "ext-temp";     // key to store data in flash
-char ext_pressurekey[] = "ext-pressure";    // key to store data in flash
-char ext_humiditykey[] = "ext-humidity";    // key to store data in flash
-char int_temperaturekey[] = "int-temp";     // key to store data in flash
-char int_pressurekey[] = "int-pressure";    // key to store data in flash
-char int_huniditykey[] = "int-humidity";    // key to store data in flash
-char flow_coeffA1[] = "flow_coeffA1";         // key to store data in flash
-char flow_coeffB1[] = "flow_coeffB1";         // key to store data in flash
-char flow_coeffA2[] = "flow_coeffA2";         // key to store data in flash
-char flow_coeffB2[] = "flow_coeffB2";         // key to store data in flash
-char flow_coeffA3[] = "flow_coeffA3";         // key to store data in flash
-char flow_coeffB3[] = "flow_coeffB3";         // key to store data in flash
+static char ext_temperaturekey[] = "ext-temp";     // key to store data in flash
+static char ext_pressurekey[] = "ext-pressure";    // key to store data in flash
+static char ext_humiditykey[] = "ext-humidity";    // key to store data in flash
+static char int_temperaturekey[] = "int-temp";     // key to store data in flash
+static char int_pressurekey[] = "int-pressure";    // key to store data in flash
+static char int_huniditykey[] = "int-humidity";    // key to store data in flash
+static char flow_coeffA1[] = "flow_coeffA1";         // key to store data in flash
+static char flow_coeffB1[] = "flow_coeffB1";         // key to store data in flash
+static char flow_coeffA2[] = "flow_coeffA2";         // key to store data in flash
+static char flow_coeffB2[] = "flow_coeffB2";         // key to store data in flash
+static char flow_coeffA3[] = "flow_coeffA3";         // key to store data in flash
+static char flow_coeffB3[] = "flow_coeffB3";         // key to store data in flash
+static char sensorvalue1[] = "sensorvalue1";
+static char sensorvalue2[] = "sensorvalue2";
+static char sensorvalue3[] = "sensorvalue3";
 
 calibrationt_t calibrationdata;     //variable to store calibration data
 
@@ -190,6 +193,28 @@ void nvsread_calibrationdata(void)
     }else{
         ESP_LOGI(TAG, "Flow coeff B3 Calibration : %.02f", calibrationdata.flow_coeffB3_calibration);
     }
+
+    ret = nvsread_value_calibration(sensorvalue1, &calibrationdata.flow_reference_sensorvalue1);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow sensor value1 read error");
+    }else{
+        ESP_LOGI(TAG, "Flow sensor value 1 : %.02f", calibrationdata.flow_reference_sensorvalue1);
+    }
+
+    ret = nvsread_value_calibration(sensorvalue2, &calibrationdata.flow_reference_sensorvalue2);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow sensor value2 read error");
+    }else{
+        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue2);
+    }
+
+    ret = nvsread_value_calibration(sensorvalue3, &calibrationdata.flow_reference_sensorvalue3);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow sensor value3 read error");
+    }else{
+        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue3);
+    }
+
 }
 
 float getcalibrationvalue_ext_temperature(void){
@@ -239,6 +264,19 @@ float getcalibrationvalue_flow_coeffB2(void){
 float getcalibrationvalue_flow_coeffB3(void){
      return calibrationdata.flow_coeffB3_calibration; 
 }
+
+float getcalibration_reference_sensorvalue1(void){
+     return calibrationdata.flow_reference_sensorvalue1; 
+}
+
+float getcalibration_reference_sensorvalue2(void){
+     return calibrationdata.flow_reference_sensorvalue2; 
+}
+
+float getcalibration_reference_sensorvalue3(void){
+     return calibrationdata.flow_reference_sensorvalue3; 
+}
+
 
 void setcalibrationvalue_ext_temperature(float value){
     calibrationdata.external_temperature_calibration = value;
@@ -298,4 +336,20 @@ void setcalibrationvalue_flow_coeffB2(float value){
 void setcalibrationvalue_flow_coeffB3(float value){
     calibrationdata.flow_coeffB3_calibration = value;
     nvswrite_value_calibration(flow_coeffB3, calibrationdata.flow_coeffB3_calibration);
+} 
+
+
+void setcalibration_flow_reference_sensorvalue1(float value){
+    calibrationdata.flow_reference_sensorvalue1 = value;
+    nvswrite_value_calibration(sensorvalue1, calibrationdata.flow_reference_sensorvalue1);
+} 
+
+void setcalibration_flow_reference_sensorvalue2(float value){
+    calibrationdata.flow_reference_sensorvalue2 = value;
+    nvswrite_value_calibration(sensorvalue2, calibrationdata.flow_reference_sensorvalue2);
+} 
+
+void setcalibration_flow_reference_sensorvalue3(float value){
+    calibrationdata.flow_reference_sensorvalue3 = value;
+    nvswrite_value_calibration(sensorvalue3, calibrationdata.flow_reference_sensorvalue3);
 } 

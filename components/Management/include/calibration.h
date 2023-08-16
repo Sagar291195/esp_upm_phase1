@@ -16,12 +16,15 @@ typedef struct calibration_strct{
     float external_temperature_calibration;     //external temperature calibration offset
     float external_humidity_calibration;        //external humidity calibration offset
     float external_pressure_calibration;        //external_pressure_calibration offset
-    float flow_coeffA1_calibration;              //flow calibration coeff A1
-    float flow_coeffB1_calibration;              //flow calibration coeff B1
-    float flow_coeffA2_calibration;              //flow calibration coeff A2
-    float flow_coeffB2_calibration;              //flow calibration coeff B2
-    float flow_coeffA3_calibration;              //flow calibration coeff A3
-    float flow_coeffB3_calibration;              //flow calibration coeff B3
+    float flow_coeffA1_calibration;             //flow calibration coeff A1
+    float flow_coeffB1_calibration;             //flow calibration coeff B1
+    float flow_coeffA2_calibration;             //flow calibration coeff A2
+    float flow_coeffB2_calibration;             //flow calibration coeff B2
+    float flow_coeffA3_calibration;             //flow calibration coeff A3
+    float flow_coeffB3_calibration;             //flow calibration coeff B3
+    float flow_reference_sensorvalue1;          //reference sensor value1
+    float flow_reference_sensorvalue2;          //reference sensor value2
+    float flow_reference_sensorvalue3;          //reference sensor value3
 }calibrationt_t;
 
 /***************************************************************************************************
@@ -132,6 +135,30 @@ float getcalibrationvalue_flow_coeffB2(void);
 float getcalibrationvalue_flow_coeffB3(void);
 
 /**
+ * @brief Get reference sensor value
+ * @param None
+ * @return float sensor value
+ *   
+*/
+float getcalibration_reference_sensorvalue1(void);
+
+/**
+ * @brief Get reference sensor value
+ * @param None
+ * @return float sensor value
+ *   
+*/
+float getcalibration_reference_sensorvalue2(void);
+
+/**
+ * @brief Get reference sensor value
+ * @param None
+ * @return float sensor value
+ *   
+*/
+float getcalibration_reference_sensorvalue3(void);
+
+/**
  * @brief Get external temperature calibration data 
  * @param value external temperature offset value
  * @return None
@@ -180,7 +207,7 @@ void setcalibrationvalue_int_pressure(float value);
 void setcalibrationvalue_int_humidity(float value);
 
 /**
- * @brief Get flow coeff A1 calibration data 
+ * @brief Set flow coeff A1 calibration data 
  * @param value flow offset value
  * @return None
  *   
@@ -188,7 +215,7 @@ void setcalibrationvalue_int_humidity(float value);
 void setcalibrationvalue_flow_coeffA1(float value);
 
 /**
- * @brief Get flow coeff A2 calibration data 
+ * @brief Set flow coeff A2 calibration data 
  * @param value flow offset value
  * @return None
  *   
@@ -196,7 +223,7 @@ void setcalibrationvalue_flow_coeffA1(float value);
 void setcalibrationvalue_flow_coeffA2(float value);
 
 /**
- * @brief Get flow coeff A3 calibration data 
+ * @brief Set flow coeff A3 calibration data 
  * @param value flow offset value
  * @return None
  *   
@@ -204,7 +231,7 @@ void setcalibrationvalue_flow_coeffA2(float value);
 void setcalibrationvalue_flow_coeffA3(float value);
 
 /**
- * @brief Get flow coeff B1 calibration data 
+ * @brief Set flow coeff B1 calibration data 
  * @param value flow offset value
  * @return None
  *   
@@ -212,7 +239,7 @@ void setcalibrationvalue_flow_coeffA3(float value);
 void setcalibrationvalue_flow_coeffB1(float value);
 
 /**
- * @brief Get flow coeff B2 calibration data 
+ * @brief Set flow coeff B2 calibration data 
  * @param value flow offset value
  * @return None
  *   
@@ -220,10 +247,34 @@ void setcalibrationvalue_flow_coeffB1(float value);
 void setcalibrationvalue_flow_coeffB2(float value);
 
 /**
- * @brief Get flow coeff B3 calibration data 
+ * @brief Set flow coeff B3 calibration data 
  * @param value flow offset value
  * @return None
  *   
 */
 void setcalibrationvalue_flow_coeffB3(float value);
+
+/**
+ * @brief Set refernce sensor value 1
+ * @param value flow offset value
+ * @return None
+ *   
+*/
+void setcalibration_flow_reference_sensorvalue1(float value);
+
+/**
+ * @brief Set refernce sensor value 2
+ * @param value flow offset value
+ * @return None
+ *   
+*/
+void setcalibration_flow_reference_sensorvalue2(float value);
+
+/**
+ * @brief Set refernce sensor value 3
+ * @param value flow offset value
+ * @return None
+ *   
+*/
+void setcalibration_flow_reference_sensorvalue3(float value);
 #endif

@@ -69,7 +69,6 @@ uint16_t rpm = 0;
 int abh = 0;
 int chk = 0;
 float totalhourVal1;
-float flowcoeff = 1;
 int16_t dp_ticks = 0;
 int16_t dp_scale;
 int16_t temperature_ticks;

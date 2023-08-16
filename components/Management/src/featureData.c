@@ -92,6 +92,6 @@ float fGetInternalAirDensity_featureData()
 float fGetVolumetricFlow_featureData()
 {
     float result =0;
-    result = _fFlowCalculation(fGetSdp32DiffPressureAverageValue(), fGetAirDesity_featureData());
+    result = _fFlowCalculation(fGetMassFlowManuCompensationLayer(), fGetAirDesity_featureData());
     return result;
 }

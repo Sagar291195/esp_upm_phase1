@@ -32,7 +32,6 @@ extern "C" {
 #include "middlewareTest.h"
 #include "midFunctions.h"
 #include "midVariable.h"
-#include "caliba.h"
 
 //#include "nvs.h"
 
