@@ -29,6 +29,12 @@ char ext_humiditykey[] = "ext-humidity";    // key to store data in flash
 char int_temperaturekey[] = "int-temp";     // key to store data in flash
 char int_pressurekey[] = "int-pressure";    // key to store data in flash
 char int_huniditykey[] = "int-humidity";    // key to store data in flash
+char flow_coeffA1[] = "flow_coeffA1";         // key to store data in flash
+char flow_coeffB1[] = "flow_coeffB1";         // key to store data in flash
+char flow_coeffA2[] = "flow_coeffA2";         // key to store data in flash
+char flow_coeffB2[] = "flow_coeffB2";         // key to store data in flash
+char flow_coeffA3[] = "flow_coeffA3";         // key to store data in flash
+char flow_coeffB3[] = "flow_coeffB3";         // key to store data in flash
 
 calibrationt_t calibrationdata;     //variable to store calibration data
 
@@ -95,7 +101,7 @@ static bool nvswrite_value_calibration(char *key, float value)
     }
 
     nvs_close(my_handle);
-  return true;
+    return true;
 }
 
 /**********************************************************************
@@ -135,11 +141,54 @@ void nvsread_calibrationdata(void)
     }else{
         ESP_LOGI(TAG, "Internal Pressure Calibration : %.02f", calibrationdata.internal_pressure_calibration);
     }
+
     ret = nvsread_value_calibration(int_huniditykey, &calibrationdata.internal_humidity_calibration);
     if(ret == false){
         ESP_LOGE(TAG, "Internal Humidity value read error");
     }else{
         ESP_LOGI(TAG, "Internal humidity Calibration : %.02f", calibrationdata.internal_humidity_calibration);
+    }
+
+    ret = nvsread_value_calibration(flow_coeffA1, &calibrationdata.flow_coeffA1_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff A1 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff A1 Calibration : %.02f", calibrationdata.flow_coeffA1_calibration);
+    }
+
+    ret = nvsread_value_calibration(flow_coeffA2, &calibrationdata.flow_coeffA2_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff A2 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff A2 Calibration : %.02f", calibrationdata.flow_coeffA2_calibration);
+    }
+
+    ret = nvsread_value_calibration(flow_coeffA3, &calibrationdata.flow_coeffA3_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff A3 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff A3 Calibration : %.02f", calibrationdata.flow_coeffA3_calibration);
+    }
+    
+    ret = nvsread_value_calibration(flow_coeffB1, &calibrationdata.flow_coeffB1_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff B1 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff B1 Calibration : %.02f", calibrationdata.flow_coeffB1_calibration);
+    }
+
+    ret = nvsread_value_calibration(flow_coeffB2, &calibrationdata.flow_coeffB2_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff B2 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff B2 Calibration : %.02f", calibrationdata.flow_coeffB2_calibration);
+    }
+
+    ret = nvsread_value_calibration(flow_coeffB3, &calibrationdata.flow_coeffB3_calibration);
+    if(ret == false){
+        ESP_LOGE(TAG, "Flow coeff B3 value read error");
+    }else{
+        ESP_LOGI(TAG, "Flow coeff B3 Calibration : %.02f", calibrationdata.flow_coeffB3_calibration);
     }
 }
 
@@ -165,6 +214,30 @@ float getcalibrationvalue_int_pressure(void){
 
 float getcalibrationvalue_int_humidity(void){
      return calibrationdata.internal_humidity_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffA1(void){
+     return calibrationdata.flow_coeffA1_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffA2(void){
+     return calibrationdata.flow_coeffA2_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffA3(void){
+     return calibrationdata.flow_coeffA3_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffB1(void){
+     return calibrationdata.flow_coeffB1_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffB2(void){
+     return calibrationdata.flow_coeffB2_calibration; 
+}
+
+float getcalibrationvalue_flow_coeffB3(void){
+     return calibrationdata.flow_coeffB3_calibration; 
 }
 
 void setcalibrationvalue_ext_temperature(float value){
@@ -195,4 +268,34 @@ void setcalibrationvalue_int_pressure(float value){
 void setcalibrationvalue_int_humidity(float value){
     calibrationdata.internal_humidity_calibration = value;
     nvswrite_value_calibration(int_huniditykey, calibrationdata.internal_humidity_calibration);
-}   
+}  
+
+void setcalibrationvalue_flow_coeffA1(float value){
+    calibrationdata.flow_coeffA1_calibration = value;
+    nvswrite_value_calibration(flow_coeffA1, calibrationdata.flow_coeffA1_calibration);
+}  
+
+void setcalibrationvalue_flow_coeffA2(float value){
+    calibrationdata.flow_coeffA2_calibration = value;
+    nvswrite_value_calibration(flow_coeffA2, calibrationdata.flow_coeffA2_calibration);
+} 
+
+void setcalibrationvalue_flow_coeffA3(float value){
+    calibrationdata.flow_coeffA3_calibration = value;
+    nvswrite_value_calibration(flow_coeffA3, calibrationdata.flow_coeffA3_calibration);
+} 
+
+void setcalibrationvalue_flow_coeffB1(float value){
+    calibrationdata.flow_coeffB1_calibration = value;
+    nvswrite_value_calibration(flow_coeffB1, calibrationdata.flow_coeffB1_calibration);
+}  
+
+void setcalibrationvalue_flow_coeffB2(float value){
+    calibrationdata.flow_coeffB2_calibration = value;
+    nvswrite_value_calibration(flow_coeffB2, calibrationdata.flow_coeffB2_calibration);
+} 
+
+void setcalibrationvalue_flow_coeffB3(float value){
+    calibrationdata.flow_coeffB3_calibration = value;
+    nvswrite_value_calibration(flow_coeffB3, calibrationdata.flow_coeffB3_calibration);
+} 
