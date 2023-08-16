@@ -607,62 +607,7 @@ int iReadNVSIntNum(char UniqueKey[20])
   return nGenericNumInt.iGenericNum;
 }
 
-/**
- * Write a Float number in NVS
- * @param genericNumber Float Number to store in NVS
- * @param UniqueKey   Give a unique Key Store the float number
- */
 
-void iWriteNVSFloatNum(float genericNumber, char UniqueKey[20])
-{
-  vTaskDelay(10 / portTICK_PERIOD_MS);
-
-  ESP_ERROR_CHECK(nvs_flash_init_partition("nvs"));
-  nvs_handle genfloatNumhandle;
-  ESP_ERROR_CHECK(nvs_open_from_partition("nvs", "GenFloatN_store", NVS_READWRITE, &genfloatNumhandle));
-
-  nGenericNumfloat nGenericNumfloat;
-  nGenericNumfloat.fGenericNum = genericNumber;
-
-  ESP_ERROR_CHECK(nvs_set_blob(genfloatNumhandle, UniqueKey, (void *)&nGenericNumfloat, sizeof(nGenericNumfloat)));
-  ESP_ERROR_CHECK(nvs_commit(genfloatNumhandle));
-
-  nvs_close(genfloatNumhandle);
-}
-/**
- * @brief this function reads the float value stored in the nvs flash
- *
- * @param UniqueKey name of the value to be read
- * @return float stroed value
- */
-float iReadNVSFloatNum(char UniqueKey[20])
-{
-
-  vTaskDelay(10 / portTICK_PERIOD_MS);
-
-  ESP_ERROR_CHECK(nvs_flash_init_partition("nvs"));
-  nvs_handle genfloatNumhandle;
-  ESP_ERROR_CHECK(nvs_open_from_partition("nvs", "GenFloatN_store", NVS_READWRITE, &genfloatNumhandle));
-  nGenericNumfloat nGenericNumfloat;
-  size_t nGenericNumfloatSize = sizeof(nGenericNumfloat);
-  esp_err_t iGenericNumResult = nvs_get_blob(genfloatNumhandle, UniqueKey, (void *)&nGenericNumfloat, &nGenericNumfloatSize);
-
-  switch (iGenericNumResult)
-  {
-  case ESP_ERR_NOT_FOUND:
-  case ESP_ERR_NVS_NOT_FOUND:
-    ESP_LOGE(TAG, "Num Value not set yet");
-    break;
-  case ESP_OK:
-    ESP_LOGI(TAG, "Number from NVS: %f", nGenericNumfloat.fGenericNum);
-    break;
-  default:
-    ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(iGenericNumResult));
-    break;
-  }
-  nvs_close(genfloatNumhandle);
-  return nGenericNumfloat.fGenericNum;
-}
 
 void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
 {
