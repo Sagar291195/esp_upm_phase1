@@ -28,7 +28,7 @@ extern "C" {
 
 #include "../../../../../../lvgl/lvgl.h"
 
-#include "screen_code.h"
+
 #include "screen_main.h"
 #include "screen_common.h"
 #include "screen_dashboard.h"
@@ -37,7 +37,6 @@ extern "C" {
 #include "screen_summary_start.h"
 #include "screen_summary_end.h"
 #include "screen_summary_sample.h"
-#include "screen_metro_code.h"
 #include "screen_metro_menu.h"
 #include "screen_metro_adjust.h"
 #include "screen_metro_flowadj.h"
