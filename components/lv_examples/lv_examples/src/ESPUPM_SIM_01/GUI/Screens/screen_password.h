@@ -43,7 +43,7 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-void Screen_Password(uint8_t screenid);
+void Screen_Password(uint8_t screen_id);
 
 /**********************
  *    ERROR ASSERT

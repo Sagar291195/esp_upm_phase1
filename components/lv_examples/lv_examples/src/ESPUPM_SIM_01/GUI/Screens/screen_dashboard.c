@@ -167,7 +167,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         {
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            metroCodeScreen();
+            Screen_Password(SCR_METROLOGY_PASSWORD);
         }
         if (!strcmp(btntext, MenuBTN_PARAMETER))
         {

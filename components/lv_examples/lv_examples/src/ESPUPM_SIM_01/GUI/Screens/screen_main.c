@@ -9,7 +9,7 @@ void Init_Screen(void)
     // Screen_Password();
     // vTestScreen1();
     // cScrTransitCheck();
-    vCallCodeScreen();	 
+    Screen_Password(SCR_PASSWORD);	 
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
