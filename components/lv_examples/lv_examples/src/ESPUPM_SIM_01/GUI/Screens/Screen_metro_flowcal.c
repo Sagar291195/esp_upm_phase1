@@ -56,7 +56,7 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
  *  STATIC VARIABLES
  **********************/
 extern float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
-int _fasDutyCycle = 30000;
+int _fasDutyCycle = 15000;
 bool metroFlowCalStarted ;
 float flow_value;
 
@@ -461,7 +461,10 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
 static void  __fasBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_RELEASED)  {
+        lv_task_del(_fasMotorTask);
         lv_task_del(_fasTimeRefTask);
+        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, 0));
+        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
         CallMetroMenuScreen();
     }
 }
@@ -472,7 +475,7 @@ static void  __fasPlusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
         if(_fasDutyCycle < 65536){
             _fasDutyCycle = _fasDutyCycle + 500;
         }else{
-            _fasDutyCycle = 30000;
+            _fasDutyCycle = 15000;
         }
         
     }
@@ -482,10 +485,10 @@ static void  __fasMinusBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
     if(event == LV_EVENT_RELEASED) 
     {
-        if(_fasDutyCycle > 30000){
+        if(_fasDutyCycle > 15000){
             _fasDutyCycle = _fasDutyCycle - 500;
         }else{
-             _fasDutyCycle = 30000;
+             _fasDutyCycle = 15000;
         }
         
     }
@@ -503,7 +506,6 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 
     if(event == LV_EVENT_RELEASED) 
     {
-        lv_task_del(_fasTimeRefTask);
         calibration_count = get_flow_calibration_point_cout();
         if(calibration_count == 0){
             previous_sensor_reading = 0;
@@ -548,9 +550,17 @@ static void  __fasValidBTN_event_handler(lv_obj_t * obj, lv_event_t event)
             setcalibration_flow_reference_sensorvalue2(reference_sensorValue[1]);
             setcalibration_flow_reference_sensorvalue3(reference_sensorValue[2]);
 
+            lv_task_del(_fasTimeRefTask);
+            lv_task_del(_fasMotorTask);
+            ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, 100));
+            ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
             set_flow_calibration_point_cout(calibration_count);
             CallMetroMenuScreen();
         }else{
+            lv_task_del(_fasTimeRefTask);
+            lv_task_del(_fasMotorTask);
+            ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, 100));
+            ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
             set_flow_calibration_point_cout(calibration_count);
             callMetroFlowAdjustScreen();
         }
