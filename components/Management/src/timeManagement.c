@@ -90,10 +90,7 @@ void vSetSystemTimeUsingCompileTime()
     strcat(now, __TIME__); // copying the time
     ESP_LOGI(TAG, "%s", now);
 
-    /**
-     * @brief converting the time to the tm structure
-     *
-     */
+    /* converting the time to the tm structure */
     strptime(now, "%b %e %Y %H:%M:%S", &tm);
     tm.tm_year = tm.tm_year + 1900; // adjusting the year
     tm.tm_mon = tm.tm_mon + 1;
@@ -121,9 +118,7 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
     sequence_t *seq = pGetAddressOfSequenceArray();
 
-    /**
-     * @brief getiing the start date and time in a string
-     */
+    /* getiing the start date and time in a string */
     char startTime[100];
     // sprintf(startTime, "%s %d:%d", seq[0].cStartDate, seq[0].uStartHour, seq[0].uStartMin); // converting into the string
     sprintf(startTime, "%s", seq[0].cStartDate); // converting into the string

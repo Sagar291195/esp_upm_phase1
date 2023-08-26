@@ -36,8 +36,6 @@ extern "C" {
  **********************/
 extern char startTime[100];
 
-// esp_timer_handle_t JTCesp_timer_handle;
-
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/

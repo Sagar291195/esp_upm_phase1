@@ -147,7 +147,7 @@ static esp_err_t i2c_setup_port(i2c_port_t port, const i2c_config_t *cfg)
     esp_err_t res;
     if (!cfg_equal(cfg, &states[port].config))
     {
-        ESP_LOGD(TAG, "Reconfiguring I2C driver on port %d", port);
+      //  ESP_LOGD(TAG, "Reconfiguring I2C driver on port %d", port);
         i2c_config_t temp;
         memcpy(&temp, cfg, sizeof(i2c_config_t));
         temp.mode = I2C_MODE_MASTER;
@@ -160,7 +160,7 @@ static esp_err_t i2c_setup_port(i2c_port_t port, const i2c_config_t *cfg)
         if ((res = i2c_driver_install(port, temp.mode, 0, 0, 0)) != ESP_OK)
         states[port].installed = true;
         memcpy(&states[port].config, &temp, sizeof(i2c_config_t));
-        ESP_LOGD(TAG, "I2C driver successfully reconfigured on port %d", port);
+      //  ESP_LOGD(TAG, "I2C driver successfully reconfigured on port %d", port);
     }
 
     return ESP_OK;

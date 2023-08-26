@@ -458,54 +458,6 @@ void ds3231_task(void *pvParameters)
 int HighResCounter = 0;
 esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
 
-void JTCtimer_callback(void *args)
-{
-
-    if (isMotor)
-    {
-        HighResCounter++;
-        totalhourVal1 = totalhourVal + (float)HighResCounter / 3600.0;
-        StopHrEND = totalhourVal1;
-        totalhourPtr = &totalhourVal1;
-
-        if (HighResCounter > totalSecond)
-        {
-            isMotor = !isMotor;
-            if (1)
-            {
-                printf("save hour counter \n");
-                setSensorTasksTOzeroPriority();
-                StopHrEND = totalhourVal1;
-                // printf("Current Hour counter value : %f \n", totalhourVal);
-                writeTotalhour(totalhourVal1); //
-                targetHr = (float)totalSecond / 3600.0;
-                effectiveHr = ((float)HighResCounter - 1.0) / 3600.0;
-                variationHr = 100.0 - ((effectiveHr * 100.0) / targetHr);
-                totalHourInt = (int)totalhourVal1;
-                totalHourFloat = (totalhourVal1 - (float)totalHourInt) * 100;
-                // printf("PumpStopForcefully: %d \n", PumpStopForcefully);
-                if (PumpStopForcefully != true)
-                {
-                    // printf("Change InfoWidget \n");
-                    lv_task_del(ResInfoPerChange_task);
-                    sprintf(stopDateEnd, "%s", guiDate);
-                    sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
-                    // setSensorTasksTOzeroPriority();
-                    vUpdateInfoWidgetTask();
-                }
-
-                if (!isMotor)
-                {
-                    setSensorTasksTOzeroPriority();
-                }
-
-                PumpStopForcefully = false;
-            }
-            HighResCounter = 0;
-        }
-    }
-}
-
 void buzzer_task(void *pvParamters)
 {
     while (1)

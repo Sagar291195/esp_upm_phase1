@@ -125,12 +125,12 @@ void Internal_Seneor_bme280_task(void *pvParamters)
         bme280_humidity_average = humidity;
         bme280_pressure_average = pressure;
     }
+
     while (1)
     {
-
+        //ESP_LOGD(TAG, "Taking semaphore for Internal Sensor Read");
         if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
         {
-
             if (bmp280_read_float(&dev, &temperature, &pressure, &humidity) != ESP_OK)
             {
                 ESP_LOGE(TAG, "Failed to read bmp280 sensor");
@@ -588,8 +588,6 @@ void vAverageBMPValue(void *pvParameters)
 
         ESP_LOGD(TAG, "Average value of the external sensor are temp: %0.2f humidity: %0.2f pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
         ESP_LOGD(TAG, "Average value of the Internal sensor are temp: %0.2f humidity: %0.2f pressure: %0.2f", bme280_temperature_average, bme280_humidity_average, bme280_pressure_average);
-
-
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(BME_280_AVERAGING_TIME_IN_MS));
     }
 }
