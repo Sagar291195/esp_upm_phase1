@@ -361,8 +361,9 @@ esp_err_t bmp280_read_fixed(bmp280_t *dev, int32_t *temperature, uint32_t *press
     if (humidity)
     {
         int32_t adc_humidity = data[6] << 8 | data[7];
-        //ESP_LOGD(TAG, "ADC humidity: %d", adc_humidity);
         *humidity = compensate_humidity(dev, adc_humidity, fine_temp);
+        // ESP_LOGD(TAG, "ADC Reading Temperature: %d, Pressure : %d, Humidity : %d", adc_temp, adc_pressure, adc_humidity);
+        
     }
 
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);

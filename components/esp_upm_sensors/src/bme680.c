@@ -761,7 +761,7 @@ esp_err_t bme680_get_results_fixed(bme680_t *dev, bme680_values_fixed_t *results
             ESP_LOGW(TAG, "Heater is not stable");
     }
 
-    // ESP_LOGD(TAG, "Fixed point sensor values - %d/100 deg.C, %d/1000 %%, %d Pa, %d Ohm",
+    // ESP_LOGD(TAG, "Fixed point sensor values - %d/100 deg.C, %d/1000 %%, %d/100 hPa, %d Ohm",
     //         results->temperature, results->humidity, results->pressure, results->gas_resistance);
 
     return ESP_OK;
@@ -779,6 +779,8 @@ esp_err_t bme680_get_results_float(bme680_t *dev, bme680_values_float_t *results
     results->humidity = fixed.humidity / 1000.0f;
     results->gas_resistance = fixed.gas_resistance;
 
+    // ESP_LOGD(TAG, "Fixed point sensor values - %.02f deg.C, %.02f %%, %.02f hPa, %.02f Ohm",
+    //         results->temperature, results->humidity, results->pressure, results->gas_resistance);
     return ESP_OK;
 }
 

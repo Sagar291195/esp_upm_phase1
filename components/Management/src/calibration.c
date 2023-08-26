@@ -116,30 +116,35 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(ext_temperaturekey, &calibrationdata.external_temperature_calibration);
     if(ret == false){
+        calibrationdata.external_temperature_calibration = 0;
         ESP_LOGE(TAG, "External Temperature value read error");
     }else{
         ESP_LOGI(TAG, "External Temperature Calibration : %.02f", calibrationdata.external_temperature_calibration);
     }
     ret = nvsread_value_calibration(ext_humiditykey, &calibrationdata.external_humidity_calibration);
     if(ret == false){
+        calibrationdata.external_humidity_calibration = 0;
         ESP_LOGE(TAG, "External Humidity value read error");
     }else{
         ESP_LOGI(TAG, "External Humidity Calibration : %.02f", calibrationdata.external_humidity_calibration);
     }
     ret = nvsread_value_calibration(ext_pressurekey, &calibrationdata.external_pressure_calibration);
     if(ret == false){
+        calibrationdata.external_pressure_calibration = 0;
         ESP_LOGE(TAG, "External pressure value read error");
     }else{
         ESP_LOGI(TAG, "External pressure Calibration : %.02f", calibrationdata.external_pressure_calibration);
     }
     ret = nvsread_value_calibration(int_temperaturekey, &calibrationdata.internal_temperature_calibration);
     if(ret == false){
+        calibrationdata.internal_temperature_calibration = 0;
         ESP_LOGE(TAG, "Internal Temperature value read error");
     }else{
         ESP_LOGI(TAG, "Internal Temperature Calibration : %.02f", calibrationdata.internal_temperature_calibration);
     }
     ret = nvsread_value_calibration(int_pressurekey, &calibrationdata.internal_pressure_calibration);
     if(ret == false){
+        calibrationdata.internal_pressure_calibration = 0;
         ESP_LOGE(TAG, "Internal Pressure value read error");
     }else{
         ESP_LOGI(TAG, "Internal Pressure Calibration : %.02f", calibrationdata.internal_pressure_calibration);
@@ -147,6 +152,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(int_huniditykey, &calibrationdata.internal_humidity_calibration);
     if(ret == false){
+        calibrationdata.internal_humidity_calibration = 0;
         ESP_LOGE(TAG, "Internal Humidity value read error");
     }else{
         ESP_LOGI(TAG, "Internal humidity Calibration : %.02f", calibrationdata.internal_humidity_calibration);
@@ -154,6 +160,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(flow_coeffA1, &calibrationdata.flow_coeffA1_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffA1_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff A1 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff A1 Calibration : %.02f", calibrationdata.flow_coeffA1_calibration);
@@ -161,6 +168,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(flow_coeffA2, &calibrationdata.flow_coeffA2_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffA2_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff A2 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff A2 Calibration : %.02f", calibrationdata.flow_coeffA2_calibration);
@@ -168,6 +176,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(flow_coeffA3, &calibrationdata.flow_coeffA3_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffA3_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff A3 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff A3 Calibration : %.02f", calibrationdata.flow_coeffA3_calibration);
@@ -175,6 +184,7 @@ void nvsread_calibrationdata(void)
     
     ret = nvsread_value_calibration(flow_coeffB1, &calibrationdata.flow_coeffB1_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffB1_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff B1 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff B1 Calibration : %.02f", calibrationdata.flow_coeffB1_calibration);
@@ -182,6 +192,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(flow_coeffB2, &calibrationdata.flow_coeffB2_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffB2_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff B2 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff B2 Calibration : %.02f", calibrationdata.flow_coeffB2_calibration);
@@ -189,6 +200,7 @@ void nvsread_calibrationdata(void)
 
     ret = nvsread_value_calibration(flow_coeffB3, &calibrationdata.flow_coeffB3_calibration);
     if(ret == false){
+        calibrationdata.flow_coeffB3_calibration = 1;
         ESP_LOGE(TAG, "Flow coeff B3 value read error");
     }else{
         ESP_LOGI(TAG, "Flow coeff B3 Calibration : %.02f", calibrationdata.flow_coeffB3_calibration);

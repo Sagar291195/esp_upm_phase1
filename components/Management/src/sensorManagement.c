@@ -133,16 +133,15 @@ void Internal_Seneor_bme280_task(void *pvParamters)
         {
             if (bmp280_read_float(&dev, &temperature, &pressure, &humidity) != ESP_OK)
             {
-                ESP_LOGE(TAG, "Failed to read bmp280 sensor");
+                ESP_LOGE(TAG, "Failed to read Internal Sensor Reading");
                 continue;
             }
             else
             {
-                ESP_LOGD(TAG, "bme280 temperature %f, bme280 humidity %f, bme280 pressure %f ", temperature, humidity, pressure);
-
                 bme280_temperature_array[last_update_bmp_sensor_value_index] = temperature;
                 bme280_humidity_array[last_update_bmp_sensor_value_index] = humidity;
-                bme280_pressure_array[last_update_bmp_sensor_value_index] = pressure;
+                bme280_pressure_array[last_update_bmp_sensor_value_index] = (pressure/100);
+                // ESP_LOGD(TAG, "Internal Temperature %0.2f, bme280 humidity %0.2f, bme280 pressure %0.2f ", temperature, humidity, (pressure/100));
 
                 if (last_update_bmp_sensor_value_index == NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP - 1)
                 {
@@ -153,7 +152,6 @@ void Internal_Seneor_bme280_task(void *pvParamters)
                     last_update_bmp_sensor_value_index++;
                 }
             }
-
             xSemaphoreGive(xGuiSemaphore);
         }
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(BME280_SENSOR_READ_IN_MS));
@@ -241,10 +239,8 @@ void vExternalBME680SensorTask(void *pvParameters)
             external_sensor_data_average.fHumidity = values.humidity;
             external_sensor_data_average.fPressure = values.pressure;
         }
-
         xSemaphoreGive(xGuiSemaphore);
     }
-
     else
     {
         xSemaphoreGive(xGuiSemaphore);
@@ -265,10 +261,10 @@ void vExternalBME680SensorTask(void *pvParameters)
             // get the results and do something with them
             if (bme680_get_results_float(&sensor, &values) == ESP_OK)
             {
-                ESP_LOGD(TAG, "External temperature is %0.2f, humidity is %0.2f, pressure if %.02f", values.temperature, values.humidity, values.pressure);
+                // ESP_LOGD(TAG, "External Temperature : %0.2f, Humidity : %0.2f, Pressure : %.02f", values.temperature, values.humidity, values.pressure);
                 external_sensor_data[last_update_bmp_sensor_value_index].fTemperature = values.temperature;
                 external_sensor_data[last_update_bmp_sensor_value_index].fHumidity = values.humidity;
-                external_sensor_data[last_update_bmp_sensor_value_index].fPressure = values.pressure*100;  //converting to Pa unit
+                external_sensor_data[last_update_bmp_sensor_value_index].fPressure = values.pressure;  //converting to Pa unit
                 external_sensor_data[last_update_bmp_sensor_value_index].fGasResistance = values.gas_resistance;
 
                 if (last_update_bmp_sensor_value_index == NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP - 1)
@@ -514,24 +510,17 @@ float fGetSdp32TemperatuerAverageValue()
 void vInitiateSensorsOnBoard()
 {
     vInitiateRTCSensor();
-    vTaskDelay(1000);
-
+    vTaskDelay(1000); 
     xTaskCreate(vExternalBME680SensorTask, "bme680", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
-    /**
-     * @brief create the various tasks to read the sensor data raw values and avbgerage them
-     *
-     */
 
+    /* create the various tasks to read the sensor data raw values and avbgerage them */
     xTaskCreate(Internal_Seneor_bme280_task, "bme280", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
-
     xTaskCreate(vSdp32TaskWithAveraging, "sdp32", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
-
     xTaskCreate(vIna3221_Sensor_task, "ina3231", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
-
     xTaskCreate(vAverageBMPValue, "bmp_average_task", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
 }
