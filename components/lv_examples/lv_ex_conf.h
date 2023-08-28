@@ -31,7 +31,45 @@
  * DEMO USAGE
  *********************/
 
+/*Show some widget*/
+#ifdef CONFIG_LV_USE_DEMO_WIDGETS
+#define LV_USE_DEMO_WIDGETS        1
+#else
+#define LV_USE_DEMO_WIDGETS        1
+#endif
 
+#if LV_USE_DEMO_WIDGETS
+#ifdef CONFIG_LV_DEMO_WIDGETS_SLIDESHOW
+#define LV_DEMO_WIDGETS_SLIDESHOW   1
+#else
+#define LV_DEMO_WIDGETS_SLIDESHOW   1
+#endif
+#endif
+
+/*Printer demo, optimized for 800x480*/
+#define LV_USE_DEMO_PRINTER     1
+
+/*Demonstrate the usage of encoder and keyboard*/
+#ifdef CONFIG_LV_USE_DEMO_KEYPAD_AND_ENCODER
+#define LV_USE_DEMO_KEYPAD_AND_ENCODER  1
+#else
+#define LV_USE_DEMO_KEYPAD_AND_ENCODER  0
+#endif
+
+/*Benchmark your system*/
+#ifdef CONFIG_LV_USE_DEMO_BENCHMARK
+#define LV_USE_DEMO_BENCHMARK   1
+#else
+#define LV_USE_DEMO_BENCHMARK   0
+#endif
+
+/*Stress test for LVGL*/
+#ifdef CONFIG_LV_USE_DEMO_STRESS
+#define LV_USE_DEMO_STRESS  1 
+#else
+#define LV_USE_DEMO_STRESS  0 
+
+#endif
 
 #endif /*LV_EX_CONF_H*/
 

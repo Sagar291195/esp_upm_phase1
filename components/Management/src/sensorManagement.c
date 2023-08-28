@@ -23,27 +23,64 @@
 
 #define TAG "sensorManagement"
 
-/* this will number of values to be average for calculating the average */
+/**
+ * @brief this will number of values to be average for calculating the average
+ *
+ */
 #define NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP 5
-#define BME280_SENSOR_READ_IN_MS                200
-/* bme 280 internal sensor averaging time in ms */
-#define BME_280_AVERAGING_TIME_IN_MS            1000
-/* bme 680 external sensor averating time in ms */
-#define BME_680_AVERAGING_TIME_IN_MS            1000
-#define BME680_SENSOR_READ_IN_MS                200
-/* INA sensor averaging time in ms */
-#define INA3221_CURRENT_SENSOR_IN_MS            1000
-/* This is the duration after which the sensor will update the data into the array. */
-#define SDP32_SENSOR_READ_DURATION_IN_MS        20
-/* sdp sensor average time out */
-#define SDP32_SENSOR_AVERAGE_DURATION_IN_MS     200
-/* scale factor for the sdp32 diff sensor */
-#define SDP32_DIFF_PRESSURE_SCALE_FACTOR        240.0
-/*sdp32 temperater scale factor */
-#define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR     200.0
-#define NO_OF_SAMPLES_SDP32                     10
 
-/* i2c bus configuration */
+#define BME280_SENSOR_READ_IN_MS 200
+
+/**
+ * @brief bme 280 internal sensor averaging time in ms
+ *
+ */
+#define BME_280_AVERAGING_TIME_IN_MS 1000
+
+/**
+ * @brief bme 680 external sensor averating time in ms
+ *
+ */
+#define BME_680_AVERAGING_TIME_IN_MS 1000
+
+#define BME680_SENSOR_READ_IN_MS 200
+
+/**
+ * @brief INA sensor averaging time in ms
+ *
+ */
+#define INA3221_CURRENT_SENSOR_IN_MS 1000
+
+/**
+ * @brief This is the duration after which the sensor will update the data into the array.
+ *
+ */
+#define SDP32_SENSOR_READ_DURATION_IN_MS 20
+
+/**
+ * @brief sdp sensor average time out
+ *
+ */
+#define SDP32_SENSOR_AVERAGE_DURATION_IN_MS 200
+
+/**
+ * @brief scale factor for the sdp32 diff sensor
+ *
+ */
+#define SDP32_DIFF_PRESSURE_SCALE_FACTOR 240.0
+
+/**
+ * @brief sdp32 temperater scale factor
+ *
+ */
+#define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR 200.0
+
+#define NO_OF_SAMPLES_SDP32 10
+
+/**
+ * @brief i2c bus configuration
+ *
+ */
 #define SDA_GPIO 21
 #define SCL_GPIO 22
 
@@ -51,33 +88,84 @@
 
 extern SemaphoreHandle_t xGuiSemaphore;
 
-/* internal temperature sensor */
+/**
+ * @brief internal temperature sensor
+ *
+ */
 float bme280_temperature_average = 0;
-/*  internal humidity sensor */
+/**
+ * @brief internal humidity sensor
+ *
+ */
 float bme280_humidity_average = 0;
-/* internal pressure sensor */
+/**
+ * @brief internal pressure sensor
+ *
+ */
 float bme280_pressure_average = 0;
-/* array of values for the internal temperature sensor */
+
+/**
+ * @brief array of values for the internal temperature sensor
+ *
+ */
 static volatile float bme280_temperature_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/* array of values for the internal humidity sensor */
+/**
+ * @brief array of values for the internal humidity sensor
+ *
+ */
 static volatile float bme280_humidity_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/* array of values for the internal pressure sensor */
+/**
+ * @brief array of values for the internal pressure sensor
+ *
+ */
 static volatile float bme280_pressure_array[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/* keep track of the sdp sensor read count */
+
+/**
+ * @brief keep track of the sdp sensor read count
+ *
+ */
 static volatile uint8_t last_update_sensor_value_index = 0;
-/* index for calculating the average values */
+
+/**
+ * @brief index for calculating the average values
+ *
+ */
 static volatile uint8_t last_update_bmp_sensor_value_index = 0;
-/* array to hold the raw spd32 values from the sensor */
+
+/**
+ * @brief array to hold the raw spd32 values from the sensor
+ *
+ */
 static volatile float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};
-/* sp32 diff pressure sensor average values */
+
+/**
+ * @brief sp32 diff pressure sensor average values
+ *
+ */
 float fSdp32_diff_pressure_average = 0;
-/* sdp32 average temperature sensor value*/
+
+/**
+ * @brief sdp32 average temperature sensor value
+ *
+ */
 float fSpd32Temperatuer_average = 0;
-/* Data variable for the bme680 sensor */
+/**
+ * @brief Data variable for the bme680 sensor
+ *
+ */
 static external_sensor_data_t external_sensor_data_average = {0};
-/* array for external sensor data for calulating the average values */
+
+/**
+ * @brief array for external sensor data for calulating the average values
+ *
+ */
+
 static volatile external_sensor_data_t external_sensor_data[NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP] = {0};
-/* array to store the sensor data */
+
+/**
+ * @brief array to store the sensor data
+ *
+ */
 INA3231_sensor_data_t INA3231_sensor_data[INA3221_CHANNEL];
 
 /**
@@ -125,23 +213,24 @@ void Internal_Seneor_bme280_task(void *pvParamters)
         bme280_humidity_average = humidity;
         bme280_pressure_average = pressure;
     }
-
     while (1)
     {
-        //ESP_LOGD(TAG, "Taking semaphore for Internal Sensor Read");
+
         if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
         {
+
             if (bmp280_read_float(&dev, &temperature, &pressure, &humidity) != ESP_OK)
             {
-                ESP_LOGE(TAG, "Failed to read Internal Sensor Reading");
+                ESP_LOGE(TAG, "Failed to read bmp280 sensor");
                 continue;
             }
             else
             {
+                ESP_LOGD(TAG, "bme280 temperature %f, bme280 humidity %f, bme280 pressure %f ", temperature, humidity, pressure);
+
                 bme280_temperature_array[last_update_bmp_sensor_value_index] = temperature;
                 bme280_humidity_array[last_update_bmp_sensor_value_index] = humidity;
-                bme280_pressure_array[last_update_bmp_sensor_value_index] = (pressure/100);
-                // ESP_LOGD(TAG, "Internal Temperature %0.2f, bme280 humidity %0.2f, bme280 pressure %0.2f ", temperature, humidity, (pressure/100));
+                bme280_pressure_array[last_update_bmp_sensor_value_index] = pressure;
 
                 if (last_update_bmp_sensor_value_index == NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP - 1)
                 {
@@ -152,6 +241,7 @@ void Internal_Seneor_bme280_task(void *pvParamters)
                     last_update_bmp_sensor_value_index++;
                 }
             }
+
             xSemaphoreGive(xGuiSemaphore);
         }
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(BME280_SENSOR_READ_IN_MS));
@@ -233,14 +323,19 @@ void vExternalBME680SensorTask(void *pvParameters)
         xSemaphoreTake(xGuiSemaphore, portMAX_DELAY);
         // get the results and do something with them
         if (bme680_get_results_float(&sensor, &values) == ESP_OK)
-        /* averaging the values over the given time frame */
+        /**
+         * @brief averaging the values over the given time frame
+         *
+         */
         {
             external_sensor_data_average.fTemperature = values.temperature;
             external_sensor_data_average.fHumidity = values.humidity;
             external_sensor_data_average.fPressure = values.pressure;
         }
+
         xSemaphoreGive(xGuiSemaphore);
     }
+
     else
     {
         xSemaphoreGive(xGuiSemaphore);
@@ -261,10 +356,10 @@ void vExternalBME680SensorTask(void *pvParameters)
             // get the results and do something with them
             if (bme680_get_results_float(&sensor, &values) == ESP_OK)
             {
-                // ESP_LOGD(TAG, "External Temperature : %0.2f, Humidity : %0.2f, Pressure : %.02f", values.temperature, values.humidity, values.pressure);
+                ESP_LOGD(TAG, "External temperature is %0.2f, humidity is %0.2f, pressure if %.02f", values.temperature, values.humidity, values.pressure);
                 external_sensor_data[last_update_bmp_sensor_value_index].fTemperature = values.temperature;
                 external_sensor_data[last_update_bmp_sensor_value_index].fHumidity = values.humidity;
-                external_sensor_data[last_update_bmp_sensor_value_index].fPressure = values.pressure;  //converting to Pa unit
+                external_sensor_data[last_update_bmp_sensor_value_index].fPressure = values.pressure*100;  //converting to Pa unit
                 external_sensor_data[last_update_bmp_sensor_value_index].fGasResistance = values.gas_resistance;
 
                 if (last_update_bmp_sensor_value_index == NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP - 1)
@@ -421,26 +516,47 @@ void vTaskAverageDiffPressure(void *pvParameters)
  */
 void vSdp32TaskWithAveraging(void *pvParameters)
 {
+
     sdp32_t dev;
+    esp_err_t err;
     memset(&dev, 0, sizeof(sdp32_t));
 
-    /* read buffer 0 initialized */
+    /**
+     * @brief read buffer 0 initialized
+     *
+     */
     uint8_t read_buff[9] = {0};
 
-    /* variable to store the checksum  */
+    /**
+     * @brief variable to store the checksum
+     *
+     */
     uint8_t checksum;
 
-    /*  various sdp32 commands */
+    /**
+     * @brief various sdp32 commands
+     *
+     */
     // uint8_t startContRead_cmd[2] = {0x36, 0x15}; // Start Read in continous Mode
     uint8_t stopContRead_cmd[2] = {0x3F, 0xF9}; // Stop Countinous measure command
-    /* mass flow, temperature compensated diff pressure with average mode */
+    uint8_t softReset_cmd[2] = {0x00, 0x06};
+    /**
+     * @brief mass flow, temperature compensated diff pressure with average mode
+     *
+     */
     uint8_t massFlowRead[2] = {0x36, 0x03};
 
-    /* initializing spd32 sensor */
+    /**
+     * @brief initializing spd32 sensor
+     *
+     */
     ESP_ERROR_CHECK_WITHOUT_ABORT(sdp32_init_desc(&dev, SDP32_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO));
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    /* sending stop continuous read command */
+    /**
+     * @brief sending stop continuous read command
+     *
+     */
     if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
     {
         sdp32_send_cmd_read(&dev, stopContRead_cmd);
@@ -451,16 +567,21 @@ void vSdp32TaskWithAveraging(void *pvParameters)
     ESP_LOGI(TAG, "Starting sdp32 sensor in massflow mode");
     if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
     {
+
         sdp32_send_cmd_read(&dev, massFlowRead);
         xSemaphoreGive(xGuiSemaphore);
     }
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    /* Creating the task which does the averaging of the samples */
+    /**
+     * @brief Creating the task which does the averaging of the samples
+     *
+     */
     xTaskCreate(vTaskAverageDiffPressure, "vTaskAverageDiffPressure", 2048, NULL, 5, NULL);
 
     while (true)
     {
+
         vTaskDelay(pdMS_TO_TICKS(SDP32_SENSOR_READ_DURATION_IN_MS));
         if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
         {
@@ -468,12 +589,21 @@ void vSdp32TaskWithAveraging(void *pvParameters)
             sdp32_read_pressure(&dev, read_buff); // actually reading the mass flow
             xSemaphoreGive(xGuiSemaphore);
         }
-        /* checksum is the third byte of the array after the first two bytes which ar actual readings */
+        /**
+         * @brief checksum is the third byte of the array after the first two bytes which ar actual readings
+         *
+         */
         checksum = read_buff[2];
 
-        /* checking the checksum, as the values we are getting are correct or not */
+        /**
+         * @brief checking the checksum, as the values we are getting are correct or not
+         *
+         */
         bool check = CheckCrc(read_buff, 2, checksum);
-        /* if checksum failed then continue the loop, else store the value in the array */
+        /**
+         * @brief if checksum failed then continue the loop, else store the value in the array
+         *
+         */
         if (!check)
         {
             continue;
@@ -510,17 +640,24 @@ float fGetSdp32TemperatuerAverageValue()
 void vInitiateSensorsOnBoard()
 {
     vInitiateRTCSensor();
-    vTaskDelay(1000); 
-    xTaskCreate(vExternalBME680SensorTask, "bme680", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
 
-    /* create the various tasks to read the sensor data raw values and avbgerage them */
+    xTaskCreate(vExternalBME680SensorTask, "bme680", 4 * 1024, NULL, 5, NULL);
+    vTaskDelay(1000);
+    /**
+     * @brief create the various tasks to read the sensor data raw values and avbgerage them
+     *
+     */
+
     xTaskCreate(Internal_Seneor_bme280_task, "bme280", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
+
     xTaskCreate(vSdp32TaskWithAveraging, "sdp32", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
+
     xTaskCreate(vIna3221_Sensor_task, "ina3231", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
+
     xTaskCreate(vAverageBMPValue, "bmp_average_task", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
 }
@@ -536,7 +673,10 @@ void vAverageBMPValue(void *pvParameters)
     while (1)
     {
 
-        /*  initializing the average values to 0 */
+        /**
+         * @brief initializing the average values to 0
+         *
+         */
         temp_bme280_temperature_average = 0;
         temp_bme280_pressure_average = 0;
         temp_bme280_humidity_average = 0;
@@ -545,12 +685,18 @@ void vAverageBMPValue(void *pvParameters)
 
         for (uint8_t i = 0; i < NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP; i++)
         {
-            /*  calculating values for the bme280 */
+            /**
+             * @brief calculating values for the bme280
+             *
+             */
             temp_bme280_temperature_average += bme280_temperature_array[i];
             temp_bme280_pressure_average += bme280_pressure_array[i];
             temp_bme280_humidity_average += bme280_humidity_array[i];
 
-            /* calculating values for the bme680 */
+            /**
+             * @brief calculating values for the bme680
+             *
+             */
             temp_external_sensor_data_average.fTemperature += external_sensor_data[i].fTemperature;
             temp_external_sensor_data_average.fPressure += external_sensor_data[i].fPressure;
             temp_external_sensor_data_average.fHumidity += external_sensor_data[i].fHumidity;
@@ -577,6 +723,8 @@ void vAverageBMPValue(void *pvParameters)
 
         ESP_LOGD(TAG, "Average value of the external sensor are temp: %0.2f humidity: %0.2f pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
         ESP_LOGD(TAG, "Average value of the Internal sensor are temp: %0.2f humidity: %0.2f pressure: %0.2f", bme280_temperature_average, bme280_humidity_average, bme280_pressure_average);
+
+
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(BME_280_AVERAGING_TIME_IN_MS));
     }
 }

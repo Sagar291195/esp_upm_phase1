@@ -43,7 +43,7 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-void callMetroFlowParameterScreen(void);
+void callFlowParameterScreen(void);
 
 /**********************
  *    ERROR ASSERT

@@ -36,6 +36,8 @@ extern "C" {
  **********************/
 extern char startTime[100];
 
+// esp_timer_handle_t JTCesp_timer_handle;
+
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
@@ -45,7 +47,7 @@ void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask);
 void start_timer_callback(void *args);
 void startTimer(void);
 void vUpdateInfoWidgetTask(void);
-void infoWidgetUpdateTask_cb(lv_task_t *infoWidgetUpdateTask);
+void infoWidgetUpdateTask_cb(lv_task_t infoWidgetUpdateTask);
 
 
 /**********************

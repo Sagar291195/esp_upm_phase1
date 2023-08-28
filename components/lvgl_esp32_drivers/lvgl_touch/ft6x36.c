@@ -83,6 +83,8 @@ esp_err_t read_reg_8(ft6x36_t *dev, uint8_t reg, uint8_t *val)
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     I2C_DEV_CHECK(&dev->i2c_dev, i2c_dev_read_reg(&dev->i2c_dev, reg, val, 1));
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
+
+    
     return ESP_OK;
 }
 esp_err_t read_reg_16(ft6x36_t *dev, uint8_t reg, uint16_t *val)
@@ -92,12 +94,37 @@ esp_err_t read_reg_16(ft6x36_t *dev, uint8_t reg, uint16_t *val)
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     I2C_DEV_CHECK(&dev->i2c_dev, i2c_dev_read_reg(&dev->i2c_dev, reg, val, 2));
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
+
+    //*val = (*val >> 8) | (*val << 8); // Swap
+
     return ESP_OK;
 }
 
 esp_err_t ft6x06_i2c_read8(uint8_t slave_addr, uint8_t register_addr, uint8_t *data_buf) {
+ /*   i2c_cmd_handle_t i2c_cmd = i2c_cmd_link_create();
+
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (slave_addr << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(i2c_cmd, register_addr, I2C_MASTER_ACK);
+
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (slave_addr << 1) | I2C_MASTER_READ, true);
+
+    i2c_master_read_byte(i2c_cmd, data_buf, I2C_MASTER_NACK);
+    i2c_master_stop(i2c_cmd);
+    esp_err_t ret = i2c_master_cmd_begin(TOUCH_I2C_PORT, i2c_cmd, 1000 / portTICK_RATE_MS);
+    i2c_cmd_link_delete(i2c_cmd);
+
+    
+    return ret;*/
+   
+
     // Sync config register
-     return  read_reg_8(&ft6x36_dev, register_addr, data_buf);    
+     return  read_reg_8(&ft6x36_dev, register_addr, data_buf);
+  
+
+   
+    
 }
 
 /**
@@ -122,50 +149,70 @@ uint8_t ft6x36_get_gesture_id() {
   * @param  dev_addr: Device address on communication Bus (I2C slave address of FT6X36).
   * @retval None
   */
+
+
+
+
 void ft6x06_init(uint16_t dev_addr) {
 
     lcd_led_driver_init();
     vTaskDelay(100 / portTICK_RATE_MS);
     if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY)) 
-    {
-        ESP_LOGI(TAG, "ft6x06_init_start");
+        {
+  
+    ESP_LOGI(TAG, "ft6x06_init_start");
+      
+ 
     
-        if (!ft6x36_status.inited) {
-            esp_err_t code = ESP_OK;
-            if (code != ESP_OK) {
-                ft6x36_status.inited = false;
-                ESP_LOGE(TAG, "Error during I2C init %s", esp_err_to_name(code));
-            } else {
-                ft6x36_status.inited = true;
-                current_dev_addr = dev_addr;
-                
-                memset(&ft6x36_dev, 0, sizeof(ft6x36_t));//
-                ESP_ERROR_CHECK(ft6x36_init_desc(&ft6x36_dev, dev_addr, 0, SDA_GPIO, SCL_GPIO));   // registration touch in i2cdev 
 
-                uint8_t data_buf;
-                esp_err_t ret;
-                ESP_LOGI(TAG, "Found touch panel controller");
-                if ((ret = ft6x06_i2c_read8(dev_addr, FT6X36_PANEL_ID_REG, &data_buf) != ESP_OK))
-                    ESP_LOGE(TAG, "Error reading from device: %s",
-                            esp_err_to_name(ret));    // Only show error the first time
-                ESP_LOGI(TAG, "Device ID: 0x%02x", data_buf);
 
-                ft6x06_i2c_read8(dev_addr, FT6X36_CHIPSELECT_REG, &data_buf);
-                ESP_LOGI(TAG, "Chip ID: 0x%02x", data_buf);
+    
+    if (!ft6x36_status.inited) {
 
-                ft6x06_i2c_read8(dev_addr, FT6X36_DEV_MODE_REG, &data_buf);
-                ESP_LOGI(TAG, "Device mode: 0x%02x", data_buf);
+/* I2C master is initialized before calling this function */
+#if 0
+        esp_err_t code = i2c_master_init();
+#else
+        esp_err_t code = ESP_OK;
+#endif
 
-                ft6x06_i2c_read8(dev_addr, FT6X36_FIRMWARE_ID_REG, &data_buf);
-                ESP_LOGI(TAG, "Firmware ID: 0x%02x", data_buf);
+        if (code != ESP_OK) {
+            ft6x36_status.inited = false;
+            ESP_LOGE(TAG, "Error during I2C init %s", esp_err_to_name(code));
+        } else {
+            ft6x36_status.inited = true;
+            current_dev_addr = dev_addr;
+            
+            memset(&ft6x36_dev, 0, sizeof(ft6x36_t));//
+            ESP_ERROR_CHECK(ft6x36_init_desc(&ft6x36_dev, dev_addr, 0, SDA_GPIO, SCL_GPIO));   // registration touch in i2cdev 
 
-                ft6x06_i2c_read8(dev_addr, FT6X36_RELEASECODE_REG, &data_buf);
-                ESP_LOGI(TAG, "Release code: 0x%02x", data_buf);
-            }
+            uint8_t data_buf;
+            esp_err_t ret;
+            ESP_LOGI(TAG, "Found touch panel controller");
+            if ((ret = ft6x06_i2c_read8(dev_addr, FT6X36_PANEL_ID_REG, &data_buf) != ESP_OK))
+                ESP_LOGE(TAG, "Error reading from device: %s",
+                         esp_err_to_name(ret));    // Only show error the first time
+            ESP_LOGI(TAG, "\tDevice ID: 0x%02x", data_buf);
+
+            ft6x06_i2c_read8(dev_addr, FT6X36_CHIPSELECT_REG, &data_buf);
+            ESP_LOGI(TAG, "\tChip ID: 0x%02x", data_buf);
+
+            ft6x06_i2c_read8(dev_addr, FT6X36_DEV_MODE_REG, &data_buf);
+            ESP_LOGI(TAG, "\tDevice mode: 0x%02x", data_buf);
+
+            ft6x06_i2c_read8(dev_addr, FT6X36_FIRMWARE_ID_REG, &data_buf);
+            ESP_LOGI(TAG, "\tFirmware ID: 0x%02x", data_buf);
+
+            ft6x06_i2c_read8(dev_addr, FT6X36_RELEASECODE_REG, &data_buf);
+            ESP_LOGI(TAG, "\tRelease code: 0x%02x", data_buf);
+
+         
         }
-        ESP_LOGI(TAG, "ft6x06_init_finish");
-        xSemaphoreGive(xGuiSemaphore);
     }
+  ESP_LOGI(TAG, "ft6x06_init_finish");
+            xSemaphoreGive(xGuiSemaphore);
+        }
+  
 }
 
 /**
@@ -196,14 +243,32 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
         data->state = LV_INDEV_STATE_REL;
         //printf("touch read test\n");
         return false;
-    }  
+    }
 
-    // rEAD x
+    // Read X value
+    /*i2c_cmd_handle_t i2c_cmd = i2c_cmd_link_create();
+    
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (current_dev_addr << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(i2c_cmd, FT6X36_P1_XH_REG, I2C_MASTER_ACK);
+
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (current_dev_addr << 1) | I2C_MASTER_READ, true);
+
+    i2c_master_read_byte(i2c_cmd, &data_xy[0], I2C_MASTER_ACK);     // reads FT6X36_P1_XH_REG
+    i2c_master_read_byte(i2c_cmd, &data_xy[1], I2C_MASTER_NACK);    // reads FT6X36_P1_XL_REG
+    i2c_master_stop(i2c_cmd);
+    esp_err_t ret = i2c_master_cmd_begin(TOUCH_I2C_PORT, i2c_cmd, 1000 / portTICK_RATE_MS);
+    i2c_cmd_link_delete(i2c_cmd);*/
+   
+   // rEAD x
     int16_t rawX;
     ret=read_reg_16(&ft6x36_dev,FT6X36_P1_XH_REG, (uint16_t *)&rawX);
     data_xy[1]=(int8_t)((rawX>>8)& 0xff);
     data_xy[0]=(int8_t)(rawX&0xff);
-    ESP_LOGV(TAG, "data_xy[1]=%u data_xy[0]=%u", data_xy[1], data_xy[0]);
+     ESP_LOGV(TAG, "data_xy[1]=%u data_xy[0]=%u", data_xy[1], data_xy[0]);
+
+
 
     if (ret != ESP_OK) {
         //printf("Hello check\n");
@@ -214,6 +279,24 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
         return false;
     }
 
+    // Read Y value
+    /*
+    i2c_cmd = i2c_cmd_link_create();
+    //printf("Hello test\n");
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (current_dev_addr << 1) | I2C_MASTER_WRITE, true);
+    i2c_master_write_byte(i2c_cmd, FT6X36_P1_YH_REG, I2C_MASTER_ACK);
+
+    i2c_master_start(i2c_cmd);
+    i2c_master_write_byte(i2c_cmd, (current_dev_addr << 1) | I2C_MASTER_READ, true);
+
+    i2c_master_read_byte(i2c_cmd, &data_xy[2], I2C_MASTER_ACK);     // reads FT6X36_P1_YH_REG
+    i2c_master_read_byte(i2c_cmd, &data_xy[3], I2C_MASTER_NACK);    // reads FT6X36_P1_YL_REG
+    i2c_master_stop(i2c_cmd);
+    ret = i2c_master_cmd_begin(TOUCH_I2C_PORT, i2c_cmd, 1000 / portTICK_RATE_MS);
+
+    i2c_cmd_link_delete(i2c_cmd);
+    */
     int16_t rawY;
     ret=read_reg_16(&ft6x36_dev,FT6X36_P1_YH_REG, (uint16_t *)&rawY);
     data_xy[3]=(int8_t)((rawY>>8)& 0xff);
@@ -246,21 +329,27 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
     data->point.y = last_y;
     data->state = LV_INDEV_STATE_PR;
     ESP_LOGV(TAG, "X=%u Y=%u", data->point.x, data->point.y);
-    ESP_LOGV(TAG, "ft6x36_read _finish");
+  //xSemaphoreGive(main_mutex);}
+   ESP_LOGV(TAG, "ft6x36_read _finish");
     return false;
-}
 
+  
+}
 //=======================new Function
 esp_err_t ft6x36_init_desc(ft6x36_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
    // registration touch
     ESP_LOGV(TAG, "ft6x36_init_desc");
+    
     CHECK_ARG(dev);
+
+  
     dev->i2c_dev.port = port;
     dev->i2c_dev.addr = addr;
     dev->i2c_dev.cfg.sda_io_num = sda_gpio;
     dev->i2c_dev.cfg.scl_io_num = scl_gpio;
     dev->i2c_dev.cfg.master.clk_speed = I2C_FREQ_HZ;
+
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 

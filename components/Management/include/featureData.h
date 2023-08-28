@@ -24,6 +24,7 @@
 
 /**
  * @brief get the air density as the feature data
+ *
  * @return float
  */
 float fGetAirDesity_featureData();
@@ -31,6 +32,7 @@ float fGetAirDesity_featureData();
 
 /**
  * @brief Get the internal air density as feature data
+ *
  * @return float
  */
 float fGetInternalAirDensity_featureData();
@@ -38,6 +40,7 @@ float fGetInternalAirDensity_featureData();
 
 /**
  * @brief get the volumentric flow as the feature data
+ *
  * @return float
  */
 float fGetVolumetricFlow_featureData();

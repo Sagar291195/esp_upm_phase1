@@ -5,6 +5,7 @@
 #define SDA_GPIO    21
 #define SCL_GPIO    22
 
+
 static const char *TAG = "lm2759";
 
 extern SemaphoreHandle_t main_mutex;
@@ -53,9 +54,21 @@ esp_err_t lm2759_init_desc(lm2759_t *dev, uint8_t addr, i2c_port_t port, gpio_nu
 
 esp_err_t lm2759_set_mode(lm2759_t *dev)
 {
+    //i2cdev_init();
+    
+
     CHECK_ARG(dev);
+
+    //I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
+
+    ESP_LOGE(TAG, "Set mode");
     // Set torch mode
     CHECK_LOGE(dev, write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x01), "Failed to init LM2759");
+    ESP_LOGE(TAG, "Set mode finish");
+
+    //I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
+
+
     return ESP_OK;
 }
 
@@ -76,6 +89,7 @@ esp_err_t lm2759_set_current(lm2759_t *dev, uint8_t current)
 
 void lcd_led_driver_init(void)
 {
+    //i2cdev_init();
     ESP_LOGI(TAG, "Init LCD driver current");
     lm2759_t dev;
     memset(&dev, 0, sizeof(lm2759_t));
@@ -91,7 +105,8 @@ void lcd_set_current(uint8_t current)
 {
     if(xSemaphoreTake(main_mutex, portMAX_DELAY)){
 
-    if (current >= 0x08) return;    
+    if (current >= 0x08) return;
+    //ESP_ERROR_CHECK(i2cdev_init());    
     lm2759_t dev;
     memset(&dev, 0, sizeof(lm2759_t));
 

@@ -42,8 +42,15 @@ extern int durMin;
 
 extern int global_DashbordBTNflag;
 extern int global_InfoWidgetStateflag;
+
+extern int global_CurveDegree;
+
 extern bool startTimeLabelAdgFlg;
 
+extern int metroflowUnit;
+
+extern float flowPoints[10];
+extern float flowPointXasis[10];
 
 extern char guiTime[25];
 extern struct tm navier_time;
@@ -65,22 +72,32 @@ extern char _xaMinutrollerbuf[32];
 extern char _xsSProllerbuf[32];
 extern char _xsDurHourrollerbuf[32];
 extern char _xsDurMinutrollerbuf[32];
+
 extern bool defaultParaSelected;
+
 extern char WseqNum1[5];
 extern bool rollerMovCkFlag;
+
 extern char stopTime[25];
 extern char stopTime1[25];
 extern char startTime[100];
 extern char stopDate[40];
+
 extern int dashboardflg;
 extern int totalSecond;
+
 extern char startDateEnd[55];
 extern char stopDateEnd[45];
+
 extern char startTimeEnd[60];
 extern char stopTimeEnd[60];
+
 extern int revCountDefJobStart;
+
 extern char * Seq_Number;
+
 extern float SetPoint_Value;
+
 extern float FlowPloyCoffA;
 extern float FlowPloyCoffB;
 extern float FlowPloyCoffC;
@@ -91,7 +108,9 @@ extern float FlowPloyCoffG;
 extern float FlowPloyCoffH;
 extern float FlowPloyCoffI;
 extern float FlowPloyCoffJ;
+
 extern int FlowPolyDeg;
+
 extern bool iArchORSummaryScrn;
 
    

@@ -56,6 +56,7 @@ void vInitializeTimeManagement();
 
 /**
  * @brief get the end date and itme of the sequence in the given array
+ *
  * @param endDate array pointer of end date
  * @param sequenceNumber sequence number of the sequence
  * @param sizeOfEndDate size of end date array max 255
@@ -67,6 +68,7 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
 
 /**
  * @brief Get the start date and time of the sequence in the given array in string format
+ *
  * @param[in] uSequenceNumber Sequnce numbet to which date and time has been determine
  * @param[out] cStartDate  array pointer of start date
  * @param[in] sizeOfStartDate size of start date array
@@ -77,6 +79,7 @@ void uGetStartSequenceDateAndTime(uint8_t uSequenceNumber, char *cStartDate, uin
 
 /**
  * @brief Get the total run time  of the sample  in given format like 15H 45M
+ *
  * @param[out] cTotalDuration place holder to put the string
  * @param[in] uSizeOfArray size of the array
  */

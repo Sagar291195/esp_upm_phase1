@@ -21,16 +21,19 @@
 
 /**
  * @brief initializes the data management module
+ *
  */
 void vInitializeDataManagementApi();
 
 /**
  * @brief writes the sequence summary to the data base
+ *
  */
 void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary);
 
 /**
  * @brief reads the sequence summary from the data base
+ *
  * @param sampleNumber sample number to beread
  * @param sequenceNumber sequnce number to be read
  * @param sequenceSummary output sequnce summary

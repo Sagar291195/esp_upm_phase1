@@ -150,7 +150,7 @@ lv_obj_t *sqCreateSequence(lv_obj_t *sqParent,uint8_t sequence_number)
     lv_obj_set_style_local_bg_color(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); //#Eb3B5A
     lv_obj_set_style_local_border_width(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
-    lv_obj_set_user_data(_sqBTNTria, &sequence_number);
+    lv_obj_set_user_data(_sqBTNTria, sequence_number);
 
     // Create a Triangle Sign Label
     _sqBTNTriaSignLbl = lv_label_create(_sqBTNTria, NULL);
@@ -181,7 +181,7 @@ lv_obj_t *sqCreateSequence(lv_obj_t *sqParent,uint8_t sequence_number)
 void sqSetFlowSetPoint(lv_obj_t *sqObj, float sqSetpNumber)
 {
     SequenceExt_t *sqExt = lv_obj_get_ext_attr(sqObj);
-    char chsqNumber[5];
+    float chsqNumber[5];
     sprintf(chsqNumber, "%0.2f", sqSetpNumber);
     lv_label_set_text(sqExt->_sqFlowSetPtValue, chsqNumber);
     lv_obj_align(_sqFlowSetPtVar, _sqFlowSetPtTxt, LV_ALIGN_OUT_RIGHT_MID, 25, 0);

@@ -21,24 +21,28 @@
 
 /**
  * @brief user compensated volumetric flow is 
+ * 
  * @return float 
  */
 float fGetVolumetricFlowUserCompensated();
 
 /**
  * @brief Get external air density user compensated
+ * 
  * @return float 
  */
 float fGetExternalAirDensityUserCompensated();
 
 /**
  * @brief get internal air density user compensated
+ * 
  * @return float 
  */
 float fGetInternalAirDensityUserCompensated();
 
 /**
  * @brief get the internal pressure user compensated
+ * 
  * @return float 
  */
 float fGetInternalPressureUserCompensated();
@@ -46,18 +50,21 @@ float fGetInternalPressureUserCompensated();
 
 /**
  * @brief Get internal Humidity user compensated
+ * 
  * @return float 
  */
 float fGetInternalHumidityUserCompesated();
 
 /**
  * @brief Get the Internal temperature user compensated
+ * 
  * @return float 
  */
 float fGetInternalTemperatureUserCompesated();
 
 /**
  * @brief Get the external sensor data user compensaed 
+ * 
  * @param[in] xUserCompenstedValues 
  */
 void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues);

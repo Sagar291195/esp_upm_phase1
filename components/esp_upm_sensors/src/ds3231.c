@@ -466,4 +466,27 @@ void print_date()
     printf ("day: %d month: %d year: %d\n", day, month, year);
 }
 
+// int main(int argc, char **argv)
+// {
+//     int i;
 
+//     set_date(5, 2, 1980);
+
+//     skip_days(10000);
+//     day_counter = 0;
+//     /* after this call next_day each day */
+
+//     print_date();
+
+//     return 0;
+// }
+
+    // int i;
+
+    // set_date(5, 2, 1980);
+
+    // skip_days(10000);
+    // day_counter = 0;
+    // /* after this call next_day each day */
+
+    // print_date();

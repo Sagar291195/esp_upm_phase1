@@ -21,9 +21,16 @@
 #include <sensorManagement.h>
 #include <featureData.h>
 
+
+
+
 /*******************************function prototype***************************************/
+
+
+
 /**
  * @brief get the external temperature from the sensor after manufacture compensation values
+ *
  * @param xManuCompenstedValues
  */
 void vGetMaufCompensatedExternalSensorData(external_sensor_data_t *xManuCompenstedValues);
@@ -31,6 +38,7 @@ void vGetMaufCompensatedExternalSensorData(external_sensor_data_t *xManuCompenst
 
 /**
  * @brief Get the volume flow manufacture compensated
+ *
  * @return float
  */
 float fGetVolumeFlowFromManuCompensationLayer();
@@ -38,30 +46,35 @@ float fGetVolumeFlowFromManuCompensationLayer();
 
 /**
  * @brief get the manufacture compensated average mass flow rate
+ *
  * @return float
  */
 float fGetMassFlowManuCompensationLayer();
 
 /**
  * @brief get the manufacture compensated average External air density.
+ *
  * @return float
  */
 float fGetAirDensityManuCompensationLayer();
 
 /**
  * @brief get the manufacture compensated internal pressure
+ *
  * @return float
  */
 float fGetInternalPressureManuCompensationLayer();
 
 /**
  * @brief get the manufacture compensated internal temperature
+ *
  * @return float
  */
 float fGetInternalTempretureManuCompensationLayer();
 
 /**
  * @brief get the internal humidity from the sensor after manufacture compensation values
+ *
  * @return float
  */
 float fGetInternalHumidityManuCompensationLayer();
@@ -69,6 +82,7 @@ float fGetInternalHumidityManuCompensationLayer();
 
 /**
  * @brief get the internal airdensity as the manufacturer compensation layer
+ *
  * @return float
  */
 float fGetInternalAirDensityManuCompensationLayer();

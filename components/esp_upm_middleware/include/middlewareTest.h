@@ -130,6 +130,16 @@ extern "C"
 
     int iReadNVSIntNum(char UniqueKey[20]);
 
+    /**
+     * Write a Float number in NVS
+     * @param genericNumber Float Number to store in NVS
+     * @param UniqueKey   Give a unique Key Store the float number
+
+     */
+    void iWriteNVSFloatNum(float genericNumber, char UniqueKey[20]);
+
+    float iReadNVSFloatNum(char UniqueKey[20]);
+
     void writeSampleDataNVS();
     void readSampleDataNVS();
 

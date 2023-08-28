@@ -41,11 +41,11 @@ extern "C" {
   #define ILI9488_BCKL_ACTIVE_LVL 0
 #endif
 
-// #ifdef CONFIG_NEW_HW
-// #define ILI9488_DC   GPIO_NUM_4
-// #else
-// #define ILI9488_DC   GPIO_NUM_14
-// #endif
+#ifdef CONFIG_NEW_HW
+#define ILI9488_DC   GPIO_NUM_4
+#else
+#define ILI9488_DC   GPIO_NUM_14
+#endif
 
 /*******************
  * ILI9488 REGS

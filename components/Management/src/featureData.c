@@ -18,10 +18,13 @@
 
 
 /***************************************defines***********************************************/
+
 #define TAG "Feature Data"
 
 
+
 /*****************************************function definations*************************************/
+
 /**
  * @brief calculates the air density
  *
@@ -62,10 +65,13 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
      *
      */
     // fResult = .118 * fDeltaPressure * 1.2/fDensity;
-
-    /*  updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
+    /**
+     * @brief updating the flow rate to flow value =  0,759 * SDPvalue^05288
+     *
+     */
 
     fResult = 0.759 * pow(fDeltaPressure, 0.5288) * (1.2 / fDensity);
+
     return fResult;
 }
 
@@ -73,25 +79,30 @@ float fGetAirDesity_featureData()
 {
     float result =0;
     external_sensor_data_t xManuCompensatedExternalData;
-
-    /* get the manufacture compensated external sensor data */
+    /**
+     * @brief get the manufacture compensated external sensor data
+     */
     vGetMaufCompensatedExternalSensorData(&xManuCompensatedExternalData);
-    /* for testing purpose we are calculating the density using the internal sensor data */
+    /**
+     * @brief for testing purpose we are calculating the density using the internal sensor data
+     */
     // return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
     // printf("-----------------%0.2f,%0.2f,%0.2f-------------------------\n",fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
     result =  _fDensityCalculation(xManuCompensatedExternalData.fTemperature, xManuCompensatedExternalData.fHumidity, xManuCompensatedExternalData.fPressure);
+
     return result;
 
 }
 
 float fGetInternalAirDensity_featureData()
 {
+
     return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
 }
 
 float fGetVolumetricFlow_featureData()
 {
     float result =0;
-    result = _fFlowCalculation(fGetMassFlowManuCompensationLayer(), fGetAirDesity_featureData());
+    result = _fFlowCalculation(fGetSdp32DiffPressureAverageValue(), fGetAirDesity_featureData());
     return result;
 }

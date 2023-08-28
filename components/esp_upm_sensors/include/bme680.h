@@ -25,7 +25,9 @@ extern "C" {
 #define BME680_HEATER_PROFILES         10   //!< max. 10 heater profiles 0 ... 9
 #define BME680_HEATER_NOT_USED         -1   //!< heater not used profile
 
-/* Fixed point sensor values (fixed THPG values) */
+/**
+ * Fixed point sensor values (fixed THPG values)
+ */
 typedef struct
 {
     int16_t temperature;     //!< temperature in degree C * 100 (Invalid value INT16_MIN)
@@ -45,7 +47,9 @@ typedef struct
     float gas_resistance; //!< gas resistance in Ohm          (Invalid value 0.0)
 } bme680_values_float_t;
 
-/* Filter size */
+/**
+ * Filter size
+ */
 typedef enum {
     BME680_IIR_SIZE_0 = 0, //!< Filter is not used
     BME680_IIR_SIZE_1,
@@ -57,7 +61,9 @@ typedef enum {
     BME680_IIR_SIZE_127
 } bme680_filter_size_t;
 
-/* Oversampling rate */
+/**
+ * Oversampling rate
+ */
 typedef enum {
     BME680_OSR_NONE = 0, //!< Measurement is skipped, output values are invalid
     BME680_OSR_1X,       //!< Default oversampling rates
@@ -89,7 +95,12 @@ typedef struct
     int8_t ambient_temperature;                 //!< Ambient temperature for G (default 25)
 } bme680_settings_t;
 
-/* Data structure for calibration parameters */
+/**
+ * @brief   Data structure for calibration parameters
+ *
+ * These calibration parameters are used in compensation algorithms to convert
+ * raw sensor data to measurement results.
+ */
 typedef struct
 {
     uint16_t par_t1;         //!< calibration data for temperature compensation
@@ -125,7 +136,9 @@ typedef struct
     int8_t   range_sw_err;
 } bme680_calib_data_t;
 
-/* BME680 sensor device data structure type */
+/**
+ * BME680 sensor device data structure type
+ */
 typedef struct
 {
     i2c_dev_t i2c_dev;              //!< I2C device descriptor

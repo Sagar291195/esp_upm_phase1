@@ -31,7 +31,9 @@ extern "C" {
 #include "driver/ledc.h"
 #include "middlewareTest.h"
 #include "midFunctions.h"
+#include "midTasks.h"
 #include "midVariable.h"
+#include "caliba.h"
 
 //#include "nvs.h"
 
