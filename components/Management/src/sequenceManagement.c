@@ -73,14 +73,12 @@ static void vCalculateSequneceEndSummary();
 
 /**
  * @brief This task will monitor analyse the data coming from the sensor and check that is it within the range of the target value
- *
  * @param pvParameters
  */
 static void vMonitorSensorDataTask(void *pvParameters);
 
 /**
  * @brief Calulate variation in the when we need to calculate variation when max and min value are given, with respect to the target value
- *
  * @param fMaxValue  Maximum deviation from the target value in the upper range
  * @param fMinValue  minimum deviation from the target value in the lower range
  * @param fTargetValue target value to be achived
@@ -90,61 +88,25 @@ static float fCalculateVariationInPercentage(float fMaxValue, float fMinValue, f
 
 /*********************************variables********************************************/
 
-/**
- * @brief variable to store the sequence summary data
- *
- */
+/* variable to store the sequence summary data */
 sequenceSummary_t xCurrentSequenceSummary;
-
-/**
- * @brief This semaphore will stop the ongoing sequence. This will be used for the force stop the running sequnences
- *
- */
+/* This semaphore will stop the ongoing sequence. This will be used for the force stop the running sequnence  */
 static SemaphoreHandle_t xStopTheRunningSequenceSemaphore = NULL;
-
-/**
- * @brief semaphore for the gui handle
- *
- */
+/* semaphore for the gui handle  */
 extern SemaphoreHandle_t xGuiSemaphore1;
-
-/**
- * @brief this is the dash board flag to set the mode of the dashboard in the gui, need to set before calling the DashboardInfoWidget() to set the mode.
- *
- */
+/* this is the dash board flag to set the mode of the dashboard in the gui, need to set before calling the DashboardInfoWidget() to set the mode. */
 extern int dashboardflg;
-
-/**
- * @brief this will store all the samples in the system
- *
- */
+/* this will store all the samples in the system */
 static sequence_t totalSequence[MAXIMUM_NO_OF_SAMPLES];
-
-/**
- * @brief total number of samples in the system
- *
- */
+/*  total number of samples in the system */
 uint8_t uTotalSequenceCount = 0;
-
 static TaskHandle_t xTaskHandleUpdateScreenAndSaveValuesEverySecond = NULL;
-
-/**
- * @brief this counts the number of seconds passed since the start of the sequence
- *
- */
+/* this counts the number of seconds passed since the start of the sequence */
 uint16_t uTotalTimePassInSeconds = 0;
-
-/**
- * @brief task handle which contols the sequence task
- *
- */
+/* task handle which contols the sequence task */
 static TaskHandle_t xTaskHandleRunSequnceTask = NULL;
-/**
- * @brief it stores is it safe to delete the task or not
- *
- */
+/* it stores is it safe to delete the task or not */
 bool bDeleteUpdateScreenAndVaulesTask = false;
-
 static TaskHandle_t xTaskHandleMonitorSensorData = NULL;
 
 /*********************************functions***********************************************/
@@ -172,9 +134,6 @@ void vSetSequenceValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStar
 {
 
     totalSequence[uSequenceNumber - 1].uSequenceNo = uSequenceNumber;
-    // memcpy(totalSequence[uSequenceNumber - 1].cStartDate, cStartDate, 40);
-    // ESP_LOGI(TAG,"DATE IS %s", cStartDate);
-    // ESP_LOGI(TAG,"%s",cStartDate);
     strcpy(&totalSequence[uSequenceNumber - 1].cStartDate, pStartDate);
     totalSequence[uSequenceNumber - 1].uStartHour = uStartHour;
     totalSequence[uSequenceNumber - 1].uStartMin = uStartMin;
@@ -186,25 +145,15 @@ void vSetSequenceValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStar
     strcpy(&totalSequence[uSequenceNumber - 1].cStartPerson, pStartPerson);
 
     print_on_terminal();
-    /**
-     * @brief incrementing the total number of samples
-     *
-     */
+    /* incrementing the total number of samples */
     uTotalSequenceCount++;
 }
 
 void vInitializeSequenceArray()
 {
-    /**
-     * @brief initializind the sample arrey to 0
-     *
-     */
+    /* initializind the sample arrey to 0 */
     memset(totalSequence, 0, MAXIMUM_NO_OF_SAMPLES * sizeof(sequence_t));
-
-    /**
-     * @brief setting the number of samples to 0
-     *
-     */
+    /* setting the number of samples to 0 */
     uTotalSequenceCount = 0;
 }
 
@@ -222,18 +171,15 @@ void vSetSequenceArrayToNVS()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
         return;
     }
 
-    /**
-     * @brief setting the value to the nvs flash
-     *
-     */
+    /* setting the value to the nvs flash */
     err = nvs_set_blob(my_handle, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         return;
     }
 
@@ -241,7 +187,7 @@ void vSetSequenceArrayToNVS()
     err = nvs_commit(my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
     }
     // Close
     nvs_close(my_handle);
@@ -255,61 +201,39 @@ void vGetSequenceFromNvsToArray()
 
     // Open
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
-
+    if (err != ESP_OK){
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
         return;
     }
 
-    /**
-     * @brief checking if the values has been present or not. if not then just return
-     *
-     */
+    /* checking if the values has been present or not. if not then just return  */
     size_t required_size = 0; // value will default to 0, if not set yet in NVS
     err = nvs_get_blob(my_handle, STORAGE_KEY, NULL, &required_size);
     if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND)
         return;
 
     ESP_LOGD(TAG, "required size is %d", required_size);
-
-    /**
-     * @brief loading the values from nvs flash to the sample array
-     *
-     */
+    /*  loading the values from nvs flash to the sample array */
     err = nvs_get_blob(my_handle, STORAGE_KEY, (void *)totalSequence, &required_size);
-
-    if (err != ESP_OK)
-    {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+    if (err != ESP_OK){
+        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
-
     nvs_close(my_handle);
 }
 
-uint8_t uGetNoOfSequenceInArray()
-{
+uint8_t uGetNoOfSequenceInArray(){
     return uTotalSequenceCount;
 }
 
-sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber)
-{
+sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber){
     return &totalSequence[uSequenceNumber - 1];
 }
 
-void taskRunSample(void *pvParameters)
-{
-    /**
-     * @brief creating semaphore for stopping the task if, the semaphore handle is NULL
-     *
-     */
-    if (xStopTheRunningSequenceSemaphore == NULL)
-    {
+void taskRunSample(void *pvParameters){
+    /* creating semaphore for stopping the task if, the semaphore handle is NULL */
+    if (xStopTheRunningSequenceSemaphore == NULL){
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
-    }
-
-    else
-    {
+    } else {
         vSemaphoreDelete(xStopTheRunningSequenceSemaphore);
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
     }
@@ -319,105 +243,55 @@ void taskRunSample(void *pvParameters)
     memcpy(&usequenceToRun, pvParameters, sizeof(uint8_t));
     ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
 
-    /**
-     * @brief starting the monitor data task
-     *
-     */
-    if (xTaskHandleMonitorSensorData == NULL)
-    {
+    /* starting the monitor data task */
+    if (xTaskHandleMonitorSensorData == NULL) {
         xTaskCreate(vMonitorSensorDataTask, "monitor data", 8 * 1024, NULL, 5, &xTaskHandleMonitorSensorData);
-    }
-    else
-    {
+    } else {
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
-    /**
-     * @brief calculating and saving the end summary of the variables
-     *
-     */
-
+    /* calculating and saving the end summary of the variables */
     vInitiateSequenceSummaryStart();
-
-    /**
-     * @brief setting the delete the update value task to false so that task does not deleted when created
-     *
-     */
+    /* setting the delete the update value task to false so that task does not deleted when created */
     bDeleteUpdateScreenAndVaulesTask = false;
-
-    /**
-     * @brief showing the work in progress screen
-     *
-     */
-
+    /*  showing the work in progress screen */
     vShowWorkInProgressScreen();
-
-    /**
-     * @brief creating the task which updates the screen values and saving the values to the nvs flash
-     *
-     */
-
+    /* creating the task which updates the screen values and saving the values to the nvs flash */
     xTaskCreate(vUpdateScreenAndSaveValuesEverySecond, "updateScreen", 4 * 1024, &usequenceToRun, 5, &xTaskHandleUpdateScreenAndSaveValuesEverySecond);
-
-    /**
-     * @brief seting the flow set point
-     *
-     */
+    /*  seting the flow set point */
     setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);
-
-    /**
-     * @brief starting the motor so we have some initial value for sdp sensor and calculate flow rate and the pid controller can compute
-     *
-     */
+    /*  starting the motor so we have some initial value for sdp sensor and calculate flow 
+     * rate and the pid controller can compute  */
     MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);
-
     setStateOfMotor(true); // run the motor
-
     ESP_LOGD(TAG, "Starting the motor");
     ESP_LOGD(TAG, "get state of motor %d", getIsMotorRunning());
-
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
     ESP_LOGI(TAG, "Duration in ms %d", udurationInMs);
-
-    /**
-     * @brief delaying the task so that motor can run this time period
-     *
-     */
+    /*  delaying the task so that motor can run this time period */
     // vTaskDelay(pdMS_TO_TICKS(udurationInMs));
-    /**
-     * @brief this will block the task until the semaphore is given or the sequnce has been run to the whole time
-     *
-     */
-    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE)
-    {
+    /* this will block the task until the semaphore is given or the sequnce has been run to the whole time */
+    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE) {
         ESP_LOGW(TAG, "Sequence has been terminated early, due to the force stop");
-    }
-    else
-    {
+    } else {
         ESP_LOGI(TAG, "Sequence has been terminated due to expiry of time");
     }
 
-    /**
-     * @brief now sequence end is reached now stopping the current sequnce and notify the sample management to carry on the task
-     *
-     */
+    /* now sequence end is reached now stopping the current sequnce and notify the sample management to carry on the task  */
     vStopCurrentSequence();
 }
 
-int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber)
-{
+int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber){
     uint64_t uSecondsRemaining = 0;
     uint8_t uStartHour = totalSequence[uSequenceNumber - 1].uStartHour;
     uint8_t uStartMin = totalSequence[uSequenceNumber - 1].uStartMin;
     struct tm timeinfo = {0};
+
     strptime(&totalSequence[uSequenceNumber - 1].cStartDate, "%Y/%m/%e", &timeinfo);
     timeinfo.tm_hour = uStartHour;
     timeinfo.tm_min = uStartMin;
     timeinfo.tm_sec = 0;
-    /**
-     * @brief getting the current time of the system
-     *
-     */
+    /* getting the current time of the system */
     struct tm now = {0};
     vGetCurrentDateAndTime(&now);
     // now.tm_year = now.tm_year - 1900;
@@ -445,10 +319,7 @@ uint8_t uGetSequenceNumberToBeSaved()
     return uTotalSequenceCount + 1;
 }
 
-/**
- * @brief get the total sequene count from the nvs flash
- *
- */
+/* @brief get the total sequene count from the nvs flash */
 void vGetTotalSequenceCountFromNvs()
 {
     ESP_LOGD(TAG, "Getting the total sequence count from NVS");
@@ -459,19 +330,16 @@ void vGetTotalSequenceCountFromNvs()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
         return;
     }
-    /**
-     * @brief loading the values from nvs flash to the sample array
-     *
-     */
+    /* loading the values from nvs flash to the sample array  */
     uint8_t length = sizeof(sizeof(uTotalSequenceCount));
     err = nvs_get_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, &length);
     if (err != ESP_OK)
     {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
 
     nvs_close(my_handle);
@@ -491,18 +359,16 @@ void vSetTotalSequenceCountFromNvs()
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
 
         return;
     }
-    /**
-     * @brief setting the value to the nvs flash
-     *
-     */
+
+    /*setting the value to the nvs flash */
     err = nvs_set_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!\n", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
         return;
     }
 
@@ -518,10 +384,7 @@ void vSetTotalSequenceCountFromNvs()
 
 void vGetSequceManagementFromNVS()
 {
-    esp_log_level_set(TAG, ESP_LOG_DEBUG);
-
     vGetTotalSequenceCountFromNvs();
-
     vGetSequenceFromNvsToArray();
 }
 
@@ -539,11 +402,7 @@ static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
     uint64_t uSequnceDurationInSec = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60));
     float fPercentageOfJobDone = 0;
 
-    /**
-     * @brief setting the total volume and seconds pass in the sequence to zero
-     *
-     */
-
+    /* setting the total volume and seconds pass in the sequence to zero */
     vSetTotalSecondPassesInGivenSequence(0);
     vSetTotalLitersHasBeenPassInGivenSequence(0);
 
@@ -551,43 +410,22 @@ static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
     {
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000)); // ensure that the calling frequnency be constant
 
-        /**
-         * @brief When we delete the task using the task delete function, there may be time that task is in middle of something and holding the semaphore. this varialbe ensure that while delting the task, the task does not hold any semaphore.
-         *
-         */
+        /*  When we delete the task using the task delete function, there may be time that task is in middle of something and holding the semaphore. this varialbe ensure that while delting the task, the task
+         * does not hold any semaphore. */
         if (!bDeleteUpdateScreenAndVaulesTask)
         {
             uTotalTimePassInSec++;
-
-            /**
-             * @brief Setting number of second pass in the sequence
-             *
-             */
+            /* Setting number of second pass in the sequence */
             vSetTotalSecondPassesInGivenSequence(uTotalTimePassInSec);
-
             fPercentageOfJobDone = ((float)uTotalTimePassInSec / (float)uSequnceDurationInSec) * 100;
-
-            /**
-             * @brief Setting the percent of job done
-             *
-             */
+            /* Setting the percent of job done */
             fSetPercentageOfJobDone(fPercentageOfJobDone);
-
             fTotalHourCountTemp = fGetTotalHoursCount();
-            /**
-             * @brief adding each second pass to the total hours count
-             *
-             */
+            /* adding each second pass to the total hours count */
             fTotalHourCountTemp += EACH_SEC_INTO_HOURS;
-
             vSetTotalHoursCount(fTotalHourCountTemp);
-
-            /**
-             * @brief updating the screen for the total hours and liters
-             *
-            //  */
+            /* updating the screen for the total hours and liters */
             vUpdateWorkInProgressScreen();
-
             vSetTotalHoursValueToNvs();
             vSetTotalLitersValueToNvs();
         }
@@ -607,22 +445,12 @@ void vGetNthSaequenceFromArray(sequence_t *xNthSequece, uint8_t uSequenceNumber)
 void vStopCurrentSequence()
 {
     ESP_LOGI(TAG, "Now stopping the current sequence");
-    /**
-     * @brief turning off the motor
-     *
-     */
+    /* turning off the motor */
     setStateOfMotor(false);
 
-    /**
-     * @brief deleting the task which update the values on the screen and saving to the flash
-     *
-     */
+    /* deleting the task which update the values on the screen and saving to the flash */
     bDeleteUpdateScreenAndVaulesTask = true;
-
-    /**
-     * @brief stopping the monitor task
-     *
-     */
+    /* stopping the monitor task */
     if (xTaskHandleMonitorSensorData)
     {
         ESP_LOGI(TAG, "Deleting the moniotr task");
@@ -630,21 +458,12 @@ void vStopCurrentSequence()
         xTaskHandleMonitorSensorData = NULL;
     }
 
-    /**
-     * @brief calculating the end summary of the sequence
-     */
+    /* calculating the end summary of the sequence */
     vCalculateSequneceEndSummary();
-
-    /**
-     * @brief giving the time to stop the ongoing task to finish
-     *
-     */
+    /* giving the time to stop the ongoing task to finish */
     vTaskDelay(pdMS_TO_TICKS(1500));
 
-    /**
-     * @brief Notify the sample task about the completion of the sequence
-     *
-     */
+    /* Notify the sample task about the completion of the sequence */
     vNotifySampleMangementToProceed();
     vTaskDelay(pdMS_TO_TICKS(50));
     if (xTaskHandleRunSequnceTask != NULL)
@@ -658,10 +477,7 @@ void vStopCurrentSequence()
 
 void vStopTheRunningSequnence()
 {
-    /**
-     * @brief Giving the semaphore for stopping the sequence
-     *
-     */
+    /* Giving the semaphore for stopping the sequence */
     xSemaphoreGive(xStopTheRunningSequenceSemaphore);
 }
 
@@ -679,73 +495,32 @@ bool bIsSequenceRunning()
 
 static void vInitiateSequenceSummaryStart()
 {
-    /**
-     * @brief setting the summary to 0
-     *
-     */
-    memset(&xCurrentSequenceSummary, 0, sizeof(sequenceSummary_t));
+    memset(&xCurrentSequenceSummary, 0, sizeof(sequenceSummary_t));  /* setting the summary to 0 */
+    sequence_t xSequenceNumber; /* variable for the sequence number */
 
-    /**
-     * @brief variable for the sequence number
-     *
-     */
-    sequence_t xSequenceNumber;
-
-    /**
-     * @brief getting the current  sequence from the sequence array
-     *
-     */
+    /* getting the current  sequence from the sequence array */
     vGetNthSaequenceFromArray(&xSequenceNumber, uGetCurrentRunningSequenceNumber());
-
     strcpy(xCurrentSequenceSummary.summary.cStartDate, xSequenceNumber.cStartDate);
-
-    /**
-     * @brief setting the flow set point
-     *
-     */
-
+    /* setting the flow set point */
     xCurrentSequenceSummary.airflowVolumetric.fAirflowSetPoint = xSequenceNumber.fFlowSetPoint;
-
-    /**
-     * @brief getting the initial total lites before the starting of the sequnece
-     *
-     */
+    /* getting the initial total lites before the starting of the sequnece */
     xCurrentSequenceSummary.summary.xVolumeCounter.fStartVolume = fGetTotalLiterCount();
-
-    /**
-     * @brief setting the target volume count
-     *
-     */
+    /* setting the target volume count */
     xCurrentSequenceSummary.summary.xVolumeCounter.fTargetVolume = (xSequenceNumber.fFlowSetPoint * ((xSequenceNumber.uDurationHour * 60) + xSequenceNumber.uDurationMinutes));
-
-    /**
-     * @brief setting the starting hour counter
-     *
-     */
+    /* setting the starting hour counter */
     xCurrentSequenceSummary.summary.xHourCounter.fStartHour = fGetTotalHoursCount();
-
-    /**
-     * @brief setting the target hour count
-     *
-     */
+    /* setting the target hour count */
     xCurrentSequenceSummary.summary.xHourCounter.fTargetHour = (float)((float)xSequenceNumber.uDurationHour + ((float)xSequenceNumber.uDurationMinutes / 60.00));
 
     ESP_LOGI(TAG, "Target hour assighned is %f", xCurrentSequenceSummary.summary.xHourCounter.fTargetHour);
-
-    /**
-     * @brief setting the in range variables in the summary to be true, if as the sensor values are measured, then we can set to false, if they outside the range
-     *
-     */
+    /*setting the in range variables in the summary to be true, if as the sensor values are measured, then we can set to false, if they outside the range */
     xCurrentSequenceSummary.airflowVolumetric.bIsInRange = true;
     xCurrentSequenceSummary.ambientHumidity.bIsInRange = true;
     xCurrentSequenceSummary.ambientPressure.bIsInRange = true;
     xCurrentSequenceSummary.ambientTemperature.bIsInRange = true;
     xCurrentSequenceSummary.headLoss.bIsInRange = true;
 
-    /**
-     * @brief end of the starting of sequnece summary
-     *
-     */
+    /* end of the starting of sequnece summary */
 }
 
 static void vCalculateSequneceEndSummary()
@@ -759,58 +534,32 @@ static void vCalculateSequneceEndSummary()
     timeinfo.tm_mon = timeinfo.tm_mon +1;
     sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
 
-    /**
-     * @brief copy end date
-     *
-     */
+    /* copy end date */
     strcpy(xCurrentSequenceSummary.summary.cStopDate, cStopDate);
-
-    /**
-     * @brief setting  the end volume and the effective volume
-     *
-     */
-
+    /* setting  the end volume and the effective volume */
     xCurrentSequenceSummary.summary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
-
     xCurrentSequenceSummary.summary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - xCurrentSequenceSummary.summary.xVolumeCounter.fStartVolume;
-
-    /**
-     * @brief calculating the variation in volume
-     *
-     */
+    /* calculating the variation in volume */
     xCurrentSequenceSummary.summary.xVolumeCounter.fVariation = fabs(((xCurrentSequenceSummary.summary.xVolumeCounter.fTargetVolume - xCurrentSequenceSummary.summary.xVolumeCounter.fEffectiveVolume) / xCurrentSequenceSummary.summary.xVolumeCounter.fTargetVolume) * 100);
 
     xCurrentSequenceSummary.summary.xHourCounter.fEndHour = fGetTotalHoursCount();
     xCurrentSequenceSummary.summary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - xCurrentSequenceSummary.summary.xHourCounter.fStartHour;
 
-    /**
-     * @brief calculating the variation in hours
-     *
-     */
+    /* calculating the variation in hours */
     xCurrentSequenceSummary.summary.xHourCounter.fVariation = fabs(((xCurrentSequenceSummary.summary.xHourCounter.fTargetHour - xCurrentSequenceSummary.summary.xHourCounter.fEffectiveHour) / xCurrentSequenceSummary.summary.xHourCounter.fTargetHour) * 100);
 
     ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", xCurrentSequenceSummary.summary.xHourCounter.fTargetHour, xCurrentSequenceSummary.summary.xHourCounter.fEffectiveHour);
 
     ESP_LOGD(TAG, "variation in hour is %.2f", xCurrentSequenceSummary.summary.xHourCounter.fVariation);
 
-    /**
-     * @brief calculating the variation of extenal sensor data and the air flow
-     *
-     */
+    /* calculating the variation of extenal sensor data and the air flow */
     xCurrentSequenceSummary.airflowVolumetric.fAirflowVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue, xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue, xCurrentSequenceSummary.airflowVolumetric.fAirflowSetPoint);
-
     xCurrentSequenceSummary.ambientHumidity.fAmbientHumidityVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientHumidity.fMaxAmbientHumidity, xCurrentSequenceSummary.ambientHumidity.fMinAmbientHumidity, xCurrentSequenceSummary.ambientHumidity.fMeanAmbientHumidity);
-
     xCurrentSequenceSummary.ambientPressure.fAmbientPressureVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientPressure.fMaxAmbientPressure, xCurrentSequenceSummary.ambientPressure.fMinAmbientPressure, xCurrentSequenceSummary.ambientPressure.fMeanAmbientPressure);
-
     xCurrentSequenceSummary.ambientTemperature.fTemperatureVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.ambientTemperature.fMaxTemperature, xCurrentSequenceSummary.ambientTemperature.fMinTemperature, xCurrentSequenceSummary.ambientTemperature.fTemperatureVariation);
-
     xCurrentSequenceSummary.headLoss.fHeadLossVariation = fCalculateVariationInPercentage(xCurrentSequenceSummary.headLoss.fMaxHeadLoss, xCurrentSequenceSummary.headLoss.fMinHeadLoss, xCurrentSequenceSummary.headLoss.fMeanHeadLoss);
 
-    /**
-     * @brief If all sensors values are with in range then the sequence is ok. So we can say that the sequence run sucessfully
-     *
-     */
+    /*  If all sensors values are with in range then the sequence is ok. So we can say that the sequence run sucessfully */
     if (xCurrentSequenceSummary.airflowVolumetric.bIsInRange && (xCurrentSequenceSummary.airflowVolumetric.fAirflowVariation < MAX_TOLERATION_IN_FLOW_VARIATION) &&
         xCurrentSequenceSummary.ambientHumidity.bIsInRange && (xCurrentSequenceSummary.ambientHumidity.fAmbientHumidityVariation < MAX_TOLERACE_IN_HUMIDITY) &&
         xCurrentSequenceSummary.ambientPressure.bIsInRange && (xCurrentSequenceSummary.ambientPressure.fAmbientPressureVariation < MAX_TOLERACE_IN_PRESSURE) &&
@@ -827,15 +576,8 @@ static void vCalculateSequneceEndSummary()
         totalSequence[uGetCurrentRunningSequenceNumber() - 1].bSucessfullyRun = false;
     }
 
-    /**
-     * @brief save summary to the db
-     *
-     */
+    /*  save summary to the db */
     vInsertSequenceSummaryIntoDataBase(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), xCurrentSequenceSummary);
-    /**
-     * @brief end fo the sequence summary
-     *
-     */
 }
 
 static void vMonitorSensorDataTask(void *pvParameters)
@@ -844,44 +586,26 @@ static void vMonitorSensorDataTask(void *pvParameters)
     uint64_t uCounterForCalculatingMeanValues = 0;
 
     TickType_t last_wakeup = xTaskGetTickCount();
-
-    TickType_t xTimeForCheckingFlowRate = xTaskGetTickCount();
     external_sensor_data_t external_sensor_data;
     INA3231_sensor_data_t xInaSensorData[INA3221_CHANNEL];
-    float fAvgExternalTemp = 0;
-    float fAvgExternaHumidity = 0;
-    float fAvgExternalPressure = 0;
-
     bool bOneTime = false;
+
     while (1)
     {
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(1000));
         uCounterForCalculatingMeanValues++;
 
-        /**
-         * @brief getting the extenal sensor data from sensor management
-         *
-         */
-        vGetExternalSensorData(&external_sensor_data);
-
-        /**
-         * @brief getting the INA data
-         *
-         */
+        /* getting the extenal sensor data from sensor management */
+        vGetExternalSensorDataUserCompensated(&external_sensor_data);
+        /* getting the INA data */
         vGet_INA3221_sensor_data(&xInaSensorData);
 
-        /**
-         * @brief calulating the mean temp, humidity and pressure
-         *
-         */
+        /* calulating the mean temp, humidity and pressure */
         xCurrentSequenceSummary.ambientTemperature.fMeanTemperature = ((xCurrentSequenceSummary.ambientTemperature.fMeanTemperature * (uCounterForCalculatingMeanValues - 1)) + external_sensor_data.fTemperature) / uCounterForCalculatingMeanValues;
         xCurrentSequenceSummary.ambientHumidity.fMeanAmbientHumidity = (xCurrentSequenceSummary.ambientHumidity.fMeanAmbientHumidity * (uCounterForCalculatingMeanValues - 1) + external_sensor_data.fHumidity) / uCounterForCalculatingMeanValues;
         xCurrentSequenceSummary.ambientPressure.fMeanAmbientPressure = (xCurrentSequenceSummary.ambientPressure.fMeanAmbientPressure * (uCounterForCalculatingMeanValues - 1) + external_sensor_data.fPressure) / uCounterForCalculatingMeanValues;
 
-        /**
-         * @brief setting the min and max values for the external sensor data
-         *
-         */
+        /*  setting the min and max values for the external sensor data */
         xCurrentSequenceSummary.ambientTemperature.fMaxTemperature = (xCurrentSequenceSummary.ambientTemperature.fMaxTemperature > external_sensor_data.fTemperature) ? xCurrentSequenceSummary.ambientTemperature.fMaxTemperature : external_sensor_data.fTemperature;
         xCurrentSequenceSummary.ambientTemperature.fMinTemperature = (xCurrentSequenceSummary.ambientTemperature.fMinTemperature < external_sensor_data.fTemperature) ? xCurrentSequenceSummary.ambientTemperature.fMinTemperature : external_sensor_data.fTemperature;
         xCurrentSequenceSummary.ambientHumidity.fMaxAmbientHumidity = (xCurrentSequenceSummary.ambientHumidity.fMaxAmbientHumidity > external_sensor_data.fHumidity) ? xCurrentSequenceSummary.ambientHumidity.fMaxAmbientHumidity : external_sensor_data.fHumidity;
@@ -889,45 +613,24 @@ static void vMonitorSensorDataTask(void *pvParameters)
         xCurrentSequenceSummary.ambientPressure.fMaxAmbientPressure = (xCurrentSequenceSummary.ambientPressure.fMaxAmbientPressure > external_sensor_data.fPressure) ? xCurrentSequenceSummary.ambientPressure.fMaxAmbientPressure : external_sensor_data.fPressure;
         xCurrentSequenceSummary.ambientPressure.fMinAmbientPressure = (xCurrentSequenceSummary.ambientPressure.fMinAmbientPressure < external_sensor_data.fPressure) ? xCurrentSequenceSummary.ambientPressure.fMinAmbientPressure : external_sensor_data.fPressure;
 
-        /**
-         * @brief checking the external sensor temprature is valid or not
-         *
-         */
+        /* checking the external sensor temprature is valid or not */
         if ((external_sensor_data.fTemperature < EXTERNAL_SENSOR_TEMPERATURE_MIN_VALUE) || (external_sensor_data.fTemperature > EXTERNAL_SENSOR_TEMPERATURE_MAX_VALUE))
         {
-            // ESP_LOGE(TAG, "Temperature is out of range");
-            /**
-             * @brief raise the flag inside the sequence summary to indicate the error
-             *
-             */
+            /* raise the flag inside the sequence summary to indicate the error */
             xCurrentSequenceSummary.ambientTemperature.bIsInRange = false;
         }
 
-        /**
-         * @brief checking if the external sensor humidity is valid or not
-         *
-         */
+        /* checking if the external sensor humidity is valid or not */
         if ((external_sensor_data.fHumidity < EXTERNAL_SENSOR_HUMIDITY_MIN_VALUE) || (external_sensor_data.fHumidity > EXTERNAL_SENSOR_HUMIDITY_MAX_VALUE))
         {
-            // ESP_LOGE(TAG, "Humidity is out of range");
-            /**
-             * @brief raise the flag inside the sequence summary to indicate the error
-             *
-             */
+            /* raise the flag inside the sequence summary to indicate the error */
             xCurrentSequenceSummary.ambientHumidity.bIsInRange = false;
         }
 
-        /**
-         * @brief checking if the external sensor pressure is valid or not
-         *
-         */
+        /* checking if the external sensor pressure is valid or not */
         if ((external_sensor_data.fPressure < EXTERNAL_SENSOR_PRESSURE_MIN_VALUE) || (external_sensor_data.fPressure > EXTERNAL_SENOSR_PRESSURE_MAX_VALUE))
         {
-            // ESP_LOGE(TAG, "Pressure is out of range");
-            /**
-             * @brief raise the flag inside the sequence summary to indicate the error
-             *
-             */
+            /* raise the flag inside the sequence summary to indicate the error */
             xCurrentSequenceSummary.ambientPressure.bIsInRange = false;
         }
 
@@ -935,25 +638,17 @@ static void vMonitorSensorDataTask(void *pvParameters)
 
         if (uConterForAirFlowRate > 0) // after 10 seconds or iteration has been passed
         {
-            /**
-             * @brief calculating the mean air flow rate
-             *
-             */
+            /* calculating the mean air flow rate */
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMean = ((xCurrentSequenceSummary.airflowVolumetric.fAirflowMean * (uConterForAirFlowRate - 1)) + xCurrentSequenceSummary.airflowVolumetric.fAirflowMean) / uConterForAirFlowRate;
 
-            /**
-             * @brief calculating the max and min for the air flow rate
-             *
-             */
+            /* calculating the max and min for the air flow rate */
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue > fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue : fGetVolumetricFlowUserCompensated();
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue < fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue : fGetVolumetricFlowUserCompensated();
         }
 
         if (!bOneTime)
-        { /**
-           * @brief printing the values on the terminal for calculation of the compensation values
-           *
-           */
+        { 
+            /*printing the values on the terminal for calculation of the compensation values */
             printf("------------------Settings-----------------------\n");
             printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
             printf("------------------Settings-----------------------\n");
@@ -970,8 +665,6 @@ static void vMonitorSensorDataTask(void *pvParameters)
 static float fCalculateVariationInPercentage(float fMaxValue, float fMinValue, float fTargetValue)
 {
     float fVariationInPercentage = 0;
-
     fVariationInPercentage = fabs((fMaxValue - fMinValue) / (fTargetValue)) * 100;
-
     return fVariationInPercentage;
 }

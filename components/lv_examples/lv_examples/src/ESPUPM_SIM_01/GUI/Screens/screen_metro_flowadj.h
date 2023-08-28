@@ -43,14 +43,9 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-
-/**
- * This function is to call Flow Calibration Screen
- * @return None
- */
-
-void xCallFlowCalibrationScreen(void);
-
+void callMetroFlowAdjustScreen(void);
+int get_flow_calibration_point_cout(void);
+void set_flow_calibration_point_cout(int value);
 /**********************
  *    ERROR ASSERT
  **********************/

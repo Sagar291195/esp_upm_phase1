@@ -1,24 +1,24 @@
 
 #include "screen_includes.h"
-#include "screen_metro_pswd.h"
+#include "screen_password.h"
 
 
-void Init_Screen()
+void Init_Screen(void)
 {
     // xScreenPidTune();
-    // xMetroPswdScrn();
+    // Screen_Password();
     // vTestScreen1();
     // cScrTransitCheck();
-     vCallCodeScreen();	 //---------------------------------------->	        	
+    Screen_Password(SCR_PASSWORD);	 
     // pxDashboardScreen();		        
     // CallScreenInfo();		        
     // metroCodeScreen();               
-    // xCallFlowCalibrationScreen();		
-    // xCallFlowAdjustScreen();
-    // callFlowParameterScreen();
+    // CallMetroFlowCalibrationScreen();		
+    // callMetroFlowAdjustScreen();
+    // callMetroFlowParameterScreen();
     // callMetroFlowSettingScreen();
     // CallMetroMenuScreen();
-    // callMetroTempAdjust();
+    // callMetroAdjust();
     // ppxParameterScreen();
     // xsPresetScreenAdvance();         
     // callServiceSetScreen();
@@ -26,6 +26,9 @@ void Init_Screen()
     // sssSummarySampleScreen();
     // xssSummaryStartScreen();  
     // xCallArchvScreen();
+    // callMetroHumiditySettingScreen();
+    // callMetroPressureSettingScreen();
+    // callMetroTempSettingScreen();
 
     // vTestScreen();
        

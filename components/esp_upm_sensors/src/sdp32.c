@@ -30,7 +30,7 @@ esp_err_t sdp32_init_desc(sdp32_t *dev, uint8_t addr, i2c_port_t port, gpio_num_
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 
-void sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
+int sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
 {
     CHECK_ARG(dev);
 
@@ -39,16 +39,18 @@ void sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
     // Set command
     CHECK_LOGE(dev, i2c_dev_write(&dev->i2c_dev, NULL, 0, cmd, 2), "Failed to send cmd read"); // 2->3
 
-    I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);    
+    I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);   
+    return 0; 
 }
 
-void sdp32_read_pressure(sdp32_t *dev, uint8_t *read_data)
+int sdp32_read_pressure(sdp32_t *dev, uint8_t *read_data)
 {
     CHECK_ARG(dev);
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     // Set command
     CHECK_LOGE(dev, i2c_dev_read(&dev->i2c_dev, NULL, 0, read_data, 9), "Failed to read diff pressure");
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
+    return 0;
 }
 
 /**

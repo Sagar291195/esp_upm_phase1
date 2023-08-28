@@ -62,7 +62,6 @@ extern "C"
     /**********************
      *  GLOBAL VARIABLES
      **********************/
-
     extern bool metroFlowCalStarted;
     extern int _fasDutyCycle;
     extern float flowPoint;
@@ -87,18 +86,8 @@ extern "C"
     extern uint8_t cr, cg, cb;
 
     extern float kp, ki, kd;
+    
 
-    extern xQueueHandle queueDate;
-
-    extern xQueueHandle queueTime;
-
-    extern xQueueHandle queueSDP;
-
-    extern xQueueHandle queueBME280;
-
-    extern xQueueHandle queueIntBME280;
-
-    extern xQueueHandle queueINA3221;
 
     typedef struct log_guiDate_t
     {
@@ -149,10 +138,9 @@ extern "C"
 
     } log_INAsensor_t;
 
-    // extern bool TotalLiterRefFlag;
 
     extern esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
-    extern TaskHandle_t receiverHandler_test;      //  = NULL;
+
 
     /**********************
      *  GLOBAL PROTOTYPES
@@ -165,30 +153,23 @@ extern "C"
     void InternalBME280_task(void *pvParamters);
     void sdp32_task(void *pvParamters);
     void ina3221_task(void *pvParameters);
-    void JTCtimer_callback(void *args);
-    void JobTimeCounter_task(void *pvParameters);
     void pump_task(void *pvParamters);
     void ResInfoPerCount_task(void *pvParamters);
     void buzzer_task(void *pvParamters);
-    // void ws2812_task(void);
     void ws2812_task(void *pvParamters);
-    void infoWgtUpdtWaitToProgTask_cb(lv_task_t infoWgtUpdtWaitToProgTask);
+    void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask);
     void vinfoWgtUpdtWaitToProgTask(void); // Task Handled by LV Task
-    void terminalPrint_task(void *pvParamters);
 
     void setSensorTasksTOzeroPriority(void);
-    void setSensorTasksTOonePriority(void);
-    void MetroFlowCalPumpControl_task(void);
 
-    void flowCounttimer_callback(void *args);
-    void flowCounter_task(void *pvParameters);
+
+
+
 
     void modSDP32_task(void *pvParameters);
 
-    void sdp32Task(void *pvParameters);
     /**
      * @brief Get the Sdp32 Sensor Average Value 
-     * 
      * @return float average diff pressure 
      */
     float getSdp32SensorAverageValue();

@@ -8,34 +8,19 @@
 /*********************
  *      DEFINES
  *********************/
-
-#define IW_WIDTH (200)
-#define IW_HEIGHT (290)
-
-#define SYMBOL_SIGNAL "\uf012"
+#define IW_WIDTH            (200)
+#define IW_HEIGHT           (290)
+#define SYMBOL_SIGNAL       "\uf012"
 
 int global_DashbordBTNflag = 1;
-
 int dashboardflg = 0;
-
-int workProgress;
-
+int workProgress = 0;
 float totalhourVal1;
-
 char MenuBTN_SERVICE[10] = "PID TUNE";
 char MenuBTN_ARCHIV[10] = "ARCHIV";
 char MenuBTN_METROLOGY[10] = "METROLOGY";
 char MenuBTN_PARAMETER[10] = "PARAMETER";
 char MenuBTN_INFO[10] = "INFO";
-
-// ptr = lang_FR;
-// lv_label_set_text(lbl_test, ptr[Welcome_id]);
-// ptr = lang_FR;
-// char MenuBTN_SERVICE[10]    = ptr[SERVICE_id]  ;
-// char MenuBTN_ARCHIV[10]     = ptr[ARCHIV_id]   ;
-// char MenuBTN_METROLOGY[10]  = ptr[METROLOGY_id];
-// char MenuBTN_PARAMETER[10]  = ptr[PARAMETER_id];
-// char MenuBTN_INFO[10]       = ptr[INFO_id]     ;
 
 /**********************
  *      TYPEDEFS
@@ -60,7 +45,6 @@ char MenuBTN_INFO[10] = "INFO";
 // extern var
 int global_DashbordBTNflag;
 bool PumpStopForcefully = false;
-bool arcloded;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scr_dashbord;
@@ -79,7 +63,6 @@ lv_obj_t *_xStopBtn;
 lv_obj_t *_xStartBtn;
 lv_obj_t *xStopButtonLabel;
 lv_obj_t *xStartButtonLabel;
-lv_obj_t *scr1;
 
 lv_obj_t *_xContainerStatusBar;
 lv_obj_t *_xTimeLabel;
@@ -143,6 +126,8 @@ LV_IMG_DECLARE(parameter_icon)
 LV_IMG_DECLARE(info_icon)
 LV_IMG_DECLARE(navier_logo)
 
+static lv_task_t *showJobFinishedTask = NULL;
+
 // Function Prototype
 
 static void BTN_event_handler(lv_obj_t *obj, lv_event_t event);
@@ -162,42 +147,30 @@ static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event);
  */
 static void event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         char btntext[10];
         sprintf(btntext, "%s", lv_list_get_btn_text(obj));
 
         if (!strcmp(btntext, MenuBTN_SERVICE))
         {
-            printf("button clicked : SERVICE\n");
-            fflush(NULL);
-            // lv_task_del(refresherTask);
-            // callServiceSetScreen();
             xScreenPidTune();
         }
         if (!strcmp(btntext, MenuBTN_ARCHIV))
         {
-            printf("button clicked : ARCHIV\n");
-            fflush(NULL);
             iArchORSummaryScrn = 1;
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            // xCallArchvScreen();
             xseSummaryEndScreen();
         }
         if (!strcmp(btntext, MenuBTN_METROLOGY))
         {
-            printf("button clicked : METROLOGY\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
-
-            metroCodeScreen();
+            Screen_Password(SCR_METROLOGY_PASSWORD);
         }
         if (!strcmp(btntext, MenuBTN_PARAMETER))
         {
-            printf("button clicked : PARAMETER\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
 
@@ -205,8 +178,6 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         }
         if (!strcmp(btntext, MenuBTN_INFO))
         {
-            printf("button clicked : INFO\n");
-            fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
             CallScreenInfo();
@@ -218,12 +189,10 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         lv_obj_set_hidden(xMenulist1, true);
         lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0, 0);
-        // lv_anim_start(&a);
-        // lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0,0);
     }
 }
 
@@ -233,9 +202,8 @@ bool bxCatchMenuClick = 0;
 static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event)
 {
 
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
-        printf("Clicked\n");
 
         if (bxCatchMenuClick == 0)
         {
@@ -264,20 +232,19 @@ void pxDashboardScreen(void)
 
     scr_dashbord = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_dashbord);
-    // lv_obj_del(scr1);
+
     if ((dashboardflg != 1) && (crnt_screen != NULL))
     {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+    
     xParentcontainer = lv_cont_create(scr_dashbord, NULL);
     lv_obj_set_size(xParentcontainer, 320, 480);
     lv_obj_align(xParentcontainer, NULL, LV_ALIGN_CENTER, 0, 0);                                                            //====================>>>>>
     lv_obj_set_style_local_bg_color(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // 0x39, 0x89, 0xBD,, 0x5D, 0x5D, 0x5D
     lv_obj_set_style_local_border_opa(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_radius(xParentcontainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-    // lv_style_set_border_opa(&style_scr1_container, LV_STATE_DEFAULT, 0);
-    // lv_style_set_radius(&style_scr1_container, LV_STATE_DEFAULT, 0);
 
     container = lv_cont_create(xParentcontainer, NULL);
     lv_obj_set_size(container, 320, 480);
@@ -293,7 +260,6 @@ void pxDashboardScreen(void)
     lv_obj_set_style_local_border_opa(_xContainerStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create Watch upper left corner
-
     _xTimeLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xTimeLabel, _xContainerStatusBar, LV_ALIGN_IN_TOP_LEFT, 8, 5);
     // lv_label_set_text(_xTimeLabel, "4:30");
@@ -308,7 +274,6 @@ void pxDashboardScreen(void)
     refresherTask = lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_HIGHEST, NULL);
 
     // Create Label for Battery icon
-
     _xBatteryLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xBatteryLabel, _xContainerStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
     lv_label_set_text(_xBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
@@ -320,7 +285,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xBatteryLabel, LV_LABEL_PART_MAIN, &_xBatteryLabelStyle);
 
     // Create Label for Wifi icon
-
     _xWifiLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWifiLabel, _xBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_xWifiLabel, LV_SYMBOL_WIFI);
@@ -332,7 +296,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xWifiLabel, LV_LABEL_PART_MAIN, &_xWifiLabelStyle);
 
     // Create Label for Signal icon
-
     _xSignalLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xSignalLabel, _xWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_xSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
@@ -346,7 +309,6 @@ void pxDashboardScreen(void)
     //=======================================================================================
 
     // Create List Button
-
     _xListBtn = lv_btn_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xListBtn, _xTimeLabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, -17);
     lv_obj_set_size(_xListBtn, 44, 44);
@@ -363,7 +325,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xListBtn, LV_BTN_PART_MAIN, &_xListBtnStyle);
 
     // create label for list
-
     _xListLabelClick = lv_label_create(_xListBtn, NULL);
     lv_obj_align(_xListLabelClick, _xTimeLabel, LV_ALIGN_IN_TOP_MID, 0, 0);
     lv_obj_set_click(_xListLabelClick, false);
@@ -390,7 +351,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xWelcomeMsgLabel, LV_LABEL_PART_MAIN, &_xWelcomeMsgLabelStyle);
 
     // Create todays date label
-
     _xTodaysDateLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xTodaysDateLabel, _xWelcomeMsgLabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_label_set_text(_xTodaysDateLabel, today_Date_Msg); // today_Date_Msg, "Today is 19, DEC 2021"
@@ -459,7 +419,6 @@ void pxDashboardScreen(void)
     lv_obj_add_style(_xStopBtn, LV_BTN_PART_MAIN, &_xStopBtnStyle);
 
     // Creat a stop Button Label
-
     xStopButtonLabel = lv_label_create(_xStopBtn, NULL);
     lv_obj_align(xStopButtonLabel, _xStopBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(xStopButtonLabel, dashboardBTNTxt); // dashboardBTNTxt
@@ -478,7 +437,6 @@ void pxDashboardScreen(void)
 
     //========================================================================================
     // Create a Menu List list
-
     xMenulist1 = lv_list_create(xParentcontainer, NULL);
     // lv_obj_set_size(xMenulist1, 160, 200);
     lv_obj_align(xMenulist1, xParentcontainer, LV_ALIGN_IN_TOP_LEFT, 0, 0);
@@ -569,16 +527,9 @@ void pxDashboardScreen(void)
 
     //=========================================Language Test Code=========================
 
-    // lv_obj_t *lbl_test = lv_label_create(xParentcontainer, NULL);
-    // lv_obj_align(lbl_test, _xStartBtn, LV_ALIGN_OUT_TOP_MID, 0, 0);
-    // lv_obj_set_pos(lbl_test, 10, 10);
-    // ptr = lang_EN;
-    // lv_label_set_text(lbl_test, ptr[0]);
-    // ptr = lang_FR;
-    // lv_label_set_text(lbl_test, ptr[Welcome_id]);
-
     //=====================================================================================
     crnt_screen = scr_dashbord;
+    screenid = SCR_DASHBOARD;
 }
 
 void DashboardInfoWidget(void)
@@ -633,10 +584,7 @@ void DashboardInfoWidget(void)
         vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-        /**
-         * @brief Setting the label text to the view summary
-         *
-         */
+        /* Setting the label text to the view summary */
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
         jobFinishedModeBuzzBeep();
@@ -666,9 +614,8 @@ void DashboardInfoWidget(void)
  *
  * @param refresherTask task handle
  */
-void _xTimeLabel_refr_func(lv_task_t refresherTask)
+void _xTimeLabel_refr_func(lv_task_t *refresherTask)
 {
-
     if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
     {
         lv_label_set_text(_xTimeLabel, guiTime);
@@ -687,7 +634,7 @@ void _xTimeLabel_refr_func(lv_task_t refresherTask)
  */
 static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_CLICKED)
+    if (event == LV_EVENT_RELEASED)
     {
         switch (xBTN)
         {
@@ -701,89 +648,52 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             // lv_task_del(ResInfoPerChange_task);
             xsPresetScreenAdvance();
             break;
+
         case 1:
             // printf("Problem State\n");
             break;
+
         case 2:
             // printf("Metrology In Progress State\n");
             break;
+
         case 3:
-
-            //=====================================================>
-            // printf("Work In Progress State\n");
-
-            // isMotor = false;
-            // PumpStopForcefully = true;
-            // rollerMovCkFlag = false;
-            // esp_timer_stop(JTCesp_timer_handle);
-            // esp_timer_delete(JTCesp_timer_handle);
             lv_task_del(refresherTask);
             refresherTask = NULL;
             // lv_task_del(ResInfoPerChange_task);
             sprintf(stopDateEnd, "%s", guiDate);
             sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
-
-            // //=======================================================>
-
-            // StopLTRCountVal = total_liters;
-            // targetLiters = (totalSecond / 60) * atoi(_xsSProllerbuf);
-            // effectiveLiters = StopLTRCountVal - StartLTRCountVal;
-            // variationLiters = 100 - ((effectiveLiters * 100) / 100);
-
-            // //=======================================================>
-
-            // totalhourVal = totalhourVal + (float)HourCount / 3600.0;
-            // StopHrEND = totalhourVal;
-            // targetHr = (float)totalSecond / 3600.0;
-            // effectiveHr = ((float)HourCount) / 3600.0;
-            // variationHr = 100.0 - ((effectiveHr * 100.0) / targetHr);
-
-            //=======================================================>
-
-            // writeTotalhour(totalhourVal1);
-
-            //=======================================================>
             vControllerSampleStop();
-
             xseSummaryEndScreen();
-
             break;
         case 4:
-            // printf("Wait State\n");
             lv_task_del(refresherTask);
             refresherTask = NULL;
             vControllerSampleStop();
-
             xseSummaryEndScreen();
             break;
         case 5:
-            // printf("Job Finished State\n");
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            // lv_task_del(ResInfoPerChange_task);
             xseSummaryEndScreen();
             break;
         case 6:
-            // printf("Alert Service State\n");
             break;
+
         case 7:
-            // printf("Metrology Needed State\n");
             break;
+
         case 8:
-            // printf("Export Data State\n");
             break;
         }
     }
 }
 
 // Update the ResumeInfoPercent Label if the Job is in progress
-void ResInfoPerChange_task_cb(lv_task_t ResInfoPerChange_task)
+void ResInfoPerChange_task_cb(lv_task_t *ResInfoPerChange_task)
 {
-    // if(lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
-    int perZero = 0;
-
-    // printf("value check is:%d\n", workProgress)   ;
     static int one = 1;
+
     if (workProgress < one)
     {
         vSetResumeInfoPercent(IW_create, 0);
@@ -811,18 +721,13 @@ void vResInfoPerChangeTask(void)
  */
 void vCleanupAllDashboardScreen()
 {
-    /**
-     * @brief deleting the refresher task
-     *
-     */
-    if (refresherTask != NULL)
-    {
+    /* deleting the refresher task */
+    if (refresherTask != NULL){
         lv_task_del(refresherTask);
         refresherTask = NULL;
     }
 
-    if (lv_task_handle_dispay_updated_values != NULL)
-    {
+    if (lv_task_handle_dispay_updated_values != NULL){
         lv_task_del(lv_task_handle_dispay_updated_values);
         lv_task_handle_dispay_updated_values = NULL;
     }
@@ -832,58 +737,43 @@ void vCleanupAllDashboardScreen()
  * @brief This function will stop updating the values of total liters total hours etc on the dashboard screen
  *
  */
-void vStopUpdatingValuesToDashbordScreen()
+void vStopUpdatingValuesToDashbordScreen(void)
 {
-    if (lv_task_handle_dispay_updated_values != NULL)
-    {
+    if (lv_task_handle_dispay_updated_values != NULL){
         lv_task_del(lv_task_handle_dispay_updated_values);
         lv_task_handle_dispay_updated_values = NULL;
     }
 }
 
-void vUpdateDashboardScreen()
-{
-    /**
-     * @brief updating the total liters and total hours
-     *
-     */
+void vUpdateDashboardScreen(void){
+    /* updating the total liters and total hours */
     vSetResumeInfoLitersInt(IW_create, uGetTotalLiterIntegerPart());
     vSetResumeInfoLitersFloat(IW_create, uGetTotalLiterFloatPart());
     vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
 
-    /**
-     * @brief updating the pecentage completed
-     *
-     */
+    /* updating the pecentage completed */
     vSetResumeInfoPercent(IW_create, fGetPercentageOfJobDone());
 
-    /**
-     * @brief need to add function to get the remainin hours and minutes from backend
-     *
-     */
-    uint16_t hour =0;
-    uint8_t min =0;
+    /* need to add function to get the remainin hours and minutes from backend */
+    uint16_t hour = 0;
+    uint8_t min = 0;
     vGetNumberOfHourAndMinutesLeftInStartingSequence(&hour, &min);
     vSetResumeInfoRemainingHour(IW_create, hour);
     vSetResumeInfoRemainingMinute(IW_create, min);
-
 }
 
-static lv_task_t *showJobFinishedTask = NULL;
-static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask)
-{
-    // printf("vShowJobFinishedDashBoardScreenTask\n");
+
+static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask){
     dashboardflg = 2;
     DashboardInfoWidget();
     lv_task_del(showJobFinishedTask);
     showJobFinishedTask = NULL;
 }
 
-void vShowJobFinishedDashboardScreen()
-{
-    // printf("vShowJobFinishedDashboardScreen\n");
+void vShowJobFinishedDashboardScreen(){
     showJobFinishedTask = lv_task_create(vShowJobFinishedDashBoardScreenTask, 1 * 1000, LV_TASK_PRIO_MID, NULL);
 }
+
 /**********************
  *    ERROR ASSERT
  **********************/

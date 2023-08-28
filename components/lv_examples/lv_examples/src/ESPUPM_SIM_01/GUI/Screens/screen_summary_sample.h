@@ -40,7 +40,7 @@ extern "C" {
  *  GLOBAL PROTOTYPES
  **********************/
 void sssSummarySampleScreen(void);
-void __sssTimeLabel_refr_func(lv_task_t __sssrefresherTask);
+void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask);
 
 /**
  * @brief Use this function before calling the sequence summary screen so that the sequence summary screen can be shown for the given sample number and sequnce nubmer

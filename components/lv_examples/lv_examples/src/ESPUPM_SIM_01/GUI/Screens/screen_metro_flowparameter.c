@@ -132,13 +132,16 @@ lv_obj_t * _fasEraseBtnLabel;
  *   GLOBAL FUNCTIONS
  **********************/
 
-void callFlowParameterScreen(void)
+void callMetroFlowParameterScreen(void)
 {
     
     
-    scrFlowPara = lv_cont_create(NULL, NULL);
+    scrFlowPara = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowPara);
-    lv_obj_del(crnt_screen);
+     if(crnt_screen != NULL){
+        lv_obj_del(crnt_screen);
+        crnt_screen = NULL;
+    }
     fpsParentCont = lv_obj_create(scrFlowPara, NULL);
     lv_obj_set_size(fpsParentCont, 320, 480);
     lv_obj_align(fpsParentCont, NULL, LV_ALIGN_CENTER, 0,0);
@@ -209,8 +212,6 @@ void callFlowParameterScreen(void)
 
     //==============================================================================================================
     // Create a container to contain Parameter Header 
-
-    
     _fpsHeadingCont_par = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fpsHeadingCont_par, 300, 70);
     lv_obj_set_width(_fpsHeadingCont_par, lv_page_get_width_fit(_fpsParaLblCont));
@@ -246,10 +247,6 @@ void callFlowParameterScreen(void)
     // lv_obj_align(_fasFlowLogo, fpsParentCont, LV_ALIGN_IN_TOP_RIGHT, -20 , 50);
     // lv_img_set_auto_size(_fasFlowLogo, true);
 
-    //=====================================
-    //                                      ============================================>
-    //=====================================
-
     // Create Parameter Black Container
     
     _fasParaBlackCont = lv_cont_create(_fpsParaLblCont, NULL);
@@ -277,110 +274,88 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_text_color(__fasDateValLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     // Create label for Hour Min Val inside big black container
-    
     __fasHrMinValLbl = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasHrMinValLbl, __fasDateValLbl, LV_ALIGN_OUT_BOTTOM_RIGHT, -5, 2);
     lv_label_set_text(__fasHrMinValLbl, "15H35");
     lv_obj_set_style_local_text_font(__fasHrMinValLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_12);
     lv_obj_set_style_local_text_color(__fasHrMinValLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-        //=====================================================================
-        //  Blue Text Style (Name of all the parameter in blue text)
-        //=====================================================================
     static lv_style_t _fpsBlueTxtStyle_Par;
     lv_style_init(&_fpsBlueTxtStyle_Par);
     lv_style_set_text_font(&_fpsBlueTxtStyle_Par, LV_STATE_DEFAULT  ,&lv_font_montserrat_12); //signal_20
     lv_style_set_text_color(&_fpsBlueTxtStyle_Par, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35,0x9F,0xE2));
-        //======================================================================
 
-        //=====================================================================
-        //  White Text Style (Value of blue text heading inside big black )
-        //=====================================================================
     static lv_style_t _fpsWhiteTxtStyle_Par;
     lv_style_init(&_fpsWhiteTxtStyle_Par);
     lv_style_set_text_font(&_fpsWhiteTxtStyle_Par, LV_STATE_DEFAULT  ,&lv_font_montserrat_12); //signal_20
     lv_style_set_text_color(&_fpsWhiteTxtStyle_Par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
-        //=====================================================================
-    
-    // create label for Point Number Text
-    
+
     __fasPointNumberTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasPointNumberTxt, __fasDateValLbl, LV_ALIGN_IN_BOTTOM_LEFT, 0, 50);
     lv_label_set_text(__fasPointNumberTxt, "POINT NUMBER:");
     lv_obj_add_style(__fasPointNumberTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for Point number Value
-    
     __fasPointNumberVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasPointNumberVal, __fasPointNumberTxt, LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text(__fasPointNumberVal, "02");
     lv_obj_add_style(__fasPointNumberVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for Global Accuracy Text
-    
     __fasGlobalAccuTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasGlobalAccuTxt, __fasPointNumberTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasGlobalAccuTxt, "GLOBAL ACUURACY:");
     lv_obj_add_style(__fasGlobalAccuTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for Global Accuracy Value
-    
     __fasGlobalAccuVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasGlobalAccuVal, __fasGlobalAccuTxt, LV_ALIGN_OUT_RIGHT_TOP, 75, 0);
     lv_label_set_text( __fasGlobalAccuVal, "2,09%");
     lv_obj_add_style( __fasGlobalAccuVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for Hour Counter Text
-    
     __fasHourCounterTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasHourCounterTxt, __fasGlobalAccuTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasHourCounterTxt, "HOUR COUNTER:");
     lv_obj_add_style(__fasHourCounterTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for Hour Counter Value
-    
     __fasHourCounterVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasHourCounterVal, __fasHourCounterTxt, LV_ALIGN_OUT_RIGHT_TOP, 95, 0);
     lv_label_set_text( __fasHourCounterVal, "567,79H");
     lv_obj_add_style( __fasHourCounterVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for Volume Counter Text
-    
     __fasVoilumeCounterTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasVoilumeCounterTxt, __fasHourCounterTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasVoilumeCounterTxt, "VOLUME COUNTER:");
     lv_obj_add_style(__fasVoilumeCounterTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for Volume Counter Value
-    
     __fasValueCounterVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasValueCounterVal, __fasVoilumeCounterTxt, LV_ALIGN_OUT_RIGHT_TOP, 80, 0);
     lv_label_set_text(__fasValueCounterVal, "567,79H");
     lv_obj_add_style(__fasValueCounterVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for CURVE Text
-    
     __fasCurveTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasCurveTxt, __fasVoilumeCounterTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasCurveTxt, "CURVE:");
     lv_obj_add_style(__fasCurveTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for Volume Counter Value
-    
     __fasCurveTxtVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasCurveTxtVal, __fasCurveTxt, LV_ALIGN_OUT_RIGHT_TOP, 155, 0);
     lv_label_set_text(__fasCurveTxtVal, "LINEAR 3");
     lv_obj_add_style(__fasCurveTxtVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for UNIT Text
-    
     __fasUnitTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasUnitTxt, __fasCurveTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasUnitTxt, "UNIT:");
     lv_obj_add_style(__fasUnitTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for  UNIT Value
-    
     __fasUnitVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_set_size(__fasUnitVal, 300, 15);
     lv_obj_align( __fasUnitVal, __fasUnitTxt, LV_ALIGN_OUT_RIGHT_TOP, 168, 0);
@@ -388,74 +363,54 @@ void callFlowParameterScreen(void)
     lv_obj_add_style(__fasUnitVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for LOWER LIMIT Text
-    
     __fasLowerLimitTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasLowerLimitTxt, __fasUnitTxt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasLowerLimitTxt, "LOWER LIMIT:");
     lv_obj_add_style(__fasLowerLimitTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for  UNIT Value
-    
     __fasLowerLimitVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasLowerLimitVal, __fasLowerLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 116, 0);
     lv_label_set_text(__fasLowerLimitVal, "NONE");
     lv_obj_add_style(__fasLowerLimitVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for HIGHER LIMIT Text
-    
     __fasHigherLimitTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align(__fasHigherLimitTxt , __fasLowerLimitTxt,  LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__fasHigherLimitTxt, "HIGHER LIMIT:");
     lv_obj_add_style(__fasHigherLimitTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for  HIGHER LIMIT Value
-    
     __fasHigherLimitVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasHigherLimitVal, __fasHigherLimitTxt, LV_ALIGN_OUT_RIGHT_TOP, 114, 0);
     lv_label_set_text(__fasHigherLimitVal, "NONE");
     lv_obj_add_style(__fasHigherLimitVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for LIMIT ALERT Text
-    
     __fasLimitAlertTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasLimitAlertTxt , __fasHigherLimitTxt,  LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text( __fasLimitAlertTxt, "LIMIT ALERT:");
     lv_obj_add_style( __fasLimitAlertTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for  LIMIT ALERT Value
-    
     __fasLimitAlertVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasLimitAlertVal, __fasLimitAlertTxt, LV_ALIGN_OUT_RIGHT_TOP, 122, 0);
     lv_label_set_text( __fasLimitAlertVal, "-10% +10%");
     lv_obj_add_style( __fasLimitAlertVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create Label for AFTER LIMIT ALERT Text
-    
     __fasAfterLtAlertTxt = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasAfterLtAlertTxt , __fasLimitAlertTxt,  LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text( __fasAfterLtAlertTxt, "AFTER LIMIT ALERT:");
     lv_obj_add_style( __fasAfterLtAlertTxt, LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
     //Create Label for AFTER  LIMIT ALERT Value
-    
     __fasAfterLtAlertVal = lv_label_create(_fasParaBlackCont, NULL);
     lv_obj_align( __fasAfterLtAlertVal, __fasAfterLtAlertTxt, LV_ALIGN_OUT_RIGHT_TOP, 78, 0);
     lv_label_set_text( __fasAfterLtAlertVal, "ENABLE");
     lv_obj_add_style( __fasAfterLtAlertVal, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
-    //==========================================================================================
-                                          
-    
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Point 1 Pallet Box Start============================================
-    //==========================================================================================
-    //==========================================================================================
-
     // Create Point1 Container
-    
     _fasPointCont1 = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fasPointCont1, 290, 120);
     lv_obj_set_click(_fasPointCont1, false);
@@ -463,109 +418,80 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_bg_color(_fasPointCont1, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_fasPointCont1, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
-    
     _fasPointHeadlbl_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasPointHeadlbl_pt1, _fasPointCont1, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text( _fasPointHeadlbl_pt1, "POINT 1");
     lv_obj_add_style( _fasPointHeadlbl_pt1, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasFactoryValTxt_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasFactoryValTxt_pt1 , _fasPointHeadlbl_pt1 , LV_ALIGN_OUT_BOTTOM_LEFT, 5, 10);
     lv_label_set_text( _fasFactoryValTxt_pt1 , "FACTORY VALUE:");
     lv_obj_add_style( _fasFactoryValTxt_pt1 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasFactoryValValue_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasFactoryValValue_pt1 , _fasFactoryValTxt_pt1 , LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text( _fasFactoryValValue_pt1 , "23,36");
     lv_obj_add_style( _fasFactoryValValue_pt1 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasCompValTxt_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasCompValTxt_pt1 , _fasFactoryValTxt_pt1 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasCompValTxt_pt1 , "COMPENSATED VALUE:");
     lv_obj_add_style( _fasCompValTxt_pt1 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasCompValValValue_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasCompValValValue_pt1 , _fasCompValTxt_pt1 , LV_ALIGN_OUT_RIGHT_TOP, 62, 0);
     lv_label_set_text( _fasCompValValValue_pt1 , "23,36");
     lv_obj_add_style( _fasCompValValValue_pt1 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasAccuracyTxt_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasAccuracyTxt_pt1 , _fasCompValTxt_pt1 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasAccuracyTxt_pt1 , "ACCURACY:");
     lv_obj_add_style( _fasAccuracyTxt_pt1 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasAccuracyValue_pt1 = lv_label_create(_fasPointCont1, NULL);
     lv_obj_align( _fasAccuracyValue_pt1 , _fasAccuracyTxt_pt1 , LV_ALIGN_OUT_RIGHT_TOP, 133, 0);
     lv_label_set_text( _fasAccuracyValue_pt1 , "10,05");
     lv_obj_add_style( _fasAccuracyValue_pt1 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create OK logo
-    
     _fasOkLogo_pt1 = lv_img_create(_fasPointCont1, NULL);
     lv_img_set_src(_fasOkLogo_pt1, &ok_icon);
     lv_obj_align(_fasOkLogo_pt1,_fasPointCont1, LV_ALIGN_IN_TOP_RIGHT, -5 , 5);
     lv_img_set_auto_size(_fasOkLogo_pt1, true);
 
-
-
-    //==========================================================================================
-    //======================Point 1 Pallet Box End==============================================
-    //==========================================================================================
-
-
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Point 2 Pallet Box Start============================================
-    //==========================================================================================
-    //==========================================================================================
-
     // Create Point2 Container
-    
     _fasPointCont2 = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fasPointCont2, 290, 120);
     lv_obj_set_click(_fasPointCont2, false);
     lv_obj_align(_fasPointCont2, _fasPointCont1, LV_ALIGN_OUT_BOTTOM_LEFT, 0,10);
     lv_obj_set_style_local_bg_color(_fasPointCont2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_fasPointCont2, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
-
     
     _fasPointHeadlbl_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasPointHeadlbl_pt2, _fasPointCont2, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text( _fasPointHeadlbl_pt2, "POINT 2");
     lv_obj_add_style( _fasPointHeadlbl_pt2, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasFactoryValTxt_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasFactoryValTxt_pt2 , _fasPointHeadlbl_pt2 , LV_ALIGN_OUT_BOTTOM_LEFT, 5, 10);
     lv_label_set_text( _fasFactoryValTxt_pt2 , "FACTORY VALUE:");
     lv_obj_add_style( _fasFactoryValTxt_pt2 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasFactoryValValue_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasFactoryValValue_pt2 , _fasFactoryValTxt_pt2 , LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text( _fasFactoryValValue_pt2 , "23,36");
     lv_obj_add_style( _fasFactoryValValue_pt2 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasCompValTxt_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasCompValTxt_pt2 , _fasFactoryValTxt_pt2 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasCompValTxt_pt2 , "COMPENSATED VALUE:");
     lv_obj_add_style( _fasCompValTxt_pt2 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasCompValValValue_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasCompValValValue_pt2 , _fasCompValTxt_pt2 , LV_ALIGN_OUT_RIGHT_TOP, 62, 0);
     lv_label_set_text( _fasCompValValValue_pt2 , "23,36");
     lv_obj_add_style( _fasCompValValValue_pt2 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasAccuracyTxt_pt2 = lv_label_create(_fasPointCont2, NULL);
     lv_obj_align( _fasAccuracyTxt_pt2 , _fasCompValTxt_pt2 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasAccuracyTxt_pt2 , "ACCURACY:");
@@ -578,26 +504,13 @@ void callFlowParameterScreen(void)
     lv_obj_add_style( _fasAccuracyValue_pt2 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create OK logo
-    
     _fasOkLogo_pt2 = lv_img_create(_fasPointCont2, NULL);
     lv_img_set_src(_fasOkLogo_pt2, &ok_icon);
     lv_obj_align(_fasOkLogo_pt2,_fasPointCont2, LV_ALIGN_IN_TOP_RIGHT, -5 , 5);
     lv_img_set_auto_size(_fasOkLogo_pt2, true);
 
-    //==========================================================================================
-    //======================Point 2 Pallet Box End==============================================
-    //==========================================================================================
-
-
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Point 3 Pallet Box Start============================================
-    //==========================================================================================
-    //==========================================================================================
 
     // Create Point3 Container
-    
     _fasPointCont3 = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fasPointCont3, 290, 120);
     lv_obj_set_click(_fasPointCont3, false);
@@ -605,139 +518,99 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_bg_color(_fasPointCont3, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_fasPointCont3, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
-    
     _fasPointHeadlbl_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasPointHeadlbl_pt3, _fasPointCont3, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text( _fasPointHeadlbl_pt3, "POINT 3");
     lv_obj_add_style( _fasPointHeadlbl_pt3, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasFactoryValTxt_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasFactoryValTxt_pt3 , _fasPointHeadlbl_pt3 , LV_ALIGN_OUT_BOTTOM_LEFT, 5, 10);
     lv_label_set_text( _fasFactoryValTxt_pt3 , "FACTORY VALUE:");
     lv_obj_add_style( _fasFactoryValTxt_pt3 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasFactoryValValue_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasFactoryValValue_pt3 , _fasFactoryValTxt_pt3 , LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text( _fasFactoryValValue_pt3 , "23,36");
     lv_obj_add_style( _fasFactoryValValue_pt3 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasCompValTxt_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasCompValTxt_pt3 , _fasFactoryValTxt_pt3 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasCompValTxt_pt3 , "COMPENSATED VALUE:");
     lv_obj_add_style( _fasCompValTxt_pt3 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasCompValValValue_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasCompValValValue_pt3 , _fasCompValTxt_pt3 , LV_ALIGN_OUT_RIGHT_TOP, 62, 0);
     lv_label_set_text( _fasCompValValValue_pt3 , "23,36");
     lv_obj_add_style( _fasCompValValValue_pt3 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasAccuracyTxt_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasAccuracyTxt_pt3 , _fasCompValTxt_pt3 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasAccuracyTxt_pt3 , "ACCURACY:");
     lv_obj_add_style( _fasAccuracyTxt_pt3 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasAccuracyValue_pt3 = lv_label_create(_fasPointCont3, NULL);
     lv_obj_align( _fasAccuracyValue_pt3 , _fasAccuracyTxt_pt3 , LV_ALIGN_OUT_RIGHT_TOP, 133, 0);
     lv_label_set_text( _fasAccuracyValue_pt3 , "10,05");
     lv_obj_add_style( _fasAccuracyValue_pt3 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
-
-    //Create OK logo
     
+    //Create OK logo
     _fasOkLogo_pt3 = lv_img_create(_fasPointCont3, NULL);
     lv_img_set_src(_fasOkLogo_pt3, &ok_icon);
     lv_obj_align(_fasOkLogo_pt3,_fasPointCont3, LV_ALIGN_IN_TOP_RIGHT, -5 , 5);
     lv_img_set_auto_size(_fasOkLogo_pt3, true);
 
 
-    //==========================================================================================
-    //======================Point 3 Pallet Box End==============================================
-    //==========================================================================================
-
-
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Point 4 Pallet Box Start============================================
-    //==========================================================================================
-    //==========================================================================================
 
     // Create Point3 Container
-    
     _fasPointCont4 = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fasPointCont4, 290, 120);
     lv_obj_set_click(_fasPointCont4, false);
     lv_obj_align(_fasPointCont4, _fasPointCont3, LV_ALIGN_OUT_BOTTOM_LEFT, 0,10);
     lv_obj_set_style_local_bg_color(_fasPointCont4, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D) ); //LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_fasPointCont4, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
-
     
     _fasPointHeadlbl_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasPointHeadlbl_pt4, _fasPointCont4, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text( _fasPointHeadlbl_pt4, "POINT 4");
     lv_obj_add_style( _fasPointHeadlbl_pt4, LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasFactoryValTxt_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasFactoryValTxt_pt4 , _fasPointHeadlbl_pt4 , LV_ALIGN_OUT_BOTTOM_LEFT, 5, 10);
     lv_label_set_text( _fasFactoryValTxt_pt4 , "FACTORY VALUE:");
     lv_obj_add_style( _fasFactoryValTxt_pt4 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasFactoryValValue_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasFactoryValValue_pt4 , _fasFactoryValTxt_pt4 , LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
     lv_label_set_text( _fasFactoryValValue_pt4 , "23,36");
     lv_obj_add_style( _fasFactoryValValue_pt4 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasCompValTxt_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasCompValTxt_pt4 , _fasFactoryValTxt_pt4 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasCompValTxt_pt4 , "COMPENSATED VALUE:");
     lv_obj_add_style( _fasCompValTxt_pt4 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasCompValValValue_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasCompValValValue_pt4 , _fasCompValTxt_pt4 , LV_ALIGN_OUT_RIGHT_TOP, 62, 0);
     lv_label_set_text( _fasCompValValValue_pt4 , "23,36");
     lv_obj_add_style( _fasCompValValValue_pt4 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    
     _fasAccuracyTxt_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasAccuracyTxt_pt4 , _fasCompValTxt_pt4 , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
     lv_label_set_text( _fasAccuracyTxt_pt4 , "ACCURACY:");
     lv_obj_add_style( _fasAccuracyTxt_pt4 , LV_LABEL_PART_MAIN, &_fpsBlueTxtStyle_Par);
 
-    
     _fasAccuracyValue_pt4 = lv_label_create(_fasPointCont4, NULL);
     lv_obj_align( _fasAccuracyValue_pt4 , _fasAccuracyTxt_pt4 , LV_ALIGN_OUT_RIGHT_TOP, 133, 0);
     lv_label_set_text( _fasAccuracyValue_pt4 , "10,05");
     lv_obj_add_style( _fasAccuracyValue_pt4 , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
     //Create OK logo
-    
     _fasOkLogo_pt4 = lv_img_create(_fasPointCont4, NULL);
     lv_img_set_src(_fasOkLogo_pt4, &ok_icon);
     lv_obj_align(_fasOkLogo_pt4,_fasPointCont4, LV_ALIGN_IN_TOP_RIGHT, -5 , 5);
     lv_img_set_auto_size(_fasOkLogo_pt4, true);
 
-
-    //==========================================================================================
-    //======================Point 3 Pallet Box End==============================================
-    //==========================================================================================
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Start Container for Graph Plot======================================
-    //==========================================================================================
-    //==========================================================================================
-
     // Create Graph Container
-    
     _fasGraphCont = lv_cont_create(_fpsParaLblCont, NULL);
     lv_obj_set_size(_fasGraphCont, 290, 250);
     lv_obj_set_click(_fasGraphCont, false);
@@ -746,17 +619,12 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_border_opa(_fasGraphCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
 
     //Create Label for Graph Title
-    
     _fasGraphTitleLbl = lv_label_create(_fasGraphCont, NULL);
     lv_obj_align( _fasGraphTitleLbl , _fasGraphCont , LV_ALIGN_IN_TOP_MID, -60, 0);
     lv_label_set_text(_fasGraphTitleLbl , "Calibrated VS Factory Value");
     lv_obj_add_style( _fasGraphTitleLbl , LV_LABEL_PART_MAIN, &_fpsWhiteTxtStyle_Par);
 
-    //=========
-    //=========
-    //=========
     /*Create a chart*/
-    
     chart = lv_chart_create(_fasGraphCont, NULL);
     lv_obj_set_size(chart, 290, 230);
     lv_obj_set_click(chart, false);
@@ -767,14 +635,11 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_border_opa(chart, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
     lv_chart_set_point_count(chart, 4);
 
-
     /*Add a faded are effect*/
     lv_obj_set_style_local_bg_opa(chart, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, LV_OPA_50); /*Max. opa.*/
     lv_obj_set_style_local_bg_grad_dir(chart, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
     lv_obj_set_style_local_bg_main_stop(chart, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 255);    /*Max opa on the top*/
     lv_obj_set_style_local_bg_grad_stop(chart, LV_CHART_PART_SERIES, LV_STATE_DEFAULT, 0);      /*Transparent on the bottom*/
-
-    
 
     /*Add two data series*/
     lv_chart_series_t * ser1 = lv_chart_add_series(chart, LV_COLOR_RED);
@@ -803,12 +668,10 @@ void callFlowParameterScreen(void)
     // ser2->points[7] = 85;
     // ser2->points[8] = 95;
     // ser2->points[9] = 95;
-
     lv_chart_refresh(chart); /*Required after direct set*/
 
 
     //Create Label for Graph Equation
-    
     _fasGraphEquation = lv_label_create(chart, NULL);
     lv_obj_align( _fasGraphEquation , chart , LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_label_set_text(_fasGraphEquation , "Y=0,00542x");
@@ -816,7 +679,6 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_text_color(_fasGraphEquation, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 
     //Create Label for Graph Regression
-    
     _fasGraphReg = lv_label_create(chart, NULL);
     lv_obj_align( _fasGraphReg , _fasGraphEquation , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 2);
     lv_label_set_text( _fasGraphReg , "R=0,00002");
@@ -824,7 +686,6 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_text_color( _fasGraphReg , LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
 
     //Create Label for Min X Value
-    
     _fasGraphMinX = lv_label_create(_fpsParaLblCont, NULL);
     lv_obj_align( _fasGraphMinX , chart , LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_label_set_text( _fasGraphMinX , "10");
@@ -832,32 +693,14 @@ void callFlowParameterScreen(void)
     lv_obj_set_style_local_text_color( _fasGraphMinX , LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     //Create Label for Max X Value
-    
     _fasGraphMaxX = lv_label_create(_fpsParaLblCont, NULL);
     lv_obj_align( _fasGraphMaxX , chart , LV_ALIGN_OUT_BOTTOM_RIGHT, 0, 0);
     lv_label_set_text( _fasGraphMaxX , "50");
     lv_obj_set_style_local_text_font( _fasGraphMaxX , LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_12);
     lv_obj_set_style_local_text_color( _fasGraphMaxX , LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
- 
-    //========
-    //========
-    //========
 
-
-    
-    //==========================================================================================
-    //======================END Container for Graph Plot======================================
-    //==========================================================================================
-
-
-    //==========================================================================================
-    //==========================================================================================
-    //======================Start "ERASE & START NEW" BUTTON====================================
-    //==========================================================================================
-    //==========================================================================================
 
     //Creat a  Button
-    
     _fasEraseBtn = lv_btn_create(_fpsParaLblCont, NULL);
     lv_obj_align(_fasEraseBtn, _fasGraphCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20 );
     lv_obj_set_size(_fasEraseBtn, 290, 44);
@@ -867,19 +710,14 @@ void callFlowParameterScreen(void)
     //lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
   
     //Creat a stop Button Label
-    
     _fasEraseBtnLabel = lv_label_create(_fasEraseBtn, NULL);
     lv_obj_align(_fasEraseBtnLabel, _fasEraseBtn, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_label_set_text(_fasEraseBtnLabel, "ERASE & START NEW");
     lv_obj_set_style_local_text_font(_fasEraseBtnLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
     lv_obj_set_style_local_text_color(_fasEraseBtnLabel, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    //==========================================================================================
-    //======================END "ERASE & START NEW" BUTTON======================================
-    //==========================================================================================
-
     crnt_screen = scrFlowPara; //scrFlowPara
-
+    screenid = SCR_FLOW_PARAMETER;
 }
 
 /**********************
@@ -889,9 +727,8 @@ void callFlowParameterScreen(void)
 //_xBackArrow_event_handler
 static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        printf("Clicked\n");
         CallMetroMenuScreen();
     }
     
@@ -899,9 +736,8 @@ static void _fpsBackArrow_event_handler(lv_obj_t * obj, lv_event_t event)
 
 static void _fpsEraseBTN_event_handler(lv_obj_t * obj, lv_event_t event)
 {
-    if(event == LV_EVENT_CLICKED) 
+    if(event == LV_EVENT_RELEASED) 
     {
-        printf("Clicked\n");
         callMetroFlowSettingScreen();
     }
     

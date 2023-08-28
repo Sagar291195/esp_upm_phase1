@@ -52,7 +52,7 @@ typedef struct
  **********************/
 
 extern void readTotalLiters(void);
-void Init_Periferals(void);
+void Init_Buzzer(void);
 void buzzer_init();
 
 

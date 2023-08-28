@@ -21,7 +21,7 @@
 
 /************************************defines******************************************************/
 
-#define TAG "controller"
+#define TAG                 "controller"
 
 extern SemaphoreHandle_t xGuiSemaphore1;
 
@@ -34,7 +34,6 @@ extern SemaphoreHandle_t xGuiSemaphore1;
 void vStartJob();
 
 /*****************************function*********************************/
-
 void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
 {
     ESP_LOGI(TAG, "kp %0.2f, ki %0.2f, kd %0.2f, akp %0.2f, aki %0.2f, akd %0.2f, ncoff %0.2f, acoff %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd, fNcoff, fACoff);
@@ -86,48 +85,23 @@ void vControllerSampleIsValid()
 {
     ESP_LOGD(TAG, "Sample is valid");
 
-    /**
-     * @brief Set the current running sequece number to 1. because we are starting the sequence from 1
-     *
-     */
+    /*  Set the current running sequece number to 1. because we are starting the sequence from 1 */
     vSetCurrentRunningSequenceNumber(1);
-    /**
-     * @brief incrementing the unique sample number
-     *
-     */
+    /* incrementing the unique sample number  */
     vIncrementCurrentSampleNumber();
-
-    /**
-     * @brief saving the sample number in the flash memory
-     *
-     */
+    /* saving the sample number in the flash memory */
     vSetSampleNumberToNvsFlash();
-    /**
-     * @brief saving the sequences to the nvs flash
-     *
-     */
+    /* saving the sequences to the nvs flash */
     vSetSequenceArrayToNVS();
 
-    /**
-     * @brief Setting the total sequence to the nvs flash
-     *
-     *
-     **/
-
+    /* Setting the total sequence to the nvs flash */
     vSetTotalSequenceCountFromNvs();
 
-    /**
-     * @brief we need to set some values which we mention in the end summary, like start date and total liter and hour counts
-     *
-     */
-
+    /* we need to set some values which we mention in the end summary, like start date and total
+     * liter and hour counts */
     vSetInitialCounterValuesToEndSummary();
 
-    /**
-     * @brief start the job
-     *
-     */
-
+    /* start the job */
     vStartJob();
 }
 
@@ -135,10 +109,7 @@ void vStartJob()
 {
     ESP_LOGI(TAG, "Starting the job");
 
-    /**
-     * @brief giving the task notification to start the sample management
-     *
-     */
+    /* giving the task notification to start the sample management */
     vNotifySampleMangementToProceed();
 }
 
@@ -181,14 +152,6 @@ void vUpdateWorkInProgressScreen()
     }
 }
 
-// void vControllerSampleStop()
-// {
-//     /**
-//      * @brief Stopping the current on going sequence
-//      *
-//      */
-//     vStopCurrentSequence();
-// }
 
 void vShowJobFinishedScreen()
 {
@@ -200,13 +163,8 @@ void vShowJobFinishedScreen()
 void vControllerSampleStop()
 {
     vStopCurrentSample();
-    /**
-     * @brief Stopping the current on going sequence
-     *
-     */
+    /* Stopping the current on going sequence */
     vStopCurrentSample();
-
-    // vControllerShowEndSummayScreen();
 }
 
 void vControllerShowEndSummayScreen()
