@@ -190,16 +190,13 @@ lv_task_t *__sssrefresherTask;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
+static uint32_t uSampleNumber = 0;      /* sample data to be get from the database */
+static uint8_t uSequnceNumber = 0;      /* sequnce data to be get from the database */\
+sequenceSummary_t xSequenceSummary;     /* data variable to store the data from the database */
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-/* sample data to be get from the database */
-static uint32_t uSampleNumber = 0;
-/* sequnce data to be get from the database */
-static uint8_t uSequnceNumber = 0;
-/* data variable to store the data from the database */
-sequenceSummary_t xSequenceSummary;
 
 void sssSummarySampleScreen(void)
 {
