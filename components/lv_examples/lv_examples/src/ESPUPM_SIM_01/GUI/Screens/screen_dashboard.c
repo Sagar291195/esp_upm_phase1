@@ -8,9 +8,9 @@
 /*********************
  *      DEFINES
  *********************/
-#define IW_WIDTH            (200)
-#define IW_HEIGHT           (290)
-#define SYMBOL_SIGNAL       "\uf012"
+#define IW_WIDTH (200)
+#define IW_HEIGHT (290)
+#define SYMBOL_SIGNAL "\uf012"
 
 int global_DashbordBTNflag = 1;
 int dashboardflg = 0;
@@ -238,7 +238,7 @@ void pxDashboardScreen(void)
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
-    
+
     xParentcontainer = lv_cont_create(scr_dashbord, NULL);
     lv_obj_set_size(xParentcontainer, 320, 480);
     lv_obj_align(xParentcontainer, NULL, LV_ALIGN_CENTER, 0, 0);                                                            //====================>>>>>
@@ -407,11 +407,11 @@ void pxDashboardScreen(void)
     char *stop1 = "STOP";
     if (!strcmp(dashboardBTNTxt, stop1))
     {
-        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); //#359Fe2, 0x35, 0x9F, 0xE2
+        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); // #359Fe2, 0x35, 0x9F, 0xE2
     }
     else
     {
-        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#359Fe2, 0xEB, 0x3B, 0x5A
+        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2, 0xEB, 0x3B, 0x5A
     }
 
     // lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A));
@@ -722,12 +722,14 @@ void vResInfoPerChangeTask(void)
 void vCleanupAllDashboardScreen()
 {
     /* deleting the refresher task */
-    if (refresherTask != NULL){
+    if (refresherTask != NULL)
+    {
         lv_task_del(refresherTask);
         refresherTask = NULL;
     }
 
-    if (lv_task_handle_dispay_updated_values != NULL){
+    if (lv_task_handle_dispay_updated_values != NULL)
+    {
         lv_task_del(lv_task_handle_dispay_updated_values);
         lv_task_handle_dispay_updated_values = NULL;
     }
@@ -739,13 +741,15 @@ void vCleanupAllDashboardScreen()
  */
 void vStopUpdatingValuesToDashbordScreen(void)
 {
-    if (lv_task_handle_dispay_updated_values != NULL){
+    if (lv_task_handle_dispay_updated_values != NULL)
+    {
         lv_task_del(lv_task_handle_dispay_updated_values);
         lv_task_handle_dispay_updated_values = NULL;
     }
 }
 
-void vUpdateDashboardScreen(void){
+void vUpdateDashboardScreen(void)
+{
     /* updating the total liters and total hours */
     vSetResumeInfoLitersInt(IW_create, uGetTotalLiterIntegerPart());
     vSetResumeInfoLitersFloat(IW_create, uGetTotalLiterFloatPart());
@@ -762,15 +766,16 @@ void vUpdateDashboardScreen(void){
     vSetResumeInfoRemainingMinute(IW_create, min);
 }
 
-
-static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask){
+static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask)
+{
     dashboardflg = 2;
     DashboardInfoWidget();
     lv_task_del(showJobFinishedTask);
     showJobFinishedTask = NULL;
 }
 
-void vShowJobFinishedDashboardScreen(){
+void vShowJobFinishedDashboardScreen()
+{
     showJobFinishedTask = lv_task_create(vShowJobFinishedDashBoardScreenTask, 1 * 1000, LV_TASK_PRIO_MID, NULL);
 }
 

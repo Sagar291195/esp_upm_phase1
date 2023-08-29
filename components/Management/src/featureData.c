@@ -54,17 +54,10 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
 
     // fResult = sqrt(fabs(fDeltaPressure)) / sqrt(fDensity) * 0.3758940103; // for test
     // fResult = (fDeltaPressure < 0.0) ? -fResult : fResult;                // check si négatif
-
-    /**
-     * @brief using the formula Q= F(dp)* den_char / den_real
-     *
-     * Putting F=1 and den_char =1.2
-     *
-     */
-    // fResult = .118 * fDeltaPressure * 1.2/fDensity;
-
-    /*  updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
-
+    /* using the formula Q= F(dp)* den_char / den_real
+     * Putting F=1 and den_char =1.2     
+     * fResult = .118 * fDeltaPressure * 1.2/fDensity;
+     * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
     fResult = 0.759 * pow(fDeltaPressure, 0.5288) * (1.2 / fDensity);
     return fResult;
 }

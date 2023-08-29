@@ -7,48 +7,48 @@
  */
 
 /**
-*  @file        screen_flow_calibration.h
-*  @brief       Header file for screen_flow_calibration.c
-*  @details     Header file for screen_flow_calibration.c
-*/
+ *  @file        screen_flow_calibration.h
+ *  @brief       Header file for screen_flow_calibration.c
+ *  @details     Header file for screen_flow_calibration.c
+ */
 
 #ifndef SCREEN_METRO_FLOWADJ_H
 #define SCREEN_METRO_FLOWADJ_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
-
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-void callMetroFlowAdjustScreen(void);
-int get_flow_calibration_point_cout(void);
-void set_flow_calibration_point_cout(int value);
-/**********************
- *    ERROR ASSERT
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
+    void callMetroFlowAdjustScreen(void);
+    int get_flow_calibration_point_cout(void);
+    void set_flow_calibration_point_cout(int value);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
 #ifdef __cplusplus
 } /* extern "C" */

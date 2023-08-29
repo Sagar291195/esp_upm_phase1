@@ -57,12 +57,10 @@ extern "C"
 
     void vCleanupAllDashboardScreen();
 
-    
-
     void vUpdateDashboardScreen();
     /**
-     * @brief this fuction will display the job finished on the screen 
-     * 
+     * @brief this fuction will display the job finished on the screen
+     *
      */
     void vShowJobFinishedDashboardScreen();
 

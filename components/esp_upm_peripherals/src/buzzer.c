@@ -5,11 +5,10 @@
  */
 
 /**
-*  @file 
-*  @brief 
-*  @details 
-*/
-
+ *  @file
+ *  @brief
+ *  @details
+ */
 
 /*********************
  *      INCLUDES
@@ -49,8 +48,8 @@
  *   STATIC FUNCTIONS
  **********************/
 
-// 1.ready_mode: 
-// 2.problem_mode: 
+// 1.ready_mode:
+// 2.problem_mode:
 // 3.metrology_in_progress_mode:
 // 4.work_in_progress_mode:
 // 5.wait_mode:
@@ -65,12 +64,12 @@
 // ===============================						================================
 // 1.READY_MODE: 												Short Beep (When switch to this mode)
 // 2.PROBLEM_MODE:												Two Long Beep (When switch to this mode)
-// 3.METROLOGY_IN_PROGRESS_MODE:									
+// 3.METROLOGY_IN_PROGRESS_MODE:
 // 4.WORK_IN_PROGRESS_MODE:									Short Beep (When switch to this mode)
-// 5.WAIT_MODE:												
+// 5.WAIT_MODE:
 // 6.JOB_FINISHED_MODE:										Very Long Beep (When switch to this mode)
-// 7.ALERT_SERVICE_MODE:										5 times short beep	(When switch to this mode)							
-// 8.METROLOGY_NEEDED_MODE:                             		5 times short beep   (When switch to this mode)    
+// 7.ALERT_SERVICE_MODE:										5 times short beep	(When switch to this mode)
+// 8.METROLOGY_NEEDED_MODE:                             		5 times short beep   (When switch to this mode)
 // 9.EXPORT_DATA_MODE:											One Short beep      (When switch to this mode)
 
 void readyModeBuzzBeep(void)
@@ -80,12 +79,11 @@ void readyModeBuzzBeep(void)
     vTaskDelay(300);
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
-    
 }
 
 void workInProgressBuzzBeep(void)
 {
-    for( int i=0; i<6; i++)
+    for (int i = 0; i < 6; i++)
     {
         ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 2000));
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
@@ -98,7 +96,7 @@ void workInProgressBuzzBeep(void)
 
 void jobFinishedModeBuzzBeep(void)
 {
-    for( int i=0; i<4; i++)
+    for (int i = 0; i < 4; i++)
     {
         ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 2000));
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
@@ -107,12 +105,11 @@ void jobFinishedModeBuzzBeep(void)
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
         vTaskDelay(100);
     }
-
 }
 
 void waitModeBuzzBeep(void)
 {
-    for( int i=0; i<3; i++)
+    for (int i = 0; i < 3; i++)
     {
         ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 2000));
         ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));

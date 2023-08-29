@@ -7,53 +7,50 @@
  */
 
 /**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
+ *  @file file
+ *  @brief Short description
+ *  @details Long description
+ */
 
 #ifndef SCREEN_METRO_FLOWSETTING_H
 #define SCREEN_METRO_FLOWSETTING_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
+    void callMetroFlowSettingScreen(void);
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-void callMetroFlowSettingScreen(void);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
-/**********************
- *    ERROR ASSERT
- **********************/
- 
- 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
 #endif /*SCREEN_METRO_FLOWSETTING_H*/
-
-

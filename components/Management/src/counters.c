@@ -17,11 +17,11 @@
 #include <sequenceManagement.h>
 
 /******************************************defines****************************************/
-#define TAG                       "counters"
+#define TAG "counters"
 
-#define NVS_STORGE_NAME           "storage"
-#define TOTAL_LITER_STORAGE_KEY   "Liters"
-#define TOTAL_HOUR_STORAGE_KEY    "Hours"
+#define NVS_STORGE_NAME "storage"
+#define TOTAL_LITER_STORAGE_KEY "Liters"
+#define TOTAL_HOUR_STORAGE_KEY "Hours"
 
 /*****************************variables****************************************************/
 
@@ -170,10 +170,8 @@ void vGetTotalHoursFromNvs()
     return;
   }
 
-  // Read run time blob
   size_t required_size = 0; // value will default to 0, if not set yet in NVS
                             // obtain required memory space to store blob being read from NVS
-
   err = nvs_get_blob(my_handle, TOTAL_HOUR_STORAGE_KEY, NULL, &required_size);
   if (err != ESP_OK)
   {
@@ -250,6 +248,3 @@ float fGetTotalLitersHasBeenPassInGivenSequence()
 {
   return fTotalLitersHasBeenPassInGivenSequence;
 }
-
-
-

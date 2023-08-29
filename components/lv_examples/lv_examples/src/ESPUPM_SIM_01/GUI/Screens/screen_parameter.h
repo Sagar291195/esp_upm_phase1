@@ -1,51 +1,47 @@
 /**
-*  @file   : screen_parameter.h
-*  @brief  : This screen is to show the parameter screen
-*  @details: This file is to show parameter screen, this screen comes when parameter button is clicked from
-*            Menulist of dashbord screen
-*/
-
+ *  @file   : screen_parameter.h
+ *  @brief  : This screen is to show the parameter screen
+ *  @details: This file is to show parameter screen, this screen comes when parameter button is clicked from
+ *            Menulist of dashbord screen
+ */
 
 #ifndef SCREEN_PARAMETER_H
 #define SCREEN_PARAMETER_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
+    void ppxParameterScreen(void);
 
-void ppxParameterScreen(void);
-
-
-/**********************
- *    ERROR ASSERT
- **********************/
-
-
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
 #ifdef __cplusplus
 } /* extern "C" */

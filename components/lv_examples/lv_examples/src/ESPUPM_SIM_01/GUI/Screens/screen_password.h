@@ -7,49 +7,48 @@
  */
 
 /**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
+ *  @file file
+ *  @brief Short description
+ *  @details Long description
+ */
 
 #ifndef SCREEN_PASSWORD_H
 #define SCREEN_PASSWORD_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
+    void Screen_Password(uint8_t screen_id);
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-void Screen_Password(uint8_t screen_id);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
-/**********************
- *    ERROR ASSERT
- **********************/
- 
- 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

@@ -92,7 +92,6 @@ lv_obj_t *_xaBackArrowCont;
 
 lv_task_t *_xarefresherTask;
 
-
 bool startTimeLabelAdgFlg = false;
 bool rollerMovCkFlag = false;
 char *Seq_Name = "Sequence";
@@ -162,7 +161,7 @@ void xsPresetScreenAdvance(void)
 {
     vControllerInitializeSampleArray();
     Seq_Number = "1";
-    SeqCounter=0;
+    SeqCounter = 0;
     // Craete a Screen container
     sprintf(_xaDaterollerbuf, "%s", _xaDaterollerNull);
     sprintf(_xaHourrollerbuf, "%s", _xaHourrollerNull);
@@ -174,7 +173,8 @@ void xsPresetScreenAdvance(void)
 
     scr_preset = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_preset);
-    if(crnt_screen != NULL){
+    if (crnt_screen != NULL)
+    {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
@@ -278,7 +278,7 @@ void xsPresetScreenAdvance(void)
     // Create Label for Sequences "Number"
     _xaSeq_Num_Adv = lv_label_create(_xaParaHeadingCont_Adv, NULL);
     lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 32, 0);
-    
+
     lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
 
     static lv_style_t _xaParameterHeadingStyle_Adv;
@@ -388,7 +388,7 @@ void xsPresetScreenAdvance(void)
     lv_roller_set_visible_row_count(_xaHourroller, 3);
     lv_roller_set_selected(_xaHourroller, navier_time.tm_hour + 1, LV_ANIM_OFF);
     lv_obj_align(_xaHourroller, _xaDateroller, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-    
+
     // lv_obj_set_size(_xaHourroller, 20, 60);
     lv_obj_set_click(_xaHourroller, false);
     lv_obj_set_style_local_bg_color(_xaHourroller, LV_ROLLER_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
@@ -830,7 +830,7 @@ void xsPresetScreenAdvance(void)
     static lv_style_t _xaValidBtnStyle;
     lv_style_init(&_xaValidBtnStyle);
     lv_style_set_radius(&_xaValidBtnStyle, LV_STATE_DEFAULT, 0);
-    lv_style_set_bg_color(&_xaValidBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); //#359Fe2
+    lv_style_set_bg_color(&_xaValidBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); // #359Fe2
     lv_style_set_bg_color(&_xaValidBtnStyle, LV_STATE_DEFAULT | LV_STATE_PRESSED | LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_style_set_border_width(&_xaValidBtnStyle, LV_STATE_DEFAULT, 0);
     lv_style_set_border_opa(&_xaValidBtnStyle, LV_STATE_DEFAULT, LV_OPA_MIN);
@@ -989,7 +989,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
 
             startHr = atoi(_xaHourrollerbuf);
             startMin = atoi(_xaMinutrollerbuf);
-            if(startMin == navier_time.tm_min)
+            if (startMin == navier_time.tm_min)
                 startMin += 1;
             durHr = atoi(_xsDurHourrollerbuf);
             durMin = atoi(_xsDurMinutrollerbuf);
@@ -1007,7 +1007,6 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             defaultParaSelected = false;
             defaultParametrs();
             vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
-
         }
 
         //===========
@@ -1018,25 +1017,24 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
 
 void defaultParametrs(void)
 {
-	lv_roller_get_selected_str(_xaHourroller, _xaHourrollerbuf, sizeof(_xaHourrollerbuf));
-	startHr = atoi(_xaHourrollerbuf);
-    
-	lv_roller_get_selected_str(_xaMinutroller, _xaMinutrollerbuf, sizeof(_xaMinutrollerbuf));
-	startMin = atoi(_xaMinutrollerbuf);
+    lv_roller_get_selected_str(_xaHourroller, _xaHourrollerbuf, sizeof(_xaHourrollerbuf));
+    startHr = atoi(_xaHourrollerbuf);
 
-	lv_roller_get_selected_str(_xaDateroller, _xaDaterollerbuf, sizeof(_xaDaterollerbuf));
+    lv_roller_get_selected_str(_xaMinutroller, _xaMinutrollerbuf, sizeof(_xaMinutrollerbuf));
+    startMin = atoi(_xaMinutrollerbuf);
 
-	lv_roller_get_selected_str(_xsSProller, _xsSProllerbuf, sizeof(_xsSProllerbuf));
-	lv_roller_get_selected_str(_xsDurHourroller, _xsDurHourrollerbuf, sizeof(_xsDurHourrollerbuf));
+    lv_roller_get_selected_str(_xaDateroller, _xaDaterollerbuf, sizeof(_xaDaterollerbuf));
+
+    lv_roller_get_selected_str(_xsSProller, _xsSProllerbuf, sizeof(_xsSProllerbuf));
+    lv_roller_get_selected_str(_xsDurHourroller, _xsDurHourrollerbuf, sizeof(_xsDurHourrollerbuf));
     lv_roller_get_selected_str(_xsDurMinutroller, _xsDurMinutrollerbuf, sizeof(_xsDurMinutrollerbuf));
-	
-	durHr = atoi(_xsDurHourrollerbuf);
+
+    durHr = atoi(_xsDurHourrollerbuf);
     durMin = atoi(_xsDurMinutrollerbuf);
 
     SetPoint_Value = atof(_xsSProllerbuf);
 
-	totalSecond = atoi(_xsDurHourrollerbuf) * 60 * 60 + atoi(_xsDurMinutrollerbuf) * 60;
-
+    totalSecond = atoi(_xsDurHourrollerbuf) * 60 * 60 + atoi(_xsDurMinutrollerbuf) * 60;
 
     getSeqStopDT(durHr, durMin, startHr, startMin);
     getStopDate(durHr, stopHr);
@@ -1044,9 +1042,9 @@ void defaultParametrs(void)
 
 /**
  * @brief event handler for the + icon in the screen. this should save the current sample and save into the memory
- * 
- * @param obj 
- * @param event 
+ *
+ * @param obj
+ * @param event
  */
 static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
 {
@@ -1059,7 +1057,7 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         ESP_LOGD(TAG, "_NextSeq_event_handler call = %d", SeqCounter);
         lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
         lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
-    
+
         switch (SeqCounter)
         {
         case 1:
@@ -1218,7 +1216,8 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xaDateroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaDaterollerbuf, sizeof(_xaDaterollerbuf));
         // printf("Selected month: %s\n", _xaDaterollerbuf);
@@ -1227,17 +1226,18 @@ static void _xaDateroller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xaHourroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaHourrollerbuf, sizeof(_xaHourrollerbuf));
         startHr = atoi(_xaHourrollerbuf);
     }
 }
 
-
 static void _xaMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xaMinutrollerbuf, sizeof(_xaMinutrollerbuf));
         sprintf(_xaHourMinrollerbuf, "%s:%s:%s", _xaHourrollerbuf, _xaMinutrollerbuf, _xaSecondrollerbuf);
@@ -1247,7 +1247,8 @@ static void _xaMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xsSProller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsSProllerbuf, sizeof(_xsSProllerbuf));
     }
@@ -1255,7 +1256,8 @@ static void _xsSProller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xsDurHourroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsDurHourrollerbuf, sizeof(_xsDurHourrollerbuf));
         durHr = atoi(_xsDurHourrollerbuf);
@@ -1264,7 +1266,8 @@ static void _xsDurHourroller_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void _xsDurMinutroller_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    if (event == LV_EVENT_VALUE_CHANGED){
+    if (event == LV_EVENT_VALUE_CHANGED)
+    {
         rollerMovCkFlag = true;
         lv_roller_get_selected_str(obj, _xsDurMinutrollerbuf, sizeof(_xsDurMinutrollerbuf));
         durMin = atoi(_xsDurMinutrollerbuf);

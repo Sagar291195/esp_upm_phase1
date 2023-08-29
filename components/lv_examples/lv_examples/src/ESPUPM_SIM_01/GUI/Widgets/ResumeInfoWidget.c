@@ -500,10 +500,10 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		char cStrtDate[40];
 		/**
 		 * @brief Getting the date and time of the current sequence from sample management api and time management api
-		 * 
+		 *
 		 */
-		uGetStartSequenceDateAndTime(uGetCurrentRunningSequenceNumber(), cStrtDate, sizeof(cStrtDate),cStrtTime, sizeof(cStrtTime));
-		lv_label_set_text_fmt(pxExt->pxPercentValue, "\nStarts at\n   %s  \n\t\t\t%s\n", cStrtTime, cStrtDate);					// startTime
+		uGetStartSequenceDateAndTime(uGetCurrentRunningSequenceNumber(), cStrtDate, sizeof(cStrtDate), cStrtTime, sizeof(cStrtTime));
+		lv_label_set_text_fmt(pxExt->pxPercentValue, "\nStarts at\n   %s  \n\t\t\t%s\n", cStrtTime, cStrtDate);			// startTime
 		lv_obj_set_style_local_text_font(pxPercentLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20); // LV_FONT_MONTSERRAT_24
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");

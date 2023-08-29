@@ -11,8 +11,8 @@
  *
  * MIT Licensed as described in the file LICENSE
  */
-//#include <esp_err.h>
-//#include <esp_idf_lib_helpers.h>
+// #include <esp_err.h>
+// #include <esp_idf_lib_helpers.h>
 #include "ds3231.h"
 
 #define I2C_FREQ_HZ 100000
@@ -59,11 +59,10 @@ enum
     DS3231_REPLACE
 };
 
-static int days_in_month[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+static int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 extern int day, month, year;
 
 extern unsigned short day_counter;
-
 
 static uint8_t bcd2dec(uint8_t val)
 {
@@ -109,7 +108,7 @@ esp_err_t ds3231_set_time(i2c_dev_t *dev, struct tm *time)
     data[3] = dec2bcd(time->tm_wday + 1);
     data[4] = dec2bcd(time->tm_mday);
     data[5] = dec2bcd(time->tm_mon + 1);
-    data[6] = dec2bcd(time->tm_year - 100);        // 100!
+    data[6] = dec2bcd(time->tm_year - 100); // 100!
 
     I2C_DEV_TAKE_MUTEX(dev);
     I2C_DEV_CHECK(dev, i2c_dev_write_reg(dev, DS3231_ADDR_TIME, data, 7));
@@ -377,12 +376,10 @@ esp_err_t ds3231_get_time(i2c_dev_t *dev, struct tm *time)
     CHECK_ARG(dev && time);
 
     uint8_t data[7];
-
     /* read time */
     I2C_DEV_TAKE_MUTEX(dev);
     I2C_DEV_CHECK(dev, i2c_dev_read_reg(dev, DS3231_ADDR_TIME, data, 7));
     I2C_DEV_GIVE_MUTEX(dev);
-
     /* convert to unix time structure */
     time->tm_sec = bcd2dec(data[0]);
     time->tm_min = bcd2dec(data[1]);
@@ -405,47 +402,54 @@ esp_err_t ds3231_get_time(i2c_dev_t *dev, struct tm *time)
     }
 
     // apply a time zone (if you are not using localtime on the rtc or you want to check/apply DST)
-    //applyTZ(time);
+    // applyTZ(time);
 
     return ESP_OK;
 }
 
 //----------------------------------------------------------------------------------------------------
 
-
-
-int is_leap(int y) 
+int is_leap(int y)
 {
     return ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0);
 }
 
 void next_day()
 {
-    day += 1; day_counter++;
-    if (day > days_in_month[month]) {
+    day += 1;
+    day_counter++;
+    if (day > days_in_month[month])
+    {
         day = 1;
         month += 1;
-        if (month > 12) {
+        if (month > 12)
+        {
             month = 1;
             year += 1;
-            if (is_leap(year)) {
+            if (is_leap(year))
+            {
                 days_in_month[2] = 29;
-            } else {
+            }
+            else
+            {
                 days_in_month[2] = 28;
             }
         }
     }
 }
 
-void  set_date(int d, int m, int y) 
+void set_date(int d, int m, int y)
 {
     m < 1 ? m = 1 : 0;
     m > 12 ? m = 12 : 0;
     d < 1 ? d = 1 : 0;
     d > days_in_month[m] ? d = days_in_month[m] : 0;
-    if (is_leap(y)){
+    if (is_leap(y))
+    {
         days_in_month[2] = 29;
-    } else {
+    }
+    else
+    {
         days_in_month[2] = 28;
     }
     day = d;
@@ -458,12 +462,11 @@ void  set_date(int d, int m, int y)
 void skip_days(int x)
 {
     int i;
-    for (i=0;i<x;i++) next_day();
+    for (i = 0; i < x; i++)
+        next_day();
 }
 
 void print_date()
 {
-    printf ("day: %d month: %d year: %d\n", day, month, year);
+    printf("day: %d month: %d year: %d\n", day, month, year);
 }
-
-

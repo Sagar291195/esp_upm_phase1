@@ -28,7 +28,7 @@
 
 #include "middlewareTest.h"
 #include "stdio.h"
-//#include "C:/esp/esp-idf/components/nvs_flash/include/nvs.h"
+// #include "C:/esp/esp-idf/components/nvs_flash/include/nvs.h"
 
 float KpVal;
 float KiVal;
@@ -275,7 +275,6 @@ float read_TotalLiter(char TLiterKey[5])
   nvs_close(wtlhandle);
   return TLiters.t_Liters;
 }
-
 
 void seqRead(char SeqKey[5])
 {
@@ -607,8 +606,6 @@ int iReadNVSIntNum(char UniqueKey[20])
   return nGenericNumInt.iGenericNum;
 }
 
-
-
 void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
 {
 
@@ -653,7 +650,7 @@ void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters)
   if (err != ESP_OK)
   {
     ESP_LOGE(TAG, "Error (%s) opening NVS handle!\n", esp_err_to_name(err));
-   
+
     return;
   }
 
@@ -665,7 +662,7 @@ void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters)
   if (err != ESP_OK)
   {
     ESP_LOGE(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
-     /**
+    /**
      * @brief setting the default value of pid parameters, if storage is not set yet
      *
      */

@@ -21,7 +21,7 @@
 
 /************************************defines******************************************************/
 
-#define TAG                 "controller"
+#define TAG "controller"
 
 extern SemaphoreHandle_t xGuiSemaphore1;
 
@@ -151,7 +151,6 @@ void vUpdateWorkInProgressScreen()
         xSemaphoreGive(xGuiSemaphore1);
     }
 }
-
 
 void vShowJobFinishedScreen()
 {

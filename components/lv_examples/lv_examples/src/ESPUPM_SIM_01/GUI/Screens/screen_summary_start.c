@@ -149,7 +149,8 @@ void xssSummaryStartScreen(void)
 {
     scrSummaryStart = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryStart);
-    if(crnt_screen != NULL){
+    if (crnt_screen != NULL)
+    {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
@@ -367,7 +368,7 @@ void xssSummaryStartScreen(void)
 
     // Create Flow Set Point Value Label
     __xssFlowStPValueLbl_ss = lv_label_create(_xssFlowStPBaseCont_ss, NULL);                           //_xssSummayCont_ss
-    lv_obj_align(__xssFlowStPValueLbl_ss, _xssFlowStPBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0); //#define _xmargin -60
+    lv_obj_align(__xssFlowStPValueLbl_ss, _xssFlowStPBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0); // #define _xmargin -60
     // lv_label_set_text(__xssFlowStPValueLbl_ss, _pSetPointValue_);
     lv_label_set_text_fmt(__xssFlowStPValueLbl_ss, "%0.f L/Min", seq[0].fFlowSetPoint);
     lv_obj_add_style(__xssFlowStPValueLbl_ss, LV_LABEL_PART_MAIN, &xssWhiteVarValueStyle_ss);
@@ -486,7 +487,7 @@ void xssSummaryStartScreen(void)
     lv_style_init(&_xssValidJobBtnStyle_ss);
     lv_style_set_radius(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT, 0);
     // lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEb, 0x3B, 0x5A));
-    lv_style_set_bg_color(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#359Fe2
+    lv_style_set_bg_color(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2
     lv_style_set_bg_color(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT | LV_STATE_PRESSED | LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_style_set_border_width(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT, 0);
     lv_style_set_border_opa(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT, LV_OPA_MIN);

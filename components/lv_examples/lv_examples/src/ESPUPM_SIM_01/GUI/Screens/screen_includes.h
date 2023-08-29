@@ -5,20 +5,20 @@
  *
  */
 
-//SCREEN_INCLUDES_H
-//SCREEN_INCLUDES_H
-
+// SCREEN_INCLUDES_H
+// SCREEN_INCLUDES_H
 
 #ifndef SCREEN_INCLUDES_H
 #define SCREEN_INCLUDES_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      INCLUDES
+     *********************/
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -27,7 +27,6 @@ extern "C" {
 #include <time.h>
 
 #include "../../../../../../lvgl/lvgl.h"
-
 
 #include "screen_main.h"
 #include "screen_common.h"
@@ -58,7 +57,6 @@ extern "C" {
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-
 #include "esp_upm_sensors.h"
 #include "middleware.h"
 
@@ -67,54 +65,53 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-#define NUM_OF_FLOW_CALIBRATION_POINT   3
-/**********************
- *      TYPEDEFS
- **********************/
-enum{
-    SCR_PASSWORD,
-    SCR_DASHBOARD,
-    SCR_METROLOGY_PASSWORD,
-    SCR_CHANGE_PASSWORD,
-    SCR_METROLOGY_MENU,
-    SCR_EXTERNAL_TEMPERATURE_SETTINGS,
-    SCR_EXTERNAL_TEMPERATURE_ADJUST,
-    SCR_EXTERNAL_PRESSURE_SETTINGS,
-    SCR_EXTERNAL_PRESSURE_ADJUST,
-    SCR_EXTERNAL_HUMIDITY_SETTINGS,
-    SCR_EXTERNAL_HUMIDITY_ADJUST,
-    SCR_INTERNAL_TEMPERATURE_SETTINGS,
-    SCR_INTERNAL_TEMPERATURE_ADJUST,
-    SCR_INTERNAL_PRESSURE_SETTINGS,
-    SCR_INTERNAL_PRESSURE_ADJUST,
-    SCR_INTERNAL_HUMIDITY_SETTINGS,
-    SCR_INTERNAL_HUMIDITY_ADJUST,
-    SCR_FLOW_SETTINGS,
-    SCR_FLOW_ADJUST,
-    SCR_FLOW_CALIBRATION,
-    SCR_FLOW_PARAMETER,
-    SCR_ARCHIEVE,
-    SCR_INFO,
-    SCR_PARAMETER,
-    SCR_PIDTUNE,
-    SCR_PRESET,
-    SCR_SERVICE,
-    SCR_SUMMARY_START,
-    SCR_SUMMARY_END,
-    SCR_SUMMARY_SAMPLE,
-}metrology_screen_t;
+#define NUM_OF_FLOW_CALIBRATION_POINT 3
+    /**********************
+     *      TYPEDEFS
+     **********************/
+    enum
+    {
+        SCR_PASSWORD,
+        SCR_DASHBOARD,
+        SCR_METROLOGY_PASSWORD,
+        SCR_CHANGE_PASSWORD,
+        SCR_METROLOGY_MENU,
+        SCR_EXTERNAL_TEMPERATURE_SETTINGS,
+        SCR_EXTERNAL_TEMPERATURE_ADJUST,
+        SCR_EXTERNAL_PRESSURE_SETTINGS,
+        SCR_EXTERNAL_PRESSURE_ADJUST,
+        SCR_EXTERNAL_HUMIDITY_SETTINGS,
+        SCR_EXTERNAL_HUMIDITY_ADJUST,
+        SCR_INTERNAL_TEMPERATURE_SETTINGS,
+        SCR_INTERNAL_TEMPERATURE_ADJUST,
+        SCR_INTERNAL_PRESSURE_SETTINGS,
+        SCR_INTERNAL_PRESSURE_ADJUST,
+        SCR_INTERNAL_HUMIDITY_SETTINGS,
+        SCR_INTERNAL_HUMIDITY_ADJUST,
+        SCR_FLOW_SETTINGS,
+        SCR_FLOW_ADJUST,
+        SCR_FLOW_CALIBRATION,
+        SCR_FLOW_PARAMETER,
+        SCR_ARCHIEVE,
+        SCR_INFO,
+        SCR_PARAMETER,
+        SCR_PIDTUNE,
+        SCR_PRESET,
+        SCR_SERVICE,
+        SCR_SUMMARY_START,
+        SCR_SUMMARY_END,
+        SCR_SUMMARY_SAMPLE,
+    } metrology_screen_t;
 
+    extern uint8_t screenid;
+    extern int global_CurveDegree;
+    /**********************
+     * GLOBAL PROTOTYPES
+     **********************/
 
-extern uint8_t screenid ;
-extern int global_CurveDegree;
-/**********************
- * GLOBAL PROTOTYPES
- **********************/
-
-
-/**********************
- *      MACROS
- **********************/
+    /**********************
+     *      MACROS
+     **********************/
 
 #ifdef __cplusplus
 } /* extern "C" */

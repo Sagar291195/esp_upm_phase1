@@ -22,10 +22,10 @@
 #include <math.h>
 /************************************************defines**********************************************/
 
-#define TAG "sampleManagement"
-#define NVS_STORGE_NAME "storage"
-#define SAMPLE_STORAGE_KEY "smplStrg"
-#define SEQUENCE_STORAGE_KEY "seqStrg"
+#define TAG                     "sampleManagement"
+#define NVS_STORGE_NAME         "storage"
+#define SAMPLE_STORAGE_KEY      "smplStrg"
+#define SEQUENCE_STORAGE_KEY    "seqStrg"
 #define END_SUMMARY_STORAGE_KEY "endStrg"
 
 /*used in the case for the deep sleep configuration  */
@@ -45,14 +45,10 @@ static xSampleSummary_t xEndSummary;
 bool bSampleForcedStop = false;
 
 /***********************************************function prototypes***************************************/
- 
-/**
- * @brief initialize the end summary variable to zero
- */
+
+/*  initialize the end summary variable to zero */
 void vInitializeEndSummaryVariableToZero();
-/**
- * @brief save the volume counters, hours counters and other values to the end summary variable.
- */
+/*  save the volume counters, hours counters and other values to the end summary variable. */
 void vSaveInitialCountersValuesEndSummary();
 void vSetCounterValuesEndSummaryDetails();
 
@@ -147,9 +143,7 @@ void vSetCurrentSequenceNumberToNvsFlash()
             ESP_LOGE(TAG, "Error (%s) setting NVS value", esp_err_to_name(err));
         }
         else
-
         {
-
             err = nvs_commit(nvsHandle);
             if (err != ESP_OK)
             {
@@ -197,7 +191,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
     vInitializeEndSummaryVariableToZero();
     /*  Getting the values from the nvs flash */
     vGetEndSummaryFromNvsFlash();
-    
+
     /* if the system restarted or wake up from sleep then the system will start from the currenct sequence
      * to be run. To do this first cheeck if the any sequence is pending to be run. */
     if (uCurrentRunningSequenceNumber != 0)
@@ -206,8 +200,8 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
         xTaskNotifyGive(xHandleSampleManagementService);
     }
     while (1)
-    { 
-       /* waitingg for the signal to start the sequences */
+    {
+        /* waitingg for the signal to start the sequences */
         ESP_LOGD(TAG, "Waiting for the new sequnce to run");
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         ESP_LOGI(TAG, "Starting the sequence");
@@ -219,7 +213,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
             ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
-            /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from 
+            /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from
              * the front end. this need to be changed in the phase 2 */
             if ((uCurrentRunningSequenceNumber != 0) && (uCurrentRunningSequenceNumber != 1))
             {
@@ -268,7 +262,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 {
                     vShowJobFinishedScreen();
                 }
-                /* if the sequence is the last sequence in the array, then the sample is over, not set 
+                /* if the sequence is the last sequence in the array, then the sample is over, not set
                  * the sequence to run to 0. indicating that no sequnce is in progress */
                 ESP_LOGD(TAG, "Setting the sequence number to 0");
                 vSetCurrentRunningSequenceNumber(0);
@@ -280,10 +274,9 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             else
             {
                 ESP_LOGD(TAG, "Icrementing the sequence number");
-                /* if the sequence is not the last sequence in the array, then  increment the sequence 
+                /* if the sequence is not the last sequence in the array, then  increment the sequence
                  * number and set it to nvs flash */
                 uCurrentRunningSequenceNumber++;
-
                 vSetCurrentSequenceNumberToNvsFlash();
             }
             ESP_LOGI(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber - 1);
@@ -468,7 +461,7 @@ void vNotifySampleMangementToProceed()
 void vStopCurrentSample()
 {
     /* setting the force stop sample flag to true */
-    bSampleForcedStop = true; //TODO: check
+    bSampleForcedStop = true; // TODO: check
 
     /* if sequce is running stopping it */
     if (bIsSequenceRunning())
@@ -482,15 +475,12 @@ void vStopCurrentSample()
         /* setting the current sample number to invalidate or zero */
         vSetCurrentRunningSequenceNumber(0);
         vSetCurrentSequenceNumberToNvsFlash(); // settin to the nvs flash
-
         /* deleting the sample management service task */
         if (xHandleSampleManagementService != NULL)
         {
-
             vTaskDelete(xHandleSampleManagementService);
             xHandleSampleManagementService = NULL;
         }
-
 
         /* restarting the sample management service once again */
         vStartSampleManagementService();
@@ -512,13 +502,13 @@ void vStopCurrentSample()
  */
 void vSetCounterValuesEndSummaryDetails()
 {
-    ESP_LOGD(TAG,"Setting the end summary details");
+    ESP_LOGD(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
     vGetCurrentDateAndTime(&timeinfo);
     char cStopDate[40];
 
-    timeinfo.tm_year = timeinfo.tm_year +1900;
-    timeinfo.tm_mon = timeinfo.tm_mon +1;
+    timeinfo.tm_year = timeinfo.tm_year + 1900;
+    timeinfo.tm_mon = timeinfo.tm_mon + 1;
     sprintf(cStopDate, "%d/%d/%d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
 
     /* copy end date */

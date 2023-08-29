@@ -5,11 +5,10 @@
  */
 
 /**
-*  @file 
-*  @brief 
-*  @details 
-*/
-
+ *  @file
+ *  @brief
+ *  @details
+ */
 
 /*********************
  *      INCLUDES
@@ -53,7 +52,7 @@ extern void readTotalLiters(void)
 {
     totalliterPtr = &total_liters1;
     TotalliterInt = (int)total_liters1;
-    TotalLiterFloat = (total_liters1 - (float)TotalliterInt)*100;
+    TotalLiterFloat = (total_liters1 - (float)TotalliterInt) * 100;
 }
 
 void Init_Buzzer(void)
@@ -61,11 +60,8 @@ void Init_Buzzer(void)
     gpio_pad_select_gpio(BUZZER);
     gpio_set_direction(BUZZER, GPIO_MODE_OUTPUT);
     gpio_set_level(BUZZER, 0);
-
     buzzer_init();
-    
 }
-
 
 void buzzer_init()
 {
@@ -87,17 +83,14 @@ void buzzer_init()
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
 }
 
-
-
 int date_difference(int day1, int mon1, int year1, int day2, int mon2, int year2)
 {
     // int day1, mon1, year1,
     //     day2, mon2, year2;
 
     int day_diff, mon_diff, year_diff;
-
     // int lpy =0;
-    // int mnt =0;         
+    // int mnt =0;
 
     // printf("Enter start date (MM/DD/YYYY): ");
     // scanf("%d/%d/%d", &mon1, &day1, &year1);
@@ -105,24 +98,24 @@ int date_difference(int day1, int mon1, int year1, int day2, int mon2, int year2
     // printf("Enter end date (MM/DD/YYYY): ");
     // scanf("%d/%d/%d", &mon2, &day2, &year2);
 
-    if(!valid_date(day1, mon1, year1))
+    if (!valid_date(day1, mon1, year1))
     {
-        printf("First date is invalid.\n");        
+        printf("First date is invalid.\n");
     }
 
-    if(!valid_date(day2, mon2, year2))
+    if (!valid_date(day2, mon2, year2))
     {
         printf("Second date is invalid.\n");
         exit(0);
-    }       
+    }
 
-    if(day2 < day1)
-    {      
+    if (day2 < day1)
+    {
         // borrow days from february
         if (mon2 == 3)
         {
             //  check whether year is a leap year
-            if ((year2 % 4 == 0 && year2 % 100 != 0) || (year2 % 400 == 0)) 
+            if ((year2 % 4 == 0 && year2 % 100 != 0) || (year2 % 400 == 0))
             {
                 day2 += 29;
                 // lpy = 1;
@@ -132,19 +125,19 @@ int date_difference(int day1, int mon1, int year1, int day2, int mon2, int year2
             {
                 day2 += 28;
                 // lpy = 2;
-            }                        
+            }
         }
 
         // borrow days from April or June or September or November
-        else if (mon2 == 5 || mon2 == 7 || mon2 == 10 || mon2 == 12) 
+        else if (mon2 == 5 || mon2 == 7 || mon2 == 10 || mon2 == 12)
         {
-           day2 += 30; 
+            day2 += 30;
         }
 
         // borrow days from Jan or Mar or May or July or Aug or Oct or Dec
         else
         {
-           day2 += 31;
+            day2 += 31;
         }
 
         mon2 = mon2 - 1;
@@ -154,54 +147,49 @@ int date_difference(int day1, int mon1, int year1, int day2, int mon2, int year2
     {
         mon2 += 12;
         year2 -= 1;
-    }       
-
+    }
     day_diff = day2 - day1;
     mon_diff = mon2 - mon1;
     year_diff = year2 - year1;
-
     printf("Difference: %d years %02d months and %02d days. \n", year_diff, mon_diff, day_diff);
-
-    int daysfromnow = year_diff*360 + mon_diff * 30 + day_diff;
-
+    int daysfromnow = year_diff * 360 + mon_diff * 30 + day_diff;
     printf("days from now = %d \n", daysfromnow);
-
     return daysfromnow; // return 0 to operating system
 }
 
 // function to check whether a date is valid or not
 
-int valid_date(int day, int mon, int year)    
+int valid_date(int day, int mon, int year)
 {
     int is_valid = 1, is_leap = 0;
 
-    if (year >= 1800 && year <= 9999) 
+    if (year >= 1800 && year <= 9999)
     {
 
         //  check whether year is a leap year
-        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) 
+        if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
         {
             is_leap = 1;
         }
 
         // check whether mon is between 1 and 12
-        if(mon >= 1 && mon <= 12)
+        if (mon >= 1 && mon <= 12)
         {
             // check for days in feb
             if (mon == 2)
             {
-                if (is_leap && day == 29) 
+                if (is_leap && day == 29)
                 {
                     is_valid = 1;
                 }
-                else if(day > 28) 
+                else if (day > 28)
                 {
                     is_valid = 0;
                 }
             }
 
             // check for days in April, June, September and November
-            else if (mon == 4 || mon == 6 || mon == 9 || mon == 11) 
+            else if (mon == 4 || mon == 6 || mon == 9 || mon == 11)
             {
                 if (day > 30)
                 {
@@ -209,19 +197,18 @@ int valid_date(int day, int mon, int year)
                 }
             }
 
-            // check for days in rest of the months 
+            // check for days in rest of the months
             // i.e Jan, Mar, May, July, Aug, Oct, Dec
-            else if(day > 31)
-            {            
+            else if (day > 31)
+            {
                 is_valid = 0;
-            }        
+            }
         }
 
         else
         {
             is_valid = 0;
         }
-
     }
     else
     {
@@ -229,9 +216,7 @@ int valid_date(int day, int mon, int year)
     }
 
     return is_valid;
-
 }
-
 
 int time_difference(int strtHr, int strtMin, int strtSec, int stpHr, int stpMin, int stpSec)
 {
@@ -250,17 +235,17 @@ int time_difference(int strtHr, int strtMin, int strtSec, int stpHr, int stpMin,
     // printf("Enter hours, minutes and seconds of stop time: ");
     // scanf("%d%d%d", &stop.hours,&stop.minutes, &stop.seconds);
 
-    stop.hours   = stpHr;
+    stop.hours = stpHr;
     stop.minutes = stpMin;
     stop.seconds = stpSec;
 
-    if(start.seconds > stop.seconds)
+    if (start.seconds > stop.seconds)
     {
         stop.seconds += 60;
         --stop.minutes;
     }
 
-    if(start.minutes > stop.minutes)
+    if (start.minutes > stop.minutes)
     {
         stop.minutes += 60;
         --stop.hours;
@@ -268,7 +253,7 @@ int time_difference(int strtHr, int strtMin, int strtSec, int stpHr, int stpMin,
 
     diff.seconds = stop.seconds - start.seconds;
     diff.minutes = stop.minutes - start.minutes;
-    diff.hours   = stop.hours   - start.hours;
+    diff.hours = stop.hours - start.hours;
 
     printf("Difference = %d : %d : %d \n", diff.hours, diff.minutes, diff.seconds);
 
@@ -277,28 +262,22 @@ int time_difference(int strtHr, int strtMin, int strtSec, int stpHr, int stpMin,
     return secVal;
 }
 
-int getWaitSecond(int sday1, int smon1, int syear1, int sday2, int smon2, int syear2, int sstrtHr, int sstrtMin, int sstrtSec, int sstpHr, int sstpMin, int sstpSec){
-
-    int waitdays1 = date_difference(sday1, smon1, syear1, sday2,  smon2,  syear2);
+int getWaitSecond(int sday1, int smon1, int syear1, int sday2, int smon2, int syear2, int sstrtHr, int sstrtMin, int sstrtSec, int sstpHr, int sstpMin, int sstpSec)
+{
+    int waitdays1 = date_difference(sday1, smon1, syear1, sday2, smon2, syear2);
     int waitSec1 = time_difference(sstrtHr, sstrtMin, sstrtSec, sstpHr, sstpMin, sstpSec);
-
     int totalWaitSec = waitdays1 * 86400 + waitSec1;
-
     printf("Total Wait Sec = %d \n", totalWaitSec);
-
     return 0;
 }
 
-
 int RemoveSlashes(char inputStr[100]) // Remove "/" from date & time buffer
 {
-  
     int i;
     int j = 0;
 
     for (i = 0; inputStr[i]; i++)
     {
-        //5
         if (inputStr[i] >= '0' && inputStr[i] <= '9')
         {
             inputStr[j] = inputStr[i];

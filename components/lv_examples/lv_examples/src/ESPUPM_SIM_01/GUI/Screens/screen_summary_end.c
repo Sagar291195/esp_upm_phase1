@@ -173,11 +173,12 @@ void xseSummaryEndScreen(void)
 
     scrSummaryEnd = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEnd);
-    if(crnt_screen != NULL){
+    if (crnt_screen != NULL)
+    {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
-    
+
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
     // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_se, 320, 480);
@@ -425,7 +426,7 @@ void xseSummaryEndScreen(void)
 
     // Put Var Text label here
     __xseVarFLPTxtLbl_se = lv_label_create(_xseContFSP_se, NULL);
-    lv_obj_align(__xseVarFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0); //# define x_align  -70
+    lv_obj_align(__xseVarFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0); // # define x_align  -70
     char _xFLP_se[30];
     sprintf(_xFLP_se, "%.1f L/min", xSampleSummary.fFlowSetPoint);
     lv_label_set_text(__xseVarFLPTxtLbl_se, _xFLP_se); // setting the flow point value
@@ -811,8 +812,8 @@ void xseSummaryEndScreen(void)
     lv_obj_set_size(_xseBTNUSB_se, 120, 55);
     // lv_obj_set_event_cb(_xseBTNUSB_se, BTN_event_handler);
     lv_obj_set_style_local_radius(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
-    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#Eb3B5A
-    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); //#Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // #Eb3B5A
     // lv_style_set_bg_color(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT | LV_STATE_PRESSED | LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_border_width(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
@@ -831,7 +832,7 @@ void xseSummaryEndScreen(void)
     // lv_obj_set_event_cb(_xseBTNUSB_se, BTN_event_handler);
     lv_obj_set_event_cb(_xseBTNValid_se, Valid_BTN_event_handler);
     lv_obj_set_style_local_radius(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
-    lv_obj_set_style_local_bg_color(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); //#Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); // #Eb3B5A
     lv_obj_set_style_local_border_width(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
 
@@ -1112,10 +1113,10 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         // printf("%d\n", (int)lv_obj_get_user_data(obj));
         /* if sample exits in the database then show */
         if (vGetSequenceSummaryFromDataBase(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary))
-        { 
+        {
             lv_task_del(__xserefresherTask);
             // setting the smaple number and sequnce number before showing the sequnce data
-            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t) lv_obj_get_user_data(obj), &xSequnceSummary);
+            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary);
             sssSummarySampleScreen();
         }
         else
