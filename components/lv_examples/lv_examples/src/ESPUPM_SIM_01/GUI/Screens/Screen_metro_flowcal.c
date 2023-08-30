@@ -527,7 +527,7 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         current_sensor_reading = fGetSdp32DiffPressureAverageValue();
 
         coeffA = (previous_sensor_reading - current_sensor_reading) / (previous_reference_value - current_reference_value);
-        coeffB = current_reference_value - (flow_coeffA1 * current_sensor_reading);
+        coeffB = current_reference_value - (coeffA * current_sensor_reading);
 
         if (calibration_count == 0)
         {

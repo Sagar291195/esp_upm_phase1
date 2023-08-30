@@ -32,8 +32,13 @@
  */
 static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure)
 {
-    return 1.0 / (287.06 * (fTemperature + 273.15)) *
-           ((fPressure)-230.617 * fHumidity / 100.0 * exp((17.5043 * fTemperature) / (241.2 + fTemperature)));
+    float exponential =  exp((17.5043 * fTemperature) / (241.2 + fTemperature));
+
+    float density = (1.0 / (287.06 * (fTemperature + 273.15)) *
+           ((fPressure*100)- (230.617 * (fHumidity / 100.0) * exponential)));
+
+    ESP_LOGD(TAG, "Density : %f", density);       
+    return density;
 }
 
 /**
@@ -58,7 +63,9 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
      * Putting F=1 and den_char =1.2     
      * fResult = .118 * fDeltaPressure * 1.2/fDensity;
      * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
-    fResult = 0.759 * pow(fDeltaPressure, 0.5288) * (1.2 / fDensity);
+    
+    fResult = (0.759 * (pow(fDeltaPressure, 0.5288)) * (1.2 / fDensity));
+    ESP_LOGI(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
     return fResult;
 }
 
@@ -69,9 +76,9 @@ float fGetAirDesity_featureData()
 
     /* get the manufacture compensated external sensor data */
     vGetMaufCompensatedExternalSensorData(&xManuCompensatedExternalData);
-    /* for testing purpose we are calculating the density using the internal sensor data */
-    // return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
-    // printf("-----------------%0.2f,%0.2f,%0.2f-------------------------\n",fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
+    // ESP_LOGI(TAG, "Manu Compensated : %0.2f, %02.f, %.3f", xManuCompensatedExternalData.fTemperature,
+    //         xManuCompensatedExternalData.fPressure, xManuCompensatedExternalData.fHumidity);
+    
     result =  _fDensityCalculation(xManuCompensatedExternalData.fTemperature, xManuCompensatedExternalData.fHumidity, xManuCompensatedExternalData.fPressure);
     return result;
 

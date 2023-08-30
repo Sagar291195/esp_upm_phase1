@@ -64,11 +64,12 @@ lv_obj_t *_mtaCorrectionTxtLbl;
 lv_obj_t *_mtaCorrectionValueLbl;
 lv_obj_t *_mtaPercentTxtLbl;
 
+lv_task_t *calibration_screenupdate_task;
 /*Create a custom map for the keyboard*/
 
 static const char *mta_kb_map[] = {
     "1", "2", "3", LV_SYMBOL_BACKSPACE, "\n",
-    "4", "5", "6", ",", "\n",
+    "4", "5", "6", ".", "\n",
     "7", "8", "9", "0", "\n", ""
 
 };
@@ -116,6 +117,52 @@ static const lv_btnmatrix_ctrl_t mta_tgl_kb_ctrl[] = {
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+void sensor_value_update(lv_task_t *taskhandle)
+{
+    const char *tempbuffer;
+    float sensorvalue = 0;
+    float reference_value = 0;
+    float correction = 0.0;
+    external_sensor_data_t external_sensorvalue;
+    
+    
+    tempbuffer = lv_textarea_get_text(_mtaEnterRefValTA);
+    reference_value = atof(tempbuffer);
+    if (screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST)
+    {
+        vGetExternalSensorData(&external_sensorvalue); 
+        sensorvalue = external_sensorvalue.fTemperature;
+    }
+    else if (screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
+    {
+        sensorvalue = fGetBme280TemperatureAverages();
+    }
+    else if (screenid == SCR_EXTERNAL_PRESSURE_ADJUST)
+    {
+        vGetExternalSensorData(&external_sensorvalue);
+        sensorvalue = external_sensorvalue.fPressure;
+    }
+    else if (screenid == SCR_INTERNAL_PRESSURE_ADJUST)
+    {
+        sensorvalue = fGetBme280PressureAverages();
+    }
+    else if (screenid == SCR_EXTERNAL_HUMIDITY_ADJUST)
+    {
+        vGetExternalSensorData(&external_sensorvalue);
+        sensorvalue = external_sensorvalue.fHumidity;
+    }
+    else if (screenid == SCR_INTERNAL_HUMIDITY_ADJUST)
+    {
+        sensorvalue = fGetBme280HumidityAverages();
+    }
+    lv_label_set_text_fmt(_mtaFactoryValueLbl, "%0.2f", sensorvalue);
+    if(isnan(reference_value) == false){
+        correction = (((reference_value - sensorvalue) / reference_value) * 100);
+        lv_label_set_text_fmt(_mtaCorrectionValueLbl, "%0.2f", correction);
+    }
+    
+}
+
 void callMetroAdjust(void)
 {
     // Create Base container
@@ -262,12 +309,12 @@ void callMetroAdjust(void)
     // Create Label for "FACTORY VALUE:" Text
     _mtaFactoryValTxtLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaFactoryValTxtLbl, _mtaPointTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
-    lv_label_set_text(_mtaFactoryValTxtLbl, "FACTORY VALUE:");
+    lv_label_set_text(_mtaFactoryValTxtLbl, "SENSOR VALUE:");
 
     // Create Label for "FACTORY VALUE:" Value
     _mtaFactoryValueLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaFactoryValueLbl, _mtaPointValLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 5);
-    lv_label_set_text(_mtaFactoryValueLbl, "24,67");
+    lv_label_set_text(_mtaFactoryValueLbl, "0.0");
     lv_obj_set_style_local_text_color(_mtaFactoryValueLbl, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
     //============================================================================================================
@@ -341,7 +388,7 @@ void callMetroAdjust(void)
     // Create Label For "CORRECTION" Text
     _mtaCorrectionValueLbl = lv_label_create(mtaPatrentCont, NULL);
     lv_obj_align(_mtaCorrectionValueLbl, _mtaCorrectionTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 10, -5);
-    lv_label_set_text(_mtaCorrectionValueLbl, "__,__");
+    lv_label_set_text(_mtaCorrectionValueLbl, "____");
 
     static lv_style_t _mtaCorrValueLblStyle;
     lv_style_init(&_mtaCorrValueLblStyle);
@@ -376,6 +423,8 @@ void callMetroAdjust(void)
     lv_obj_set_style_local_text_color(_mtaKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_border_width(_mtaKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
 
+    calibration_screenupdate_task = lv_task_create(sensor_value_update, 100, LV_TASK_PRIO_LOW, NULL);
+
     crnt_screen = scrMetroTmpAdj; // scrMetroTmpAdj
 }
 
@@ -391,6 +440,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
 
     if (event == LV_EVENT_RELEASED)
     {
+        
         tempbuffer = lv_textarea_get_text(_mtaEnterRefValTA);
         referencevalue = atof(tempbuffer);
 
@@ -439,6 +489,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
             ESP_LOGI(TAG, "Internal Humidity calibration : %.02f", calibrationvalue);
             callMetroFlowSettingScreen();
         }
+        lv_task_del(calibration_screenupdate_task);
     }
 }
 
@@ -446,6 +497,7 @@ static void __mtaBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(calibration_screenupdate_task);
         CallMetroMenuScreen();
     }
 }
@@ -454,11 +506,9 @@ static void _mtaEnterRefValTA_event_cb(lv_obj_t *ta, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        /* Focus on the clicked text area */
         lv_textarea_set_text(_mtaEnterRefValTA, "");
         if (_mtaKeyBord != NULL)
         {
-
             lv_keyboard_set_textarea(_mtaKeyBord, ta);
         }
     }

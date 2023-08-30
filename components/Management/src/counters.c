@@ -117,7 +117,7 @@ void vGetTotalLitersFromNvs()
 
   // Read blob
   err = nvs_get_blob(my_handle, TOTAL_LITER_STORAGE_KEY, &totalLitersCounter, &required_size);
-
+  ESP_LOGI(TAG, "Total Liter : %0.2f", totalLitersCounter);
   // Close
   nvs_close(my_handle);
 }
@@ -183,7 +183,7 @@ void vGetTotalHoursFromNvs()
 
   // Read blob
   err = nvs_get_blob(my_handle, TOTAL_HOUR_STORAGE_KEY, &totalHoursCounter, &required_size);
-
+  ESP_LOGI(TAG, "Total Hour : %0.2f", totalHoursCounter);
   // Close
   nvs_close(my_handle);
 }
@@ -212,6 +212,7 @@ void vGetTheCounterValuesFromNvsFlash()
 {
   vGetTotalLitersFromNvs();
   vGetTotalHoursFromNvs();
+  
 }
 
 float fGetPercentageOfJobDone()
