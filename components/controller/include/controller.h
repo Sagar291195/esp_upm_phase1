@@ -103,12 +103,6 @@ void vShowJobFinishedScreen();
 
 
 /**
- * @brief All in one function to stop the current sequence. Call this function from gsm/wifi/mqtt/Gui etc
- * 
- */
-void vControllerSampleStop();
-
-/**
  * @brief shows the end summary screen
  * 
  */

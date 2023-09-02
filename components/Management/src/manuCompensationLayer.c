@@ -63,6 +63,9 @@ float fGetMassFlowManuCompensationLayer()
     {
         coeffA = getcalibrationvalue_flow_coeffA3();
         coeffB = getcalibrationvalue_flow_coeffB3();
+    }else{
+        coeffA = getcalibrationvalue_flow_coeffA3();
+        coeffB = getcalibrationvalue_flow_coeffB3();
     }
 
     

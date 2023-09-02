@@ -646,8 +646,6 @@ void start_timer_callback(void *args)
     // totalHourFloat = (totalhourVal - (float)totalHourInt)*100;
     if (PumpStopForcefully != true)
     {
-        // printf("Change InfoWidget \n");
-        lv_task_del(ResInfoPerChange_task);
         sprintf(stopDateEnd, "%s", guiDate);
         sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
         vUpdateInfoWidgetTask();

@@ -578,7 +578,7 @@ void motorPWMTask(void *pvParameters)
         /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
+            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
 
             flowRate = fGetVolumetricFlowUserCompensated(); /* calulating the current flow rate */
             if (isnan(flowRate))
@@ -589,7 +589,7 @@ void motorPWMTask(void *pvParameters)
             else
             {
                 fTempVariable = fGetTotalLiterCount(); /* compute the total volume flow in the system */
-                ESP_LOGV(TAG, "FLOW rate IS %0.2f", flowRate);
+                ESP_LOGD(TAG, "FLOW rate IS from upm %0.2f", flowRate);
                 fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000); /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
                 vSetTotalLiterCount(fTempVariable);                                           /* updating the total liters flow in the variable */
             }
@@ -601,15 +601,7 @@ void motorPWMTask(void *pvParameters)
     }
 }
 
-float getSdp32SensorAverageValue()
-{
-    float sum = 0.0;
-    for (uint8_t i = 0; i < NO_OF_SAMPLES_SDP32; i++)
-    {
-        sum += noOfSamplesSdp32[i];
-    }
-    return (sum / NO_OF_SAMPLES_SDP32);
-}
+
 /**********************
  *    ERROR ASSERT
  **********************/

@@ -34,11 +34,9 @@ extern "C"
      **********************/
     extern lv_obj_t *xStopButtonLabel;
     extern lv_obj_t *_xStopBtn;
-    extern lv_task_t *ResInfoPerChange_task;
     extern lv_obj_t *_xStopBtn;
 
     extern bool PumpStopForcefully;
-    extern int xBTN;
     /**********************
      *  GLOBAL PROTOTYPES
      **********************/
@@ -50,18 +48,9 @@ extern "C"
     void stopBTN(void);
 
     void _xTimeLabel_refr_func(lv_task_t *refresherTask); /*This function wil be called periodically to refresh the guiTime label*/
-    void vResInfoPerChangeTask(void);
-    void ResInfoPerChange_task_cb(lv_task_t *ResInfoPerChange_task);
-
-    void vStopUpdatingValuesToDashbordScreen();
-
-    void vCleanupAllDashboardScreen();
 
     void vUpdateDashboardScreen();
-    /**
-     * @brief this fuction will display the job finished on the screen
-     *
-     */
+    /*  this fuction will display the job finished on the screen  */
     void vShowJobFinishedDashboardScreen();
 
     /**********************

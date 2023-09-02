@@ -65,7 +65,7 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
      * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
     
     fResult = (0.759 * (pow(fDeltaPressure, 0.5288)) * (1.2 / fDensity));
-    ESP_LOGI(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
+    ESP_LOGD(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
     return fResult;
 }
 

@@ -168,11 +168,7 @@ extern "C"
 
     void modSDP32_task(void *pvParameters);
 
-    /**
-     * @brief Get the Sdp32 Sensor Average Value 
-     * @return float average diff pressure 
-     */
-    float getSdp32SensorAverageValue();
+  
     void motorPWMTask(void *pvParameters);
 
     /**********************

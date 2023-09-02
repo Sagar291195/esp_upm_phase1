@@ -266,7 +266,7 @@ static void motorTask(void *pvParameters)
          * the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
+            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
             /* calulating the current flow rate */
             flowRate = fGetVolumetricFlowUserCompensated();
             if (isnan(flowRate))
@@ -277,9 +277,9 @@ static void motorTask(void *pvParameters)
             else
             {
                 fTempVariable = fGetTotalLiterCount();
-                ESP_LOGV(TAG, "FLOW rate IS %0.2f", flowRate);
                 /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
                 fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);
+                ESP_LOGD(TAG, "FLOW rate IS from motor %0.2f, Total liter : %.2f", flowRate, fTempVariable);
                 /* updating the total liters flow in the variable */
                 vSetTotalLiterCount(fTempVariable);
             }

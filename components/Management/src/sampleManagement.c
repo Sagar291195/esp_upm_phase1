@@ -170,7 +170,7 @@ void vGetCurrentSequenceNumberFromNvsFlash()
         {
             ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
         }
-        ESP_LOGD(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
+        ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
         nvs_close(nvsHandle);
     }
 }
@@ -202,7 +202,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
     while (1)
     {
         /* waitingg for the signal to start the sequences */
-        ESP_LOGD(TAG, "Waiting for the new sequnce to run");
+        ESP_LOGI(TAG, "Waiting for the new sequnce to run");
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         ESP_LOGI(TAG, "Starting the sequence");
 
@@ -211,13 +211,13 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
         while ((uCurrentRunningSequenceNumber <= uGetNoOfSequenceInArray()) && (uCurrentRunningSequenceNumber != 0))
         {
 
-            ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGI(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
             /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from
              * the front end. this need to be changed in the phase 2 */
             if ((uCurrentRunningSequenceNumber != 0) && (uCurrentRunningSequenceNumber != 1))
             {
-                ESP_LOGD(TAG, "showing the waitn in progress screeen");
+                ESP_LOGI(TAG, "showing the wait in progress screeen");
                 vShowWaitInProgressScreen(); // first sample wait screen has been shown by the gui itself
             }
             // vShowWaitInProgressScreen();
@@ -235,7 +235,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 ESP_LOGE(TAG, "Error: Delay time is less than 0 means that time has already passed, but can force start the sequence now");
             }
 
-            ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGI(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
             /*  created the sequence to run */
             vSetSequenceToRun(&uCurrentRunningSequenceNumber);
@@ -246,7 +246,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             {
                 break;
             }
-            ESP_LOGD(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber);
+            ESP_LOGI(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber);
             /* show the summary screen, when all the sequneces are finished or we forced stop the samples
              * by pressing the stop button
              */
@@ -255,7 +255,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 /* filling the end summary, when not force stopped */
                 vSetCounterValuesEndSummaryDetails();
                 /* now need to save the end summary */
-                ESP_LOGD(TAG, "end of the Sample reached");
+                ESP_LOGI(TAG, "end of the Sample reached");
                 /* our job is finished, need to show the finised job summary screen only when the sample
                  * is time end */
                 if (!bSampleForcedStop)
@@ -264,16 +264,16 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 }
                 /* if the sequence is the last sequence in the array, then the sample is over, not set
                  * the sequence to run to 0. indicating that no sequnce is in progress */
-                ESP_LOGD(TAG, "Setting the sequence number to 0");
+                ESP_LOGI(TAG, "Setting the sequence number to 0");
                 vSetCurrentRunningSequenceNumber(0);
-                ESP_LOGD(TAG, "Saving the sequence number to nvs flash");
+                ESP_LOGI(TAG, "Saving the sequence number to nvs flash");
                 vSetCurrentSequenceNumberToNvsFlash();
                 bSampleForcedStop = false;
                 break;
             }
             else
             {
-                ESP_LOGD(TAG, "Icrementing the sequence number");
+                ESP_LOGI(TAG, "Icrementing the sequence number");
                 /* if the sequence is not the last sequence in the array, then  increment the sequence
                  * number and set it to nvs flash */
                 uCurrentRunningSequenceNumber++;
@@ -281,7 +281,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             }
             ESP_LOGI(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber - 1);
         }
-        ESP_LOGD(TAG, "END of the Sample task ha been reached, now iterating for the new loop");
+        ESP_LOGI(TAG, "END of the Sample task ha been reached, now iterating for the new loop");
     }
 
     ESP_LOGE(TAG, "Error: Sample Management Service Task is exiting");
@@ -471,7 +471,7 @@ void vStopCurrentSample()
     }
     else // is sequnce is not running then, take out the sample management service out of the blocked state so that the current sample will stop.
     {
-        ESP_LOGD(TAG, "No sample is currently running, deleting the sample management service");
+        ESP_LOGI(TAG, "No sample is currently running, deleting the sample management service");
         /* setting the current sample number to invalidate or zero */
         vSetCurrentRunningSequenceNumber(0);
         vSetCurrentSequenceNumberToNvsFlash(); // settin to the nvs flash

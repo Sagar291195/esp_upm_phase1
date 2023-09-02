@@ -116,8 +116,6 @@ lv_task_t *__xserefresherTask;
 
 char *Seq_Number;
 
-bool PumpStopForcefully;
-
 char startDateEnd[55];
 char stopDateEnd[45];
 
