@@ -13,12 +13,10 @@
 /*********************
  *      DEFINES
  *********************/
-
-#define SYMBOL_SIGNAL "\uf012"
-
-#define _xColorBGParas LV_COLOR_MAKE(0x38, 0x38, 0x38) // LV_COLOR_MAKE(0x5f, 0x61, 0x38)
-
-#define x_align -78
+#define TAG             "SUMMARY END"
+#define SYMBOL_SIGNAL   "\uf012"
+#define _xColorBGParas  LV_COLOR_MAKE(0x38, 0x38, 0x38) // LV_COLOR_MAKE(0x5f, 0x61, 0x38)
+#define x_align         -78
 
 // Declare Fonts
 LV_FONT_DECLARE(signal_20)
@@ -72,6 +70,7 @@ void xseSummaryEndScreen(void)
         crnt_screen = NULL;
     }
 
+    ESP_LOGI(TAG, "Loading Summary end screen");
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
     // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_se, 320, 480);
@@ -588,9 +587,6 @@ void xseSummaryEndScreen(void)
     lv_obj_align(hor_line1, _xseContProblem_se, LV_ALIGN_OUT_BOTTOM_MID, 0, 130);
     lv_obj_add_style(hor_line1, LV_LINE_PART_MAIN, &style_hor_line);
 
-    //=========================================================================================================================
-    //                                    HOUR COUNTER HEADING
-    //=========================================================================================================================
     // Create a container for HOUR COUNTER Heading
     _xseContHourCount_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_align(_xseContHourCount_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);

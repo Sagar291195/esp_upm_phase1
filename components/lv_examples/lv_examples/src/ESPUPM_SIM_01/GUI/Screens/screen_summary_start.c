@@ -12,9 +12,9 @@
 /*********************
  *      DEFINES
  *********************/
-
-#define SYMBOL_SIGNAL "\uf012"
-#define _xmargin -60
+#define TAG             "SUMMARY START"
+#define SYMBOL_SIGNAL   "\uf012"
+#define _xmargin        -60
 
 /*********************
  *   DECLARATION
@@ -154,6 +154,8 @@ void xssSummaryStartScreen(void)
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+
+    ESP_LOGI(TAG, "Loading Summary Start Screen");
     xssParentContainer_ss = lv_cont_create(scrSummaryStart, NULL);
     // lv_scr_load(xssParentContainer_ss);
     lv_obj_set_size(xssParentContainer_ss, 320, 480);
@@ -542,10 +544,7 @@ void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
             }
             if (strttmrcount >= 10)
             {
-                /**
-                 * @brief now sample is valid and can be saved into the memory and proceed for the sample execution
-                 *
-                 */
+                /* now sample is valid and can be saved into the memory and proceed for the sample execution */
                 vControllerSampleIsValid();
                 lv_task_del(__xssTMrefresherTask);
                 lv_task_del(__xssStartBTNCountTask);

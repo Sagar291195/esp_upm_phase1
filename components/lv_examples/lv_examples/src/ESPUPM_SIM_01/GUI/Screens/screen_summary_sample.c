@@ -13,8 +13,8 @@
 /*********************
  *      DEFINES
  *********************/
-
-#define SYMBOL_SIGNAL "\uf012"
+#define TAG             "SUMMARY SAMPLE"
+#define SYMBOL_SIGNAL   "\uf012"
 
 // Declare Fonts
 LV_FONT_DECLARE(signal_20)
@@ -207,6 +207,9 @@ void sssSummarySampleScreen(void)
                 lv_obj_del(crnt_screen);
                 crnt_screen = NULL;
         }
+
+        ESP_LOGI(TAG, "Loading Summary Sample screen");
+
         sssParentContainer = lv_cont_create(scrSummarySample, NULL);
         // lv_scr_load(sssParentContainer);
         lv_obj_set_size(sssParentContainer, 320, 480);

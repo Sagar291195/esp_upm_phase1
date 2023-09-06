@@ -170,6 +170,7 @@ void xsPresetScreenAdvance(void)
     sprintf(_xsDurHourrollerbuf, "%s", _xsDurHourrollerNull);
     sprintf(_xsDurHourrollerbuf, "%s", _xsDurHourrollerNull);
     sprintf(_xsDurMinutrollerbuf, "%s", _xsDurMinutrollerNull);
+    ESP_LOGI(TAG, "Loading preset screen");
 
     scr_preset = lv_obj_create(NULL, NULL);
     lv_scr_load(scr_preset);

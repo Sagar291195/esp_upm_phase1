@@ -224,12 +224,10 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
             /*  getting the delay time for the current sequence */
             ulrequiredDelay = uGetNumberOfSecondRemainingToStartSequence(uCurrentRunningSequenceNumber);
-
             if (ulrequiredDelay >= 0)
             {
                 vTaskDelay(pdMS_TO_TICKS(ulrequiredDelay * 1000));
             }
-
             else
             {
                 ESP_LOGE(TAG, "Error: Delay time is less than 0 means that time has already passed, but can force start the sequence now");

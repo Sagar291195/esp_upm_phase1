@@ -8,6 +8,7 @@
 /*********************
  *      DEFINES
  *********************/
+#define TAG         "DASHBOARD"
 #define IW_WIDTH (200)
 #define IW_HEIGHT (290)
 #define SYMBOL_SIGNAL "\uf012"
@@ -526,6 +527,7 @@ void DashboardInfoWidget(void)
     switch (dashboardflg)
     {
     case 0: // Ready Mode
+        xBTN = 0;
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_READY, "Ready");
@@ -535,10 +537,10 @@ void DashboardInfoWidget(void)
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
         readyModeBuzzBeep();
-        xBTN = 0;
         break;
 
     case 1: // Work in progress
+        xBTN = 3;
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_WORK_IN_PROGRESS, "    Work in progress");
@@ -557,12 +559,11 @@ void DashboardInfoWidget(void)
 
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A));
-
         workInProgressBuzzBeep();
-        xBTN = 3;
         break;
 
     case 2: // Work Finished
+        xBTN = 5;
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_JOB_FINISHED, "Job finished");
@@ -575,10 +576,10 @@ void DashboardInfoWidget(void)
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
         jobFinishedModeBuzzBeep();
-        xBTN = 5;
         break;
 
     case 3: // Wait In Progress
+        xBTN = 4;
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_WAIT, "  Wait in progress");
@@ -591,7 +592,6 @@ void DashboardInfoWidget(void)
         // lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         // lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
         waitModeBuzzBeep();
-        xBTN = 4;
         break;
     }
 }
@@ -623,12 +623,10 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        ESP_LOGI("DASHBOARD", "Button Pressed : %d", xBTN);
+        ESP_LOGI(TAG, "Button Pressed : %d", xBTN);
         switch (xBTN)
         {
         case 0:
-            // printf("Ready State\n");
-            // printf("Call Sequence Screen\n");
             lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_BTN_STATE_PRESSED, LV_COLOR_BLUE);
             fflush(NULL);
             lv_task_del(refresherTask);
@@ -652,12 +650,14 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             vControllerSampleStop();
             xseSummaryEndScreen();
             break;
+
         case 4:
             lv_task_del(refresherTask);
             refresherTask = NULL;
             vControllerSampleStop();
             xseSummaryEndScreen();
             break;
+
         case 5:
             lv_task_del(refresherTask);
             refresherTask = NULL;
