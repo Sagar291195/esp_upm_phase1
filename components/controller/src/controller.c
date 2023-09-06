@@ -21,7 +21,7 @@
 
 /************************************defines******************************************************/
 
-#define TAG                 "controller"
+#define TAG "controller"
 
 extern SemaphoreHandle_t xGuiSemaphore1;
 
@@ -147,11 +147,11 @@ void vUpdateWorkInProgressScreen()
 
     if (xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY) == pdTRUE)
     {
+        ESP_LOGD(TAG, "Updating dashboard screen");
         vUpdateDashboardScreen();
         xSemaphoreGive(xGuiSemaphore1);
     }
 }
-
 
 void vShowJobFinishedScreen()
 {
@@ -162,7 +162,7 @@ void vShowJobFinishedScreen()
 
 void vControllerSampleStop()
 {
-    vStopCurrentSample();
+    // vStopCurrentSample();
     /* Stopping the current on going sequence */
     vStopCurrentSample();
 }

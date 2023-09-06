@@ -7,53 +7,50 @@
  */
 
 /**
-*  @file screen_info.h
-*  @brief This is header file for screen_info.c
-*  @details This is header file for screen_info.c
-*/
+ *  @file screen_info.h
+ *  @brief This is header file for screen_info.c
+ *  @details This is header file for screen_info.c
+ */
 
 #ifndef SCREEN_INFO_H
 #define SCREEN_INFO_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
+    void CallScreenInfo(void);
+    void infoTimeLabel_refr_func(lv_task_t *inforefresherTask);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-void CallScreenInfo(void);
-void infoTimeLabel_refr_func(lv_task_t *inforefresherTask);
-/**********************
- *    ERROR ASSERT
- **********************/
- 
- 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
 #endif /*SCREEN_INFO_H*/
-
-

@@ -7,52 +7,51 @@
  */
 
 /**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
+ *  @file file
+ *  @brief Short description
+ *  @details Long description
+ */
 
 #ifndef LANGUAGE_H
 #define LANGUAGE_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-
-void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask) ;
-void CallMetroFlowCalibrationScreen(void);
-/**********************
- *    ERROR ASSERT
- **********************/
+    void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask);
+    void CallMetroFlowCalibrationScreen(void);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
 #endif /*LANGUAGE_H*/
-

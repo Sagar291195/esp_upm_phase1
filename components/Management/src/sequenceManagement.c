@@ -201,7 +201,8 @@ void vGetSequenceFromNvsToArray()
 
     // Open
     err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK){
+    if (err != ESP_OK)
+    {
         ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
         return;
     }
@@ -215,25 +216,32 @@ void vGetSequenceFromNvsToArray()
     ESP_LOGD(TAG, "required size is %d", required_size);
     /*  loading the values from nvs flash to the sample array */
     err = nvs_get_blob(my_handle, STORAGE_KEY, (void *)totalSequence, &required_size);
-    if (err != ESP_OK){
+    if (err != ESP_OK)
+    {
         ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
     }
     nvs_close(my_handle);
 }
 
-uint8_t uGetNoOfSequenceInArray(){
+uint8_t uGetNoOfSequenceInArray()
+{
     return uTotalSequenceCount;
 }
 
-sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber){
+sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber)
+{
     return &totalSequence[uSequenceNumber - 1];
 }
 
-void taskRunSample(void *pvParameters){
+void taskRunSample(void *pvParameters)
+{
     /* creating semaphore for stopping the task if, the semaphore handle is NULL */
-    if (xStopTheRunningSequenceSemaphore == NULL){
+    if (xStopTheRunningSequenceSemaphore == NULL)
+    {
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
-    } else {
+    }
+    else
+    {
         vSemaphoreDelete(xStopTheRunningSequenceSemaphore);
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
     }
@@ -244,9 +252,12 @@ void taskRunSample(void *pvParameters){
     ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
 
     /* starting the monitor data task */
-    if (xTaskHandleMonitorSensorData == NULL) {
+    if (xTaskHandleMonitorSensorData == NULL)
+    {
         xTaskCreate(vMonitorSensorDataTask, "monitor data", 8 * 1024, NULL, 5, &xTaskHandleMonitorSensorData);
-    } else {
+    }
+    else
+    {
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
@@ -260,7 +271,7 @@ void taskRunSample(void *pvParameters){
     xTaskCreate(vUpdateScreenAndSaveValuesEverySecond, "updateScreen", 4 * 1024, &usequenceToRun, 5, &xTaskHandleUpdateScreenAndSaveValuesEverySecond);
     /*  seting the flow set point */
     setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);
-    /*  starting the motor so we have some initial value for sdp sensor and calculate flow 
+    /*  starting the motor so we have some initial value for sdp sensor and calculate flow
      * rate and the pid controller can compute  */
     MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);
     setStateOfMotor(true); // run the motor
@@ -271,9 +282,12 @@ void taskRunSample(void *pvParameters){
     /*  delaying the task so that motor can run this time period */
     // vTaskDelay(pdMS_TO_TICKS(udurationInMs));
     /* this will block the task until the semaphore is given or the sequnce has been run to the whole time */
-    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore,(udurationInMs/portTICK_PERIOD_MS)) == pdTRUE) {
+    if (xSemaphoreTake(xStopTheRunningSequenceSemaphore, (udurationInMs / portTICK_PERIOD_MS)) == pdTRUE)
+    {
         ESP_LOGW(TAG, "Sequence has been terminated early, due to the force stop");
-    } else {
+    }
+    else
+    {
         ESP_LOGI(TAG, "Sequence has been terminated due to expiry of time");
     }
 
@@ -281,7 +295,8 @@ void taskRunSample(void *pvParameters){
     vStopCurrentSequence();
 }
 
-int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber){
+int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber)
+{
     uint64_t uSecondsRemaining = 0;
     uint8_t uStartHour = totalSequence[uSequenceNumber - 1].uStartHour;
     uint8_t uStartMin = totalSequence[uSequenceNumber - 1].uStartMin;
@@ -345,10 +360,7 @@ void vGetTotalSequenceCountFromNvs()
     nvs_close(my_handle);
 }
 
-/**
- * @brief set the total sequnce count to the nvs flash
- *
- */
+/** set the total sequnce count to the nvs flash */
 void vSetTotalSequenceCountFromNvs()
 {
     ESP_LOGD(TAG, "Setting the total sequce count to NVS");
@@ -495,8 +507,8 @@ bool bIsSequenceRunning()
 
 static void vInitiateSequenceSummaryStart()
 {
-    memset(&xCurrentSequenceSummary, 0, sizeof(sequenceSummary_t));  /* setting the summary to 0 */
-    sequence_t xSequenceNumber; /* variable for the sequence number */
+    memset(&xCurrentSequenceSummary, 0, sizeof(sequenceSummary_t)); /* setting the summary to 0 */
+    sequence_t xSequenceNumber;                                     /* variable for the sequence number */
 
     /* getting the current  sequence from the sequence array */
     vGetNthSaequenceFromArray(&xSequenceNumber, uGetCurrentRunningSequenceNumber());
@@ -530,8 +542,8 @@ static void vCalculateSequneceEndSummary()
     char cStopDate[40];
 
     // sprintf(cStopDate, "%d/%d/%d", timeinfo.tm_mday, timeinfo.tm_mon, timeinfo.tm_year);
-    timeinfo.tm_year = timeinfo.tm_year +1900;
-    timeinfo.tm_mon = timeinfo.tm_mon +1;
+    timeinfo.tm_year = timeinfo.tm_year + 1900;
+    timeinfo.tm_mon = timeinfo.tm_mon + 1;
     sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
 
     /* copy end date */
@@ -647,7 +659,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
         }
 
         if (!bOneTime)
-        { 
+        {
             /*printing the values on the terminal for calculation of the compensation values */
             printf("------------------Settings-----------------------\n");
             printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
@@ -656,7 +668,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
             printf("hardware Time,SDP_temperature,SDP_MassFlow,External_pressure_BME,External_temp_BME,External_humidity_BME,totalliter,TotalHour,C1BusVolt,C1ShuntVolt,C1ShuntCurr,C2BusVolt,C2ShuntVolt,C2ShuntCurr,C3BusVolt,C3ShuntVolt,C3ShuntCurr,RealFlowRate,External AirDensity,internal BME280 temperature,internal BME280 pressure,internal BME280 humidity,internal BME280 Airdensity\n");
         }
 
-    printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(), fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), external_sensor_data.fPressure, external_sensor_data.fTemperature, external_sensor_data.fHumidity, fGetTotalLiterCount(), fGetTotalHoursCount(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, fGetVolumetricFlowUserCompensated(), fGetAirDesity_featureData(),fGetInternalTemperatureUserCompesated(),fGetInternalPressureUserCompensated(),fGetInternalHumidityUserCompesated(),fGetInternalAirDensityUserCompensated());
+        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(), fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), external_sensor_data.fPressure, external_sensor_data.fTemperature, external_sensor_data.fHumidity, fGetTotalLiterCount(), fGetTotalHoursCount(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, fGetVolumetricFlowUserCompensated(), fGetAirDesity_featureData(), fGetInternalTemperatureUserCompesated(), fGetInternalPressureUserCompensated(), fGetInternalHumidityUserCompesated(), fGetInternalAirDensityUserCompensated());
     }
 
     vTaskDelete(NULL);

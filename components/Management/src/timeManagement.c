@@ -76,12 +76,11 @@ void vGetCurrentDateAndTime(struct tm *time)
 
     // time->tm_mon = time->tm_mon + 1; // adjusting the month
     time->tm_mon = time->tm_mon; // adjusting the month
-
 }
 
 void vSetSystemTimeUsingCompileTime()
 {
-    struct tm tm={0};
+    struct tm tm = {0};
 
     char now[255];
     memset(now, 0, 255);
@@ -97,7 +96,7 @@ void vSetSystemTimeUsingCompileTime()
     ESP_LOGD(TAG, "setting the system time");
     vSetDateAndTimeOfTheDevice(tm);
 
-    struct tm currentTime={0};
+    struct tm currentTime = {0};
     vGetCurrentDateAndTime(&currentTime);
     strftime(now, sizeof(now), "%d %b %Y %H:%M", &currentTime);
     ESP_LOGI(TAG, "Current time is %s", now);
@@ -123,7 +122,7 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
     // sprintf(startTime, "%s %d:%d", seq[0].cStartDate, seq[0].uStartHour, seq[0].uStartMin); // converting into the string
     sprintf(startTime, "%s", seq[0].cStartDate); // converting into the string
 
-    struct tm startTimeTm={0};
+    struct tm startTimeTm = {0};
     strptime(startTime, "%Y/%m/%d", &startTimeTm); // converting into the tm structure
 
     startTimeTm.tm_hour = seq[0].uStartHour;
@@ -136,15 +135,15 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
     ESP_LOGD(TAG, "startTimeT %lu", startTimeT);
 
     /* converting the time_t format into the struct tm */
-    struct tm stopTimeTm={0};
+    struct tm stopTimeTm = {0};
 
     gmtime_r(&startTimeT, &stopTimeTm);
 
-    ESP_LOGD(TAG,"stop year is %d",stopTimeTm.tm_year);
-    ESP_LOGD(TAG,"stop month is %d",stopTimeTm.tm_mon);
-    ESP_LOGD(TAG,"stop day is %d",stopTimeTm.tm_mday);
-    ESP_LOGD(TAG,"stop hour is %d",stopTimeTm.tm_hour);
-    ESP_LOGD(TAG,"stop min is %d",stopTimeTm.tm_min);
+    ESP_LOGD(TAG, "stop year is %d", stopTimeTm.tm_year);
+    ESP_LOGD(TAG, "stop month is %d", stopTimeTm.tm_mon);
+    ESP_LOGD(TAG, "stop day is %d", stopTimeTm.tm_mday);
+    ESP_LOGD(TAG, "stop hour is %d", stopTimeTm.tm_hour);
+    ESP_LOGD(TAG, "stop min is %d", stopTimeTm.tm_min);
 
     // ESP_LOGD(TAG, "End date of sequence %d is %d-%d-%d %d:%d", sequenceNumber, stopTimeTm.tm_mday, stopTimeTm.tm_mon + 1, stopTimeTm.tm_year + 1900, stopTimeTm.tm_hour, stopTimeTm.tm_min);
     strftime(endDate, sizeOfEndDate, "%Y/%m/%d", &stopTimeTm);
@@ -187,14 +186,13 @@ void vGetNumberOfHourAndMinutesLeftInStartingSequence(uint16_t *hour, uint8_t *m
     sequence_t *seq = pGetAddressOfSequenceArray();
     uint32_t uTotalDurationSecondsLeft = 0;
 
-    uTotalDurationSecondsLeft = seq[uGetCurrentRunningSequenceNumber()-1].uDurationHour * 3600 + seq[uGetCurrentRunningSequenceNumber()-1].uDurationMinutes * 60;
+    uTotalDurationSecondsLeft = seq[uGetCurrentRunningSequenceNumber() - 1].uDurationHour * 3600 + seq[uGetCurrentRunningSequenceNumber() - 1].uDurationMinutes * 60;
 
     /* subtracting the number of seconds already elapsed  in the running sequnence */
-    uTotalDurationSecondsLeft=uTotalDurationSecondsLeft-uGetTotalSecondPassesInGivenSequence();
-    ESP_LOGV(TAG,"uTotalDurationSecondsLeft %d",uTotalDurationSecondsLeft);
+    uTotalDurationSecondsLeft = uTotalDurationSecondsLeft - uGetTotalSecondPassesInGivenSequence();
+    ESP_LOGV(TAG, "uTotalDurationSecondsLeft %d", uTotalDurationSecondsLeft);
     /* getting the number of hours and minutes left */
     *hour = uTotalDurationSecondsLeft / 3600;
     *minutes = (uTotalDurationSecondsLeft % 3600) / 60;
-    ESP_LOGD(TAG,"%d hours and %d minutes left",*hour,*minutes);
-
+    ESP_LOGD(TAG, "%d hours and %d minutes left", *hour, *minutes);
 }

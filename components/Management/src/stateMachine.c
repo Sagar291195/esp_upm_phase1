@@ -1,7 +1,7 @@
 /**
  * @file stateMachine.c
  * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This file contain the implementation of the state machine of the machine. Each state is being consider as the event of in the system. What ever are the 
+ * @brief This file contain the implementation of the state machine of the machine. Each state is being consider as the event of in the system. What ever are the
  * state machine in the system are devine here.
  * @version 1.1
  * @date 2022-05-25
@@ -37,7 +37,7 @@ void vStateMachineEventHandler(void *handler_args, esp_event_base_t base, int32_
         // buzzer set for a second
         // led colour should be orange
         // send alert to the user using gsm
-        //update the things board with the current state of the machine
+        // update the things board with the current state of the machine
         break;
 
     case MODE_WAKEUP:
@@ -74,8 +74,7 @@ void vStateMachineEventHandler(void *handler_args, esp_event_base_t base, int32_
 
 void vInitiateTheStateMachine()
 {
-     // Create the default event loop
+    // Create the default event loop
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(esp_event_handler_instance_register(MACHINE_STATE, ESP_EVENT_ANY_ID, vStateMachineEventHandler, NULL, NULL));
-
 }

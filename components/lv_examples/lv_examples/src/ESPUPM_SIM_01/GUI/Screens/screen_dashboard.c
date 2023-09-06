@@ -8,9 +8,9 @@
 /*********************
  *      DEFINES
  *********************/
-#define IW_WIDTH            (200)
-#define IW_HEIGHT           (290)
-#define SYMBOL_SIGNAL       "\uf012"
+#define IW_WIDTH (200)
+#define IW_HEIGHT (290)
+#define SYMBOL_SIGNAL "\uf012"
 
 int global_DashbordBTNflag = 1;
 int dashboardflg = 0;
@@ -44,7 +44,6 @@ char MenuBTN_INFO[10] = "INFO";
 
 // extern var
 int global_DashbordBTNflag;
-bool PumpStopForcefully = false;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scr_dashbord;
@@ -74,19 +73,9 @@ lv_obj_t *_xListLabelClick;
 lv_obj_t *_xWelcomeMsgLabel;
 lv_obj_t *_xTodaysDateLabel;
 
-/**
- * @brief task responsible for update of time
- *
- */
+/* task responsible for update of time */
 static lv_task_t *refresherTask = NULL;
 
-/**
- * @brief task handle which update the values on the dashboard container
- *
- */
-static lv_task_t *lv_task_handle_dispay_updated_values = NULL;
-
-lv_task_t *ResInfoPerChange_task;
 
 double StopLTRCountVal;
 
@@ -238,7 +227,7 @@ void pxDashboardScreen(void)
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
-    
+
     xParentcontainer = lv_cont_create(scr_dashbord, NULL);
     lv_obj_set_size(xParentcontainer, 320, 480);
     lv_obj_align(xParentcontainer, NULL, LV_ALIGN_CENTER, 0, 0);                                                            //====================>>>>>
@@ -407,11 +396,11 @@ void pxDashboardScreen(void)
     char *stop1 = "STOP";
     if (!strcmp(dashboardBTNTxt, stop1))
     {
-        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); //#359Fe2, 0x35, 0x9F, 0xE2
+        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); // #359Fe2, 0x35, 0x9F, 0xE2
     }
     else
     {
-        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#359Fe2, 0xEB, 0x3B, 0x5A
+        lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2, 0xEB, 0x3B, 0x5A
     }
 
     // lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A));
@@ -550,7 +539,6 @@ void DashboardInfoWidget(void)
         break;
 
     case 1: // Work in progress
-
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_WORK_IN_PROGRESS, "    Work in progress");
@@ -570,7 +558,6 @@ void DashboardInfoWidget(void)
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A));
 
-        // vResInfoPerChangeTask();
         workInProgressBuzzBeep();
         xBTN = 3;
         break;
@@ -636,6 +623,7 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        ESP_LOGI("DASHBOARD", "Button Pressed : %d", xBTN);
         switch (xBTN)
         {
         case 0:
@@ -645,7 +633,6 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             fflush(NULL);
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            // lv_task_del(ResInfoPerChange_task);
             xsPresetScreenAdvance();
             break;
 
@@ -660,7 +647,6 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         case 3:
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            // lv_task_del(ResInfoPerChange_task);
             sprintf(stopDateEnd, "%s", guiDate);
             sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
             vControllerSampleStop();
@@ -689,63 +675,9 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
     }
 }
 
-// Update the ResumeInfoPercent Label if the Job is in progress
-void ResInfoPerChange_task_cb(lv_task_t *ResInfoPerChange_task)
+
+void vUpdateDashboardScreen(void)
 {
-    static int one = 1;
-
-    if (workProgress < one)
-    {
-        vSetResumeInfoPercent(IW_create, 0);
-    }
-    if (workProgress >= one)
-    {
-        vSetResumeInfoPercent(IW_create, workProgress);
-    }
-    // vSetResumeInfoPercent(IW_create, workProgress);
-    vSetResumeInfoRemainingHour(IW_create, Job_Rem_Hr);
-    vSetResumeInfoRemainingMinute(IW_create, Job_Rem_Min);
-}
-
-void vResInfoPerChangeTask(void)
-{
-    if (isMotor == true /* && crnt_screen == scr_dashbord */)
-    {
-        ResInfoPerChange_task = lv_task_create(ResInfoPerChange_task_cb, 10000, LV_TASK_PRIO_MID, NULL);
-    }
-}
-
-/**
- * @brief this function can be called  to delete the dashboard screen data. This function can be called generally when the dashboard screen has been deleted once for all
- *
- */
-void vCleanupAllDashboardScreen()
-{
-    /* deleting the refresher task */
-    if (refresherTask != NULL){
-        lv_task_del(refresherTask);
-        refresherTask = NULL;
-    }
-
-    if (lv_task_handle_dispay_updated_values != NULL){
-        lv_task_del(lv_task_handle_dispay_updated_values);
-        lv_task_handle_dispay_updated_values = NULL;
-    }
-}
-
-/**
- * @brief This function will stop updating the values of total liters total hours etc on the dashboard screen
- *
- */
-void vStopUpdatingValuesToDashbordScreen(void)
-{
-    if (lv_task_handle_dispay_updated_values != NULL){
-        lv_task_del(lv_task_handle_dispay_updated_values);
-        lv_task_handle_dispay_updated_values = NULL;
-    }
-}
-
-void vUpdateDashboardScreen(void){
     /* updating the total liters and total hours */
     vSetResumeInfoLitersInt(IW_create, uGetTotalLiterIntegerPart());
     vSetResumeInfoLitersFloat(IW_create, uGetTotalLiterFloatPart());
@@ -762,15 +694,16 @@ void vUpdateDashboardScreen(void){
     vSetResumeInfoRemainingMinute(IW_create, min);
 }
 
-
-static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask){
+static void vShowJobFinishedDashBoardScreenTask(lv_task_t *showJobFinishedTask)
+{
     dashboardflg = 2;
     DashboardInfoWidget();
     lv_task_del(showJobFinishedTask);
     showJobFinishedTask = NULL;
 }
 
-void vShowJobFinishedDashboardScreen(){
+void vShowJobFinishedDashboardScreen()
+{
     showJobFinishedTask = lv_task_create(vShowJobFinishedDashBoardScreenTask, 1 * 1000, LV_TASK_PRIO_MID, NULL);
 }
 

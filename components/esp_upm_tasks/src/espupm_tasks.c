@@ -31,8 +31,8 @@
 #define SDA_GPIO 21
 #define SCL_GPIO 22
 
-#define TAG_sdp32_task  "TAG_sdp32_task"
-#define TAG             "ESPUPM_TASKS"
+#define TAG_sdp32_task "TAG_sdp32_task"
+#define TAG "ESPUPM_TASKS"
 
 /* This is the duration after which the sensor will update the data into the array. */
 #define SDP32_SENSOR_READ_DURATION_IN_MS 20
@@ -199,8 +199,7 @@ struct tm navier_time =
         .tm_mday = 9,
         .tm_hour = 18,
         .tm_min = 39,
-        .tm_sec = 10
-    };
+        .tm_sec = 10};
 
 struct tm alarmtest_time =
     {
@@ -227,9 +226,8 @@ int totalSecond;
 bool navier_set_time;
 
 char guiTime[25];
-char rtcTimeNow[25];
+
 char guiDate[40];
-char guiDateDefault[25];
 char guiHrDef[25];
 char guiMinDef[32];
 char guiS;
@@ -287,16 +285,17 @@ void ds3231_task(void *pvParameters)
         {
             if (navier_set_time)
             {
-                struct tm navier_time_set ={
-                        .tm_year = year_Roller_int - 1900, // since 1900 (2020 - 1900)
-                        .tm_mon = month_Roller_int - 1,    // 0-based
-                        .tm_mday = day_Roller_int,
-                        .tm_hour = hour_Roller_int,
-                        .tm_min = min_Roller_int,
-                        .tm_sec = sec_Roller_int};
-                
+                struct tm navier_time_set = {
+                    .tm_year = year_Roller_int - 1900, // since 1900 (2020 - 1900)
+                    .tm_mon = month_Roller_int - 1,    // 0-based
+                    .tm_mday = day_Roller_int,
+                    .tm_hour = hour_Roller_int,
+                    .tm_min = min_Roller_int,
+                    .tm_sec = sec_Roller_int};
+
                 printf("Time Setting Execution started \n");
-                if (ds3231_set_time(&dev, &navier_time_set) != ESP_OK){
+                if (ds3231_set_time(&dev, &navier_time_set) != ESP_OK)
+                {
                     printf("Could not net time \n");
                 }
                 printf("Time Setting Execution Done \n");
@@ -320,25 +319,15 @@ void ds3231_task(void *pvParameters)
             int year1 = navier_time.tm_year + 1900;
 
             sprintf(guiTime, "%02d:%02d:%02d\n", hour1, minute1, second1);
-            sprintf(rtcTimeNow, "%02d:%02d:%02d", hour1, minute1, second1);
-            sprintf(guiDateDefault, "%02dH %02dM\n", hour1, minute1);
             sprintf(guiDate, "%04d/%02d/%02d", year1, month1, day1);
-            log_guiDate_t queueGUIDate;
-            log_guiTime_t queueGUITime;
-
-            memset(queueGUIDate.QguiDate, 0, 10);
-            memcpy(queueGUIDate.QguiDate, guiDate, strlen(guiDate));
-
-            memset(queueGUITime.QguiTime, 0, 10);
-            memcpy(queueGUITime.QguiTime, rtcTimeNow, strlen(guiTime));
 
             sprintf(guiHrDef, "%d", navier_time.tm_hour);
             sprintf(guiMinDef, "%d", navier_time.tm_min);
+
             char now[5] = "Now";
             sprintf(today_Date_Msg, "Today is %2d %s %04d", navier_time.tm_mday, month_name, navier_time.tm_year + 1900);
 
-            sprintf(guiDateNext1, " %s \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n"
-                    ,
+            sprintf(guiDateNext1, " %s \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n",
                     now, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 0, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 1, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 2, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 3);
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
@@ -350,7 +339,7 @@ void ds3231_task(void *pvParameters)
             skip_days(1);
             day_counter = 0;
             sprintf(guiSeqDate1, "%04d/%02d/%02d", year, month, day); // day, month, year
-    
+
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(2);
             day_counter = 0;
@@ -386,7 +375,6 @@ void ds3231_task(void *pvParameters)
             day_counter = 0;
             sprintf(guiSeqDate7, "%04d/%02d/%02d", year, month, day); // day, month, year
 
-
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(9);
             day_counter = 0;
@@ -396,7 +384,6 @@ void ds3231_task(void *pvParameters)
             skip_days(10);
             day_counter = 0;
             sprintf(guiSeqDate9, "%04d/%02d/%02d", year, month, day); // day, month, year
-
 
             sprintf(GuiDateRollerStr, "%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n", guiSeqDate0, guiSeqDate1, guiSeqDate2, guiSeqDate3, guiSeqDate4, guiSeqDate5, guiSeqDate6, guiSeqDate7, guiSeqDate8, guiSeqDate9);
             if (navier_time.tm_mon + 1 == 1)
@@ -557,8 +544,6 @@ void iLEDDeActive(void)
     free(pixels);
 }
 
-
-
 void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask)
 {
     dashboardflg = 1;
@@ -584,22 +569,18 @@ void motorPWMTask(void *pvParameters)
     float fTempVariable = 0;
 
     pRealFlowRate = &flowRate; // copying  so that we can print on task
-
-    /* intiating the pwm motor */
-    initiatePWMMotor();
-    /* initialize pid controller */
-    initializePIDController();
+    initiatePWMMotor();        /* intiating the pwm motor */
+    initializePIDController(); /* initialize pid controller */
 
     while (1)
     {
-
         vTaskDelay(motorWAIT_ON / portTICK_PERIOD_MS);
         /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", getSdp32SensorAverageValue());
-            /* calulating the current flow rate */
-            flowRate = fGetVolumetricFlowUserCompensated();
+            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
+
+            flowRate = fGetVolumetricFlowUserCompensated(); /* calulating the current flow rate */
             if (isnan(flowRate))
             {
                 ESP_LOGE(TAG, "flow rate is nan");
@@ -607,33 +588,20 @@ void motorPWMTask(void *pvParameters)
             }
             else
             {
-                /* compute the total volume flow in the system */
-                fTempVariable = fGetTotalLiterCount();
-                ESP_LOGV(TAG,"FLOW rate IS %0.2f",flowRate);
-                /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);
-                /* updating the total liters flow in the variable */
-                vSetTotalLiterCount(fTempVariable);
+                fTempVariable = fGetTotalLiterCount(); /* compute the total volume flow in the system */
+                ESP_LOGD(TAG, "FLOW rate IS from upm %0.2f", flowRate);
+                fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000); /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
+                vSetTotalLiterCount(fTempVariable);                                           /* updating the total liters flow in the variable */
             }
 
-            /* computing the duty cycle and set it */
-            motorPidComputeAndSetOutput(flowRate);
+            motorPidComputeAndSetOutput(flowRate); /* computing the duty cycle and set it */
             flow_value = flowRate;
             vTaskDelay(pdMS_TO_TICKS(getMotorPIDSampleComputeTime()));
         }
     }
 }
 
-float getSdp32SensorAverageValue()
-{
-    float sum = 0.0;
-    for (uint8_t i = 0; i < NO_OF_SAMPLES_SDP32; i++)
-    {
-        sum += noOfSamplesSdp32[i];
-    }
 
-    return (sum / NO_OF_SAMPLES_SDP32);
-}
 /**********************
  *    ERROR ASSERT
  **********************/

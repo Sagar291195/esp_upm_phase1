@@ -190,22 +190,20 @@ lv_task_t *__sssrefresherTask;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
+static uint32_t uSampleNumber = 0;      /* sample data to be get from the database */
+static uint8_t uSequnceNumber = 0;      /* sequnce data to be get from the database */\
+sequenceSummary_t xSequenceSummary;     /* data variable to store the data from the database */
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-/* sample data to be get from the database */
-static uint32_t uSampleNumber = 0;
-/* sequnce data to be get from the database */
-static uint8_t uSequnceNumber = 0;
-/* data variable to store the data from the database */
-sequenceSummary_t xSequenceSummary;
 
 void sssSummarySampleScreen(void)
 {
         scrSummarySample = lv_obj_create(NULL, NULL);
         lv_scr_load(scrSummarySample);
-        if(crnt_screen != NULL){
+        if (crnt_screen != NULL)
+        {
                 lv_obj_del(crnt_screen);
                 crnt_screen = NULL;
         }
@@ -503,7 +501,6 @@ void sssSummarySampleScreen(void)
         lv_label_set_text(___sssVariationTxt, "VARIATION");
         lv_obj_add_style(___sssVariationTxt, LV_LABEL_PART_MAIN, &___sssStrtStpTxtStyle);
 
-
         // Seprator line
         // Create Horizontal Line
         hor_line = lv_line_create(__sssSeqSumCont, NULL);
@@ -627,7 +624,6 @@ void sssSummarySampleScreen(void)
         lv_style_set_text_font(&_sssSamllVarTxtStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
         lv_style_set_text_color(&_sssSamllVarTxtStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
-
         //-------------------Text style for up/down symbol---------------------
         static lv_style_t _sssUpDownSymbolStyle;
         lv_style_init(&_sssUpDownSymbolStyle);
@@ -693,7 +689,6 @@ void sssSummarySampleScreen(void)
         lv_obj_align(_sssMinValVar_AFV, _sssUpdownSignal2_AFV, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text_fmt(_sssMinValVar_AFV, "%0.2f", xSequenceSummary.airflowVolumetric.fAirflowMinValue); // display flow min value"
         lv_obj_add_style(_sssMinValVar_AFV, LV_LABEL_PART_MAIN, &_sssSamllVarTxtStyle);
-
 
         // Create label for VARIATION Fix Txt
         _sssVariationTxt_AFV = lv_label_create(___sssAirflowVolCont, NULL);
@@ -816,7 +811,7 @@ void sssSummarySampleScreen(void)
         lv_obj_align(_sssPercentSymbol_AT, _sssVariationTxt_AT, LV_ALIGN_OUT_TOP_LEFT, 5, -5);
         lv_label_set_text(_sssPercentSymbol_AT, "%");
         lv_obj_add_style(_sssPercentSymbol_AT, LV_LABEL_PART_MAIN, &_sssUpDownSymbolStyle);
- 
+
         _sssVariationVal_AT = lv_label_create(___sssAmbTempCont, NULL);
         lv_obj_align(_sssVariationVal_AT, _sssPercentSymbol_AT, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text_fmt(_sssVariationVal_AT, "%0.2f", xSequenceSummary.ambientTemperature.fTemperatureVariation);
@@ -1135,7 +1130,7 @@ void sssSummarySampleScreen(void)
         lv_obj_align(_sssMinValVar_HL, _sssUpdownSignal2_HL, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text_fmt(_sssMinValVar_HL, "%0.2f", xSequenceSummary.headLoss.fMinHeadLoss); // setting the min value of head loss
         lv_obj_add_style(_sssMinValVar_HL, LV_LABEL_PART_MAIN, &_sssSamllVarTxtStyle);
-  
+
         // Create label for VARIATION Fix Txt
         _sssVariationTxt_HL = lv_label_create(___sssHeadLossCont, NULL);
         lv_obj_align(_sssVariationTxt_HL, _sssMinValTxt_HL, LV_ALIGN_OUT_RIGHT_TOP, 35, 0);
@@ -1146,7 +1141,7 @@ void sssSummarySampleScreen(void)
         lv_obj_align(_sssPercentSymbol_HL, _sssVariationTxt_HL, LV_ALIGN_OUT_TOP_LEFT, 5, -5);
         lv_label_set_text(_sssPercentSymbol_HL, "%");
         lv_obj_add_style(_sssPercentSymbol_HL, LV_LABEL_PART_MAIN, &_sssUpDownSymbolStyle);
- 
+
         _sssVariationVal_HL = lv_label_create(___sssHeadLossCont, NULL);
         lv_obj_align(_sssVariationVal_HL, _sssPercentSymbol_HL, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
         lv_label_set_text_fmt(_sssVariationVal_HL, "%0.2f", xSequenceSummary.headLoss.fHeadLossVariation); // setting the variation value of head loss
@@ -1163,7 +1158,7 @@ void sssSummarySampleScreen(void)
         lv_style_init(&_sssQuitBtnStyle);
         lv_style_set_radius(&_sssQuitBtnStyle, LV_STATE_DEFAULT, 3);
         // lv_style_set_bg_color(&_xStopBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEb, 0x3B, 0x5A));
-        lv_style_set_bg_color(&_sssQuitBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#359Fe2
+        lv_style_set_bg_color(&_sssQuitBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2
         lv_style_set_border_width(&_sssQuitBtnStyle, LV_STATE_DEFAULT, 0);
         lv_style_set_border_opa(&_sssQuitBtnStyle, LV_STATE_DEFAULT, LV_OPA_MIN);
         lv_obj_add_style(_sssQuitBtn, LV_BTN_PART_MAIN, &_sssQuitBtnStyle);

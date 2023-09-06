@@ -58,7 +58,7 @@ lv_obj_t *_sqBTNTriaSignLbl;
  * @return pointer to the created object
  */
 
-lv_obj_t *sqCreateSequence(lv_obj_t *sqParent,uint8_t sequence_number)
+lv_obj_t *sqCreateSequence(lv_obj_t *sqParent, uint8_t sequence_number)
 {
     lv_obj_t *sqContainer = lv_obj_create(sqParent, NULL);
     lv_obj_set_size(sqContainer, SEQUENCE_CONTAINER_WIDTH, SEQUENCE_CONTAINER_HEIGHT);
@@ -147,7 +147,7 @@ lv_obj_t *sqCreateSequence(lv_obj_t *sqParent,uint8_t sequence_number)
     lv_obj_set_size(_sqBTNTria, 50, SEQUENCE_CONTAINER_HEIGHT);
     // lv_obj_set_event_cb(_xseBTNUSB_se, BTN_event_handler);
     lv_obj_set_style_local_radius(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 7);
-    lv_obj_set_style_local_bg_color(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); //#Eb3B5A
+    lv_obj_set_style_local_bg_color(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A)); // #Eb3B5A
     lv_obj_set_style_local_border_width(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_sqBTNTria, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_user_data(_sqBTNTria, &sequence_number);
@@ -269,11 +269,11 @@ void sqSetBtnColor(lv_obj_t *sqObj, SequenceState_t xBTNState)
  */
 
 void SeqWigetBTNEventCallback(lv_obj_t *obj1, lv_event_cb_t event_cb1)
-{   
+{
     /**
      * @brief add the event handler to the button(triangle one)
      */
-     
+
     lv_obj_set_event_cb(_sqBTNTria, event_cb1);
     // lv_obj_set_event_cb(obj1, event_cb1);
 }

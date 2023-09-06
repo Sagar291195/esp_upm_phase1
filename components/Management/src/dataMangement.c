@@ -28,35 +28,23 @@
 
 /****************************************defines**********************************/
 
-#define TAG "dataMangement"
-
-#define DB_LOCATION "/card"
-
-#define PARTITION_NAME "DB"
-
-/**
- * @brief pin configuration for the external flash
- *
- */
-#define PIN_NUM_MISO GPIO_NUM_19
-#define PIN_NUM_MOSI GPIO_NUM_23
-#define PIN_NUM_CLK GPIO_NUM_18
-#define PIN_CS GPIO_NUM_12
-
-#define SPI_DMA_CHAN 1
-
-#define BASE_PATH "/spiffs"
-
-/* file correspond to the db*/
-#define DB_FILENAME "/spiffs/file.db"
+#define TAG                 "dataMangement"
+#define DB_LOCATION         "/card"
+#define PARTITION_NAME      "DB"
+/* pin configuration for the external flash */
+#define PIN_NUM_MISO        GPIO_NUM_19
+#define PIN_NUM_MOSI        GPIO_NUM_23
+#define PIN_NUM_CLK         GPIO_NUM_18
+#define PIN_CS              GPIO_NUM_12
+#define SPI_DMA_CHAN        1
+#define BASE_PATH           "/spiffs"
+#define DB_FILENAME         "/spiffs/file.db"
 
 /*************************************variables********************************************/
-/* Since many task writing to the db at the same time so we need mutual exclusion */
-SemaphoreHandle_t mutexForTheDb = NULL;
-/* db handle for the raw measurement data */
-sqlite3 *dbRawMeasurement = NULL;
-/* db handle for the archive data */
-sqlite3 *dbArchivedMeasurement = NULL;
+
+SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
+sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
+sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
 const char *data = "Callback function has been called";
 char *zErrMsg;
 
@@ -65,176 +53,12 @@ void vCreateDataBase();
 esp_err_t vInitializeSpiffs();
 
 /*********************************************fucntions****************************************/
-esp_err_t initializeSDCard()
-{
-    sdmmc_card_t *card;
-    esp_err_t ret;
 
-    // Options for mounting the filesystem.
-    // If format_if_mount_failed is set to true, SD card will be partitioned and
-    // formatted in case when mounting fails.
-    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
 
-        .format_if_mount_failed = true,
-        .max_files = 5,
-        .allocation_unit_size = 16 * 1024};
-
-    const char mount_point[] = DB_LOCATION;
-    ESP_LOGI(TAG, "Initializing SD card");
-
-    ESP_LOGI(TAG, "Using SPI peripheral");
-
-    // sd card host based configuration
-    sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-    host.slot = HSPI_HOST;
-    // host.max_freq_khz = 10000; // maximum frequecy supported by the sd card module
-
-    // This initializes the slot without card detect (CD) and write protect (WP) signals.
-    // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
-    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    slot_config.gpio_cs = (gpio_num_t)PIN_CS;
-    slot_config.host_id = (spi_host_device_t)host.slot;
-
-    ret = esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
-
-    if (ret != ESP_OK)
-    {
-        if (ret == ESP_FAIL)
-        {
-            ESP_LOGE(TAG, "Failed to mount filesystem. ");
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Failed to initialize the card (%s). "
-                          "Make sure SD card lines have pull-up resistors in place.",
-                     esp_err_to_name(ret));
-        }
-        return ret;
-    }
-
-    // Card has been initialized, print its properties
-    sdmmc_card_print_info(stdout, card);
-    return ESP_OK;
-}
-
-void initializeSDPartSEcond()
-{
-    esp_err_t ret;
-
-    // Options for mounting the filesystem.
-    // If format_if_mount_failed is set to true, SD card will be partitioned and
-    // formatted in case when mounting fails.
-    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
-#ifdef CONFIG_EXAMPLE_FORMAT_IF_MOUNT_FAILED
-        .format_if_mount_failed = true,
-#else
-        .format_if_mount_failed = false,
-#endif // EXAMPLE_FORMAT_IF_MOUNT_FAILED
-        .max_files = 5,
-        .allocation_unit_size = 16 * 1024};
-    sdmmc_card_t *card;
-    const char mount_point[] = DB_LOCATION;
-    ESP_LOGI(TAG, "Initializing SD card");
-
-    sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-
-    // This initializes the slot without card detect (CD) and write protect (WP) signals.
-    // Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
-    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    slot_config.gpio_cs = PIN_CS;
-    slot_config.host_id = host.slot;
-
-    ESP_LOGI(TAG, "Mounting filesystem");
-    ret = esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
-
-    if (ret != ESP_OK)
-    {
-        if (ret == ESP_FAIL)
-        {
-            ESP_LOGE(TAG, "Failed to mount filesystem. "
-                          "If you want the card to be formatted, set the EXAMPLE_FORMAT_IF_MOUNT_FAILED menuconfig option.");
-        }
-        else
-        {
-            ESP_LOGE(TAG, "Failed to initialize the card (%s). "
-                          "Make sure SD card lines have pull-up resistors in place.",
-                     esp_err_to_name(ret));
-        }
-        return;
-    }
-    ESP_LOGI(TAG, "Filesystem mounted");
-
-    // Card has been initialized, print its properties
-    sdmmc_card_print_info(stdout, card);
-
-    // Use POSIX and C standard library functions to work with files.
-
-    // First create a file.
-    const char *file_hello = DB_LOCATION "/hello.txt";
-
-    ESP_LOGI(TAG, "Opening file %s", file_hello);
-    FILE *f = fopen(file_hello, "w");
-    if (f == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to open file for writing");
-        return;
-    }
-    fprintf(f, "Hello %s!\n", card->cid.name);
-    fclose(f);
-    ESP_LOGI(TAG, "File written");
-
-    const char *file_foo = DB_LOCATION "/foo.txt";
-
-    // Check if destination file exists before renaming
-    struct stat st;
-    if (stat(file_foo, &st) == 0)
-    {
-        // Delete it if it exists
-        unlink(file_foo);
-    }
-
-    // Rename original file
-    ESP_LOGI(TAG, "Renaming file %s to %s", file_hello, file_foo);
-    if (rename(file_hello, file_foo) != 0)
-    {
-        ESP_LOGE(TAG, "Rename failed");
-        return;
-    }
-
-    // Open renamed file for reading
-    ESP_LOGI(TAG, "Reading file %s", file_foo);
-    f = fopen(file_foo, "r");
-    if (f == NULL)
-    {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-        return;
-    }
-
-    // Read a line from file
-    char line[64];
-    fgets(line, sizeof(line), f);
-    fclose(f);
-
-    // Strip newline
-    char *pos = strchr(line, '\n');
-    if (pos)
-    {
-        *pos = '\0';
-    }
-    ESP_LOGI(TAG, "Read from file: '%s'", line);
-
-    // All done, unmount partition and disable SPI peripheral
-    esp_vfs_fat_sdcard_unmount(mount_point, card);
-    ESP_LOGI(TAG, "Card unmounted");
-
-    // deinitialize the bus after all devices are removed
-    spi_bus_free(host.slot);
-}
 
 void vInitializeDataManagementApi()
 {
-    //  initializeSDPartSEcond();
-    esp_log_level_set(TAG,ESP_LOG_WARN);
+    esp_log_level_set(TAG, ESP_LOG_WARN);
 
     /* initializing our spiffs */
     esp_err_t err = vInitializeSpiffs();
@@ -276,10 +100,13 @@ esp_err_t vInitializeSpiffs()
 
     size_t total = 0, used = 0;
     ret = esp_littlefs_info("storage", &total, &used);
-    if (ret != ESP_OK){
+    if (ret != ESP_OK)
+    {
         ESP_LOGE(TAG, "Failed to get SPIFFS partition information (%s)", esp_err_to_name(ret));
         return ret;
-    }else{
+    }
+    else
+    {
         ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
         return ret;
     }
@@ -353,7 +180,6 @@ static int db_exec(sqlite3 *db, const char *sql)
     {
         ESP_LOGI(TAG, "DB Operation done successfully\n");
     }
-
     return rc;
 }
 
@@ -370,24 +196,19 @@ void vCreateDataBase()
         ESP_LOGW(TAG, "File not present may be due to the first run not creating it!");
         dbFile = fopen(DB_FILENAME, "w");
     }
+
     fclose(dbFile);
-
-    /* opening the file for the writing purposes */
-    dbFile = fopen(DB_FILENAME, "rw");
-
-    /*  opening the database at the given location */
-    db_open(DB_FILENAME, &dbRawMeasurement);
-
+    dbFile = fopen(DB_FILENAME, "rw");  /* opening the file for the writing purposes */
+    db_open(DB_FILENAME, &dbRawMeasurement);    /*  opening the database at the given location */
     /* creating the raw measurement database */
     char cCreateRawMeasurementTable[] = "CREATE TABLE IF NOT EXISTS rawValuesDataBase(Sample_number INT PRIMARY KEY,Sequence_number INT,timestamp TEXT,average_sdp_value REAL,flowrate REAL,Internal_Pressure_BME REAL,Internal_Temperature_BME REAL,Internal_Humidity_BME REAL,AirDensity REAL,TotalLiters REAL,totalHour REAL,C1BusVolt REAL,C1ShuntVolt REAL,C1ShuntCurr REAL,C2BusVolt REAL,C2ShuntVolt REAL,C2ShuntCur  REAL,C3BusVolt REAL,C3ShuntVolt REAL,C3ShuntCurr REAL,External_Pressure_BME REAL,External_Temperature_BME REAL,External_Humidity_BME REAL);";
-
     int rc = db_exec(dbRawMeasurement, cCreateRawMeasurementTable);
-    if (!rc){
+    if (!rc)
+    {
         ESP_LOGI(TAG, "Raw data table created");
     }
 
     sqlite3_close(dbRawMeasurement); // closing the database
-
     /* creating the data base for the archived data */
     db_open(DB_FILENAME, &dbArchivedMeasurement);
 
@@ -538,7 +359,6 @@ bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNum
             }
 
         } while (rc == SQLITE_ROW);
-
 
         /* finalizing the statement of sqlite */
         rc = sqlite3_finalize(stmt);

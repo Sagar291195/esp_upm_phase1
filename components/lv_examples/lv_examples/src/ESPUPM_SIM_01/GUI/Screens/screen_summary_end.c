@@ -45,114 +45,7 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
-// lv_obj_t *crnt_screen;
-// lv_obj_t * scrSummaryEnd;
-// lv_obj_t * xseParentContainer_se;
-// lv_obj_t * _xseContStatusBar_se;
-// lv_obj_t * __xseTimeLabel_se;
-// lv_obj_t * __xseBatteryLabel_se;
-// lv_obj_t * __xseWifiLabel_se;
-// lv_obj_t * __xseSignalLabel_se;
-// lv_obj_t * _xseSummaryParent_se;
-// lv_obj_t * __xseParaHeadingCont_se;
-// lv_obj_t * ___xseBackArrowLabel_se;
-// lv_obj_t * ___xseSummaryHeadingLbl_se;
-// lv_obj_t * __xseBaseContainer_se;
-// lv_obj_t * ___xseMark_se;
-// lv_obj_t * ___xseStartTxt_se;
-// lv_obj_t * ___xseStopTxt_se;
-// lv_obj_t * ___xseStartDateTxt_se;
-// lv_obj_t * ___xseStopDateTxt_se;
-// lv_obj_t * ___xseStrtTmCont_se;
-// lv_obj_t * ____xseStrtTmVal_se;
-// lv_obj_t * ___xseStopTmCont_se;
-// lv_obj_t * ____xseStopTmVal_se;
-// lv_obj_t * _xseSampleNumTxt_se;
-// lv_obj_t * _xseSampleNumVal_se;
-// lv_obj_t * _xseContFSP_se;
-// lv_obj_t * __xseFLPTxtLbl_se;
-// lv_obj_t * __xseVarFLPTxtLbl_se;
-// lv_obj_t * _xseContSQNum_se;
-// lv_obj_t * __xseSQNumLbl_se;
-// lv_obj_t * __xseVarSQNumLbl_se;
-// lv_obj_t * _xseContSQDur_se;
-// lv_obj_t * __xseSQDurLbl_se;
-// lv_obj_t * __xseVarSQDurLbl_se;
-// lv_obj_t * _xseContStart_se;
-// lv_obj_t * __xseStartLbl_se;
-// lv_obj_t * __xseVarStartLbl_se;
-// lv_obj_t * _xseContEndBy_se;
-// lv_obj_t * __xseContEndByLbl_se;
-// lv_obj_t * __xseVarEndByLbl_se;
-// lv_obj_t * _xseContStrtPerson_se;
-// lv_obj_t * __xseStrtPersonLbl_se;
-// lv_obj_t * __xseVarStrtPersonLbl_se;
-// lv_obj_t * _xseContStopPerson_se;
-// lv_obj_t * __xseStopPersonLbl_se;
-// lv_obj_t * __xseVarStopPersonLbl_se;
-// lv_obj_t * _xseContProblem_se;
-// lv_obj_t * __xseProblemLbl_se;
-// lv_obj_t * __xseVarProblemLbl_se;
-// lv_obj_t * hor_line;
-// lv_obj_t * _xseContVolumeCount_se;
-// lv_obj_t * __xseVolCountLbl_se;
-// lv_obj_t * _xseStartStopTxtValCont_se;
-// lv_obj_t * __xseStartTxt_se;
-// lv_obj_t * __xseStartVal_se;
-// lv_obj_t * __xseStopTxt_se;
-// lv_obj_t * __xseStopVal_se;
-// lv_obj_t * __xseTargetVal_se;
-// lv_obj_t * __xseTargetTxt_se;
-// lv_obj_t * __xseEffectiveVal_se;
-// lv_obj_t * __xseEffectiveTxt_se;
-// lv_obj_t * __xseVariationVal_se;
-// lv_obj_t * __xseVariationText_se;
-// lv_obj_t * hor_line1;
-// lv_obj_t * _xseContHourCount_se;
-// lv_obj_t * __xseHourCountLbl_se;
-// lv_obj_t * _xseHrStartStopTxtValCont_se;
-// lv_obj_t * __xseHrStartTxt_se;
-// lv_obj_t * __xseHrStartVal_se;
-// lv_obj_t * __xseHrStopTxt_se;
-// lv_obj_t * __xseHrStopVal_se;
-// lv_obj_t * __xseHrTargetVal_se;
-// lv_obj_t * __xseHrTargetTxt_se;
-// lv_obj_t * __xseHrEffectiveVal_se;
-// lv_obj_t * __xseHrEffectiveTxt_se;
-// lv_obj_t * __xseHrVariationVal_se;
-// lv_obj_t * __xseHrVariationText_se;
-// lv_obj_t * hor_line2;
-// lv_obj_t * _xseSeque1_se;
-// lv_obj_t * Seq;
-// lv_obj_t * _xseSeque2_se;
-// lv_obj_t * Seq1;
-// lv_obj_t * _xseBTNCont_se;
-// lv_obj_t * _xseBTNUSB_se;
-// lv_obj_t * _xseBTNUSBLbl_se;
-// lv_obj_t * _xseBTNValid_se;
-// lv_obj_t * _xseBTNValidLbl_se;
 
-// lv_task_t *__xserefresherTask;
-
-// char * Seq_Number;
-// bool PumpStopForcefully;
-// char startDateEnd[55];
-// char stopDateEnd[45];
-// char startTimeEnd[60];
-// char stopTimeEnd[60];
-// char guiHrDef[60];
-// char guiMinDef[32];
-// char _xsSProllerbuf[32];
-// char WseqNum1[5];
-// char _xsDurHourRollerbuf[32];
-// char _xsDurMinutrollerbuf[32];
-// double StartLTRCountVal;
-// double StopLTRCountVal;
-// float StartHrEND;
-// float StopHrEND;
-// float targetHr;
-// float effectiveHr;
-// float variationHr;
 
 /**********************
  *      MACROS
@@ -173,11 +66,12 @@ void xseSummaryEndScreen(void)
 
     scrSummaryEnd = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEnd);
-    if(crnt_screen != NULL){
+    if (crnt_screen != NULL)
+    {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
-    
+
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
     // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_se, 320, 480);
@@ -425,7 +319,7 @@ void xseSummaryEndScreen(void)
 
     // Put Var Text label here
     __xseVarFLPTxtLbl_se = lv_label_create(_xseContFSP_se, NULL);
-    lv_obj_align(__xseVarFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0); //# define x_align  -70
+    lv_obj_align(__xseVarFLPTxtLbl_se, _xseContFSP_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0); // # define x_align  -70
     char _xFLP_se[30];
     sprintf(_xFLP_se, "%.1f L/min", xSampleSummary.fFlowSetPoint);
     lv_label_set_text(__xseVarFLPTxtLbl_se, _xFLP_se); // setting the flow point value
@@ -811,8 +705,8 @@ void xseSummaryEndScreen(void)
     lv_obj_set_size(_xseBTNUSB_se, 120, 55);
     // lv_obj_set_event_cb(_xseBTNUSB_se, BTN_event_handler);
     lv_obj_set_style_local_radius(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
-    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); //#Eb3B5A
-    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); //#Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // #Eb3B5A
     // lv_style_set_bg_color(&_xssValidJobBtnStyle_ss, LV_STATE_DEFAULT | LV_STATE_PRESSED | LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_border_width(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_xseBTNUSB_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
@@ -831,7 +725,7 @@ void xseSummaryEndScreen(void)
     // lv_obj_set_event_cb(_xseBTNUSB_se, BTN_event_handler);
     lv_obj_set_event_cb(_xseBTNValid_se, Valid_BTN_event_handler);
     lv_obj_set_style_local_radius(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
-    lv_obj_set_style_local_bg_color(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); //#Eb3B5A
+    lv_obj_set_style_local_bg_color(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48)); // #Eb3B5A
     lv_obj_set_style_local_border_width(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(_xseBTNValid_se, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
 
@@ -1112,10 +1006,10 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         // printf("%d\n", (int)lv_obj_get_user_data(obj));
         /* if sample exits in the database then show */
         if (vGetSequenceSummaryFromDataBase(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary))
-        { 
+        {
             lv_task_del(__xserefresherTask);
             // setting the smaple number and sequnce number before showing the sequnce data
-            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t) lv_obj_get_user_data(obj), &xSequnceSummary);
+            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary);
             sssSummarySampleScreen();
         }
         else

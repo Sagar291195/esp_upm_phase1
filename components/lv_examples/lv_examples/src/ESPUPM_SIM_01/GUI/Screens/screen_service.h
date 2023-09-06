@@ -6,56 +6,51 @@
  *  @date      Year
  */
 
-
 /**
-*  @file screen_service.h
-*  @brief Short description
-*  @details Long description
-*/
+ *  @file screen_service.h
+ *  @brief Short description
+ *  @details Long description
+ */
 
 #ifndef SCREEN_SERVICE_H
 #define SCREEN_SERVICE_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+    /*********************
+     *      INCLUDES
+     *********************/
 
-/*********************
- *      INCLUDES
- *********************/
+    /*********************
+     *      DEFINES
+     *********************/
 
-/*********************
- *      DEFINES
- *********************/
+    /**********************
+     *     TYPEDEFS
+     **********************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+    /**********************
+     *  GLOBAL MACROS
+     **********************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
+    /**********************
+     *  GLOBAL VARIABLES
+     **********************/
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+    /**********************
+     *  GLOBAL PROTOTYPES
+     **********************/
+    void callServiceSetScreen(void);
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
-void callServiceSetScreen(void);
+    /**********************
+     *    ERROR ASSERT
+     **********************/
 
-
-/**********************
- *    ERROR ASSERT
- **********************/
- 
- 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
 #endif /*SCREEN_SERVICE_H*/
-
-
