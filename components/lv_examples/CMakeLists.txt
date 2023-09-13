@@ -6,7 +6,7 @@ file(GLOB_RECURSE INCLUEDES lv_examples/ lv_examples/src/ESPUPM_SIM_01/GUI/Langu
 
 idf_component_register(SRCS ${SOURCES}
                        INCLUDE_DIRS ${INCLUEDES} .
-                       REQUIRES lvgl controller)
+                       REQUIRES lvgl )
 
 else()
     message(FATAL_ERROR "LVGL LV examples: ESP_PLATFORM is not defined. Try reinstalling ESP-IDF.")
