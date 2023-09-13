@@ -1,14 +1,3 @@
-/**
- * @file manuCompensationLayer.c
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This contain the manufacturing layer compensation. All the data realted to the manufacture compensation is caluelated and done here
- * @version 1.1
- * @date 2022-06-27
- *
- * @copyright Copyright (c) 2022
- *
- */
-
 #include <sensorManagement.h>
 #include <esp_err.h>
 #include <esp_log.h>

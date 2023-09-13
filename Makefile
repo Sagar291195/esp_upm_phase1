@@ -3,5 +3,5 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := lvgl-demo
+PROJECT_NAME := esp-upm
 include $(IDF_PATH)/make/project.mk
