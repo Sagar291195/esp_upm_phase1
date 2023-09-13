@@ -15,6 +15,7 @@
 #include <esp_log.h>
 #include <math.h>
 #include <sensorManagement.h>
+#include "userCompensationLayer.h"
 
 
 /***************************************defines***********************************************/
@@ -69,29 +70,41 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
     return fResult;
 }
 
-float fGetAirDesity_featureData()
+float fGetExternal_AirDesity_Raw(void)
 {
     float result =0;
-    external_sensor_data_t xManuCompensatedExternalData;
+    external_sensor_data_t xAverageData;
 
-    /* get the manufacture compensated external sensor data */
-    vGetMaufCompensatedExternalSensorData(&xManuCompensatedExternalData);
-    // ESP_LOGI(TAG, "Manu Compensated : %0.2f, %02.f, %.3f", xManuCompensatedExternalData.fTemperature,
-    //         xManuCompensatedExternalData.fPressure, xManuCompensatedExternalData.fHumidity);
-    
-    result =  _fDensityCalculation(xManuCompensatedExternalData.fTemperature, xManuCompensatedExternalData.fHumidity, xManuCompensatedExternalData.fPressure);
+    vGetExternalSensorData(&xAverageData);    
+    result =  _fDensityCalculation(xAverageData.fTemperature, xAverageData.fHumidity, xAverageData.fPressure);
     return result;
 
 }
 
-float fGetInternalAirDensity_featureData()
+float fGetInternalAirDensity_Raw()
 {
     return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
+}
+
+float fGetExternal_AirDesity_Comp(void)
+{
+    float result =0;
+    external_sensor_data_t comp_sensordata;
+
+    vGetExternalSensorDataUserCompensated(&comp_sensordata);;    
+    result =  _fDensityCalculation(comp_sensordata.fTemperature, comp_sensordata.fHumidity, comp_sensordata.fPressure);
+    return result;
+
+}
+
+float fGetInternalAirDensity_Comp(void)
+{
+    return _fDensityCalculation(fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated());
 }
 
 float fGetVolumetricFlow_featureData()
 {
     float result =0;
-    result = _fFlowCalculation(fGetMassFlowManuCompensationLayer(), fGetAirDesity_featureData());
+    result = _fFlowCalculation(fGetMassFlowManuCompensationLayer(), fGetExternal_AirDesity_Comp());
     return result;
 }

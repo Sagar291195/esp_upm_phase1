@@ -19,23 +19,6 @@
 
 /*****************************function prototype***************************************/
 
-/**
- * @brief user compensated volumetric flow is 
- * @return float 
- */
-float fGetVolumetricFlowUserCompensated();
-
-/**
- * @brief Get external air density user compensated
- * @return float 
- */
-float fGetExternalAirDensityUserCompensated();
-
-/**
- * @brief get internal air density user compensated
- * @return float 
- */
-float fGetInternalAirDensityUserCompensated();
 
 /**
  * @brief get the internal pressure user compensated
@@ -43,7 +26,7 @@ float fGetInternalAirDensityUserCompensated();
  */
 float fGetInternalPressureUserCompensated();
 
-
+float fGetVolumetricFlowUserCompensated();
 /**
  * @brief Get internal Humidity user compensated
  * @return float 

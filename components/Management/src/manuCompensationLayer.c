@@ -76,7 +76,7 @@ float fGetMassFlowManuCompensationLayer()
 float fGetAirDensityManuCompensationLayer()
 {
     float fResult = 0.0;
-    fResult = fGetAirDesity_featureData();
+    fResult = fGetExternal_AirDesity_Raw();
     /* do some calulation to get the air density */
     return fResult;
 }
@@ -105,10 +105,4 @@ float fGetInternalHumidityManuCompensationLayer()
     return fResult;
 }
 
-float fGetInternalAirDensityManuCompensationLayer()
-{
-    float fResult = 0;
-    fResult = fGetInternalAirDensity_featureData();
 
-    return fResult;
-}

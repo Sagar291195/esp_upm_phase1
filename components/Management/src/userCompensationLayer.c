@@ -31,22 +31,6 @@ float fGetVolumetricFlowUserCompensated()
     return result;
 }
 
-float fGetExternalAirDensityUserCompensated()
-{
-    float result = fGetAirDensityManuCompensationLayer();
-    /* add some user compensation */
-    ESP_LOGD(TAG, "user compensated Extenal air density is %0.2f", result);
-    return result;
-}
-
-float fGetInternalAirDensityUserCompensated()
-{
-    float result = fGetInternalAirDensityManuCompensationLayer();
-    /* add some user compensation */
-    ESP_LOGD(TAG, "Internal Air density user compensated is %0.2f", result);
-    return result;
-}
-
 float fGetInternalPressureUserCompensated()
 {
     float result = fGetInternalPressureManuCompensationLayer();

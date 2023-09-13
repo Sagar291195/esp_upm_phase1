@@ -66,11 +66,4 @@ float fGetInternalTempretureManuCompensationLayer();
  */
 float fGetInternalHumidityManuCompensationLayer();
 
-
-/**
- * @brief get the internal airdensity as the manufacturer compensation layer
- * @return float
- */
-float fGetInternalAirDensityManuCompensationLayer();
-
  #endif // __MANUCOMPENSATIONLAYER_H__
