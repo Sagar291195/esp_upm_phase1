@@ -8,7 +8,7 @@
  *      INCLUDES
  *********************/
 #include "screen_includes.h"
-#include <controller.h>
+#include "../../controller.h"
 // #include <lv_obj.h>
 /*********************
  *      DEFINES

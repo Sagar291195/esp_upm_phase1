@@ -45,7 +45,7 @@ extern "C"
 #include "esp_err.h"
 #include "esp_timer.h" //added this to add High resolution timer//
 #include "esp_upm_sensors.h"
-#include "../lv_examples/lv_examples/src/ESPUPM_SIM_01/GUI/Screens/screen_includes.h"
+#include "GUI/Screens/screen_includes.h"
 #include "esp_upm_periferal.h"
     /*********************
      *      DEFINES

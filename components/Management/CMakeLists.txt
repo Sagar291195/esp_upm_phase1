@@ -11,4 +11,4 @@ idf_component_register(SRCS "src/sampleManagement.c"
                             "src/userCompensationLayer.c"
                             "src/calibration.c"
                     INCLUDE_DIRS include 
-                    REQUIRES esp_upm_middleware esp_upm_sensors lv_examples nvs_flash)
+                    REQUIRES esp_upm_middleware esp_upm_sensors nvs_flash)

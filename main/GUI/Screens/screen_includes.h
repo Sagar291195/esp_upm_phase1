@@ -26,7 +26,7 @@ extern "C"
 #include <string.h>
 #include <time.h>
 
-#include "../../../../../../lvgl/lvgl.h"
+#include "../../lvgl/lvgl.h"
 
 #include "screen_main.h"
 #include "screen_common.h"

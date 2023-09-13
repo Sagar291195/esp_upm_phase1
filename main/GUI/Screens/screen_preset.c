@@ -9,7 +9,7 @@
  *********************/
 #include "screen_includes.h"
 
-#include <controller.h>
+#include "../../controller.h"
 #include <esp_log.h>
 /*********************
  *   DEFINES/CONST

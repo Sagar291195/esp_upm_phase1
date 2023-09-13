@@ -7,9 +7,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdio.h>
-// #include "lvgl/lvgl.h"
 
-#include "../../../../../../lvgl/lvgl.h"
+
+#include "../lvgl/lvgl.h"
 #include "../Screens/screen_includes.h"
 
 /*********************

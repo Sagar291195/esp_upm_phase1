@@ -1365,17 +1365,6 @@ CONFIG_LITTLEFS_MTIME_USE_SECONDS=y
 # end of LittleFS
 
 #
-# lv_examples configuration
-#
-CONFIG_LV_EX_PRINTF=y
-CONFIG_LV_USE_DEMO_WIDGETS=y
-# CONFIG_LV_USE_DEMO_KEYPAD_AND_ENCODER is not set
-# CONFIG_LV_USE_DEMO_BENCHMARK is not set
-# CONFIG_LV_USE_DEMO_STRESS is not set
-# CONFIG_LV_DEMO_WIDGETS_SLIDESHOW is not set
-# end of lv_examples configuration
-
-#
 # LVGL configuration
 #
 CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=y

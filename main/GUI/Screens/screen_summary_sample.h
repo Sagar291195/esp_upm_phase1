@@ -8,7 +8,7 @@
 #ifndef SCREEN_SUMMARY_SAMPLE_H
 #define SCREEN_SUMMARY_SAMPLE_H
 #include <stdint.h>
-#include <controller.h>
+#include "../../controller.h"
 
 #ifdef __cplusplus
 extern "C"

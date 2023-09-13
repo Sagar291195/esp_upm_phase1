@@ -2,7 +2,7 @@
  *      INCLUDES
  *********************/
 #include "ResumeInfoWidget.h"
-#include <controller.h>
+#include "../../controller.h"
 /**********************
  *  STATIC VARIABLES
  **********************/

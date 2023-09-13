@@ -24,7 +24,7 @@ extern "C"
  *      INCLUDES
  *********************/
 #include "middleware.h"
-#include "../lv_examples/lv_examples/src/ESPUPM_SIM_01/GUI/Screens/screen_includes.h"
+#include "../../../main/GUI/Screens/screen_includes.h"
     /*********************
      *      DEFINES
      *********************/

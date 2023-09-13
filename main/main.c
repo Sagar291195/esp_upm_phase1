@@ -39,7 +39,7 @@
 #include "lvgl/lvgl.h"
 #endif
 #include "lvgl_helpers.h"
-#include "../components/lv_examples/lv_examples/src/ESPUPM_SIM_01/GUI/Screens/screen_includes.h"
+#include "GUI/Screens/screen_includes.h"
 
 #include "espupm_tasks.h"
 #include "middlewareTest.h"
