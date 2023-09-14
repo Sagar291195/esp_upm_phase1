@@ -9,7 +9,7 @@
  *
  */
 
-#include <motor.h>
+#include "external/motor.h"
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_periph.h"
 #include "driver/pcnt.h"

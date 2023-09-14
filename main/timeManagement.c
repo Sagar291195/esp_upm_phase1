@@ -10,7 +10,7 @@
  */
 
 #include <timeManagement.h>
-#include <ds3231.h>
+#include "external/ds3231.h"
 #include <esp_log.h>
 #include <time.h>
 #include <i2cdev.h>

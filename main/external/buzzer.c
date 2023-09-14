@@ -1,19 +1,9 @@
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Abhai Tiwari
- *  @date      2021-03-22
- */
 
-/**
- *  @file
- *  @brief
- *  @details
- */
 
 /*********************
  *      INCLUDES
  *********************/
-
+#include "esp_upm.h"
 #include "buzzer.h"
 
 /*********************

@@ -1,19 +1,5 @@
-
-
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Name (mail or git)
- *  @date      Year
- */
-
-/**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
-
-#ifndef TEST_S1_H
-#define TEST_S1_H
+#ifndef BUZZER_H
+#define BUZZER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,8 +29,11 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-void testFolderAdd1(void);
 
+void readyModeBuzzBeep(void);
+void workInProgressBuzzBeep(void);
+void jobFinishedModeBuzzBeep(void);
+void waitModeBuzzBeep(void);
 /**********************
  *    ERROR ASSERT
  **********************/
@@ -54,6 +43,6 @@ void testFolderAdd1(void);
 } /* extern "C" */
 #endif
 
-#endif /*TEST_S1_H*/
+#endif /*BUZZER_H*/
 
 

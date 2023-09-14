@@ -19,12 +19,13 @@ extern "C"
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <counters.h>
 #include <sampleManagement.h>
 #include <sequenceManagement.h>
 #include <timeManagement.h>
 #include <dataMangement.h>
 #include <sensorManagement.h>
+
+#include "counters.h"
 
 
 

@@ -1,19 +1,6 @@
 
-
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Name (mail or git)
- *  @date      Year
- */
-
-/**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
-
-#ifndef ESP_UPM_SENSORS_H
-#define ESP_UPM_SENSORS_H
+#ifndef MIDDLEWARE_H
+#define MIDDLEWARE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,17 +10,18 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "test_s.h"
-#include "test_s1.h"
-#include "ds3231.h"
-#include "scanneri2c.h"
-#include "bmp280.h"
-#include "esp_upm_variables.h"
-#include "sdp32.h"
-#include "ina3221.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "esp_system.h"
+#include "driver/gpio.h"
+#include "driver/ledc.h"
+#include "middlewareTest.h"
+#include "midFunctions.h"
+#include "midVariable.h"
 
-#include "middleware.h"
-#include "PID.h"
+//#include "nvs.h"
+
 /*********************
  *      DEFINES
  *********************/
@@ -63,6 +51,6 @@ extern "C" {
 } /* extern "C" */
 #endif
 
-#endif /*ESP_UPM_SENSORS_H*/
+#endif /*MIDDLEWARE_H*/
 
 

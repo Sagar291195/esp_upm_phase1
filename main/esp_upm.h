@@ -1,19 +1,6 @@
 
-
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Name (mail or git)
- *  @date      Year
- */
-
-/**
-*  @file file
-*  @brief Short description
-*  @details Long description
-*/
-
-#ifndef BUZZER_H
-#define BUZZER_H
+#ifndef ESP_UPM_H
+#define ESP_UPM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,7 +10,17 @@ extern "C" {
 /*********************
  *      INCLUDES
  *********************/
-#include "esp_upm_periferal.h"
+#include "external/ds3231.h"
+#include "sensors/bmp280.h"
+#include "sensors/sdp32.h"
+#include "external/ina3221.h"
+
+#include "middleware.h"
+#include "PID.h"
+
+#include "espupm_tasks.h"
+#include "external/buzzer.h"
+#include "external/ws2812.h"
 /*********************
  *      DEFINES
  *********************/
@@ -44,10 +41,6 @@ extern "C" {
  *  GLOBAL PROTOTYPES
  **********************/
 
-void readyModeBuzzBeep(void);
-void workInProgressBuzzBeep(void);
-void jobFinishedModeBuzzBeep(void);
-void waitModeBuzzBeep(void);
 /**********************
  *    ERROR ASSERT
  **********************/
@@ -57,6 +50,6 @@ void waitModeBuzzBeep(void);
 } /* extern "C" */
 #endif
 
-#endif /*BUZZER_H*/
+#endif /*ESP_UPM_H*/
 
 

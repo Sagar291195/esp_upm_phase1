@@ -17,7 +17,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <timeManagement.h>
-#include <motor.h>
+#include "external/motor.h"
 #include <controller.h>
 #include <freertos/semphr.h>
 #include <freertos/timers.h>

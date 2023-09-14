@@ -16,7 +16,7 @@
 #include "screen_includes.h"
 
 #include <userCompensationLayer.h>
-#include <motor.h>
+#include "external/motor.h"
 #include <sensorManagement.h>
 #include <calibration.h>
 

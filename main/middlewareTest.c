@@ -16,7 +16,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
-#include <motor.h>
+
+#include "external/motor.h"
 
 /**********************************************defines*********************************************/
 

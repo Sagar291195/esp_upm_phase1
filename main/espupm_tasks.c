@@ -15,7 +15,7 @@
  *********************/
 #include "espupm_tasks.h"
 #include <inttypes.h>
-#include <motor.h>
+#include "external/motor.h"
 #include <math.h>
 #include <counters.h>
 #include <sensorManagement.h>

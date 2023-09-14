@@ -13,11 +13,12 @@
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include <bmp280.h>
-#include <bme680.h>
+#include "sensors/bme680.h"
+#include "sensors/bmp280.h"
+
 #include <string.h>
-#include <ina3221.h>
-#include <sdp32.h>
+#include "external/ina3221.h"
+#include "sensors/sdp32.h"
 #include <timeManagement.h>
 /********************************************defines****************************************************************/
 

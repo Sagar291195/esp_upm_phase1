@@ -17,7 +17,7 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 #include <time.h>
-#include "../../../controller.h"
+#include "controller.h"
 #include <string.h>
 #include <math.h>
 /************************************************defines**********************************************/

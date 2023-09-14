@@ -21,10 +21,9 @@
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "nvs.h"
-#include <motor.h>
+#include "external/motor.h"
 #include <espupm_tasks.h>
 #include <timeManagement.h>
-#include <stateMachine.h>
 #include <nvs_flash.h>
 #include <dataMangement.h>
 #include <sensorManagement.h>
@@ -44,7 +43,7 @@
 #include "espupm_tasks.h"
 #include "middlewareTest.h"
 #include <sampleManagement.h>
-#include "esp_upm_sensors.h"
+#include "esp_upm.h"
 #include <calibration.h>
 
 /*********************
@@ -169,7 +168,6 @@ void app_main()
     xGuiSemaphore1 = xSemaphoreCreateMutex();
 
     wakeupmodeInit();           // enabling the device from the wake mode
-    vInitiateTheStateMachine(); // initaiting the state machine of the device
     Init_Buzzer();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);

@@ -12,7 +12,7 @@
 #include <controller.h>
 #include <esp_log.h>
 #include <middlewareTest.h>
-#include <motor.h>
+#include "external/motor.h"
 #include <sampleManagement.h>
 #include <sequenceManagement.h>
 #include <freertos/FreeRTOS.h>
