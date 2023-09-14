@@ -9,15 +9,18 @@
  *
  */
 /************************************Inlcude*********************************************************/
-#include <controller.h>
+
 #include <esp_log.h>
-#include <middlewareTest.h>
-#include "external/motor.h"
-#include <sampleManagement.h>
-#include <sequenceManagement.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <freertos/semphr.h>
+
+#include "esp_upm.h"
+#include <controller.h>
+#include "external/motor.h"
+#include <sampleManagement.h>
+#include <sequenceManagement.h>
+#include "storage/parameters.h"
 
 /************************************defines******************************************************/
 
@@ -27,10 +30,7 @@ extern SemaphoreHandle_t xGuiSemaphore1;
 
 /******************************** prototypes ******************************************************/
 
-/**
- * @brief this function start the job
- *
- */
+/* this function start the job */
 void vStartJob();
 
 /*****************************function*********************************/
@@ -56,16 +56,10 @@ void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, 
         fACoff = 1;
     }
 
-    /**
-     * @brief setting the pid parameters to the nvs flash
-     *
-     */
+    /* setting the pid parameters to the nvs flash */
     vSetPIDParametersToNvs(&PID_parameters);
 
-    /**
-     * @brief also setting the pid parameters to the pid control block
-     *
-     */
+    /* also setting the pid parameters to the pid control block */
     setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);
 }
 

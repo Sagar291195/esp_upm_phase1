@@ -17,7 +17,7 @@
 #include <inttypes.h>
 #include "external/motor.h"
 #include <math.h>
-#include <counters.h>
+#include "storage/parameters.h"
 #include <sensorManagement.h>
 #include <manuCompensationLayer.h>
 #include <userCompensationLayer.h>

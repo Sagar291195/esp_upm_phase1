@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <counters.h>
+#include "storage/parameters.h"
 
 /***************************************defines****************************************/
 /* maximum number of samples in the system */

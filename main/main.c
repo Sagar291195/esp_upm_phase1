@@ -21,15 +21,12 @@
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "nvs.h"
-#include "external/motor.h"
-#include <espupm_tasks.h>
-#include <timeManagement.h>
 #include <nvs_flash.h>
+#include "esp_timer.h" 
+
+#include <timeManagement.h>
 #include <dataMangement.h>
 #include <sensorManagement.h>
-
-
-#include "esp_timer.h" // added this to check High resolution timer
 
 /* Littlevgl specific */
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
@@ -38,13 +35,10 @@
 #include "lvgl/lvgl.h"
 #endif
 #include "lvgl_helpers.h"
-#include "GUI/Screens/screen_includes.h"
+#include "gui/screens/screen_includes.h"
 
-#include "espupm_tasks.h"
-#include "middlewareTest.h"
 #include <sampleManagement.h>
 #include "esp_upm.h"
-#include "storage/calibration.h"
 
 /*********************
  *      DEFINES
@@ -181,7 +175,7 @@ void app_main()
     vInitializeMotor();                 // Installing the sample management service
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    // readTotalLiters();                //Reading the tolal volume in the system from nvs flash
+
 
     ESP_LOGI(TAG, "Code Version: ESPUPM 8-04-2022 V2");
 

@@ -25,7 +25,7 @@ extern "C"
 #include <dataMangement.h>
 #include <sensorManagement.h>
 
-#include "counters.h"
+#include "storage/parameters.h"
 
 
 

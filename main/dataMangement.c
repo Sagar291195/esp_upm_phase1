@@ -29,15 +29,6 @@
 /****************************************defines**********************************/
 
 #define TAG                 "dataMangement"
-#define DB_LOCATION         "/card"
-#define PARTITION_NAME      "DB"
-/* pin configuration for the external flash */
-#define PIN_NUM_MISO        GPIO_NUM_19
-#define PIN_NUM_MOSI        GPIO_NUM_23
-#define PIN_NUM_CLK         GPIO_NUM_18
-#define PIN_CS              GPIO_NUM_12
-#define SPI_DMA_CHAN        1
-#define BASE_PATH           "/spiffs"
 #define DB_FILENAME         "/spiffs/file.db"
 
 /*************************************variables********************************************/

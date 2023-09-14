@@ -56,18 +56,7 @@
 #define motorPID_SAMPLE_MIN (100)
 /** Default PID Sample */
 #define motorPID_DEFAULT_SAMPLE (403)
-/** Default PID aggressive Ki */
-#define motorPID_DEFAULT_AKI (4.8)
-/** Default PID aggressive Kd */
-#define motorPID_DEFAULT_AKD (1.2)
-/** Default PID aggressive Kp */
-#define motorPID_DEFAULT_AKP (15)
-/** Default PID normal Ki */
-#define motorPID_DEFAULT_KI (3.0)
-/** Default PID normal Kd */
-#define motorPID_DEFAULT_KD (1.0)
-/** Default PID normal Kp */
-#define motorPID_DEFAULT_KP (5.0)
+
 /**
  * @brief set the entry point for the pid controller
  *

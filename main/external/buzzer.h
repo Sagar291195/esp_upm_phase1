@@ -29,7 +29,7 @@ extern "C" {
 /**********************
  *  GLOBAL PROTOTYPES
  **********************/
-
+void Init_Buzzer(void);
 void readyModeBuzzBeep(void);
 void workInProgressBuzzBeep(void);
 void jobFinishedModeBuzzBeep(void);

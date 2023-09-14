@@ -22,9 +22,8 @@
 #include <sampleManagement.h>
 
 /****************************************defines****************************************/
-
-#define TAG "timeManagement"
-#define STORAGE "timeManagement"
+#define TAG         "timeManagement"
+#define STORAGE     "timeManagement"
 
 /* i2c sda and scl pins */
 #define SDA_GPIO 21

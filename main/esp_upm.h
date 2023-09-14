@@ -18,14 +18,16 @@ extern "C" {
 #include "external/ina3221.h"
 #include "external/buzzer.h"
 #include "external/ws2812.h"
+#include "external/motor.h"
 #include "sensors/bmp280.h"
 #include "sensors/sdp32.h"
 
 
 #include "pid.h"
 #include "espupm_tasks.h"
-#include "middlewareTest.h"
-#include "midFunctions.h"
+#include "storage/parameters.h"
+#include "storage/calibration.h"
+
 /*********************
  *      DEFINES
  *********************/

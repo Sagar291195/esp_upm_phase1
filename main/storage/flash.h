@@ -17,7 +17,7 @@
 /***************************************************************************************************
  *                         FUNCTION PROTOTYPE
  ***************************************************************************************************/
-bool nvsread_value_float(char *storagename, char *key, float *value);
+bool nvsread_value_parameter(char *storagename, char *key, void *value);
 bool nvswrite_value_float(char *storagename, char *key, float value);
-
+bool nvswrite_value_parameters(char *storagename, char *key, void *value, uint16_t length);
 #endif  /*__FLASH_H__*/

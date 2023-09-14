@@ -603,7 +603,6 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         /* now sample is valid and can be saved into the memory and proceed for the sample execution */
         vControllerSampleIsValid();
         // printf("Back to Dashbord from presetscrn\n");
-        // int xdt = RemoveSlashes(_xaDaterollerbuf);
         // printf("xdat value is: %d \n", xdt );
         defaultParaSelected = false;
         global_DashbordBTNflag = 2;
@@ -629,20 +628,6 @@ void startTimer(void)
 
 void start_timer_callback(void *args)
 {
-    // printf("Timer Stop \n");
-    // isMotor = false;
-
-    // totalhourVal = totalhourVal +  (float) HourCount / 3600.0 ;
-    // StopHrEND = totalhourVal;
-    // //printf("Current Hour counter value : %f \n", totalhourVal);
-    // writeTotalhour(totalhourVal); //
-
-    // targetHr = (float)totalSecond / 3600.0;
-    // effectiveHr = ((float)HourCount )/ 3600.0;
-    // variationHr = 100.0 - ((effectiveHr * 100.0) / targetHr);
-
-    // totalHourInt = (int)totalhourVal;
-    // totalHourFloat = (totalhourVal - (float)totalHourInt)*100;
     if (PumpStopForcefully != true)
     {
         sprintf(stopDateEnd, "%s", guiDate);

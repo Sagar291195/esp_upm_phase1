@@ -1,31 +1,36 @@
 
-
-/**
- * @file counters.h
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This files contain the definition of the counters. Counters are the values which are unique in nature globally
- * @version 1.1
- * @date 2022-05-18
- *
- * @copyright Copyright (c) 2022
- *
- */
-
-#ifndef __COUNTERS_H__
-#define __COUNTERS_H__
+#ifndef __PARAMETERS_H__
+#define __PARAMETERS_H__
 
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <nvs.h>
+#include <nvs_flash.h>
+#include <esp_log.h>
 
-/**********************************************defines*******************************************/
-
+/***************************************************************************************************
+ *                              TYPEDEF
+ ***************************************************************************************************/
 /* maximum variation in tolerance for the hour measurement to mark the sample as sucessful */
 #define MAX_TOLERATION_IN_HOUR_VARIATION 5.0
 /* maximum variation in tolerance for volume measurement to mark as sucessful */
 #define MAX_TOLERATION_IN_VOLUME_VARIATION 5.0
 /* maximum tolerance in variation for flow of air to mark the sample as sucessful */
 #define MAX_TOLERATION_IN_FLOW_VARIATION 5.0
+
+/** Default PID aggressive Ki */
+#define motorPID_DEFAULT_AKI (4.8)
+/** Default PID aggressive Kd */
+#define motorPID_DEFAULT_AKD (1.2)
+/** Default PID aggressive Kp */
+#define motorPID_DEFAULT_AKP (15)
+/** Default PID normal Ki */
+#define motorPID_DEFAULT_KI (3.0)
+/** Default PID normal Kd */
+#define motorPID_DEFAULT_KD (1.0)
+/** Default PID normal Kp */
+#define motorPID_DEFAULT_KP (5.0)
 
 /***************************************struct and enum *****************************************/
 /* structure to store the volume of air flow values of the sequence summary in the system */
@@ -47,7 +52,6 @@ typedef struct hourCounter
     float fTargetHour;     // target hour to be achived
     float fEffectiveHour;   //hour has been acheived by running the sequence
     float fVariation;   //variation in percentage
-
 } hourCounter_t;
 
 /* summary of the air flow counter */
@@ -67,7 +71,7 @@ typedef struct ambientTemperature
     float fMaxTemperature;  //max variation in the ambient temperature for the sequence during the running
     float fMinTemperature;  //min variation in the ambient temperature for the sequence during the running
     float fTemperatureVariation;    //percentage of variation in the ambient temperature for the sequence during the running
-bool bIsInRange;            //check whether the values are in the range or not
+    bool bIsInRange;            //check whether the values are in the range or not
 } ambientTemperature_t;
 
 /* structure for holding the ambient pressure */
@@ -78,7 +82,6 @@ typedef struct ambientPressure
     float fMinAmbientPressure;  //min ambient pressure
     float fAmbientPressureVariation;    //variation in pressure
     bool bIsInRange;    //check whether the values are in the range or not
-
 } ambientPressure_t;
 
 /* structure to hold the ambient humididy */
@@ -101,6 +104,18 @@ typedef struct headLoss
     bool bIsInRange;    //check whether the values are in the range or not
 } headLoss_t;
 
+/* Stores and retrieves the pid values from the nvs flash */
+typedef struct struct_PID_parameters
+{
+    float fKp;
+    float fKi;
+    float fKd;
+    float fAkp;
+    float fAki;
+    float fAkd;
+    float fNcoff;
+    float fACoff;
+} struct_PID_parameters_t;
 
 /*********************function prototypes**********************/
 /**
@@ -207,4 +222,11 @@ void vSetTotalLitersHasBeenPassInGivenSequence(float fLiters);
  */
 float fGetTotalLitersHasBeenPassInGivenSequence();
 
-#endif // __COUNTERS_H__
+void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters);
+void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters);
+/***************************************************************************************************
+ *                         FUNCTION PROTOTYPE
+ ***************************************************************************************************/
+
+
+#endif  /*__PARAMETERS_H__*/
