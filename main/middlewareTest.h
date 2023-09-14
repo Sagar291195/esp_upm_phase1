@@ -23,7 +23,6 @@ extern "C"
 /*********************
  *      INCLUDES
  *********************/
-#include "middleware.h"
 #include "../../../main/GUI/Screens/screen_includes.h"
     /*********************
      *      DEFINES

@@ -58,8 +58,6 @@ extern "C"
 #include "freertos/task.h"
 
 #include "esp_upm.h"
-#include "middleware.h"
-
 #include "espupm_tasks.h"
 
 /*********************

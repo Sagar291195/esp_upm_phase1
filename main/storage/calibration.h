@@ -25,7 +25,7 @@ typedef struct calibration_strct{
     float flow_reference_sensorvalue1;          //reference sensor value1
     float flow_reference_sensorvalue2;          //reference sensor value2
     float flow_reference_sensorvalue3;          //reference sensor value3
-}calibrationt_t;
+}calibration_t;
 
 /***************************************************************************************************
  *                         FUNCTION PROTOTYPE

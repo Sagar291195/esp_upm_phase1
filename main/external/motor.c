@@ -13,16 +13,16 @@
 #include "driver/mcpwm.h"
 #include "soc/mcpwm_periph.h"
 #include "driver/pcnt.h"
-#include <PID.h>
+#include <pid.h>
 #include <esp_log.h>
 #include <stdbool.h>
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include <math.h>
-#include <middleware.h>
 #include <userCompensationLayer.h>
 #include <sampleManagement.h>
 #include <sequenceManagement.h>
+#include "esp_upm.h"
 
 /**********************************************define************************************************/
 #define TAG "MOTOR"

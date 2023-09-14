@@ -14,7 +14,6 @@
  *      INCLUDES
  *********************/
 #include "esp_upm.h"
-#include "middleware.h"
 
 /*********************
  *      DEFINES
