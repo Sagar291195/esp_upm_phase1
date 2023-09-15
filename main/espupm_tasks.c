@@ -57,10 +57,6 @@ float *pRealFlowRate = NULL;
 extern SemaphoreHandle_t xGuiSemaphore;
 
 //======PID Variables============
-// float kp = 1/*2.5*/, ki = 0/*1.0*/, kd = 0/*1.0*/;
-// float kp = 1, ki = 0.8, kd = 0.4;
-// pidc_t *pid;
-// struct pid_controller ctrldata;
 float count_flow = 1, output = 0;
 float setpoint_val;
 float *flowrateptr;
@@ -76,7 +72,6 @@ bool enRead = true;
 float flow_comapre = 0.5;
 float literTm_Frac = 60.0;
 float hundread = 100.0;
-int FlowPolyDeg;
 float Avg_flow_value1;
 
 //================================================
@@ -88,14 +83,13 @@ float flow_value;
 // float dp_ticks_rw = 240.0
 volatile int JTCCountSec = 0;
 int64_t JTCC21 = 0;
-int revCountDefJobStart;
+
 bool ismotor;
 bool timerOn = false;
 int flow_read_count = 0;
 float Avg_flow_value = 0;
 float TotalLit;
-int TotalliterInt;
-int TotalLiterFloat;
+
 volatile int Job_Rem_Hr;
 volatile int Job_Rem_Min;
 int literMeasureNum = 0; // This is 0 at start when there is Flow Rate 1, Flow Rate Stopped then 2
@@ -107,7 +101,6 @@ double targetLiters;
 double effectiveLiters;
 float variationLiters;
 int HourCount = 0;
-float totalhourVal;
 bool buzzer_on = false;
 float PolyFlowOut;
 uint8_t cr, cg, cb;
@@ -116,11 +109,11 @@ int dashboardflg;
 int global_DashbordBTNflag;
 char startDateEnd[55];
 char startTimeEnd[60];
-double StartLTRCountVal;
-double total_liters1;
+
+
 
 double *totalliterPtr;
-float *totalhourPtr;
+
 
 uint32_t *INA_measNumPtr = NULL;
 
@@ -549,8 +542,6 @@ void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask)
 
     sprintf(startDateEnd, "%s", guiDate);
     sprintf(startTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
-    StartLTRCountVal = total_liters1;
-
     DashboardInfoWidget();
     lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
     lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
@@ -563,7 +554,9 @@ void vinfoWgtUpdtWaitToProgTask(void)
 }
 
 
-
+void set_navier_time_flag(bool value){
+    navier_set_time = value;
+}
 
 /**********************
  *    ERROR ASSERT

@@ -46,7 +46,6 @@ extern "C"
 
     extern char guiTime[25];
     extern struct tm navier_time;
-    extern char guiDate[40];
     extern char guiSeqDate1[25];
     extern char guiDateNext1[200];
     extern char GuiDateRollerStr[700];
@@ -74,20 +73,8 @@ extern "C"
     extern char stopDateEnd[45];
     extern char startTimeEnd[60];
     extern char stopTimeEnd[60];
-    extern int revCountDefJobStart;
     extern char *Seq_Number;
     extern float SetPoint_Value;
-    extern float FlowPloyCoffA;
-    extern float FlowPloyCoffB;
-    extern float FlowPloyCoffC;
-    extern float FlowPloyCoffD;
-    extern float FlowPloyCoffE;
-    extern float FlowPloyCoffF;
-    extern float FlowPloyCoffG;
-    extern float FlowPloyCoffH;
-    extern float FlowPloyCoffI;
-    extern float FlowPloyCoffJ;
-    extern int FlowPolyDeg;
     extern bool iArchORSummaryScrn;
 
     /**********************

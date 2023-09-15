@@ -1940,7 +1940,7 @@ static void timeSaveBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         min_Roller_int = atoi(min_Roller_Val);
         sec_Roller_int = atoi(sec_Roller_Val);
 
-        navier_set_time = true;
+        set_navier_time_flag(true);
 
         fflush(NULL);
     }

@@ -34,7 +34,6 @@
  *  GLOBAL VARIABLES
  **********************/
 extern char guiTime[25];
-extern char guiDate[40];
 extern char guiDateNext1[200];
 extern char GuiDateRollerStr[700];
 char stopTime[25];

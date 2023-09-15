@@ -71,10 +71,8 @@ extern bool isMotor; // Flag to Motor On Off Satatus ( flase = OFF, true = ON)
 
 extern double total_liters;
 
-extern int sampleNumber;
 extern int HourCount;
 
-extern double StartLTRCountVal;
 extern double StopLTRCountVal;
 
 extern double targetLiters;
@@ -85,16 +83,7 @@ extern float targetHr;
 extern float effectiveHr;
 extern float variationHr;
 
-extern float StartHrEND;
 extern float StopHrEND;
-
-extern float totalhourVal;
-extern long totalHourInt;
-extern int totalHourFloat;
-
-extern float KpVal;
-extern float KiVal;
-extern float KdVal;
 
 /**********************
  *  GLOBAL PROTOTYPES

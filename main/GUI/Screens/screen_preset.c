@@ -928,9 +928,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         SeqCounter++;
         lv_task_del(_xarefresherTask);
-        sampleNumber = sampleNumber + 1;
         defaultParametrs(); // get all parameters
-        // writeSampleNum(sampleNumber);
         if (rollerMovCkFlag == true)
         {
             startTimeLabelAdgFlg = true;

@@ -72,23 +72,15 @@ extern "C"
     extern volatile int Job_Rem_Min;
     extern float TotalLit;
     extern int literMeasureNum;
-    extern int TotalliterInt;
-    extern int TotalLiterFloat;
     extern char today_Date_Msg[200];
     extern char guiDate[40];
-    extern double total_liters1;
-    extern bool navier_set_time;
     extern float totalhourVal1;
     extern float flow_value;
     extern double *totalliterPtr;
-    extern float *totalhourPtr;
 
     extern int HourCount;
     extern bool buzzer_on;
     extern uint8_t cr, cg, cb;
-
-    extern float kp, ki, kd;
-    
 
 
     typedef struct log_guiDate_t
@@ -194,7 +186,7 @@ extern "C"
 
 
     void modSDP32_task(void *pvParameters);
-
+    void set_navier_time_flag(bool value);
 
     /**********************
      *    ERROR ASSERT

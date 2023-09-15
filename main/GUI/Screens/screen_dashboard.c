@@ -84,8 +84,6 @@ char PrevguiTime[25];
 
 char startDateEnd[55];
 char stopDateEnd[45];
-char guiDate[40];
-
 char startTimeEnd[60];
 char stopTimeEnd[60];
 

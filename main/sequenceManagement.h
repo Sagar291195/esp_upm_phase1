@@ -129,7 +129,7 @@ uint8_t uGetSequenceNumberToBeSaved();
 /**
  * @brief All in one function to get the variable from the nvs flash into the memory 
  */
-void vGetSequceManagementFromNVS();
+void nvsread_sequence_parameters();
 
 /**
  * @brief set the total sequence count to the nvs flash

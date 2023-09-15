@@ -293,7 +293,7 @@ void vSetTotalSequenceCountToNvs()
     (void) nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
 }
 
-void vGetSequceManagementFromNVS()
+void nvsread_sequence_parameters()
 {
     vGetTotalSequenceCountFromNvs();
     vGetSequenceFromNvsToArray();

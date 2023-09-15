@@ -59,8 +59,6 @@ int _xBTN = 0;
 
 extern char *dashboardBTNTxt;
 
-char guiDate[40];
-
 /**********************
  *  GLOBAL VARIABLES
  **********************/

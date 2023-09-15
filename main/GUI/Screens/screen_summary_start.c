@@ -57,8 +57,6 @@ char stopTime[25];
 
 char startDateEnd[55];
 char stopDateEnd[45];
-char guiDate[40];
-
 char startTimeEnd[60];
 char stopTimeEnd[60];
 
@@ -70,12 +68,7 @@ int global_DashbordBTNflag;
 bool isMotor;
 int strttmrcount = 0;
 bool PumpStopForcefully;
-int sampleNumber;
 
-double StartLTRCountVal;
-
-long totalHourInt;
-int totalHourFloat;
 
 float targetHr;
 float effectiveHr;
@@ -449,7 +442,7 @@ void xssSummaryStartScreen(void)
     // Create  Liter Counter value Label
     __xssLtrCntrValLbl_ss = lv_label_create(_xssLtrCntrBaseCont_ss, NULL);
     lv_obj_align(__xssLtrCntrValLbl_ss, _xssLtrCntrBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
-    lv_label_set_text_fmt(__xssLtrCntrValLbl_ss, "%0.2lf", fGetTotalLiterCount()); // total_liters1 ,, _pLtrCountVal_
+    lv_label_set_text_fmt(__xssLtrCntrValLbl_ss, "%0.2lf", fGetTotalLiterCount()); 
     lv_obj_add_style(__xssLtrCntrValLbl_ss, LV_LABEL_PART_MAIN, &xssWhiteVarValueStyle_ss);
 
     _xssHrCntrBaseCont_ss = lv_cont_create(_xssSummayCont_ss, NULL);
@@ -467,22 +460,15 @@ void xssSummaryStartScreen(void)
     // Create  Hour Counter value Label
     __xssHrCntrValLbl_ss = lv_label_create(_xssHrCntrBaseCont_ss, NULL);
     lv_obj_align(__xssHrCntrValLbl_ss, _xssHrCntrBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
-    // totalhourVal = read_Totalhour(HrCntKey);
-    lv_label_set_text_fmt(__xssHrCntrValLbl_ss, "%0.2f", fGetTotalHoursCount()); // totalhourVal
+
+    lv_label_set_text_fmt(__xssHrCntrValLbl_ss, "%0.2f", fGetTotalHoursCount()); 
     lv_obj_add_style(__xssHrCntrValLbl_ss, LV_LABEL_PART_MAIN, &xssWhiteVarValueStyle_ss);
 
     // Create Start Job Button
     _xssValidJobBtn_ss = lv_btn_create(xssParentContainer_ss, NULL);
     lv_obj_align(_xssValidJobBtn_ss, _xssSummayCont_ss, LV_ALIGN_OUT_BOTTOM_MID, -85, 7);
     lv_obj_set_size(_xssValidJobBtn_ss, 300, 44);
-    // if (defaultParametrs == true)
-    // {
-    //     lv_obj_set_click(_xssValidJobBtn_ss, false);
-    // }
-    // else
-    // {
-    //     lv_obj_set_click(_xssValidJobBtn_ss, true);
-    // }
+
     lv_obj_set_event_cb(_xssValidJobBtn_ss, stbBTN_event_handler);
     // lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
     static lv_style_t _xssValidJobBtnStyle_ss;
@@ -556,8 +542,6 @@ void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
                 // isMotor = true;
                 sprintf(startDateEnd, "%s", guiDate);
                 sprintf(startTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
-                StartLTRCountVal = fGetTotalLiterCount();
-                // startTimer(); // Start The Job Timer
                 defaultParaSelected = false;
                 pxDashboardScreen(); // Open Dashboard Screen
             }

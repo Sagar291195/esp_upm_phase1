@@ -130,10 +130,8 @@ char WseqNum1[5];
 char _xsDurHourRollerbuf[32];
 char _xsDurMinutrollerbuf[32];
 
-double StartLTRCountVal;
 double StopLTRCountVal;
 
-float StartHrEND;
 float StopHrEND;
 
 float targetHr;
