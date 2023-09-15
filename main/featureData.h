@@ -17,7 +17,6 @@
 
 #include <stdio.h>
 #include <sensorManagement.h>
-#include <manuCompensationLayer.h>
 
 
 /********************************************function prototypes*****************************************************/

@@ -777,10 +777,7 @@ void xDrawSummaryHeading(void)
     lv_obj_add_style(___xseSummaryHeadingLbl_se, LV_LABEL_PART_MAIN, &_xseParameterHeadingStyle_se);
 }
 
-/**
- * @brief Create the heading for the archive screen (Summary)
- *
- */
+/* Create the heading for the archive screen (Summary) */
 void xDrawArchHeadNav(void)
 {
     __xseParaHeadingCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
@@ -894,66 +891,6 @@ void SequenceWidgetArrange(void)
         SeqWigetBTNEventCallback(Seq, SeqWidgetTriBTN_event_handler);
         curr_obj = _xseSeque1_se;
     }
-    // switch (NumOfSeq)
-    // {
-    // case 1:
-    //     _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
-    //     lv_obj_align(_xseSeque1_se, __xseBaseContainer_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
-    //     lv_obj_set_size(_xseSeque1_se, 290, 100);
-    //     lv_obj_set_style_local_bg_color(_xseSeque1_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); //_xColorBGParas
-    //     lv_obj_set_style_local_border_width(_xseSeque1_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-
-    //     Seq = sqCreateSequence(_xseSeque1_se);
-    //     lv_obj_align(Seq, NULL, LV_ALIGN_CENTER, 0, 0);
-    //     lv_obj_set_style_local_bg_color(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
-    //     lv_obj_set_style_local_border_opa(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-    //     sqSquenceNum(Seq, 1);
-    //     float sptoprint = atof(_xsSProllerbuf);
-    //     sqSetFlowSetPoint(Seq, sptoprint); //_xsSProllerbuf
-    //     sqSetDuration(Seq, 5);             //_xsDurHourrollerbuf,, _xsDurMinutrollerbuf
-    //     sqSetProblem(Seq, "NONE");
-    //     sqSetBtnColor(Seq, STATE_OK);
-    //     SeqWigetBTNEventCallback(Seq, SeqWidgetTriBTN_event_handler);
-
-    //     return;
-    // case 2:
-
-    //     _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
-    //     lv_obj_align(_xseSeque1_se, __xseBaseContainer_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
-    //     lv_obj_set_size(_xseSeque1_se, 290, 100);
-    //     lv_obj_set_style_local_bg_color(_xseSeque1_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); //_xColorBGParas
-    //     lv_obj_set_style_local_border_width(_xseSeque1_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-
-    //     Seq = sqCreateSequence(_xseSeque1_se);
-    //     lv_obj_align(Seq, NULL, LV_ALIGN_CENTER, 0, 0);
-    //     lv_obj_set_style_local_bg_color(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
-    //     lv_obj_set_style_local_border_opa(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-    //     sqSquenceNum(Seq, 1);
-    //     sqSetFlowSetPoint(Seq, 12);
-    //     sqSetDuration(Seq, 5);
-    //     sqSetProblem(Seq, "NONE");
-    //     sqSetBtnColor(Seq, STATE_OK);
-
-    //     //==================================================================================================================
-
-    //     _xseSeque2_se = lv_cont_create(_xseSummaryParent_se, NULL);
-    //     lv_obj_align(_xseSeque2_se, _xseSeque1_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-    //     lv_obj_set_size(_xseSeque2_se, 290, 100);
-    //     lv_obj_set_style_local_bg_color(_xseSeque2_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); //_xColorBGParas
-    //     lv_obj_set_style_local_border_width(_xseSeque2_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-
-    //     Seq1 = sqCreateSequence(_xseSeque2_se);
-    //     lv_obj_align(Seq1, NULL, LV_ALIGN_CENTER, 0, 0);
-    //     lv_obj_set_style_local_bg_color(Seq1, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
-    //     lv_obj_set_style_local_border_opa(Seq1, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-    //     sqSquenceNum(Seq1, 2);
-    //     sqSetFlowSetPoint(Seq1, 14);
-    //     sqSetDuration(Seq1, 8);
-    //     sqSetProblem(Seq1, "YES");
-    //     sqSetBtnColor(Seq, STATE_NOTOK);
-
-    //     return;
-    // }
 }
 
 void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)

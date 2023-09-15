@@ -25,7 +25,7 @@
 
 float fGetVolumetricFlowUserCompensated()
 {
-    float result = fGetVolumeFlowFromManuCompensationLayer();
+    float result = fGetVolumetricFlow_featureData();
     /* apply the user compensation */
     ESP_LOGD(TAG, "user compensated Voulumetric flow is %0.2f", result);
     return result;
@@ -33,7 +33,7 @@ float fGetVolumetricFlowUserCompensated()
 
 float fGetInternalPressureUserCompensated()
 {
-    float result = fGetInternalPressureManuCompensationLayer();
+    float result = fGetBme280PressureAverages();
     /*  add some user compensation */
     result = result - getcalibrationvalue_int_pressure();
     ESP_LOGD(TAG, "Internal Pressure USER COMPENSATED is %0.2f", result);
@@ -42,7 +42,7 @@ float fGetInternalPressureUserCompensated()
 
 float fGetInternalHumidityUserCompesated()
 {
-    float result = fGetInternalHumidityManuCompensationLayer();
+    float result = fGetBme280HumidityAverages();
 
     /* add some user compensation */
     result = result - getcalibrationvalue_int_humidity();
@@ -52,7 +52,7 @@ float fGetInternalHumidityUserCompesated()
 
 float fGetInternalTemperatureUserCompesated()
 {
-    float result = fGetInternalTempretureManuCompensationLayer();
+    float result = fGetBme280TemperatureAverages();
     result = result - getcalibrationvalue_int_temperature(); /* add some user compensation */
     ESP_LOGD(TAG, "Internal Temperature user compensated is %0.2f", result);
     return result;
@@ -61,7 +61,7 @@ float fGetInternalTemperatureUserCompesated()
 void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues)
 {
     external_sensor_data_t xManuCompenstedValues;
-    vGetMaufCompensatedExternalSensorData(&xManuCompenstedValues);
+    vGetExternalSensorData(&xManuCompenstedValues);
 
     xManuCompenstedValues.fTemperature = (xManuCompenstedValues.fTemperature - getcalibrationvalue_ext_temperature());
     xManuCompenstedValues.fPressure = (xManuCompenstedValues.fPressure - getcalibrationvalue_ext_pressure());
@@ -69,4 +69,37 @@ void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenst
     /* do something to get the user compnsated values */
     memcpy(xUserCompenstedValues, &xManuCompenstedValues, sizeof(external_sensor_data_t));
     ESP_LOGD(TAG, "User compensated External sensor values are temp %0.2f humidiy %0.2f pressure %0.2f", xUserCompenstedValues->fTemperature, xUserCompenstedValues->fHumidity, xUserCompenstedValues->fPressure);
+}
+
+
+float fGetMassFlowUserCompensated(void)
+{
+    float fResult = 0.0;
+    float coeffA = 0.0;
+    float coeffB = 0.0;
+
+    fResult = fGetSdp32DiffPressureAverageValue();
+    /*  do some calulation to get the mass flow  */
+    if (fResult > 0 && fResult <= getcalibration_reference_sensorvalue1())
+    {
+        coeffA = getcalibrationvalue_flow_coeffA1();
+        coeffB = getcalibrationvalue_flow_coeffB1();
+    }
+    else if (fResult <= getcalibration_reference_sensorvalue2())
+    {
+        coeffA = getcalibrationvalue_flow_coeffA2();
+        coeffB = getcalibrationvalue_flow_coeffB2();
+    }
+    else if (fResult <= getcalibration_reference_sensorvalue3())
+    {
+        coeffA = getcalibrationvalue_flow_coeffA3();
+        coeffB = getcalibrationvalue_flow_coeffB3();
+    }else{
+        coeffA = getcalibrationvalue_flow_coeffA3();
+        coeffB = getcalibrationvalue_flow_coeffB3();
+    }
+
+    
+    fResult = ((coeffA * fResult) + coeffB);
+    return fResult;
 }

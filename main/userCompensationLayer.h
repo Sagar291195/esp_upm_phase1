@@ -12,9 +12,8 @@
 #ifndef __USERCOMPENSATIONLAYER_H__
 #define __USERCOMPENSATIONLAYER_H__
 
+#include "esp_upm.h"
 #include <sensorManagement.h>
-#include <manuCompensationLayer.h>
-
 
 
 /*****************************function prototype***************************************/
@@ -45,5 +44,5 @@ float fGetInternalTemperatureUserCompesated();
  */
 void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues);
 
-
+float fGetMassFlowUserCompensated(void);
 #endif // __USERCOMPENSATIONLAYER_H__

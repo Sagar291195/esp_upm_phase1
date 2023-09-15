@@ -1,31 +1,5 @@
-/* LVGL Example project
- *
- * Basic project to test LVGL on ESP32 based projects.
- *
- * This example code is in the Public Domain (or CC0 licensed, at your option.)
- *
- * Unless required by applicable law or agreed to in writing, this
- * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- * CONDITIONS OF ANY KIND, either express or implied.
- */
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_freertos_hooks.h"
-#include "freertos/semphr.h"
-#include "esp_system.h"
-#include "driver/gpio.h"
-#include "driver/ledc.h"
-#include "nvs.h"
-#include <nvs_flash.h>
-#include "esp_timer.h" 
 
 #include <timeManagement.h>
-#include <dataMangement.h>
 #include <sensorManagement.h>
 
 /* Littlevgl specific */
@@ -43,8 +17,8 @@
 /*********************
  *      DEFINES
  *********************/
-#define TAG "Demo"
-#define LV_TICK_PERIOD_MS 1
+#define TAG                 "Demo"
+#define LV_TICK_PERIOD_MS   1
 // #define WAKEMODE 32
 
 #ifdef CONFIG_NEW_HW
@@ -165,11 +139,14 @@ void app_main()
     Init_Buzzer();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    vInitializeDataManagementApi();     // Initiating the data managament api
+    nvs_storage_initialize();     // Initiating the data managament api
     nvsread_calibrationdata();          // Read calibration data from flash
+    nvsread_hours_liters_value();
+    vGetSequceManagementFromNVS();
+    
+
     vInitiateSensorsOnBoard();          // Initiating all i2c sensors on the board
-    vGetTheCounterValuesFromNvsFlash(); // loading the various conter values from the nvs flash
-    vGetSequceManagementFromNVS();      // Before loading  sample management we need to load the sequence of the sample
+
     vInitializeTimeManagement();        // Initializing the time management of the device
     vStartSampleManagementService();    // Installing the sample management service
     vInitializeMotor();                 // Installing the sample management service

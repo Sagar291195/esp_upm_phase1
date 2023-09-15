@@ -71,48 +71,13 @@ void vIncrementCurrentSampleNumber()
 
 void vSetSampleNumberToNvsFlash()
 {
-    nvs_handle nvsHandle;
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-        err = nvs_set_u32(nvsHandle, SAMPLE_STORAGE_KEY, uUniqueSampleNumber);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
-        }
-        else
-        {
-            err = nvs_commit(nvsHandle);
-            if (err != ESP_OK)
-            {
-                ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
-            }
-        }
-        nvs_close(nvsHandle);
-    }
+    (void) nvswrite_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, uUniqueSampleNumber);
 }
 
 void vGetSampleNumberFromNvsFlash()
 {
-    nvs_handle nvsHandle;
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-        err = nvs_get_u32(nvsHandle, SAMPLE_STORAGE_KEY, &uUniqueSampleNumber);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
-        }
-        nvs_close(nvsHandle);
-    }
+    (void) nvsread_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, &uUniqueSampleNumber);
+    ESP_LOGI(TAG, "Unique saved sample number in nvs flash is %u", uUniqueSampleNumber);
 }
 
 uint8_t uGetCurrentRunningSequenceNumber()
@@ -127,52 +92,13 @@ void vSetCurrentRunningSequenceNumber(uint8_t uSequenceNumber)
 
 void vSetCurrentSequenceNumberToNvsFlash()
 {
-    nvs_handle nvsHandle;
-
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-
-        err = nvs_set_u8(nvsHandle, SEQUENCE_STORAGE_KEY, uCurrentRunningSequenceNumber);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value", esp_err_to_name(err));
-        }
-        else
-        {
-            err = nvs_commit(nvsHandle);
-            if (err != ESP_OK)
-            {
-                ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
-            }
-        }
-
-        nvs_close(nvsHandle);
-    }
+    (void) nvswrite_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, uCurrentRunningSequenceNumber);
 }
 
 void vGetCurrentSequenceNumberFromNvsFlash()
 {
-    nvs_handle nvsHandle;
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-        err = nvs_get_u8(nvsHandle, SEQUENCE_STORAGE_KEY, &uCurrentRunningSequenceNumber);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
-        }
-        ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
-        nvs_close(nvsHandle);
-    }
+    (void) nvsread_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, &uCurrentRunningSequenceNumber);
+    ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
 }
 
 static void vSampleManagementServiceFunction(void *pvParamaters)
@@ -182,22 +108,17 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
     esp_log_level_set(TAG, ESP_LOG_DEBUG);
     ESP_LOGD(TAG, "Sample Management Service Started");
-
-    /* Getting the current sample number from nvs flash */
-    vGetSampleNumberFromNvsFlash();
-    /* gettting the current running sequence number from nvs flash */
-    vGetCurrentSequenceNumberFromNvsFlash();
-    /* saving the current system state to calculate the end summary */
-    vInitializeEndSummaryVariableToZero();
-    /*  Getting the values from the nvs flash */
-    vGetEndSummaryFromNvsFlash();
+   
+    vGetSampleNumberFromNvsFlash();             /* Getting the current sample number from nvs flash */
+    vGetCurrentSequenceNumberFromNvsFlash();    /* gettting the current running sequence number from nvs flash */
+    vInitializeEndSummaryVariableToZero();      /* saving the current system state to calculate the end summary */
+    vGetEndSummaryFromNvsFlash();       /*  Getting the values from the nvs flash */
 
     /* if the system restarted or wake up from sleep then the system will start from the currenct sequence
      * to be run. To do this first cheeck if the any sequence is pending to be run. */
     if (uCurrentRunningSequenceNumber != 0)
     {
-        /* give the notification to start the sample sequence */
-        xTaskNotifyGive(xHandleSampleManagementService);
+        xTaskNotifyGive(xHandleSampleManagementService);         /* give the notification to start the sample sequence */
     }
     while (1)
     {
@@ -207,7 +128,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
         ESP_LOGI(TAG, "Starting the sequence");
 
         /* iterating over the sequences.valid sequence are those which are less thatn the number of the sequnces and
-         *  also the invalid sequnce number 0 */
+         * also the invalid sequnce number 0 */
         while ((uCurrentRunningSequenceNumber <= uGetNoOfSequenceInArray()) && (uCurrentRunningSequenceNumber != 0))
         {
 

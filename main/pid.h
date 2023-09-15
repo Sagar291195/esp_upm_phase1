@@ -95,6 +95,8 @@ esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_para
  */
 esp_err_t pid_compute(pid_ctrl_block_handle_t pid, float input_error, float *ret_result);
 
+
+void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff);
 #ifdef __cplusplus
 }
 #endif

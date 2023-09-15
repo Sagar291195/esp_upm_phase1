@@ -16,10 +16,9 @@
 #define __SENSORMANAGEMENT_H__
 
 #include <stdio.h>
-#include "sensors/bme680.h"
-#include "sensors/bmp280.h"
 #include <esp_err.h>
 
+#include "esp_upm.h"
 
 /********************************defines*******************************************/
 

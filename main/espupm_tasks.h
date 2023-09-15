@@ -195,8 +195,6 @@ extern "C"
 
     void modSDP32_task(void *pvParameters);
 
-  
-    void motorPWMTask(void *pvParameters);
 
     /**********************
      *    ERROR ASSERT

@@ -8,18 +8,18 @@
  * @copyright Copyright (c) 2022
  *
  */
+#include <string.h>
 
 #include <sensorManagement.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "sensors/bme680.h"
-#include "sensors/bmp280.h"
 
-#include <string.h>
-#include "external/ina3221.h"
-#include "sensors/sdp32.h"
+
+
 #include <timeManagement.h>
+
+#include "esp_upm.h"
 /********************************************defines****************************************************************/
 
 #define TAG "sensorManagement"

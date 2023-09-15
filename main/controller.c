@@ -15,12 +15,11 @@
 #include <freertos/task.h>
 #include <freertos/semphr.h>
 
-#include "esp_upm.h"
+
 #include <controller.h>
-#include "external/motor.h"
 #include <sampleManagement.h>
 #include <sequenceManagement.h>
-#include "storage/parameters.h"
+
 
 /************************************defines******************************************************/
 
@@ -34,34 +33,7 @@ extern SemaphoreHandle_t xGuiSemaphore1;
 void vStartJob();
 
 /*****************************function*********************************/
-void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
-{
-    ESP_LOGI(TAG, "kp %0.2f, ki %0.2f, kd %0.2f, akp %0.2f, aki %0.2f, akd %0.2f, ncoff %0.2f, acoff %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd, fNcoff, fACoff);
-    struct_PID_parameters_t PID_parameters;
-    PID_parameters.fKp = fKp;
-    PID_parameters.fKi = fKi;
-    PID_parameters.fKd = fKd;
-    PID_parameters.fAkp = fAkp;
-    PID_parameters.fAki = fAki;
-    PID_parameters.fAkd = fAkd;
-    PID_parameters.fNcoff = fNcoff;
-    PID_parameters.fACoff = fACoff;
-    if (fNcoff == 0)
-    {
-        fNcoff = 1;
-    }
 
-    if (fACoff == 0)
-    {
-        fACoff = 1;
-    }
-
-    /* setting the pid parameters to the nvs flash */
-    vSetPIDParametersToNvs(&PID_parameters);
-
-    /* also setting the pid parameters to the pid control block */
-    setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);
-}
 
 void vSaveSampleValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin, float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, char *pStartPerson)
 {
@@ -89,7 +61,7 @@ void vControllerSampleIsValid()
     vSetSequenceArrayToNVS();
 
     /* Setting the total sequence to the nvs flash */
-    vSetTotalSequenceCountFromNvs();
+    vSetTotalSequenceCountToNvs();
 
     /* we need to set some values which we mention in the end summary, like start date and total
      * liter and hour counts */

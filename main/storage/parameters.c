@@ -118,7 +118,7 @@ float fGetTotalLitersHasBeenPassInGivenSequence()
   return fTotalLitersHasBeenPassInGivenSequence;
 }
 
-void vGetTheCounterValuesFromNvsFlash()
+void nvsread_hours_liters_value()
 {
   vGetTotalLitersFromNvs();
   vGetTotalHoursFromNvs();  

@@ -10,7 +10,7 @@
  */
 
 #include <timeManagement.h>
-#include "external/ds3231.h"
+
 #include <esp_log.h>
 #include <time.h>
 #include <i2cdev.h>
@@ -21,6 +21,7 @@
 #include <sequenceManagement.h>
 #include <sampleManagement.h>
 
+#include "esp_upm.h"
 /****************************************defines****************************************/
 #define TAG         "timeManagement"
 #define STORAGE     "timeManagement"

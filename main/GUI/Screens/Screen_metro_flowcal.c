@@ -16,9 +16,9 @@
 #include "screen_includes.h"
 
 #include <userCompensationLayer.h>
-#include "external/motor.h"
 #include <sensorManagement.h>
-#include "storage/calibration.h"
+
+#include "esp_upm.h"
 
 /*********************
  *      DEFINES

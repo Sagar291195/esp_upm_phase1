@@ -22,27 +22,9 @@ extern "C"
 #include <sampleManagement.h>
 #include <sequenceManagement.h>
 #include <timeManagement.h>
-#include <dataMangement.h>
 #include <sensorManagement.h>
 
-#include "storage/parameters.h"
-
-
-
-
-/**
- * @brief This function will take the parameters from the view and set to the motor pid
- * 
- * @param fKp kp value
- * @param fKi ki value
- * @param fKd kd value
- * @param fAkp Aggresive kp value
- * @param fAki Aggresive ki value
- * @param fAkd Aggresive kd value
- * @param fNcoff normal cofficient
- * @param fACoff Aggresive cofficient
- */
-void vSetPIDParameters(float fKp, float fKi, float fKd,float fAkp,float fAki,float fAkd,float fNcoff,float fACoff);
+#include "esp_upm.h"
 
 /**
  * @brief set the sample data to the sample array. This is just the middle function for the sample values

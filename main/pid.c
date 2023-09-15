@@ -8,7 +8,9 @@
 #include <sys/param.h>
 #include "esp_check.h"
 #include "esp_log.h"
-#include "PID.h"
+
+
+#include "esp_upm.h"
 
 static const char *TAG = "pid_ctrl";
 
@@ -137,4 +139,33 @@ esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_para
         ESP_RETURN_ON_FALSE(false, ESP_ERR_INVALID_ARG, TAG, "invalid PID calculation type:%d", params->cal_type);
     }
     return ESP_OK;
+}
+
+void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
+{
+    ESP_LOGI(TAG, "kp %0.2f, ki %0.2f, kd %0.2f, akp %0.2f, aki %0.2f, akd %0.2f, ncoff %0.2f, acoff %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd, fNcoff, fACoff);
+    struct_PID_parameters_t PID_parameters;
+    PID_parameters.fKp = fKp;
+    PID_parameters.fKi = fKi;
+    PID_parameters.fKd = fKd;
+    PID_parameters.fAkp = fAkp;
+    PID_parameters.fAki = fAki;
+    PID_parameters.fAkd = fAkd;
+    PID_parameters.fNcoff = fNcoff;
+    PID_parameters.fACoff = fACoff;
+    if (fNcoff == 0)
+    {
+        fNcoff = 1;
+    }
+
+    if (fACoff == 0)
+    {
+        fACoff = 1;
+    }
+
+    /* setting the pid parameters to the nvs flash */
+    vSetPIDParametersToNvs(&PID_parameters);
+
+    /* also setting the pid parameters to the pid control block */
+    setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);
 }

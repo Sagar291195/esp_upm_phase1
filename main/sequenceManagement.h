@@ -134,7 +134,7 @@ void vGetSequceManagementFromNVS();
 /**
  * @brief set the total sequence count to the nvs flash
  */
-void vSetTotalSequenceCountFromNvs();
+void vSetTotalSequenceCountToNvs();
 
 /**
  * @brief Get the Nth sequence from the array 

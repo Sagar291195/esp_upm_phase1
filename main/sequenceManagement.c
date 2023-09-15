@@ -17,17 +17,16 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <timeManagement.h>
-#include "external/motor.h"
+
 #include <controller.h>
 #include <freertos/semphr.h>
 #include <freertos/timers.h>
 #include <math.h>
 #include <sensorManagement.h>
-#include <manuCompensationLayer.h>
 #include <userCompensationLayer.h>
-#include <dataMangement.h>
 #include <esp_timer.h>
 
+#include "esp_upm.h"
 /***********************************************************defines************************************/
 
 #define TAG "Sequnce_Management"
@@ -164,63 +163,12 @@ sequence_t *pGetAddressOfSequenceArray()
 
 void vSetSequenceArrayToNVS()
 {
-    nvs_handle_t my_handle;
-    esp_err_t err;
-
-    // Open
-    err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-        return;
-    }
-
-    /* setting the value to the nvs flash */
-    err = nvs_set_blob(my_handle, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
-        return;
-    }
-
-    // Commit
-    err = nvs_commit(my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
-    }
-    // Close
-    nvs_close(my_handle);
+    (void) nvswrite_value_parameters(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
 }
 
 void vGetSequenceFromNvsToArray()
 {
-    ESP_LOGD(TAG, "Getting the sequence array from NVS");
-    nvs_handle_t my_handle;
-    esp_err_t err;
-
-    // Open
-    err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-        return;
-    }
-
-    /* checking if the values has been present or not. if not then just return  */
-    size_t required_size = 0; // value will default to 0, if not set yet in NVS
-    err = nvs_get_blob(my_handle, STORAGE_KEY, NULL, &required_size);
-    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND)
-        return;
-
-    ESP_LOGD(TAG, "required size is %d", required_size);
-    /*  loading the values from nvs flash to the sample array */
-    err = nvs_get_blob(my_handle, STORAGE_KEY, (void *)totalSequence, &required_size);
-    if (err != ESP_OK)
-    {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
-    }
-    nvs_close(my_handle);
+    (void) nvsread_value_parameter(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence);
 }
 
 uint8_t uGetNoOfSequenceInArray()
@@ -337,61 +285,13 @@ uint8_t uGetSequenceNumberToBeSaved()
 /* @brief get the total sequene count from the nvs flash */
 void vGetTotalSequenceCountFromNvs()
 {
-    ESP_LOGD(TAG, "Getting the total sequence count from NVS");
-    nvs_handle_t my_handle;
-    esp_err_t err;
-
-    // Open
-    err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-
-        return;
-    }
-    /* loading the values from nvs flash to the sample array  */
-    uint8_t length = sizeof(sizeof(uTotalSequenceCount));
-    err = nvs_get_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, &length);
-    if (err != ESP_OK)
-    {
-        ESP_LOGW(TAG, "Error (%s) getting blob NVS handle!", esp_err_to_name(err));
-    }
-
-    nvs_close(my_handle);
+    (void) nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
 }
 
 /** set the total sequnce count to the nvs flash */
-void vSetTotalSequenceCountFromNvs()
+void vSetTotalSequenceCountToNvs()
 {
-    ESP_LOGD(TAG, "Setting the total sequce count to NVS");
-    nvs_handle_t my_handle;
-    esp_err_t err;
-
-    // Open
-    err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-
-        return;
-    }
-
-    /*setting the value to the nvs flash */
-    err = nvs_set_blob(my_handle, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
-        return;
-    }
-
-    // Commit
-    err = nvs_commit(my_handle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) committing NVS handle!\n", esp_err_to_name(err));
-    }
-    // Close
-    nvs_close(my_handle);
+    (void) nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
 }
 
 void vGetSequceManagementFromNVS()
@@ -669,7 +569,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
             //printf(" hardware Time,SDP_temperature,SDP_MassFlow,External_pressure_BME,External_temp_BME,External_humidity_BME,totalliter,TotalHour,C1BusVolt,C1ShuntVolt,C1ShuntCurr,C2BusVolt,C2ShuntVolt,C2ShuntCurr,C3BusVolt,C3ShuntVolt,C3ShuntCurr,RealFlowRate,External AirDensity,internal BME280 temperature,internal BME280 pressure,internal BME280 humidity,internal BME280 Airdensity\n");
         }
         printf("Time: RTC Time: %s, Hardware Time: %llu,\n",  guiTime, esp_timer_get_time());
-        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowManuCompensationLayer());
+        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowUserCompensated());
         printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
         printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
         printf("Channel 2: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent);

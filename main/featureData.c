@@ -105,6 +105,6 @@ float fGetInternalAirDensity_Comp(void)
 float fGetVolumetricFlow_featureData()
 {
     float result =0;
-    result = _fFlowCalculation(fGetMassFlowManuCompensationLayer(), fGetExternal_AirDesity_Comp());
+    result = _fFlowCalculation(fGetMassFlowUserCompensated(), fGetExternal_AirDesity_Comp());
     return result;
 }

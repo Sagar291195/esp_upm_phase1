@@ -15,13 +15,12 @@
  *********************/
 #include "espupm_tasks.h"
 #include <inttypes.h>
-#include "external/motor.h"
 #include <math.h>
 #include "storage/parameters.h"
 #include <sensorManagement.h>
-#include <manuCompensationLayer.h>
 #include <userCompensationLayer.h>
 
+#include "esp_upm.h"
 /*********************
  *      DEFINES
  *********************/
@@ -563,43 +562,7 @@ void vinfoWgtUpdtWaitToProgTask(void)
     lv_task_once(infoWgtUpdtWaitToProgTask);
 }
 
-void motorPWMTask(void *pvParameters)
-{
-    float flowRate = 0;
-    float fTempVariable = 0;
 
-    pRealFlowRate = &flowRate; // copying  so that we can print on task
-    initiatePWMMotor();        /* intiating the pwm motor */
-    initializePIDController(); /* initialize pid controller */
-
-    while (1)
-    {
-        vTaskDelay(motorWAIT_ON / portTICK_PERIOD_MS);
-        /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
-        while (getIsMotorRunning())
-        {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
-
-            flowRate = fGetVolumetricFlowUserCompensated(); /* calulating the current flow rate */
-            if (isnan(flowRate))
-            {
-                ESP_LOGE(TAG, "flow rate is nan");
-                flowRate = MINIMUN_FLOW_RATE;
-            }
-            else
-            {
-                fTempVariable = fGetTotalLiterCount(); /* compute the total volume flow in the system */
-                ESP_LOGD(TAG, "FLOW rate IS from upm %0.2f", flowRate);
-                fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000); /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                vSetTotalLiterCount(fTempVariable);                                           /* updating the total liters flow in the variable */
-            }
-
-            motorPidComputeAndSetOutput(flowRate); /* computing the duty cycle and set it */
-            flow_value = flowRate;
-            vTaskDelay(pdMS_TO_TICKS(getMotorPIDSampleComputeTime()));
-        }
-    }
-}
 
 
 /**********************

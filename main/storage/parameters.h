@@ -179,7 +179,7 @@ void vSetTotalLitersValueToNvs();
 /**
  * @brief get the various counter values from the nvs flash
  */
-void vGetTheCounterValuesFromNvsFlash();
+void nvsread_hours_liters_value();
 
 /**
  * @brief get the percentage of the job done
