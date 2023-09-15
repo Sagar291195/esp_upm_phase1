@@ -7,8 +7,10 @@
 
 #ifndef SCREEN_SUMMARY_SAMPLE_H
 #define SCREEN_SUMMARY_SAMPLE_H
+
 #include <stdint.h>
-#include "../../controller.h"
+#include "sampleManagement.h"
+#include "sequenceManagement.h"
 
 #ifdef __cplusplus
 extern "C"

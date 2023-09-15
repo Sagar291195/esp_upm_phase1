@@ -37,11 +37,13 @@ extern "C" {
 
 #include "pid.h"
 #include "espupm_tasks.h"
-#include "featureData.h"
 #include "storage/flash.h"
 #include "storage/parameters.h"
 #include "storage/calibration.h"
 
+#include "sampleManagement.h"
+#include "sequenceManagement.h"
+#include "timeManagement.h"
 /*********************
  *      DEFINES
  *********************/

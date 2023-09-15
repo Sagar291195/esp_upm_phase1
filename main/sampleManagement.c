@@ -17,9 +17,12 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 #include <time.h>
-#include "controller.h"
 #include <string.h>
 #include <math.h>
+
+#include <sampleManagement.h>
+#include <sequenceManagement.h>
+
 /************************************************defines**********************************************/
 
 #define TAG                     "sampleManagement"
@@ -32,6 +35,7 @@
 #define MINIMUM_DELAY_TO_START_SAMPLE_IN_SECONDS (30)
 
 /***************************************************variables*******************************************/
+extern SemaphoreHandle_t xGuiSemaphore1;
 /* This is the unique sample number in the system. Since sample  */
 static uint32_t uUniqueSampleNumber = 0;
 /* tells about the current running sequnce. */
@@ -224,49 +228,12 @@ void vInitializeEndSummaryVariableToZero()
 
 void vSaveEndSummaryToNvsFlash()
 {
-    nvs_handle nvsHandle;
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-        err = nvs_set_blob(nvsHandle, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) setting NVS value!", esp_err_to_name(err));
-        }
-        else
-        {
-            err = nvs_commit(nvsHandle);
-            if (err != ESP_OK)
-            {
-                ESP_LOGE(TAG, "Error (%s) committing NVS handle!", esp_err_to_name(err));
-            }
-        }
-        nvs_close(nvsHandle);
-    }
+    (void) nvswrite_value_parameters(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
 }
 
 void vGetEndSummaryFromNvsFlash()
 {
-    nvs_handle nvsHandle;
-    esp_err_t err = nvs_open(NVS_STORGE_NAME, NVS_READWRITE, &nvsHandle);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "Error (%s) opening NVS handle!", esp_err_to_name(err));
-    }
-    else
-    {
-        size_t requiredSize = sizeof(xEndSummary);
-        err = nvs_get_blob(nvsHandle, END_SUMMARY_STORAGE_KEY, &xEndSummary, &requiredSize);
-        if (err != ESP_OK)
-        {
-            ESP_LOGE(TAG, "Error (%s) getting NVS value! func %s", esp_err_to_name(err), __func__);
-        }
-        nvs_close(nvsHandle);
-    }
+    (void) nvsread_value_parameter(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary);
 }
 
 void vSetInitialCounterValuesToEndSummary()
@@ -462,4 +429,112 @@ void vSetCounterValuesEndSummaryDetails()
     strcpy(xEndSummary.cEndPerson, "Time Finish");
     /* saving the values to the nvs flash */
     vSaveEndSummaryToNvsFlash();
+}
+
+void vSaveSampleValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin, float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, char *pStartPerson)
+{
+
+    vSetSequenceValues(uSequenceNumber, pStartDate, uStartHour, uStartMin, fFlowSetPoint, uDurationHour, uDurationMinutes, pStartPerson);
+}
+
+void vControllerInitializeSampleArray()
+{
+    ESP_LOGD(TAG, "iniitalizing the array");
+    vInitializeSequenceArray();
+}
+
+void vControllerSampleIsValid()
+{
+    ESP_LOGD(TAG, "Sample is valid");
+
+    /*  Set the current running sequece number to 1. because we are starting the sequence from 1 */
+    vSetCurrentRunningSequenceNumber(1);
+    /* incrementing the unique sample number  */
+    vIncrementCurrentSampleNumber();
+    /* saving the sample number in the flash memory */
+    vSetSampleNumberToNvsFlash();
+    /* saving the sequences to the nvs flash */
+    vSetSequenceArrayToNVS();
+
+    /* Setting the total sequence to the nvs flash */
+    vSetTotalSequenceCountToNvs();
+
+    /* we need to set some values which we mention in the end summary, like start date and total
+     * liter and hour counts */
+    vSetInitialCounterValuesToEndSummary();
+
+    /* start the job */
+    vStartJob();
+}
+
+void vStartJob()
+{
+    ESP_LOGI(TAG, "Starting the job");
+
+    /* giving the task notification to start the sample management */
+    vNotifySampleMangementToProceed();
+}
+
+void vShowWaitInProgressScreen()
+{
+    ESP_LOGD(TAG, "Showing the wait in progress screen");
+
+    if (xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY) == pdTRUE)
+    {
+        dashboardflg = 3; // dashboard flag for the wait screen
+        DashboardInfoWidget();
+        lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
+        lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
+
+        xSemaphoreGive(xGuiSemaphore1);
+    }
+}
+
+void vShowWorkInProgressScreen()
+{
+    ESP_LOGD(TAG, "Showing the work in progress screen");
+
+    if (xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY) == pdTRUE)
+    {
+        dashboardflg = 1; // dashboard screen flag
+        DashboardInfoWidget();
+        // pxDashboardScreen();
+        xSemaphoreGive(xGuiSemaphore1);
+    }
+}
+
+void vUpdateWorkInProgressScreen()
+{
+    ESP_LOGD(TAG, "Updating the work in progress screen");
+
+    if (xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY) == pdTRUE)
+    {
+        ESP_LOGD(TAG, "Updating dashboard screen");
+        vUpdateDashboardScreen();
+        xSemaphoreGive(xGuiSemaphore1);
+    }
+}
+
+void vShowJobFinishedScreen()
+{
+    ESP_LOGI(TAG, "Showing the job finish screen");
+    vTaskDelay(100);
+    vShowJobFinishedDashboardScreen();
+}
+
+void vControllerSampleStop()
+{
+    // vStopCurrentSample();
+    /* Stopping the current on going sequence */
+    vStopCurrentSample();
+}
+
+void vControllerShowEndSummayScreen()
+{
+    ESP_LOGI(TAG, "Showing the end summary screen");
+    if (xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY) == pdTRUE)
+    {
+        xseSummaryEndScreen();
+        xSemaphoreGive(xGuiSemaphore1);
+    }
 }

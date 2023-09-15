@@ -8,7 +8,10 @@
  *      INCLUDES
  *********************/
 #include "screen_includes.h"
-#include "../../controller.h"
+
+#include "sequenceManagement.h"
+#include "sampleManagement.h"
+#include "timeManagement.h"
 
 /*********************
  *      DEFINES

@@ -15,9 +15,8 @@
  *********************/
 #include "screen_includes.h"
 
-#include <userCompensationLayer.h>
-#include <sensorManagement.h>
-
+#include "sampleManagement.h"
+#include "sequenceManagement.h"
 #include "esp_upm.h"
 
 /*********************

@@ -16,7 +16,6 @@
 
 #include "screen_includes.h"
 
-#include "controller.h"
 
 /*********************
  *      DEFINES

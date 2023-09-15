@@ -45,4 +45,26 @@ float fGetInternalTemperatureUserCompesated();
 void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues);
 
 float fGetMassFlowUserCompensated(void);
+
+/**
+ * @brief get the air density as the feature data
+ * @return float
+ */
+float fGetExternal_AirDesity_Raw();
+
+
+/**
+ * @brief Get the internal air density as feature data
+ * @return float
+ */
+float fGetInternalAirDensity_Raw();
+
+
+/**
+ * @brief get the volumentric flow as the feature data
+ * @return float
+ */
+float fGetVolumetricFlow_featureData();
+float fGetExternal_AirDesity_Comp(void);
+float fGetInternalAirDensity_Comp(void);
 #endif // __USERCOMPENSATIONLAYER_H__

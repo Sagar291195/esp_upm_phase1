@@ -8,8 +8,6 @@
  *      INCLUDES
  *********************/
 #include "screen_includes.h"
-
-#include "../../controller.h"
 #include <esp_log.h>
 /*********************
  *   DEFINES/CONST
@@ -17,7 +15,7 @@
 
 #define SYMBOL_SIGNAL "\uf012"
 #define TAG "SCREEN PRESET"
-#include "controller.h"
+
 /*********************
  *      DEFINES
  *********************/

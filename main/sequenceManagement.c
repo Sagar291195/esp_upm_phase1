@@ -18,7 +18,7 @@
 #include <freertos/task.h>
 #include <timeManagement.h>
 
-#include <controller.h>
+
 #include <freertos/semphr.h>
 #include <freertos/timers.h>
 #include <math.h>
@@ -245,7 +245,6 @@ void taskRunSample(void *pvParameters)
 
 int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber)
 {
-    uint64_t uSecondsRemaining = 0;
     uint8_t uStartHour = totalSequence[uSequenceNumber - 1].uStartHour;
     uint8_t uStartMin = totalSequence[uSequenceNumber - 1].uStartMin;
     struct tm timeinfo = {0};

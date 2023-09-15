@@ -15,9 +15,13 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <sequenceManagement.h>
 #include "freertos/FreeRTOS.h"
 #include <freertos/task.h>
+
+#include <sampleManagement.h>
+#include <sequenceManagement.h>
+#include <timeManagement.h>
+#include <sensorManagement.h>
 
 /***********************************************************defines************************************/
 
@@ -172,5 +176,72 @@ void vStopCurrentSample();
  */
 void vSetCounterValuesEndSummaryDetails();
 
+/**
+ * @brief set the sample data to the sample array. This is just the middle function for the sample values
+ * 
+ * @param uSequenceNumber 
+ * @param cStartDate 
+ * @param uStartHour 
+ * @param uStartMin 
+ * @param fFlowSetPoint 
+ * @param uDurationHour 
+ * @param uDurationMinutes 
+ * @param cStartPerson 
+ */
+void vSaveSampleValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin, float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, char *pStartPerson);
 
+
+/**
+ * @brief initiaialize the sample array
+ * 
+ */
+void vControllerInitializeSampleArray();
+
+/**
+ * @brief this function is intended to use when the user interrupt (10 sec ) time has been passed out and sample is valid and ready for start
+ * 
+ */
+void vControllerSampleIsValid();
+
+/**
+ * @brief showing the sequence wait screen.
+ * 
+ */
+void vShowWaitInProgressScreen();
+
+
+/**
+ * @brief shows the work in progress screen
+ * 
+ */
+void vShowWorkInProgressScreen();
+
+/**
+ * @brief update the work in progress screen with the latest value
+ * 
+ */
+void vUpdateWorkInProgressScreen();
+
+/**
+ * @brief Stops the ongoing sequence
+ * 
+ */
+void vControllerSampleStop();
+
+/**
+ * @brief show show when the job is finished and the user want to see the data
+ * 
+ */
+void vShowJobFinishedScreen();
+
+
+/**
+ * @brief shows the end summary screen
+ * 
+ */
+void vControllerShowEndSummayScreen();
+
+
+/* this function start the job */
+void vStartJob();
 #endif // __SAMPLEMANAGEMENT_H__
