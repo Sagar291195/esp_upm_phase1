@@ -115,13 +115,6 @@ lv_obj_t *_xseBTNValidLbl_se;
 lv_task_t *__xserefresherTask;
 
 char *Seq_Number;
-
-char startDateEnd[55];
-char stopDateEnd[45];
-
-char startTimeEnd[60];
-char stopTimeEnd[60];
-
 char guiHrDef[25];
 char guiMinDef[32];
 
@@ -130,7 +123,6 @@ char WseqNum1[5];
 char _xsDurHourRollerbuf[32];
 char _xsDurMinutrollerbuf[32];
 
-double StopLTRCountVal;
 
 float StopHrEND;
 

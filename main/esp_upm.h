@@ -59,21 +59,7 @@ extern "C" {
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-extern int flag_WorkInProg;    // Work In Progress
-extern int flag_Ready;         // Ready
-extern int flag_WaitInProg;    // Wait In Progress
-extern int flag_JobFinished;   // Job Finished
-extern int flag_SerAlert;      // Alert Service
-extern int flag_MetroNeeded;   // Merology Needed
-extern int flag_exportData;    // Export Data
-extern int flag_MetroInProg;   // Metrology In Progress
-extern bool isMotor; // Flag to Motor On Off Satatus ( flase = OFF, true = ON)
-
-extern double total_liters;
-
 extern int HourCount;
-
-extern double StopLTRCountVal;
 
 extern double targetLiters;
 extern double effectiveLiters;

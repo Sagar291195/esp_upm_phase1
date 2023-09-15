@@ -16,7 +16,6 @@
 int global_DashbordBTNflag = 1;
 int dashboardflg = 0;
 int workProgress = 0;
-float totalhourVal1;
 char MenuBTN_SERVICE[10] = "PID TUNE";
 char MenuBTN_ARCHIV[10] = "ARCHIV";
 char MenuBTN_METROLOGY[10] = "METROLOGY";
@@ -77,15 +76,7 @@ lv_obj_t *_xTodaysDateLabel;
 /* task responsible for update of time */
 static lv_task_t *refresherTask = NULL;
 
-
-double StopLTRCountVal;
-
 char PrevguiTime[25];
-
-char startDateEnd[55];
-char stopDateEnd[45];
-char startTimeEnd[60];
-char stopTimeEnd[60];
 
 char guiHrDef[25];
 char guiMinDef[32];
@@ -643,8 +634,6 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         case 3:
             lv_task_del(refresherTask);
             refresherTask = NULL;
-            sprintf(stopDateEnd, "%s", guiDate);
-            sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
             vControllerSampleStop();
             xseSummaryEndScreen();
             break;

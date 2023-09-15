@@ -284,7 +284,6 @@ static void motorTask(void *pvParameters)
             }
             /* computing the duty cycle and set it */
             motorPidComputeAndSetOutput(flowRate);
-            flow_value = flowRate;
             vTaskDelay(pdMS_TO_TICKS(getMotorPIDSampleComputeTime()));
         }
     }

@@ -32,7 +32,6 @@ extern "C"
     /**********************
      *  GLOBAL VARIABLES
      **********************/
-    extern char startTime[100];
 
     /**********************
      *  GLOBAL PROTOTYPES

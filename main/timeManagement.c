@@ -117,14 +117,7 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
     // esp_log_level_set(TAG, ESP_LOG_DEBUG);
     sequence_t *seq = pGetAddressOfSequenceArray();
 
-    /* getiing the start date and time in a string */
-    char startTime[100];
-    // sprintf(startTime, "%s %d:%d", seq[0].cStartDate, seq[0].uStartHour, seq[0].uStartMin); // converting into the string
-    sprintf(startTime, "%s", seq[0].cStartDate); // converting into the string
-
     struct tm startTimeTm = {0};
-    strptime(startTime, "%Y/%m/%d", &startTimeTm); // converting into the tm structure
-
     startTimeTm.tm_hour = seq[0].uStartHour;
     startTimeTm.tm_min = seq[0].uStartMin;
 

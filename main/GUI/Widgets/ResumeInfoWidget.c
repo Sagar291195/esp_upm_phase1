@@ -493,15 +493,12 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_set_style_local_line_color(pxArc, LV_ARC_PART_INDIC, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xD5, 0xDE, 0x54));
 		lv_obj_set_style_local_bg_opa(pxArc, LV_ARC_PART_BG, LV_STATE_DEFAULT, LV_OPA_TRANSP);
 		lv_arc_set_angles(pxExt->pxProgressArc, 0, 360);
-		// lv_label_set_text_fmt(pxExt->pxPercentValue, "\nStarts in\n  %02dh %02dm", 10, 15); //startTime
+		
 		char cStrtTime[30];
 		char cStrtDate[40];
-		/**
-		 * @brief Getting the date and time of the current sequence from sample management api and time management api
-		 *
-		 */
+		/* Getting the date and time of the current sequence from sample management api and time management api  */
 		uGetStartSequenceDateAndTime(uGetCurrentRunningSequenceNumber(), cStrtDate, sizeof(cStrtDate), cStrtTime, sizeof(cStrtTime));
-		lv_label_set_text_fmt(pxExt->pxPercentValue, "\nStarts at\n   %s  \n\t\t\t%s\n", cStrtTime, cStrtDate);			// startTime
+		lv_label_set_text_fmt(pxExt->pxPercentValue, "\nStarts at\n   %s  \n\t\t\t%s\n", cStrtTime, cStrtDate);	
 		lv_obj_set_style_local_text_font(pxPercentLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_20); // LV_FONT_MONTSERRAT_24
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");

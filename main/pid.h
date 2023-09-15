@@ -12,25 +12,16 @@
 extern "C" {
 #endif
 
-/**
- * @brief PID calculation type
- *
- */
+/* PID calculation type */
 typedef enum {
     PID_CAL_TYPE_INCREMENTAL, /*!< Incremental PID control */
     PID_CAL_TYPE_POSITIONAL,  /*!< Positional PID control */
 } pid_calculate_type_t;
 
-/**
- * @brief Type of PID control block handle
- *
- */
+/* Type of PID control block handle */
 typedef struct pid_ctrl_block_t *pid_ctrl_block_handle_t;
 
-/**
- * @brief PID control parameters
- *
- */
+/* PID control parameters */
 typedef struct {
     float kp;                      // PID Kp parameter
     float ki;                      // PID Ki parameter
@@ -42,10 +33,7 @@ typedef struct {
     pid_calculate_type_t cal_type; // PID calculation type
 } pid_ctrl_parameter_t;
 
-/**
- * @brief PID control configuration
- *
- */
+/* PID control configuration */
 typedef struct {
     pid_ctrl_parameter_t init_param; // Initial parameters
 } pid_ctrl_config_t;

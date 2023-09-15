@@ -68,14 +68,9 @@ extern "C"
     extern int _fasDutyCycle;
     extern float flowPoint;
     extern int workProgress;
-    extern volatile int Job_Rem_Hr;
-    extern volatile int Job_Rem_Min;
-    extern float TotalLit;
     extern int literMeasureNum;
     extern char today_Date_Msg[200];
     extern char guiDate[40];
-    extern float totalhourVal1;
-    extern float flow_value;
     extern double *totalliterPtr;
 
     extern int HourCount;

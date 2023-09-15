@@ -396,7 +396,6 @@ void vGetExternalSensorData(external_sensor_data_t *external_sensor_data_des)
 
 /**
  * @brief This task function will average the sdp32 sample
- *
  * @param pvParameters
  */
 void vTaskAverageDiffPressure(void *pvParameters)

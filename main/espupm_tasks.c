@@ -25,13 +25,12 @@
  *      DEFINES
  *********************/
 
-#define INCLUDE_vTaskPrioritySet 1
+#define INCLUDE_vTaskPrioritySet    1
+#define SDA_GPIO                    21
+#define SCL_GPIO                    22
 
-#define SDA_GPIO 21
-#define SCL_GPIO 22
-
-#define TAG_sdp32_task "TAG_sdp32_task"
-#define TAG "ESPUPM_TASKS"
+#define TAG_sdp32_task              "TAG_sdp32_task"
+#define TAG                         "ESPUPM_TASKS"
 
 /* This is the duration after which the sensor will update the data into the array. */
 #define SDP32_SENSOR_READ_DURATION_IN_MS 20
@@ -41,62 +40,14 @@
 #define SDP32_DIFF_PRESSURE_SCALE_FACTOR 240.0
 
 /****************************variables*****************************/
+extern SemaphoreHandle_t xGuiSemaphore;
 /* array which stores the number of samples in a second for the sdp32 sensor */
 float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};
-/* contains the index of the array which is being updated in the sdp32 sensor value array */
-uint16_t last_update_sensor_value_index = 0;
-float sdp32Temprature = 0;
 unsigned short day_counter;
-bool run_once = true;
-int dutyCycleVal = 0;
-float _airDensityIn = 0;
-float _RealFloW;
-float *pAirDensityIn = NULL;
-float *pRealFlowRate = NULL;
-// extern SemaphoreHandle_t main_mutex;
-extern SemaphoreHandle_t xGuiSemaphore;
-
-//======PID Variables============
-float count_flow = 1, output = 0;
-float setpoint_val;
-float *flowrateptr;
-uint16_t rpm = 0;
-int abh = 0;
-int chk = 0;
-float totalhourVal1;
-int16_t dp_ticks = 0;
-int16_t dp_scale;
-int16_t temperature_ticks;
-float t_scale = 200.0;
-bool enRead = true;
-float flow_comapre = 0.5;
-float literTm_Frac = 60.0;
-float hundread = 100.0;
-float Avg_flow_value1;
-
-//================================================
 lv_task_t *infoWgtUpdtWaitToProgTask; // Task to be called after wait time is over
-sensor_data_t sensor_data;
-float hours_value_sum, flow_value_sum = 0, flow_begin = 0, flow_stop = 0, flow_total_vol = 0, hours_begin = 0, hours_stop = 0, hour_duration;
-float diff_press;
-float flow_value;
-// float dp_ticks_rw = 240.0
-volatile int JTCCountSec = 0;
-int64_t JTCC21 = 0;
-
-bool ismotor;
-bool timerOn = false;
-int flow_read_count = 0;
-float Avg_flow_value = 0;
-float TotalLit;
-
-volatile int Job_Rem_Hr;
-volatile int Job_Rem_Min;
-int literMeasureNum = 0; // This is 0 at start when there is Flow Rate 1, Flow Rate Stopped then 2
 char today_Date_Msg[200];
 char month_name[5] = "";
-double total_liters;
-double StopLTRCountVal;
+
 double targetLiters;
 double effectiveLiters;
 float variationLiters;
@@ -107,8 +58,7 @@ uint8_t cr, cg, cb;
 int workProgressCount = 0;
 int dashboardflg;
 int global_DashbordBTNflag;
-char startDateEnd[55];
-char startTimeEnd[60];
+
 
 
 
@@ -539,9 +489,6 @@ void iLEDDeActive(void)
 void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask)
 {
     dashboardflg = 1;
-
-    sprintf(startDateEnd, "%s", guiDate);
-    sprintf(startTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
     DashboardInfoWidget();
     lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
     lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));

@@ -56,7 +56,6 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
 extern float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 int _fasDutyCycle = 15000;
 bool metroFlowCalStarted;
-float flow_value;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scrFlowcal;

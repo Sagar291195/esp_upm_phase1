@@ -52,20 +52,14 @@ char *_pPersonName_ = "Mark";
 char *_pLtrCountVal_ = "10012.00 L";
 char *_pHourCountVal_ = "2300.13 H";
 
-char startTime[100];
 char stopTime[25];
 
-char startDateEnd[55];
-char stopDateEnd[45];
-char startTimeEnd[60];
-char stopTimeEnd[60];
 
 char guiHrDef[25];
 char guiMinDef[32];
 
 int xSpacebwline = 2;
 int global_DashbordBTNflag;
-bool isMotor;
 int strttmrcount = 0;
 bool PumpStopForcefully;
 
@@ -75,12 +69,7 @@ float effectiveHr;
 float variationHr;
 bool defaultParaSelected;
 
-// double StopLTRCountVal;
-
-/**
- * @brief refers to the current ongoing screen
- *
- */
+/* refers to the current ongoing screen */
 lv_obj_t *crnt_screen;
 lv_obj_t *scrSummaryStart;
 lv_obj_t *xssParentContainer_ss;
@@ -312,13 +301,8 @@ void xssSummaryStartScreen(void)
     {
         lv_obj_align(__xssStartTimeLbl_ss, __xssStartDateLbl_ss, LV_ALIGN_OUT_BOTTOM_RIGHT, -22, 2);
     }
-    // lv_obj_align(__xssStartTimeLbl_ss, __xssStartDateLbl_ss, LV_ALIGN_OUT_BOTTOM_RIGHT, -28, 2);
-    // lv_obj_align(__xssStartTimeLbl_ss, __xssStartDateLbl_ss, LV_ALIGN_OUT_BOTTOM_RIGHT, -22, -20);
-    // if(startTimeLabelAdgFlg){lv_label_set_text(__xssStartTimeLbl_ss, _xaHourMinrollerbuf);}
-    // lv_label_set_text(__xssStartTimeLbl_ss, _xaHourMinrollerbuf); // _xaHourMinrollerbuf  _pStartTime_
+
     lv_label_set_text_fmt(__xssStartTimeLbl_ss, "%dH %dM", seq[0].uStartHour, seq[0].uStartMin);
-    char min1[] = "00";
-    sprintf(startTime, "%s:%s:%s", _xaHourrollerbuf, _xaMinutrollerbuf, min1);
     lv_obj_add_style(__xssStartTimeLbl_ss, LV_LABEL_PART_MAIN, &xssStSpTimeLblStyle_ss);
 
     // Create Label for Stop time
@@ -539,9 +523,6 @@ void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
                 strttmrcount = 0;
                 dashboardflg = 1;
                 global_DashbordBTNflag = 2;
-                // isMotor = true;
-                sprintf(startDateEnd, "%s", guiDate);
-                sprintf(startTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
                 defaultParaSelected = false;
                 pxDashboardScreen(); // Open Dashboard Screen
             }
@@ -614,8 +595,6 @@ void start_timer_callback(void *args)
 {
     if (PumpStopForcefully != true)
     {
-        sprintf(stopDateEnd, "%s", guiDate);
-        sprintf(stopTimeEnd, "%sH%sM", guiHrDef, guiMinDef);
         vUpdateInfoWidgetTask();
     }
 

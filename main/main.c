@@ -1,3 +1,7 @@
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+
 #include "esp_upm.h"
 #include "lvgl_helpers.h"
 #include <timeManagement.h>
@@ -5,47 +9,58 @@
 #include <sampleManagement.h>
 #include "gui/screens/screen_includes.h"
 
-/*********************
- *      DEFINES
- *********************/
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 #define TAG                 "Demo"
 #define LV_TICK_PERIOD_MS   1
 
 #ifdef CONFIG_NEW_HW
-#define WAKEMODE            GPIO_NUM_27
+#define WAKEMODE            GPIO_NUM_27     /* wakeup GPIO new hardware*/
 #else
-#define WAKEMODE            GPIO_NUM_32
+#define WAKEMODE            GPIO_NUM_32     /* wakeup GPIO old hardware*/
 #endif
 
 
+/********************************************************************************************
+ *                              VARIABLES
+ ********************************************************************************************/
+uint8_t screenid;                   /* variable to store current loaded screen id*/
+SemaphoreHandle_t xGuiSemaphore;    /* semaphore to Processes*/ 
+SemaphoreHandle_t xGuiSemaphore1;   /* semaphore to GUId*/ 
 
-uint8_t screenid;
-
-SemaphoreHandle_t xGuiSemaphore;  // semaphore to Processes
-SemaphoreHandle_t xGuiSemaphore1; // semaphore to GUId
-
-/**********************
- *  STATIC PROTOTYPES
- **********************/
+/********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
 static void IRAM_ATTR lv_tick_task(void *arg);      /* lvgl task to count the ticks */
 static void guiTask(void *pvParameter);             /* This it the lvgl task */
-static void create_demo_application(void);          /*This function intiate the first screen to show */
-static void wakeupmodeInit(void);                   /*This function wakeup the screen*/
+static void create_demo_application(void);          /* This function intiate the first screen to show */
+static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
 
-/**********************
- * CODE
- **********************/
+/********************************************************************************************
+ *                              CODE
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void create_demo_application(void)
 {
     Init_Screen();
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void IRAM_ATTR lv_tick_task(void *arg)
 {
     (void)arg;
     lv_tick_inc(portTICK_RATE_MS);
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void wakeupmodeInit(void)
 {
     // Set GPIO as OUTPUT
@@ -54,9 +69,9 @@ static void wakeupmodeInit(void)
     gpio_set_level(WAKEMODE, 0);
 }
 
-/**********************
- *   APPLICATION MAIN
- **********************/
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 void app_main()
 {
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
@@ -109,11 +124,9 @@ void app_main()
     xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
 }
 
-/* Creates a semaphore to handle concurrent call to lvgl stuff*****
- * If you wish to call *any* lvgl function from other threads/tasks
- * you should lock on the very same semaphore! ********************
- *
- * */
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void guiTask(void *pvParameter)
 {
 
