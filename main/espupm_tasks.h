@@ -64,82 +64,11 @@ extern "C"
     /**********************
      *  GLOBAL VARIABLES
      **********************/
-    extern bool metroFlowCalStarted;
     extern int _fasDutyCycle;
-    extern float flowPoint;
-    extern int workProgress;
-    extern int literMeasureNum;
     extern char today_Date_Msg[200];
     extern char guiDate[40];
-    extern double *totalliterPtr;
-
-    extern int HourCount;
     extern bool buzzer_on;
-    extern uint8_t cr, cg, cb;
-
-
-    typedef struct log_guiDate_t
-    {
-        char QguiDate[10];
-    } log_guiDate_t;
-
-    typedef struct log_guiTime_t
-    {
-        char QguiTime[60];
-    } log_guiTime_t;
-
-    typedef struct log_SDPsensor_t
-    {
-        float dp_ticks_SDP;
-        float out_SDP;
-        int16_t temperature_ticks_SDP;
-        float flow_value_SDP;
-        float polyFlow;
-    } log_SDPsensor_t;
-
-    typedef struct log_BME280sensor_t
-    {
-        float Qpressure_BME;
-        float Qtemp_BME;
-        float Qhumidity_BME;
-    } log_BME280sensor_t;
-
-    typedef struct log_IntBME280sensor_t
-    {
-        float Qpressure_IntBME;
-        float Qtemp_IntBME;
-        float Qhumidity_IntBME;
-    } log_IntBME280sensor_t;
-
-    typedef struct log_INAsensor_t
-    {
-        float qC1BusVoltPtr;
-        float qC1ShuntVoltPtr;
-        float qC1ShuntCurrentPtr;
-
-        float qC2BusVoltPtr;
-        float qC2ShuntVoltPtr;
-        float qC2ShuntCurrentPtr;
-
-        float qC3BusVoltPtr;
-        float qC3ShuntVoltPtr;
-        float qC3ShuntCurrentPtr;
-
-    } log_INAsensor_t;
-
-    typedef struct
-    {
-        float       bme280_temp;
-        float       bme280_humid;
-        float       bme280_press;
-        float       bme680_temp;    
-        float       bme680_press;       
-        float       bme680_humid;       
-        float       bme680_gas_resist; 
-        uint16_t    sdp32_diff_press;
-        uint16_t    sdp32_temp;
-        uint16_t    motor_rpm;
-    } sensor_data_t;
+    extern esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
 
     // if sensor connect - true
     typedef struct
@@ -152,9 +81,6 @@ extern "C"
         bool sdp32;
         bool buzzer;
     } sensor_present_t;
-
-    extern esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
-
 
     /**********************
      *  GLOBAL PROTOTYPES

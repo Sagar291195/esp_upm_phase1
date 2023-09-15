@@ -115,20 +115,12 @@ lv_obj_t *_xseBTNValidLbl_se;
 lv_task_t *__xserefresherTask;
 
 char *Seq_Number;
-char guiHrDef[25];
 char guiMinDef[32];
 
 char _xsSProllerbuf[32];
 char WseqNum1[5];
 char _xsDurHourRollerbuf[32];
 char _xsDurMinutrollerbuf[32];
-
-
-float StopHrEND;
-
-float targetHr;
-float effectiveHr;
-float variationHr;
 
 /**********************
  *  GLOBAL PROTOTYPES

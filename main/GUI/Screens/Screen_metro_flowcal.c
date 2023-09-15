@@ -55,7 +55,7 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
  **********************/
 extern float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 int _fasDutyCycle = 15000;
-bool metroFlowCalStarted;
+
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scrFlowcal;
@@ -413,8 +413,6 @@ void CallMetroFlowCalibrationScreen(void)
     lv_obj_set_style_local_text_font(_fasValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_22);
     lv_obj_set_style_local_text_color(_fasValidTxt, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    metroFlowCalStarted = true;
-
     _fasMotorTask = lv_task_create(_fas_MotorTask_Call, 10, LV_TASK_PRIO_HIGH, NULL);
     crnt_screen = scrFlowcal;
     screenid = SCR_FLOW_CALIBRATION;
@@ -549,8 +547,6 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         if (calibration_count >= NUM_OF_FLOW_CALIBRATION_POINT)
         {
             calibration_count = 0;
-            metroFlowCalStarted = false;
-
             setcalibrationvalue_flow_coeffA1(flow_coeffA1);
             setcalibrationvalue_flow_coeffA2(flow_coeffA2);
             setcalibrationvalue_flow_coeffA3(flow_coeffA3);

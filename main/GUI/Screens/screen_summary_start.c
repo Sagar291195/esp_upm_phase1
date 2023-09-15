@@ -52,10 +52,7 @@ char *_pPersonName_ = "Mark";
 char *_pLtrCountVal_ = "10012.00 L";
 char *_pHourCountVal_ = "2300.13 H";
 
-char stopTime[25];
 
-
-char guiHrDef[25];
 char guiMinDef[32];
 
 int xSpacebwline = 2;
@@ -63,10 +60,6 @@ int global_DashbordBTNflag;
 int strttmrcount = 0;
 bool PumpStopForcefully;
 
-
-float targetHr;
-float effectiveHr;
-float variationHr;
 bool defaultParaSelected;
 
 /* refers to the current ongoing screen */
@@ -308,7 +301,7 @@ void xssSummaryStartScreen(void)
     // Create Label for Stop time
     __xssStopTimeLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStopTimeLbl_ss, __xssStopDateLbl_ss, LV_ALIGN_OUT_BOTTOM_RIGHT, -22, 2);
-    lv_label_set_text_fmt(__xssStopTimeLbl_ss, "%s\n", endTime); // stopTime , _pStopTime_
+    lv_label_set_text_fmt(__xssStopTimeLbl_ss, "%s\n", endTime); 
     lv_obj_add_style(__xssStopTimeLbl_ss, LV_LABEL_PART_MAIN, &xssStSpTimeLblStyle_ss);
 
     // Create style for Sample Number label

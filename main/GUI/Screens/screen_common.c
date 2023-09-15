@@ -36,8 +36,6 @@
 extern char guiTime[25];
 extern char guiDateNext1[200];
 extern char GuiDateRollerStr[700];
-char stopTime[25];
-char stopTime1[25];
 char stopDate[40];
 
 int totalSecond;
@@ -88,11 +86,6 @@ void getSeqStopDT(int afterHr, int afterMin, int currHr, int currMin)
     }
     stopHr = getHr;
     stopMin = getMin;
-    // printf("Time after X Hr &  Y Min: %02d:%02d \n", getHr, getMin);
-    // stopTime
-    char min2[] = "00";
-    sprintf(stopTime, "%02dH%02dM\n", getHr, getMin);        // stopTime1
-    sprintf(stopTime1, "%02d:%02d:%s", getHr, getMin, min2); // stopTime1
 }
 
 void getStopDate(int xdurHr, int xstopHr)

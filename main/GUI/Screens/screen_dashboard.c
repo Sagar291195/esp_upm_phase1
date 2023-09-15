@@ -8,14 +8,13 @@
 /*********************
  *      DEFINES
  *********************/
-#define TAG         "DASHBOARD"
-#define IW_WIDTH (200)
-#define IW_HEIGHT (290)
-#define SYMBOL_SIGNAL "\uf012"
+#define TAG             "DASHBOARD"
+#define IW_WIDTH        (200)
+#define IW_HEIGHT       (290)
+#define SYMBOL_SIGNAL   "\uf012"
 
 int global_DashbordBTNflag = 1;
 int dashboardflg = 0;
-int workProgress = 0;
 char MenuBTN_SERVICE[10] = "PID TUNE";
 char MenuBTN_ARCHIV[10] = "ARCHIV";
 char MenuBTN_METROLOGY[10] = "METROLOGY";
@@ -77,8 +76,6 @@ lv_obj_t *_xTodaysDateLabel;
 static lv_task_t *refresherTask = NULL;
 
 char PrevguiTime[25];
-
-char guiHrDef[25];
 char guiMinDef[32];
 
 char *guiH;

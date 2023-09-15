@@ -63,9 +63,6 @@ extern "C"
     extern bool defaultParaSelected;
     extern char WseqNum1[5];
     extern bool rollerMovCkFlag;
-    extern char stopTime[25];
-    extern char stopTime1[25];
-    extern char stopDate[40];
     extern int dashboardflg;
     extern int totalSecond;
     extern char *Seq_Number;

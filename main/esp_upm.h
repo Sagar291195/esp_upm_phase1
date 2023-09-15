@@ -59,17 +59,6 @@ extern "C" {
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-extern int HourCount;
-
-extern double targetLiters;
-extern double effectiveLiters;
-extern float variationLiters;
-
-extern float targetHr;
-extern float effectiveHr;
-extern float variationHr;
-
-extern float StopHrEND;
 
 /**********************
  *  GLOBAL PROTOTYPES

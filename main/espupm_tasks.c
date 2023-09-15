@@ -47,64 +47,11 @@ unsigned short day_counter;
 lv_task_t *infoWgtUpdtWaitToProgTask; // Task to be called after wait time is over
 char today_Date_Msg[200];
 char month_name[5] = "";
-
-double targetLiters;
-double effectiveLiters;
-float variationLiters;
-int HourCount = 0;
 bool buzzer_on = false;
-float PolyFlowOut;
 uint8_t cr, cg, cb;
-int workProgressCount = 0;
 int dashboardflg;
 int global_DashbordBTNflag;
 
-
-
-
-double *totalliterPtr;
-
-
-uint32_t *INA_measNumPtr = NULL;
-
-float *C1BusVoltPtr = NULL;
-float *C1ShuntVoltPtr = NULL;
-float *C1ShuntCurrentPtr = NULL;
-float *C2BusVoltPtr = NULL;
-float *C2ShuntVoltPtr = NULL;
-float *C2ShuntCurrentPtr = NULL;
-float *C3BusVoltPtr = NULL;
-float *C3ShuntVoltPtr = NULL;
-float *C3ShuntCurrentPtr = NULL;
-int *tickCoutptr = NULL;
-bool printHeader = true;
-bool printdata = true;
-
-char Rec_Date[60];
-char Rec_time[60];
-int16_t Rec_dp_ticks;
-float Rec_Out;
-int16_t Rec_temperature_ticks;
-float Rec_flow_value;
-float Rec_Polyflow_value;
-float Rec_pressureBME;
-float Rec_tempBME;
-float Rec_humidityBME;
-float Rec_pressureBME_Int;
-float Rec_tempBME_Int;
-float Rec_humidityBME_Int;
-
-float recC1BusVoltPtr;
-float recC1ShuntVoltPtr;
-float recC1ShuntCurrentPtr;
-
-float recC2BusVoltPtr;
-float recC2ShuntVoltPtr;
-float recC2ShuntCurrentPtr;
-
-float recC3BusVoltPtr;
-float recC3ShuntVoltPtr;
-float recC3ShuntCurrentPtr;
 
 int day_Roller_int;
 int month_Roller_int;
@@ -134,7 +81,7 @@ struct tm navier_time_set =
         .tm_min = min,
         .tm_sec = sec};
 
-struct tm navier_time =
+    struct tm navier_time =
     {
         .tm_year = 121, // since 1900 (2020 - 1900)
         .tm_mon = 5,    // 0-based
@@ -143,7 +90,7 @@ struct tm navier_time =
         .tm_min = 39,
         .tm_sec = 10};
 
-struct tm alarmtest_time =
+    struct tm alarmtest_time =
     {
         .tm_year = 121 + 1990, // since 1900 (2020 - 1900)
         .tm_mon = 8 + 1,       // 0-based
@@ -152,7 +99,7 @@ struct tm alarmtest_time =
         .tm_min = 52,
         .tm_sec = 10};
 
-sensor_present_t sensor =
+    sensor_present_t sensor =
     {
         .bme280 = false,
         .bme680 = false,
@@ -164,7 +111,6 @@ sensor_present_t sensor =
 
 int day, month, year;
 int totalSecond;
-
 bool navier_set_time;
 
 char guiTime[25];
@@ -172,7 +118,7 @@ char guiTime[25];
 char guiDate[40];
 char guiHrDef[25];
 char guiMinDef[32];
-char guiS;
+
 
 char guiDateNext1[200];
 char GuiDateRollerStr[700];
@@ -187,11 +133,7 @@ char guiSeqDate6[25];
 char guiSeqDate7[25];
 char guiSeqDate8[25];
 char guiSeqDate9[25];
-char guiSeqDate10[25];
-char guiSeqDate11[25];
-char guiSeqDate12[25];
-char guiSeqDate13[25];
-char guiSeqDate14[25];
+
 
 /**********************
  *  STATIC PROTOTYPES
