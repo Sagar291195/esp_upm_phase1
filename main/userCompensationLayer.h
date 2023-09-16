@@ -42,7 +42,7 @@ float fGetInternalTemperatureUserCompesated();
  * @brief Get the external sensor data user compensaed 
  * @param[in] xUserCompenstedValues 
  */
-void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues);
+void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue);
 
 float fGetMassFlowUserCompensated(void);
 

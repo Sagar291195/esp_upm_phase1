@@ -163,12 +163,20 @@ sequence_t *pGetAddressOfSequenceArray()
 
 void vSetSequenceArrayToNVS()
 {
-    (void) nvswrite_value_parameters(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
+    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence, sizeof(totalSequence));
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence summary write error");
+    }
 }
 
 void vGetSequenceFromNvsToArray()
 {
-    (void) nvsread_value_parameter(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence);
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence summary read error");
+    }
 }
 
 uint8_t uGetNoOfSequenceInArray()
@@ -209,27 +217,22 @@ void taskRunSample(void *pvParameters)
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
-    /* calculating and saving the end summary of the variables */
-    vInitiateSequenceSummaryStart();
-    /* setting the delete the update value task to false so that task does not deleted when created */
-    bDeleteUpdateScreenAndVaulesTask = false;
-    /*  showing the work in progress screen */
-    vShowWorkInProgressScreen();
+   
+    vInitiateSequenceSummaryStart();     /* calculating and saving the end summary of the variables */
+    bDeleteUpdateScreenAndVaulesTask = false;   /* setting the delete the update value task to false so that task does not deleted when created */
+    vShowWorkInProgressScreen();    /*  showing the work in progress screen */
+    
     /* creating the task which updates the screen values and saving the values to the nvs flash */
     xTaskCreate(vUpdateScreenAndSaveValuesEverySecond, "updateScreen", 4 * 1024, &usequenceToRun, 5, &xTaskHandleUpdateScreenAndSaveValuesEverySecond);
-    /*  seting the flow set point */
-    setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);
-    /*  starting the motor so we have some initial value for sdp sensor and calculate flow
-     * rate and the pid controller can compute  */
-    MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);
+    
+    setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);     /*  seting the flow set point */
+    MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);    /*  starting the motor so we have some initial value for sdp sensor and calculate flowrate and the pid controller can compute  */
     setStateOfMotor(true); // run the motor
     ESP_LOGD(TAG, "Starting the motor");
     ESP_LOGD(TAG, "get state of motor %d", getIsMotorRunning());
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
     ESP_LOGI(TAG, "Duration in ms %d", udurationInMs);
-    /*  delaying the task so that motor can run this time period */
-    // vTaskDelay(pdMS_TO_TICKS(udurationInMs));
-    /* this will block the task until the semaphore is given or the sequnce has been run to the whole time */
+
     if (xSemaphoreTake(xStopTheRunningSequenceSemaphore, (udurationInMs / portTICK_PERIOD_MS)) == pdTRUE)
     {
         ESP_LOGW(TAG, "Sequence has been terminated early, due to the force stop");
@@ -284,13 +287,25 @@ uint8_t uGetSequenceNumberToBeSaved()
 /* @brief get the total sequene count from the nvs flash */
 void vGetTotalSequenceCountFromNvs()
 {
-    (void) nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence count read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Total Sequence count : %d", uTotalSequenceCount);
+    }
 }
 
 /** set the total sequnce count to the nvs flash */
 void vSetTotalSequenceCountToNvs()
 {
-    (void) nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
+    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence count write error");
+    }
 }
 
 void nvsread_sequence_parameters()
@@ -507,11 +522,10 @@ static void vMonitorSensorDataTask(void *pvParameters)
         vTaskDelayUntil(&last_wakeup, pdMS_TO_TICKS(1000));
         uCounterForCalculatingMeanValues++;
 
-        /* getting the extenal sensor data from sensor management */
-        vGetExternalSensorDataUserCompensated(&external_sensor_data);
+        get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
         vGetExternalSensorData(&raw_sensor_data);
-        /* getting the INA data */
-        vGet_INA3221_sensor_data(&xInaSensorData);
+       
+        vGet_INA3221_sensor_data(&xInaSensorData);   /* getting the INA data */
 
         /* calulating the mean temp, humidity and pressure */
         xCurrentSequenceSummary.ambientTemperature.fMeanTemperature = ((xCurrentSequenceSummary.ambientTemperature.fMeanTemperature * (uCounterForCalculatingMeanValues - 1)) + external_sensor_data.fTemperature) / uCounterForCalculatingMeanValues;
@@ -567,7 +581,8 @@ static void vMonitorSensorDataTask(void *pvParameters)
             bOneTime = true;
             //printf(" hardware Time,SDP_temperature,SDP_MassFlow,External_pressure_BME,External_temp_BME,External_humidity_BME,totalliter,TotalHour,C1BusVolt,C1ShuntVolt,C1ShuntCurr,C2BusVolt,C2ShuntVolt,C2ShuntCurr,C3BusVolt,C3ShuntVolt,C3ShuntCurr,RealFlowRate,External AirDensity,internal BME280 temperature,internal BME280 pressure,internal BME280 humidity,internal BME280 Airdensity\n");
         }
-        printf("Time: RTC Time: %s, Hardware Time: %llu,\n",  guiTime, esp_timer_get_time());
+        printf("\n\n\nTime: RTC Time: %s",  guiTime );
+        printf("Hardware Time: %llu,\n", esp_timer_get_time());
         printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowUserCompensated());
         printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
         printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
@@ -576,10 +591,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
         printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", fGetBme280TemperatureAverages(), fGetBme280HumidityAverages(), fGetBme280PressureAverages(),  fGetInternalAirDensity_Raw());
         printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
         printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
-        printf("Feature: Volumetric Flow Comp: %0.2f LPM", fGetVolumetricFlowUserCompensated());
-
-
-        // printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(), fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), external_sensor_data.fPressure, external_sensor_data.fTemperature, external_sensor_data.fHumidity, fGetTotalLiterCount(), fGetTotalHoursCount(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, fGetVolumetricFlowUserCompensated(), fGetExternal_AirDesity_Raw(), fGetInternalTemperatureUserCompesated(), fGetInternalPressureUserCompensated(), fGetInternalHumidityUserCompesated(), fGetInternalAirDensityUserCompensated());
+        printf("Feature: Volumetric Flow Comp: %0.2f LPM\n", fGetVolumetricFlowUserCompensated());
     }
 
     vTaskDelete(NULL);

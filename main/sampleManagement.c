@@ -75,13 +75,24 @@ void vIncrementCurrentSampleNumber()
 
 void vSetSampleNumberToNvsFlash()
 {
-    (void) nvswrite_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, uUniqueSampleNumber);
+    bool ret = nvswrite_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, uUniqueSampleNumber);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "sample number write error");
+    }
 }
 
 void vGetSampleNumberFromNvsFlash()
 {
-    (void) nvsread_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, &uUniqueSampleNumber);
-    ESP_LOGI(TAG, "Unique saved sample number in nvs flash is %u", uUniqueSampleNumber);
+    bool ret = nvsread_value_u32(NVS_STORGE_NAME, SAMPLE_STORAGE_KEY, &uUniqueSampleNumber);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Sample number read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Unique saved sample number in nvs flash is %u", uUniqueSampleNumber);
+    }
 }
 
 uint8_t uGetCurrentRunningSequenceNumber()
@@ -96,13 +107,24 @@ void vSetCurrentRunningSequenceNumber(uint8_t uSequenceNumber)
 
 void vSetCurrentSequenceNumberToNvsFlash()
 {
-    (void) nvswrite_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, uCurrentRunningSequenceNumber);
+    bool ret = nvswrite_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, uCurrentRunningSequenceNumber);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "current sample number error");
+    }
 }
 
 void vGetCurrentSequenceNumberFromNvsFlash()
 {
-    (void) nvsread_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, &uCurrentRunningSequenceNumber);
-    ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
+    bool ret = nvsread_value_u8(NVS_STORGE_NAME, SEQUENCE_STORAGE_KEY, &uCurrentRunningSequenceNumber);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "current sample number read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
+    }
 }
 
 static void vSampleManagementServiceFunction(void *pvParamaters)
@@ -228,12 +250,20 @@ void vInitializeEndSummaryVariableToZero()
 
 void vSaveEndSummaryToNvsFlash()
 {
-    (void) nvswrite_value_parameters(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
+    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "End summary write error");
+    }
 }
 
 void vGetEndSummaryFromNvsFlash()
 {
-    (void) nvsread_value_parameter(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary);
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "End summary read error");
+    }
 }
 
 void vSetInitialCounterValuesToEndSummary()

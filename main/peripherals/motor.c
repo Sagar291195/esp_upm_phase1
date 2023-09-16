@@ -266,8 +266,8 @@ static void motorTask(void *pvParameters)
         while (getIsMotorRunning())
         {
             ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
-            /* calulating the current flow rate */
-            flowRate = fGetVolumetricFlowUserCompensated();
+           
+            flowRate = fGetVolumetricFlowUserCompensated();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {
                 ESP_LOGD(TAG, "flow rate is nan");
@@ -276,8 +276,7 @@ static void motorTask(void *pvParameters)
             else
             {
                 fTempVariable = fGetTotalLiterCount();
-                /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);
+                fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);   /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
                 ESP_LOGD(TAG, "FLOW rate IS from motor %0.2f, Total liter : %.2f", flowRate, fTempVariable);
                 /* updating the total liters flow in the variable */
                 vSetTotalLiterCount(fTempVariable);

@@ -166,10 +166,7 @@ uint32_t uGetTotalHoursIntegerPart();
  */
 uint8_t uGetTotalHoursFloatPart();
 
-/**
- * @brief set the total hours to the nvs flash
- */
-void vSetTotalHoursValueToNvs();
+
 
 /**
  * @brief set the total liter values into the flash
@@ -210,6 +207,7 @@ void vSetTotalSecondPassesInGivenSequence(uint64_t uSecondPasses);
  */
 void vIncrementTotalSecondPassesInGivenSequence();
 
+void vSetTotalHoursValueToNvs();
 /**
  * @brief Set the total volume in the liters passed in the sequence
  * @param fLiters total volume in liters

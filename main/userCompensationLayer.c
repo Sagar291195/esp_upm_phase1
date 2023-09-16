@@ -58,17 +58,19 @@ float fGetInternalTemperatureUserCompesated()
     return result;
 }
 
-void vGetExternalSensorDataUserCompensated(external_sensor_data_t *xUserCompenstedValues)
+void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue)
 {
-    external_sensor_data_t xManuCompenstedValues;
-    vGetExternalSensorData(&xManuCompenstedValues);
+    external_sensor_data_t sensorvalues;
+    vGetExternalSensorData(&sensorvalues);
 
-    xManuCompenstedValues.fTemperature = (xManuCompenstedValues.fTemperature - getcalibrationvalue_ext_temperature());
-    xManuCompenstedValues.fPressure = (xManuCompenstedValues.fPressure - getcalibrationvalue_ext_pressure());
-    xManuCompenstedValues.fTemperature = (xManuCompenstedValues.fHumidity - getcalibrationvalue_ext_humidity());
-    /* do something to get the user compnsated values */
-    memcpy(xUserCompenstedValues, &xManuCompenstedValues, sizeof(external_sensor_data_t));
-    ESP_LOGD(TAG, "User compensated External sensor values are temp %0.2f humidiy %0.2f pressure %0.2f", xUserCompenstedValues->fTemperature, xUserCompenstedValues->fHumidity, xUserCompenstedValues->fPressure);
+    float offset_temp = getcalibrationvalue_ext_temperature();
+    float offset_pressure = getcalibrationvalue_ext_pressure();
+    float offset_humidity = getcalibrationvalue_ext_humidity();
+    calibratedvalue->fTemperature = (sensorvalues.fTemperature - offset_temp);
+    calibratedvalue->fPressure = (sensorvalues.fPressure - offset_pressure);
+    calibratedvalue->fHumidity = (sensorvalues.fHumidity - offset_humidity);
+    
+    ESP_LOGD(TAG, "Calibrated External sensor values are temp %0.2f humidiy %0.2f pressure %0.2f", calibratedvalue->fTemperature, calibratedvalue->fHumidity, calibratedvalue->fPressure);
 }
 
 
@@ -170,10 +172,10 @@ float fGetInternalAirDensity_Raw()
 float fGetExternal_AirDesity_Comp(void)
 {
     float result =0;
-    external_sensor_data_t comp_sensordata;
+    external_sensor_data_t calibratedsensordata;
 
-    vGetExternalSensorDataUserCompensated(&comp_sensordata);;    
-    result =  _fDensityCalculation(comp_sensordata.fTemperature, comp_sensordata.fHumidity, comp_sensordata.fPressure);
+    get_external_sensor_calibratedvalue(&calibratedsensordata);;    
+    result =  _fDensityCalculation(calibratedsensordata.fTemperature, calibratedsensordata.fHumidity, calibratedsensordata.fPressure);
     return result;
 
 }

@@ -24,7 +24,7 @@ uint64_t uTotalSecondPassesInGivenSequence = 0;     /* To measure how much time 
 float fTotalLitersHasBeenPassInGivenSequence = 0;   /* Tracks how much liters has been passed in the given sequence */
 
 static char total_literskey[] = "total-liters";  // key to store data in flash
-static char total_hourskey[] = "total-liters";  // key to store data in flash
+static char total_hourskey[] = "total-hours";  // key to store data in flash
 static char pid_parameterskey[] = "pid-parameters";  // key to store data in flash
 
 /***********************************************************************
@@ -32,7 +32,7 @@ static char pid_parameterskey[] = "pid-parameters";  // key to store data in fla
  **********************************************************************/
 void vSetTotalLitersValueToNvs();
 void vGetTotalLitersFromNvs();
-void vSetTotalHoursValueToNvs();
+
 void vGetTotalHoursFromNvs();
 
 /***********************************************************************
@@ -126,22 +126,46 @@ void nvsread_hours_liters_value()
 
 void vSetTotalLitersValueToNvs()
 {
-    (void)nvswrite_value_float(PARAMETERS_STORGE_NAME, total_literskey, totalLitersCounter);
+    bool ret = nvswrite_value_float(PARAMETERS_STORGE_NAME, total_literskey, totalLitersCounter);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total liters write error");
+    }
 }
 
 void vGetTotalLitersFromNvs()
 {
-    (void)nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_literskey, &totalLitersCounter);
+    bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_literskey, &totalLitersCounter);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total liters read error");
+    }
+    else
+    {
+      ESP_LOGI(TAG, "Total Liters count : %0.2f", totalLitersCounter);
+    }
 }
 
 void vSetTotalHoursValueToNvs()
 {
-    (void)nvswrite_value_float(PARAMETERS_STORGE_NAME, total_hourskey, totalHoursCounter);
+    bool ret = nvswrite_value_float(PARAMETERS_STORGE_NAME, total_hourskey, totalHoursCounter);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total hours write error");
+    }
 }
 
 void vGetTotalHoursFromNvs()
 {
-    (void)nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_hourskey, &totalHoursCounter);
+    bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_hourskey, &totalHoursCounter);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total hours read error");
+    }
+    else
+    {
+      ESP_LOGI(TAG, "Total Hours Count : %0.2f", totalHoursCounter);
+    }
 }
 
 void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
