@@ -17,6 +17,7 @@
 
 #include "sampleManagement.h"
 #include "sequenceManagement.h"
+#include "userCompensationLayer.h"
 #include "esp_upm.h"
 
 /*********************
@@ -447,6 +448,27 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
         {
             lv_img_set_src(_fasStatusIcon, &cross_icon);
         }
+
+        external_sensor_data_t external_sensor_data;
+        external_sensor_data_t raw_sensor_data;
+        INA3231_sensor_data_t xInaSensorData[INA3221_CHANNEL];
+
+        get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
+        vGetExternalSensorData(&raw_sensor_data);
+        vGet_INA3221_sensor_data(&xInaSensorData[0]);
+     
+
+        printf("\n\n\nTime: RTC Time: %s",  guiTime );
+        printf("Hardware Time: %llu,\n", esp_timer_get_time());
+        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowUserCompensated());
+        printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
+        printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
+        printf("Channel 2: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent);
+        printf("External: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw());
+        printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", fGetBme280TemperatureAverages(), fGetBme280HumidityAverages(), fGetBme280PressureAverages(),  fGetInternalAirDensity_Raw());
+        printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
+        printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
+        printf("Feature: Volumetric Flow Comp: %0.2f LPM, Hour Counter : %0.2f, Volume Counter : %0.2f\n", fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 }
 

@@ -591,7 +591,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
         printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", fGetBme280TemperatureAverages(), fGetBme280HumidityAverages(), fGetBme280PressureAverages(),  fGetInternalAirDensity_Raw());
         printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
         printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
-        printf("Feature: Volumetric Flow Comp: %0.2f LPM\n", fGetVolumetricFlowUserCompensated());
+        printf("Feature: Volumetric Flow Comp: %0.2f LPM, Hour Counter : %0.2f, Volume Counter : %0.2f\n", fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 
     vTaskDelete(NULL);
