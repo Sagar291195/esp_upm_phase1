@@ -1,17 +1,3 @@
-
-
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Name (mail or git)
- *  @date      Year
- */
-
-/**
- *  @file file
- *  @brief Short description
- *  @details Long description
- */
-
 #ifndef ESPUPM_TASKS_H
 #define ESPUPM_TASKS_H
 
@@ -20,10 +6,9 @@ extern "C"
 {
 #endif
 
-    /*********************
-     *      INCLUDES
-     *********************/
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,70 +33,38 @@ extern "C"
 #include "GUI/Screens/screen_includes.h"
 
 
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 
-    /*********************
-     *      DEFINES
-     *********************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+typedef struct
+{
+    bool bme280;
+    bool bme680;
+    bool ds3231;
+    bool ina3231;
+    bool mpu6050;
+    bool sdp32;
+    bool buzzer;
+} sensor_present_t;
 
-    /**********************
-     *     TYPEDEFS
-     **********************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+extern char today_Date_Msg[200];
+extern char guiDate[40];
+extern bool buzzer_on;
 
-    /**********************
-     *  GLOBAL MACROS
-     **********************/
-
-    /**********************
-     *  GLOBAL VARIABLES
-     **********************/
-    extern int _fasDutyCycle;
-    extern char today_Date_Msg[200];
-    extern char guiDate[40];
-    extern bool buzzer_on;
-    extern esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
-
-    // if sensor connect - true
-    typedef struct
-    {
-        bool bme280;
-        bool bme680;
-        bool ds3231;
-        bool ina3231;
-        bool mpu6050;
-        bool sdp32;
-        bool buzzer;
-    } sensor_present_t;
-
-    /**********************
-     *  GLOBAL PROTOTYPES
-     **********************/
-    void iLEDActive(void);
-    void iLEDDeActive(void);
-
-    void ds3231_task(void *pvParameters);
-    void bme280_task(void *pvParamters);
-    void InternalBME280_task(void *pvParamters);
-    void sdp32_task(void *pvParamters);
-    void ina3221_task(void *pvParameters);
-    void pump_task(void *pvParamters);
-    void ResInfoPerCount_task(void *pvParamters);
-    void buzzer_task(void *pvParamters);
-    void ws2812_task(void *pvParamters);
-    void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask);
-    void vinfoWgtUpdtWaitToProgTask(void); // Task Handled by LV Task
-
-    void setSensorTasksTOzeroPriority(void);
-
-
-
-
-
-    void modSDP32_task(void *pvParameters);
-    void set_navier_time_flag(bool value);
-
-    /**********************
-     *    ERROR ASSERT
-     **********************/
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+void ds3231_task(void *pvParameters);
+void buzzer_task(void *pvParamters);
+void ws2812_task(void *pvParamters);
+void set_navier_time_flag(bool value);
 
 #ifdef __cplusplus
 } /* extern "C" */

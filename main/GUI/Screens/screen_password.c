@@ -82,8 +82,8 @@ static const lv_btnmatrix_ctrl_t fcs_tgl_kb_ctrl[] = {
  *  GLOBAL VARIABLES
  **********************/
 
-static char *pass;
-static char *Re_pass;
+static const char *pass;
+static const char *Re_pass;
 bool passNo = false;
 
 lv_task_t *timer_task = NULL;

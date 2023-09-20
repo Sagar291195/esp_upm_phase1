@@ -1,31 +1,22 @@
-/**
- * @file ina3221.c
- *
- * ESP-IDF driver for Shunt and Bus Voltage Monitor INA3221
- *
- * Ported from esp-open-rtos
- *
- * Copyright (C) 2016 Zaltora <https://github.com/Zaltora>\n
- * Copyright (C) 2019 Ruslan V. Uss <unclerus@gmail.com>
- *
- * MIT Licensed as described in the file LICENSE
- */
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <esp_log.h>
-//#include <esp_idf_lib_helpers.h>
 #include "ina3221.h"
 
-static const char *TAG = "INA3221";
-
-#define I2C_FREQ_HZ 200000 // Max 1MHz for esp-idf, but device supports up to 2.44Mhz
-
-#define INA3221_REG_CONFIG (0x00)
-#define INA3221_REG_SHUNTVOLTAGE_1 (0x01)
-#define INA3221_REG_BUSVOLTAGE_1 (0x02)
-#define INA3221_REG_CRITICAL_ALERT_1 (0x07)
-#define INA3221_REG_WARNING_ALERT_1 (0x08)
-#define INA3221_REG_SHUNT_VOLTAGE_SUM (0x0D)
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG                             "INA3221"
+#define I2C_FREQ_HZ                     200000 // Max 1MHz for esp-idf, but device supports up to 2.44Mhz
+#define INA3221_REG_CONFIG              (0x00)
+#define INA3221_REG_SHUNTVOLTAGE_1      (0x01)
+#define INA3221_REG_BUSVOLTAGE_1        (0x02)
+#define INA3221_REG_CRITICAL_ALERT_1    (0x07)
+#define INA3221_REG_WARNING_ALERT_1     (0x08)
+#define INA3221_REG_SHUNT_VOLTAGE_SUM   (0x0D)
 #define INA3221_REG_SHUNT_VOLTAGE_SUM_LIMIT (0x0E)
-#define INA3221_REG_MASK (0x0F)
+#define INA3221_REG_MASK                (0x0F)
 #define INA3221_REG_VALID_POWER_UPPER_LIMIT (0x10)
 #define INA3221_REG_VALID_POWER_LOWER_LIMIT (0x11)
 
@@ -42,7 +33,33 @@ static const char *TAG = "INA3221";
         if (!(VAL))                     \
             return ESP_ERR_INVALID_ARG; \
     } while (0)
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+ static esp_err_t read_reg_16(ina3221_t *dev, uint8_t reg, uint16_t *val);
+ static esp_err_t write_reg_16(ina3221_t *dev, uint8_t reg, uint16_t val);
+ static esp_err_t write_config(ina3221_t *dev);
+ static esp_err_t write_mask(ina3221_t *dev);
+
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t read_reg_16(ina3221_t *dev, uint8_t reg, uint16_t *val)
 {
     CHECK_ARG(val);
@@ -56,6 +73,9 @@ static esp_err_t read_reg_16(ina3221_t *dev, uint8_t reg, uint16_t *val)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t write_reg_16(ina3221_t *dev, uint8_t reg, uint16_t val)
 {
     uint16_t v = (val >> 8) | (val << 8); // Swap
@@ -67,18 +87,29 @@ static esp_err_t write_reg_16(ina3221_t *dev, uint8_t reg, uint16_t val)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t write_config(ina3221_t *dev)
 {
     return write_reg_16(dev, INA3221_REG_CONFIG, dev->config.config_register);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t write_mask(ina3221_t *dev)
 {
     return write_reg_16(dev, INA3221_REG_MASK, dev->mask.mask_register & INA3221_MASK_CONFIG);
 }
 
-///////////////////////////////////////////////////////////////////////////////////
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_init_desc(ina3221_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
     CHECK_ARG(dev);
@@ -98,6 +129,9 @@ esp_err_t ina3221_init_desc(ina3221_t *dev, uint8_t addr, i2c_port_t port, gpio_
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_free_desc(ina3221_t *dev)
 {
     CHECK_ARG(dev);
@@ -105,6 +139,9 @@ esp_err_t ina3221_free_desc(ina3221_t *dev)
     return i2c_dev_delete_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_sync(ina3221_t *dev)
 {
     CHECK_ARG(dev);
@@ -124,16 +161,25 @@ esp_err_t ina3221_sync(ina3221_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_trigger(ina3221_t *dev)
 {
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_get_status(ina3221_t *dev)
 {
     return read_reg_16(dev, INA3221_REG_MASK, &dev->mask.mask_register);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_options(ina3221_t *dev, bool mode, bool bus, bool shunt)
 {
     CHECK_ARG(dev);
@@ -144,6 +190,9 @@ esp_err_t ina3221_set_options(ina3221_t *dev, bool mode, bool bus, bool shunt)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_enable_channel(ina3221_t *dev, bool ch1, bool ch2, bool ch3)
 {
     CHECK_ARG(dev);
@@ -154,6 +203,9 @@ esp_err_t ina3221_enable_channel(ina3221_t *dev, bool ch1, bool ch2, bool ch3)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_enable_channel_sum(ina3221_t *dev, bool ch1, bool ch2, bool ch3)
 {
     CHECK_ARG(dev);
@@ -164,6 +216,9 @@ esp_err_t ina3221_enable_channel_sum(ina3221_t *dev, bool ch1, bool ch2, bool ch
     return write_mask(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_enable_latch_pin(ina3221_t *dev, bool warning, bool critical)
 {
     CHECK_ARG(dev);
@@ -173,6 +228,9 @@ esp_err_t ina3221_enable_latch_pin(ina3221_t *dev, bool warning, bool critical)
     return write_mask(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_average(ina3221_t *dev, ina3221_avg_t avg)
 {
     CHECK_ARG(dev);
@@ -181,6 +239,9 @@ esp_err_t ina3221_set_average(ina3221_t *dev, ina3221_avg_t avg)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_bus_conversion_time(ina3221_t *dev, ina3221_ct_t ct)
 {
     CHECK_ARG(dev);
@@ -189,6 +250,9 @@ esp_err_t ina3221_set_bus_conversion_time(ina3221_t *dev, ina3221_ct_t ct)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_shunt_conversion_time(ina3221_t *dev, ina3221_ct_t ct)
 {
     CHECK_ARG(dev);
@@ -197,6 +261,9 @@ esp_err_t ina3221_set_shunt_conversion_time(ina3221_t *dev, ina3221_ct_t ct)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_reset(ina3221_t *dev)
 {
     CHECK_ARG(dev);
@@ -207,6 +274,9 @@ esp_err_t ina3221_reset(ina3221_t *dev)
     return write_config(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_get_bus_voltage(ina3221_t *dev, ina3221_channel_t channel, float *voltage)
 {
     CHECK_ARG(dev && voltage);
@@ -219,6 +289,9 @@ esp_err_t ina3221_get_bus_voltage(ina3221_t *dev, ina3221_channel_t channel, flo
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_get_shunt_value(ina3221_t *dev, ina3221_channel_t channel, float *voltage, float *current)
 {
     CHECK_ARG(dev);
@@ -242,6 +315,9 @@ esp_err_t ina3221_get_shunt_value(ina3221_t *dev, ina3221_channel_t channel, flo
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_get_sum_shunt_value(ina3221_t *dev, float *voltage)
 {
     CHECK_ARG(dev && voltage);
@@ -254,6 +330,9 @@ esp_err_t ina3221_get_sum_shunt_value(ina3221_t *dev, float *voltage)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_critical_alert(ina3221_t *dev, ina3221_channel_t channel, float current)
 {
     CHECK_ARG(dev);
@@ -262,6 +341,9 @@ esp_err_t ina3221_set_critical_alert(ina3221_t *dev, ina3221_channel_t channel, 
     return write_reg_16(dev, INA3221_REG_CRITICAL_ALERT_1 + channel * 2, *(uint16_t *)&raw);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_warning_alert(ina3221_t *dev, ina3221_channel_t channel, float current)
 {
     CHECK_ARG(dev);
@@ -270,6 +352,9 @@ esp_err_t ina3221_set_warning_alert(ina3221_t *dev, ina3221_channel_t channel, f
     return write_reg_16(dev, INA3221_REG_WARNING_ALERT_1 + channel * 2, *(uint16_t *)&raw);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_sum_warning_alert(ina3221_t *dev, float voltage)
 {
     CHECK_ARG(dev);
@@ -278,6 +363,9 @@ esp_err_t ina3221_set_sum_warning_alert(ina3221_t *dev, float voltage)
     return write_reg_16(dev, INA3221_REG_SHUNT_VOLTAGE_SUM_LIMIT, *(uint16_t *)&raw);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_power_valid_upper_limit(ina3221_t *dev, float voltage)
 {
     CHECK_ARG(dev);
@@ -291,6 +379,9 @@ esp_err_t ina3221_set_power_valid_upper_limit(ina3221_t *dev, float voltage)
     return write_reg_16(dev, INA3221_REG_VALID_POWER_UPPER_LIMIT, *(uint16_t *)&raw);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ina3221_set_power_valid_lower_limit(ina3221_t *dev, float voltage)
 {
     CHECK_ARG(dev);

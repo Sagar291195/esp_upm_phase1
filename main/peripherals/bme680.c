@@ -1,19 +1,21 @@
-/**
- * @file bme680.c
- * @copyright Copyright (c) 2022
- *
- */
-#include <string.h>
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ #include <string.h>
 #include <stdlib.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-// #include <esp_idf_lib_helpers.h>
 #include "bme680.h"
 
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG         "BME680"
 #define I2C_FREQ_HZ 1000000 // Up to 3.4MHz, but esp-idf only supports 1MHz
-#define SDA_GPIO 21
-#define SCL_GPIO 22
+#define SDA_GPIO    21
+#define SCL_GPIO    22
+
 // modes: unfortunatly, only SLEEP_MODE and FORCED_MODE are documented
 #define BME680_SLEEP_MODE 0x00     // low power sleeping
 #define BME680_FORCED_MODE 0x01    // perform one TPHG cycle (field data 0 filled)
@@ -171,7 +173,7 @@
 #define BME680_CDM_RHR 43  // 0x02 - res_heat_range
 #define BME680_CDM_RSWE 45 // 0x04 - range_sw_error
 
-static const char *TAG = "bme680";
+
 
 #define CHECK(x)                \
     do                          \
@@ -197,42 +199,90 @@ static const char *TAG = "bme680";
         }                                      \
     } while (0)
 
-/**
- * @brief   Raw data (integer values) read from sensor
- */
-typedef struct
-{
-
-    bool gas_valid;     // indicate that gas measurement results are valid
-    bool heater_stable; // indicate that heater temperature was stable
-
-    uint32_t temperature;    // degree celsius x100
-    uint32_t pressure;       // pressure in Pascal
-    uint16_t humidity;       // relative humidity x1000 in %
-    uint16_t gas_resistance; // gas resistance data
-    uint8_t gas_range;       // gas resistance range
-
-    uint8_t gas_index; // heater profile used (0 ... 9)
-    uint8_t meas_index;
-
-} bme680_raw_data_t;
-
 #define lsb_msb_to_type(t, b, o) (t)(((t)b[o + 1] << 8) | b[o])
 #define lsb_to_type(t, b, o) (t)(b[o])
 #define bme_set_reg_bit(byte, bitname, bit) ((byte & ~bitname##_BITS) | \
                                              ((bit << bitname##_SHIFT) & bitname##_BITS))
 #define bme_get_reg_bit(byte, bitname) ((byte & bitname##_BITS) >> bitname##_SHIFT)
+#define msb_lsb_xlsb_to_20bit(t, b, o) (t)((t)b[o] << 12 | (t)b[o + 1] << 4 | b[o + 2] >> 4)
+#define msb_lsb_to_type(t, b, o) (t)(((t)b[o] << 8) | b[o + 1])
 
+#define BME680_RAW_P_OFF BME680_REG_PRESS_MSB_0 - BME680_REG_MEAS_STATUS_0
+#define BME680_RAW_T_OFF (BME680_RAW_P_OFF + BME680_REG_TEMP_MSB_0 - BME680_REG_PRESS_MSB_0)
+#define BME680_RAW_H_OFF (BME680_RAW_T_OFF + BME680_REG_HUM_MSB_0 - BME680_REG_TEMP_MSB_0)
+#define BME680_RAW_G_OFF (BME680_RAW_H_OFF + BME680_REG_GAS_R_MSB_0 - BME680_REG_HUM_MSB_0)
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+/* Raw data (integer values) read from sensor */
+typedef struct
+{
+    bool gas_valid;     // indicate that gas measurement results are valid
+    bool heater_stable; // indicate that heater temperature was stable
+    uint32_t temperature;    // degree celsius x100
+    uint32_t pressure;       // pressure in Pascal
+    uint16_t humidity;       // relative humidity x1000 in %
+    uint16_t gas_resistance; // gas resistance data
+    uint8_t gas_range;       // gas resistance range
+    uint8_t gas_index; // heater profile used (0 ... 9)
+    uint8_t meas_index;
+} bme680_raw_data_t;
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+
+/* Lookup table for gas resitance computation */
+static float lookup_table[16][2] = {
+    // const1, const2       // gas_range
+    {1.0, 8000000.0},     // 0
+    {1.0, 4000000.0},     // 1
+    {1.0, 2000000.0},     // 2
+    {1.0, 1000000.0},     // 3
+    {1.0, 499500.4995},   // 4
+    {0.99, 248262.1648},  // 5
+    {1.0, 125000.0},      // 6
+    {0.992, 63004.03226}, // 7
+    {1.0, 31281.28128},   // 8
+    {1.0, 15625.0},       // 9
+    {0.998, 7812.5},      // 10
+    {0.995, 3906.25},     // 11
+    {1.0, 1953.125},      // 12
+    {0.99, 976.5625},     // 13
+    {1.0, 488.28125},     // 14
+    {1.0, 244.140625}     // 15
+};
+ /********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static inline esp_err_t read_reg_8_nolock(bme680_t *dev, uint8_t reg, uint8_t *data)
 {
     return i2c_dev_read_reg(&dev->i2c_dev, reg, data, 1);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static inline esp_err_t write_reg_8_nolock(bme680_t *dev, uint8_t reg, uint8_t data)
 {
     return i2c_dev_write_reg(&dev->i2c_dev, reg, &data, 1);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t read_reg_8(bme680_t *dev, uint8_t reg, uint8_t *data)
 {
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
@@ -242,6 +292,9 @@ static esp_err_t read_reg_8(bme680_t *dev, uint8_t reg, uint8_t *data)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t bme680_set_mode(bme680_t *dev, uint8_t mode)
 {
     uint8_t reg;
@@ -255,14 +308,9 @@ static esp_err_t bme680_set_mode(bme680_t *dev, uint8_t mode)
     return ESP_OK;
 }
 
-#define msb_lsb_xlsb_to_20bit(t, b, o) (t)((t)b[o] << 12 | (t)b[o + 1] << 4 | b[o + 2] >> 4)
-#define msb_lsb_to_type(t, b, o) (t)(((t)b[o] << 8) | b[o + 1])
-
-#define BME680_RAW_P_OFF BME680_REG_PRESS_MSB_0 - BME680_REG_MEAS_STATUS_0
-#define BME680_RAW_T_OFF (BME680_RAW_P_OFF + BME680_REG_TEMP_MSB_0 - BME680_REG_PRESS_MSB_0)
-#define BME680_RAW_H_OFF (BME680_RAW_T_OFF + BME680_REG_HUM_MSB_0 - BME680_REG_TEMP_MSB_0)
-#define BME680_RAW_G_OFF (BME680_RAW_H_OFF + BME680_REG_GAS_R_MSB_0 - BME680_REG_HUM_MSB_0)
-
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t bme680_get_raw_data(bme680_t *dev, bme680_raw_data_t *raw_data)
 {
     if (!dev->meas_started)
@@ -307,20 +355,12 @@ static esp_err_t bme680_get_raw_data(bme680_t *dev, bme680_raw_data_t *raw_data)
     raw_data->gas_resistance = ((uint16_t)raw[BME680_RAW_G_OFF] << 2) | raw[BME680_RAW_G_OFF + 1] >> 6;
     raw_data->gas_range = raw[BME680_RAW_G_OFF + 1] & BME680_GAS_RANGE_R_BITS;
 
-    /*
-     * BME680_REG_MEAS_STATUS_1, BME680_REG_MEAS_STATUS_2
-     * These data are not documented and it is not really clear when they are filled
-     */
-    // ESP_LOGD(TAG, "Raw data: %d %d %d %d %d", raw_data->temperature, raw_data->pressure,
-    //         raw_data->humidity, raw_data->gas_resistance, raw_data->gas_range);
-
     return ESP_OK;
 }
 
-/**
- * @brief   Calculate temperature from raw temperature value
- * @ref     BME280 datasheet, page 50
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static int16_t bme680_convert_temperature(bme680_t *dev, uint32_t raw_temperature)
 {
     bme680_calib_data_t *cd = &dev->calib_data;
@@ -337,17 +377,9 @@ static int16_t bme680_convert_temperature(bme680_t *dev, uint32_t raw_temperatur
     return temperature;
 }
 
-/**
- * @brief       Calculate pressure from raw pressure value
- * @copyright   Copyright (c) 2017 - 2018 Bosch Sensortec GmbH
- *
- * The algorithm was extracted from the original Bosch Sensortec BME680 driver
- * published as open source. Divisions and multiplications by potences of 2
- * were replaced by shift operations for effeciency reasons.
- *
- * @ref         [BME680_diver](https://github.com/BoschSensortec/BME680_driver)
- * @ref         BME280 datasheet, page 50
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint32_t bme680_convert_pressure(bme680_t *dev, uint32_t raw_pressure)
 {
     bme680_calib_data_t *cd = &dev->calib_data;
@@ -395,16 +427,9 @@ static uint32_t bme680_convert_pressure(bme680_t *dev, uint32_t raw_pressure)
     return (uint32_t)pressure_comp;
 }
 
-/**
- * @brief       Calculate humidty from raw humidity data
- * @copyright   Copyright (c) 2017 - 2018 Bosch Sensortec GmbH
- *
- * The algorithm was extracted from the original Bosch Sensortec BME680 driver
- * published as open source. Divisions and multiplications by potences of 2
- * were replaced by shift operations for effeciency reasons.
- *
- * @ref         [BME680_diver](https://github.com/BoschSensortec/BME680_driver)
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint32_t bme680_convert_humidity(bme680_t *dev, uint16_t raw_humidity)
 {
     bme680_calib_data_t *cd = &dev->calib_data;
@@ -436,34 +461,11 @@ static uint32_t bme680_convert_humidity(bme680_t *dev, uint16_t raw_humidity)
     return (uint32_t)humidity;
 }
 
-/**
- * @brief   Lookup table for gas resitance computation
- * @ref     BME680 datasheet, page 19
- */
-static float lookup_table[16][2] = {
-    // const1, const2       // gas_range
-    {1.0, 8000000.0},     // 0
-    {1.0, 4000000.0},     // 1
-    {1.0, 2000000.0},     // 2
-    {1.0, 1000000.0},     // 3
-    {1.0, 499500.4995},   // 4
-    {0.99, 248262.1648},  // 5
-    {1.0, 125000.0},      // 6
-    {0.992, 63004.03226}, // 7
-    {1.0, 31281.28128},   // 8
-    {1.0, 15625.0},       // 9
-    {0.998, 7812.5},      // 10
-    {0.995, 3906.25},     // 11
-    {1.0, 1953.125},      // 12
-    {0.99, 976.5625},     // 13
-    {1.0, 488.28125},     // 14
-    {1.0, 244.140625}     // 15
-};
 
-/**
- * @brief   Calculate gas resistance from raw gas resitance value and gas range
- * @ref     BME680 datasheet
- */
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint32_t bme680_convert_gas(bme680_t *dev, uint16_t gas, uint8_t gas_range)
 {
     bme680_calib_data_t *cd = &dev->calib_data;
@@ -472,19 +474,9 @@ static uint32_t bme680_convert_gas(bme680_t *dev, uint16_t gas, uint8_t gas_rang
     return var1 * lookup_table[gas_range][1] / (gas - 512.0 + var1);
 }
 
-/**
- * @brief   Calculate internal duration representation
- *
- * Durations are internally representes as one byte
- *
- *  duration = value<5:0> * multiplier<7:6>
- *
- * where the multiplier is 1, 4, 16, or 64. Maximum duration is therefore
- * 64*64 = 4032 ms. The function takes a real world duration value given
- * in milliseconds and computes the internal representation.
- *
- * @ref Datasheet
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint8_t bme680_heater_duration(uint16_t duration)
 {
     uint8_t multiplier = 0;
@@ -497,11 +489,9 @@ static uint8_t bme680_heater_duration(uint16_t duration)
     return (uint8_t)(duration | (multiplier << 6));
 }
 
-/**
- * @brief  Calculate internal heater resistance value from real temperature.
- *
- * @ref Datasheet of BME680
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint8_t bme680_heater_resistance(const bme680_t *dev, uint16_t temp)
 {
     if (!dev)
@@ -531,8 +521,13 @@ static uint8_t bme680_heater_resistance(const bme680_t *dev, uint16_t temp)
     return res_heat_x;
 }
 
-///////////////////////////////////////////////////////////////////////////////
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_init_desc(bme680_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
     CHECK_ARG(dev);
@@ -555,6 +550,9 @@ esp_err_t bme680_init_desc(bme680_t *dev, uint8_t addr, i2c_port_t port, gpio_nu
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_free_desc(bme680_t *dev)
 {
     CHECK_ARG(dev);
@@ -562,6 +560,9 @@ esp_err_t bme680_free_desc(bme680_t *dev)
     return i2c_dev_delete_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_init_sensor(bme680_t *dev)
 {
     CHECK_ARG(dev);
@@ -647,6 +648,9 @@ esp_err_t bme680_init_sensor(bme680_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_force_measurement(bme680_t *dev)
 {
     CHECK_ARG(dev);
@@ -667,12 +671,9 @@ esp_err_t bme680_force_measurement(bme680_t *dev)
     return ESP_OK;
 }
 
-/**
- * @brief Estimate the measurement duration in RTOS ticks
- *
- * Timing formulas extracted from BME280 datasheet and test in some
- * experiments. They represent the maximum measurement duration.
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_get_measurement_duration(const bme680_t *dev, uint32_t *duration)
 {
     CHECK_ARG(dev && duration);
@@ -710,6 +711,9 @@ esp_err_t bme680_get_measurement_duration(const bme680_t *dev, uint32_t *duratio
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_is_measuring(bme680_t *dev, bool *busy)
 {
     CHECK_ARG(dev && busy);
@@ -724,6 +728,9 @@ esp_err_t bme680_is_measuring(bme680_t *dev, bool *busy)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_get_results_fixed(bme680_t *dev, bme680_values_fixed_t *results)
 {
     bme680_raw_data_t raw;
@@ -766,6 +773,9 @@ esp_err_t bme680_get_results_fixed(bme680_t *dev, bme680_values_fixed_t *results
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_get_results_float(bme680_t *dev, bme680_values_float_t *results)
 {
     bme680_values_fixed_t fixed;
@@ -781,6 +791,9 @@ esp_err_t bme680_get_results_float(bme680_t *dev, bme680_values_float_t *results
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_measure_fixed(bme680_t *dev, bme680_values_fixed_t *results)
 {
     uint32_t duration;
@@ -797,6 +810,9 @@ esp_err_t bme680_measure_fixed(bme680_t *dev, bme680_values_fixed_t *results)
     return bme680_get_results_fixed(dev, results);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_measure_float(bme680_t *dev, bme680_values_float_t *results)
 {
     uint32_t duration;
@@ -813,6 +829,9 @@ esp_err_t bme680_measure_float(bme680_t *dev, bme680_values_float_t *results)
     return bme680_get_results_float(dev, results);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_set_oversampling_rates(bme680_t *dev, bme680_oversampling_rate_t ost,
                                         bme680_oversampling_rate_t osp, bme680_oversampling_rate_t osh)
 {
@@ -859,6 +878,9 @@ esp_err_t bme680_set_oversampling_rates(bme680_t *dev, bme680_oversampling_rate_
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_set_filter_size(bme680_t *dev, bme680_filter_size_t size)
 {
     uint8_t reg;
@@ -877,6 +899,9 @@ esp_err_t bme680_set_filter_size(bme680_t *dev, bme680_filter_size_t size)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_set_heater_profile(bme680_t *dev, uint8_t profile, uint16_t temperature, uint16_t duration)
 {
     CHECK_ARG(dev && profile < BME680_HEATER_PROFILES);
@@ -905,6 +930,9 @@ esp_err_t bme680_set_heater_profile(bme680_t *dev, uint8_t profile, uint16_t tem
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_use_heater_profile(bme680_t *dev, int8_t profile)
 {
     CHECK_ARG(dev);
@@ -922,6 +950,9 @@ esp_err_t bme680_use_heater_profile(bme680_t *dev, int8_t profile)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bme680_set_ambient_temperature(bme680_t *dev, int16_t ambient)
 {
     CHECK_ARG(dev);
@@ -941,11 +972,10 @@ esp_err_t bme680_set_ambient_temperature(bme680_t *dev, int16_t ambient)
     ESP_LOGD(TAG, "Setting heater ambient temperature done: ambient=%d", dev->settings.ambient_temperature);
     return ESP_OK;
 }
-/**
- * @brief
- * this function to initialize BME280 Sensor
- *
- */
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t init_bme680(void)
 {
     ESP_ERROR_CHECK(bme680_init_desc(&bme680_sensor, BME680_I2C_ADDR_0, 0, SDA_GPIO, SCL_GPIO));
@@ -963,16 +993,10 @@ esp_err_t init_bme680(void)
     bme680_set_ambient_temperature(&bme680_sensor, 10);
     return ESP_OK;
 }
-/**
- * @brief
- * @function : get_bme680_pressure_humidity_temp_gas_resi
- * get Temperature , Pressure , Humidity and gas resistance value in float
- * @param pre pressure
- * @param humi Humidity
- * @param gas_resi gas resistance
- * @param temperature ambient temperature in degree Celsius
- * @return `ESP_OK` on success
- */
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void get_bme680_pressure_humidity_temp_gas_resi(float *pre, float *temp, float *humi, float *gas_resi)
 {
     bme680_values_float_t values;
@@ -981,14 +1005,6 @@ void get_bme680_pressure_humidity_temp_gas_resi(float *pre, float *temp, float *
     if (ESP_OK == bme680_get_results_float(&bme680_sensor, &values))
     {
         vTaskDelay(500 / portTICK_PERIOD_MS);
-#if 0
-        printf("BME680 Sensor: %.2f °C, %.2f %%, %.2f hPa, %.2f Ohm\n",
-        values.temperature, values.humidity,
-        values.pressure, values.gas_resistance);
-        ESP_LOGI(BME_680TAG,"BME680 Sensor: Temperature %.2f °C,Humidity %.2f %%, Pressure %.2f hPa,Gas Resistance %.2f Ohm\n",
-        values.temperature, values.humidity,
-        values.pressure, values.gas_resistance);
-#endif
     }
     *pre = values.pressure;
     *temp = values.temperature;

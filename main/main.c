@@ -26,8 +26,8 @@
  *                              VARIABLES
  ********************************************************************************************/
 uint8_t screenid;                   /* variable to store current loaded screen id*/
-SemaphoreHandle_t xGuiSemaphore;    /* semaphore to Processes*/ 
-SemaphoreHandle_t xGuiSemaphore1;   /* semaphore to GUId*/ 
+SemaphoreHandle_t i2c_communication_semaphore;    /* semaphore to Processes*/ 
+SemaphoreHandle_t gui_update_semaphore;   /* semaphore to GUId*/ 
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -63,8 +63,7 @@ static void IRAM_ATTR lv_tick_task(void *arg)
  ********************************************************************************************/
 static void wakeupmodeInit(void)
 {
-    // Set GPIO as OUTPUT
-    gpio_pad_select_gpio(WAKEMODE);
+    gpio_pad_select_gpio(WAKEMODE);                 // Set GPIO as OUTPUT
     gpio_set_direction(WAKEMODE, GPIO_MODE_OUTPUT); // WakeMode
     gpio_set_level(WAKEMODE, 0);
 }
@@ -89,8 +88,8 @@ void app_main()
         ESP_LOGD(TAG, "Nvs initialized");
     }
 
-    xGuiSemaphore = xSemaphoreCreateMutex();
-    xGuiSemaphore1 = xSemaphoreCreateMutex();
+    i2c_communication_semaphore = xSemaphoreCreateMutex();
+    gui_update_semaphore = xSemaphoreCreateMutex();
 
     wakeupmodeInit();           // enabling the device from the wake mode
     Init_Buzzer();              // This will initiate the buzze in the system
@@ -117,9 +116,7 @@ void app_main()
 
     xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
     vTaskDelay(500 / portTICK_PERIOD_MS);
-
     xTaskCreatePinnedToCore(ds3231_task, "ds3231_task", 2048, NULL, 1, NULL, 1); //  RTS
-
     xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
     xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
 }
@@ -179,10 +176,10 @@ static void guiTask(void *pvParameter)
     while (1)
     {
         vTaskDelay(pdMS_TO_TICKS(1));           /* Delay 10ms tick assumes FreeRTOS tick is 10ms */
-        if (pdTRUE == xSemaphoreTake(xGuiSemaphore1, portMAX_DELAY))
+        if (pdTRUE == xSemaphoreTake(gui_update_semaphore, portMAX_DELAY))
         {
             lv_task_handler();
-            xSemaphoreGive(xGuiSemaphore1);
+            xSemaphoreGive(gui_update_semaphore);
         }
     }
 

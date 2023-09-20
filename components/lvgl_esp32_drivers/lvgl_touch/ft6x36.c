@@ -36,7 +36,7 @@
 
 #define TAG "FT6X36"
 
-extern SemaphoreHandle_t xGuiSemaphore;
+extern SemaphoreHandle_t i2c_communication_semaphore;
 
 #define lm2759_I2C_ADDRESS 0x53
 #define lm2759_REG_GENERAL 0x10 /* bits: 3-0 */
@@ -126,7 +126,7 @@ void ft6x06_init(uint16_t dev_addr) {
 
     lcd_led_driver_init();
     vTaskDelay(100 / portTICK_RATE_MS);
-    if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY)) 
+    if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY)) 
     {
         ESP_LOGI(TAG, "ft6x06_init_start");
     
@@ -164,7 +164,7 @@ void ft6x06_init(uint16_t dev_addr) {
             }
         }
         ESP_LOGI(TAG, "ft6x06_init_finish");
-        xSemaphoreGive(xGuiSemaphore);
+        xSemaphoreGive(i2c_communication_semaphore);
     }
 }
 

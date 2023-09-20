@@ -1,29 +1,33 @@
-/**
- * @file bme680.h
- * @copyright Copyright (c) 2022
- * 
- */
-
 #ifndef __BME680_H__
 #define __BME680_H__
-
-#include <stdbool.h>
-#include <i2cdev.h>
-#include <esp_err.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define BME680_I2C_ADDR_0 0x76
-#define BME680_I2C_ADDR_1 0x77
 
-#define BME680_MAX_OVERFLOW_VAL      INT32_C(0x40000000) // overflow value used in pressure calculation (bme680_convert_pressure)
 
-#define BME680_HEATER_TEMP_MIN         200  //!< min. 200 degree Celsius
-#define BME680_HEATER_TEMP_MAX         400  //!< max. 200 degree Celsius
-#define BME680_HEATER_PROFILES         10   //!< max. 10 heater profiles 0 ... 9
-#define BME680_HEATER_NOT_USED         -1   //!< heater not used profile
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+#include <stdbool.h>
+#include <i2cdev.h>
+#include <esp_err.h>
+
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define BME680_I2C_ADDR_0           0x76
+#define BME680_I2C_ADDR_1           0x77
+#define BME680_MAX_OVERFLOW_VAL     INT32_C(0x40000000) // overflow value used in pressure calculation (bme680_convert_pressure)
+#define BME680_HEATER_TEMP_MIN      200  //!< min. 200 degree Celsius
+#define BME680_HEATER_TEMP_MAX      400  //!< max. 200 degree Celsius
+#define BME680_HEATER_PROFILES      10   //!< max. 10 heater profiles 0 ... 9
+#define BME680_HEATER_NOT_USED      -1   //!< heater not used profile
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
 /* Fixed point sensor values (fixed THPG values) */
 typedef struct
@@ -34,9 +38,7 @@ typedef struct
     uint32_t gas_resistance; //!< gas resistance in Ohm         (Invalid value 0)
 } bme680_values_fixed_t;
 
-/**
- * Floating point sensor values (real THPG values)
- */
+/* Floating point sensor values (real THPG values) */
 typedef struct
 {
     float temperature;    //!< temperature in degree C        (Invalid value -327.68)
@@ -136,8 +138,16 @@ typedef struct
     bme680_settings_t settings;     //!< Sensor settings
     bme680_calib_data_t calib_data; //!< Calibration data of the sensor
 } bme680_t;
-bme680_t bme680_sensor;     
-    
+bme680_t bme680_sensor;   
+
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+ 
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+
 /**
  * @brief Initialize device descriptor
  *
@@ -412,6 +422,5 @@ void get_bme680_pressure_humidity_temp_gas_resi(float *pre, float *temp,float *h
 }
 #endif
 
-/**@}*/
 
 #endif /* __BME680_H__ */

@@ -1,39 +1,29 @@
-/**
- * @file bmp280.h
- * @defgroup bmp280 bmp280
- * @{
- *
- * ESP-IDF driver for BMP280/BME280 digital pressure sensor
- *
- * Ported from esp-open-rtos
- *
- * Copyright (C) 2016 sheinz <https://github.com/sheinz>\n
- * Copyright (C) 2018 Ruslan V. Uss <https://github.com/UncleRus>
- *
- * MIT Licensed as described in the file LICENSE
- */
 #ifndef __BMP280_H__
 #define __BMP280_H__
-
-#include <stdint.h>
-#include <stdbool.h>
-#include <esp_err.h>
-//#include <i2cdev.h>
-#include "../lvgl_esp32_drivers/lvgl_touch/i2cdev.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define BMP280_I2C_ADDRESS_0  0x76 //!< I2C address when SDO pin is low old 76
-#define BMP280_I2C_ADDRESS_1  0x77 //!< I2C address when SDO pin is high 
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+#include <stdint.h>
+#include <stdbool.h>
+#include <esp_err.h>
+#include "../lvgl_esp32_drivers/lvgl_touch/i2cdev.h"
 
-#define BMP280_CHIP_ID  0x58 //!< BMP280 has chip-id 0x58
-#define BME280_CHIP_ID  0x60 //!< BME280 has chip-id 0x60
-
-/**
- * Mode of BMP280 module operation.
- */
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define BMP280_I2C_ADDRESS_0    0x76 //!< I2C address when SDO pin is low old 76
+#define BMP280_I2C_ADDRESS_1    0x77 //!< I2C address when SDO pin is high 
+#define BMP280_CHIP_ID          0x58 //!< BMP280 has chip-id 0x58
+#define BME280_CHIP_ID          0x60 //!< BME280 has chip-id 0x60
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+/* Mode of BMP280 module operation */
 typedef enum {
     BMP280_MODE_SLEEP = 0,  //!< Sleep mode
     BMP280_MODE_FORCED = 1, //!< Measurement is initiated by user
@@ -48,9 +38,7 @@ typedef enum {
     BMP280_FILTER_16 = 4
 } BMP280_Filter;
 
-/**
- * Pressure oversampling settings
- */
+/* Pressure oversampling settings */
 typedef enum {
     BMP280_SKIPPED = 0,          //!< no measurement
     BMP280_ULTRA_LOW_POWER = 1,  //!< oversampling x1
@@ -60,9 +48,7 @@ typedef enum {
     BMP280_ULTRA_HIGH_RES = 5    //!< oversampling x16
 } BMP280_Oversampling;
 
-/**
- * Stand by time between measurements in normal mode
- */
+/* Stand by time between measurements in normal mode */
 typedef enum {
     BMP280_STANDBY_05 = 0,      //!< stand by time 0.5ms
     BMP280_STANDBY_62 = 1,      //!< stand by time 62.5ms
@@ -74,10 +60,8 @@ typedef enum {
     BMP280_STANDBY_4000 = 7,    //!< stand by time 4s BMP280, 20ms BME280
 } BMP280_StandbyTime;
 
-/**
- * Configuration parameters for BMP280 module.
- * Use function bmp280_init_default_params to use default configuration.
- */
+/* Configuration parameters for BMP280 module.
+ * Use function bmp280_init_default_params to use default configuration */
 typedef struct {
     BMP280_Mode mode;
     BMP280_Filter filter;
@@ -87,9 +71,7 @@ typedef struct {
     BMP280_StandbyTime standby;
 } bmp280_params_t;
 
-/**
- * Device descriptor
- */
+/* Device descriptor */
 typedef struct {
     uint16_t dig_T1;
     int16_t  dig_T2;
@@ -111,10 +93,17 @@ typedef struct {
     int16_t  dig_H4;
     int16_t  dig_H5;
     int8_t   dig_H6;
-
     i2c_dev_t i2c_dev;  //!< I2C device descriptor
     uint8_t   id;       //!< Chip ID
 } bmp280_t;
+
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
 /**
  * @brief Initialize device descriptior
@@ -192,7 +181,5 @@ esp_err_t bmp280_read_float(bmp280_t *dev, float *temperature,
 #ifdef __cplusplus
 }
 #endif
-
-/**@}*/
 
 #endif  // __BMP280_H__

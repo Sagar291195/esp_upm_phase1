@@ -2,6 +2,10 @@
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
 
+
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -9,30 +13,24 @@
 #include <nvs_flash.h>
 #include <esp_log.h>
 
-/***************************************************************************************************
- *                              TYPEDEF
- ***************************************************************************************************/
-/* maximum variation in tolerance for the hour measurement to mark the sample as sucessful */
-#define MAX_TOLERATION_IN_HOUR_VARIATION 5.0
-/* maximum variation in tolerance for volume measurement to mark as sucessful */
-#define MAX_TOLERATION_IN_VOLUME_VARIATION 5.0
-/* maximum tolerance in variation for flow of air to mark the sample as sucessful */
-#define MAX_TOLERATION_IN_FLOW_VARIATION 5.0
 
-/** Default PID aggressive Ki */
-#define motorPID_DEFAULT_AKI (4.8)
-/** Default PID aggressive Kd */
-#define motorPID_DEFAULT_AKD (1.2)
-/** Default PID aggressive Kp */
-#define motorPID_DEFAULT_AKP (15)
-/** Default PID normal Ki */
-#define motorPID_DEFAULT_KI (3.0)
-/** Default PID normal Kd */
-#define motorPID_DEFAULT_KD (1.0)
-/** Default PID normal Kp */
-#define motorPID_DEFAULT_KP (5.0)
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 
-/***************************************struct and enum *****************************************/
+#define MAX_TOLERATION_IN_HOUR_VARIATION    5.0     /* maximum variation in tolerance for the hour measurement to mark the sample as sucessful */
+#define MAX_TOLERATION_IN_VOLUME_VARIATION  5.0     /* maximum variation in tolerance for volume measurement to mark as sucessful */
+#define MAX_TOLERATION_IN_FLOW_VARIATION    5.0     /* maximum tolerance in variation for flow of air to mark the sample as sucessful */
+#define motorPID_DEFAULT_AKI (4.8)  /** Default PID aggressive Ki */
+#define motorPID_DEFAULT_AKD (1.2)  /** Default PID aggressive Kd */
+#define motorPID_DEFAULT_AKP (15)   /** Default PID aggressive Kp */
+#define motorPID_DEFAULT_KI (3.0)   /** Default PID normal Ki */
+#define motorPID_DEFAULT_KD (1.0)   /** Default PID normal Kd */
+#define motorPID_DEFAULT_KP (5.0)   /** Default PID normal Kp */
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /* structure to store the volume of air flow values of the sequence summary in the system */
 typedef struct volumeCounter
 {
@@ -117,7 +115,14 @@ typedef struct struct_PID_parameters
     float fACoff;
 } struct_PID_parameters_t;
 
-/*********************function prototypes**********************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+ 
 /**
  * @brief get the total liter count
  * @return float
@@ -222,9 +227,5 @@ float fGetTotalLitersHasBeenPassInGivenSequence();
 
 void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters);
 void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters);
-/***************************************************************************************************
- *                         FUNCTION PROTOTYPE
- ***************************************************************************************************/
-
 
 #endif  /*__PARAMETERS_H__*/

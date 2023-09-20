@@ -1,18 +1,9 @@
-
-/**
- * @file sampleManagement.h
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This is the header file for the sample management. The sample management contain the sequence,their data points, their results and their status.
- * @version 1.1
- * @date 2022-05-12
- *
- * @copyright Copyright (c) 2022
- *
- */
-
 #ifndef __SAMPLEMANAGEMENT_H__
 #define __SAMPLEMANAGEMENT_H__
 
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
 #include "freertos/FreeRTOS.h"
@@ -23,10 +14,14 @@
 #include <timeManagement.h>
 #include <sensorManagement.h>
 
-/***********************************************************defines************************************/
 
-/************************************struct enum variables********************************************/
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
  /* sample header structure */
 typedef struct sampleHeader
 {   
@@ -58,10 +53,14 @@ typedef struct xSampleSummary
     char hasProblem[5];     //check whether the sample has problem or not.It has only 2 values yes or no 
 }xSampleSummary_t;
 
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
 
-
-/***********************************************function prototypes*********************************/
-
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+ 
 /**
  * @brief Get the current sample number in the system
  * @return uint32_t current sample number
@@ -161,20 +160,6 @@ void vNotifySampleMangementToProceed();
  */
 void vStopCurrentSample();
 
-/**
- * @brief this function calculates the values of summarry which we get at the end of the sample
- * Various values updated are:
- * 1. Stop date
- * 2. Stop time
- * 3. sample problem
- * 4. stop liters
- * 5. effective stop lites
- * 6. variation in stop liters
- * 7. stop hours
- * 8. effective stop hours
- * 9. variation in stop hours
- */
-void vSetCounterValuesEndSummaryDetails();
 
 /**
  * @brief set the sample data to the sample array. This is just the middle function for the sample values

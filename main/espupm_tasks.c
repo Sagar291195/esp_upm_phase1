@@ -1,18 +1,7 @@
-/**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Abhai Tiwari
- *  @date      2021-03-22
- */
 
-/**
- *  @file
- *  @brief
- *  @details
- */
-
-/*********************
- *      INCLUDES
- *********************/
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include "espupm_tasks.h"
 #include <inttypes.h>
 #include <math.h>
@@ -21,108 +10,65 @@
 #include <userCompensationLayer.h>
 
 #include "esp_upm.h"
-/*********************
- *      DEFINES
- *********************/
 
-#define INCLUDE_vTaskPrioritySet    1
-#define SDA_GPIO                    21
-#define SCL_GPIO                    22
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG                                 "ESPUPM_TASKS"
 
-#define TAG_sdp32_task              "TAG_sdp32_task"
-#define TAG                         "ESPUPM_TASKS"
+#define INCLUDE_vTaskPrioritySet            1
+#define SDA_GPIO                            21
+#define SCL_GPIO                            22
+#define SDP32_SENSOR_READ_DURATION_IN_MS    20         /* This is the duration after which the sensor will update the data into the array. */
+#define NO_OF_SAMPLES_SDP32                 (PID_COMPUT_TIME_AGGRESIVE_IN_MS / SDP32_SENSOR_READ_DURATION_IN_MS)    /* this is the number of samples to be averaged in a second */
+#define SDP32_DIFF_PRESSURE_SCALE_FACTOR    240.0      /* scale factor for the sdp32 diff sensor */
 
-/* This is the duration after which the sensor will update the data into the array. */
-#define SDP32_SENSOR_READ_DURATION_IN_MS 20
-/* this is the number of samples to be averaged in a second */
-#define NO_OF_SAMPLES_SDP32 (PID_COMPUT_TIME_AGGRESIVE_IN_MS / SDP32_SENSOR_READ_DURATION_IN_MS)
-/* scale factor for the sdp32 diff sensor */
-#define SDP32_DIFF_PRESSURE_SCALE_FACTOR 240.0
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+sensor_present_t sensor =
+{
+    .bme280 = false,
+    .bme680 = false,
+    .ds3231 = false,
+    .ina3231 = false,
+    .mpu6050 = false,
+    .sdp32 = false,
+    .buzzer = true};
 
-/****************************variables*****************************/
-extern SemaphoreHandle_t xGuiSemaphore;
-/* array which stores the number of samples in a second for the sdp32 sensor */
-float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};
+/********************************************************************************************
+ *                            GLOBAL VARIABLES
+ ********************************************************************************************/
+extern SemaphoreHandle_t i2c_communication_semaphore;
+struct tm navier_time;
+
+/********************************************************************************************
+ *                            STATIC VARIABLES
+ ********************************************************************************************/
+float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};      /* array which stores the number of samples in a second for the sdp32 sensor */
 unsigned short day_counter;
-lv_task_t *infoWgtUpdtWaitToProgTask; // Task to be called after wait time is over
+lv_task_t *infoWgtUpdtWaitToProgTask;                   /*Task to be called after wait time is over */
 char today_Date_Msg[200];
 char month_name[5] = "";
 bool buzzer_on = false;
 uint8_t cr, cg, cb;
 int dashboardflg;
 int global_DashbordBTNflag;
-
-
-int day_Roller_int;
-int month_Roller_int;
-int year_Roller_int;
-
-int hour_Roller_int;
-int min_Roller_int;
-int sec_Roller_int;
-
-const int DD = 1;
-const int MM = 3;
-const int YYYY = 5;
-
-const int HH = 0;
-const int min = 9;
-const int sec = 0;
-
-/**********************
- *      TYPEDEFS
- **********************/
-struct tm navier_time_set =
-    {
-        .tm_year = YYYY - 1900, // since 1900 (2020 - 1900)
-        .tm_mon = MM,           // 0-based
-        .tm_mday = DD,
-        .tm_hour = HH,
-        .tm_min = min,
-        .tm_sec = sec};
-
-    struct tm navier_time =
-    {
-        .tm_year = 121, // since 1900 (2020 - 1900)
-        .tm_mon = 5,    // 0-based
-        .tm_mday = 9,
-        .tm_hour = 18,
-        .tm_min = 39,
-        .tm_sec = 10};
-
-    struct tm alarmtest_time =
-    {
-        .tm_year = 121 + 1990, // since 1900 (2020 - 1900)
-        .tm_mon = 8 + 1,       // 0-based
-        .tm_mday = 17,
-        .tm_hour = 14,
-        .tm_min = 52,
-        .tm_sec = 10};
-
-    sensor_present_t sensor =
-    {
-        .bme280 = false,
-        .bme680 = false,
-        .ds3231 = false,
-        .ina3231 = false,
-        .mpu6050 = false,
-        .sdp32 = false,
-        .buzzer = true};
-
 int day, month, year;
 int totalSecond;
 bool navier_set_time;
-
+int day_Roller_int;
+int month_Roller_int;
+int year_Roller_int;
+int hour_Roller_int;
+int min_Roller_int;
+int sec_Roller_int;
 char guiTime[25];
-
 char guiDate[40];
 char guiHrDef[25];
 char guiMinDef[32];
-
-
 char guiDateNext1[200];
 char GuiDateRollerStr[700];
-
 char guiSeqDate0[25];
 char guiSeqDate1[25];
 char guiSeqDate2[25];
@@ -135,26 +81,51 @@ char guiSeqDate8[25];
 char guiSeqDate9[25];
 
 
-/**********************
- *  STATIC PROTOTYPES
- **********************/
+/********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+static void iLEDActive(void);
+static void iLEDDeActive(void);
 
-/**********************
- *  STATIC VARIABLES
- **********************/
+/********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+static void iLEDActive(void)
+{
+    const uint8_t pixel_count = 1;
+    uint8_t green = cg;
+    uint8_t red = cr;
+    uint8_t blue = cb;
+    rgbVal color = makeRGBVal(green, red, blue);
+    rgbVal *pixels;
+    pixels = malloc(sizeof(rgbVal) * pixel_count);
+    pixels[0] = color;
+    ws2812_setColors(pixel_count, pixels);
+    // vTaskDelay(300);
+    free(pixels);
+}
 
-/**********************
- *      MACROS
- **********************/
+static void iLEDDeActive(void)
+{
+    const uint8_t pixel_count = 1;
+    uint8_t green = 0x0;
+    uint8_t red = 0x0;
+    uint8_t blue = 0x0;
+    rgbVal color = makeRGBVal(green, red, blue);
+    rgbVal *pixels;
+    pixels = malloc(sizeof(rgbVal) * pixel_count);
+    pixels[0] = color;
+    ws2812_setColors(pixel_count, pixels);
+    free(pixels);
+}
 
-/**********************
- *  GLOBAL VARIABLES
- **********************/
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
-/**********************
- *   GLOBAL FUNCTIONS
- **********************/
-
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
 void ds3231_task(void *pvParameters)
 {
     i2c_dev_t dev;
@@ -165,7 +136,7 @@ void ds3231_task(void *pvParameters)
     {
         vTaskDelay(pdMS_TO_TICKS(1000));
 
-        if (pdTRUE == xSemaphoreTake(xGuiSemaphore, portMAX_DELAY))
+        if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
         {
             if (navier_set_time)
             {
@@ -192,7 +163,7 @@ void ds3231_task(void *pvParameters)
                 ESP_ERROR_CHECK(ds3231_init_desc(&dev, 0, SDA_GPIO, SCL_GPIO));
                 continue;
             }
-            xSemaphoreGive(xGuiSemaphore);
+            xSemaphoreGive(i2c_communication_semaphore);
 
             int hour1 = navier_time.tm_hour;
             int minute1 = navier_time.tm_min;
@@ -319,16 +290,16 @@ void ds3231_task(void *pvParameters)
                 strcpy(month_name, "DEC");
             }
 
-            // xSemaphoreGive(xGuiSemaphore);
+            // xSemaphoreGive(i2c_communication_semaphore);
         }
     }
 
     vTaskDelete(NULL);
 }
 
-int HighResCounter = 0;
-esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
-
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
 void buzzer_task(void *pvParamters)
 {
     while (1)
@@ -341,16 +312,17 @@ void buzzer_task(void *pvParamters)
             ESP_ERROR_CHECK(ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0));
             ESP_ERROR_CHECK(ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1));
             vTaskDelay(1000);
-            // buzzer_on = false;
         }
         vTaskDelay(100);
     }
     vTaskDelete(NULL);
 }
 
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
 void ws2812_task(void *pvParamters)
 {
-
     ws2812_init(13);
     cr = 0x5D;
     cg = 0xAF;
@@ -366,6 +338,7 @@ void ws2812_task(void *pvParamters)
             cb = 0x48;
             iLEDActive();
             break;
+
         case 1: // Work in progress
             cr = 0x54;
             cg = 0x83;
@@ -379,12 +352,14 @@ void ws2812_task(void *pvParamters)
             iLEDDeActive();
             vTaskDelay(2000);
             break;
+
         case 2: // Work Finished
             cr = 0x38;
             cg = 0x67;
             cb = 0xD6;
             iLEDActive();
             break;
+
         case 3: // Wait
             cr = 0xD5;
             cg = 0xDE;
@@ -394,55 +369,17 @@ void ws2812_task(void *pvParamters)
             iLEDDeActive();
             vTaskDelay(300);
             break;
+
+        default:
+            break;    
         }
     }
 }
 
-void iLEDActive(void)
-{
-    const uint8_t pixel_count = 1;
-    uint8_t green = cg;
-    uint8_t red = cr;
-    uint8_t blue = cb;
-    rgbVal color = makeRGBVal(green, red, blue);
-    rgbVal *pixels;
-    pixels = malloc(sizeof(rgbVal) * pixel_count);
-    pixels[0] = color;
-    ws2812_setColors(pixel_count, pixels);
-    // vTaskDelay(300);
-    free(pixels);
-}
 
-void iLEDDeActive(void)
-{
-    const uint8_t pixel_count = 1;
-    uint8_t green = 0x0;
-    uint8_t red = 0x0;
-    uint8_t blue = 0x0;
-    rgbVal color = makeRGBVal(green, red, blue);
-    rgbVal *pixels;
-    pixels = malloc(sizeof(rgbVal) * pixel_count);
-    pixels[0] = color;
-    ws2812_setColors(pixel_count, pixels);
-    // vTaskDelay(300);
-    free(pixels);
-}
-
-void infoWgtUpdtWaitToProgTask_cb(lv_task_t *infoWgtUpdtWaitToProgTask)
-{
-    dashboardflg = 1;
-    DashboardInfoWidget();
-    lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
-    lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
-}
-
-void vinfoWgtUpdtWaitToProgTask(void)
-{
-    infoWgtUpdtWaitToProgTask = lv_task_create(infoWgtUpdtWaitToProgTask_cb, 1000, LV_TASK_PRIO_MID, NULL);
-    lv_task_once(infoWgtUpdtWaitToProgTask);
-}
-
-
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
 void set_navier_time_flag(bool value){
     navier_set_time = value;
 }
