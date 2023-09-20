@@ -940,11 +940,11 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         sequenceSummary_t xSequnceSummary;
         // printf("%d\n", (int)lv_obj_get_user_data(obj));
         /* if sample exits in the database then show */
-        if (vGetSequenceSummaryFromDataBase(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary))
+        if (vGetSequenceSummaryFromDataBase(uGetCurrentSampleNumber(), (uint32_t)lv_obj_get_user_data(obj), &xSequnceSummary))
         {
             lv_task_del(__xserefresherTask);
             // setting the smaple number and sequnce number before showing the sequnce data
-            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint8_t)lv_obj_get_user_data(obj), &xSequnceSummary);
+            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint32_t)lv_obj_get_user_data(obj), &xSequnceSummary);
             sssSummarySampleScreen();
         }
         else
