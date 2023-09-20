@@ -1,27 +1,15 @@
-/**
- * @file bmp280.c
- *
- * ESP-IDF driver for BMP280/BME280 digital pressure sensor
- *
- * Ported from esp-open-rtos
- *
- * Copyright (C) 2016 sheinz <https://github.com/sheinz>\n
- * Copyright (C) 2018 Ruslan V. Uss <https://github.com/UncleRus>
- *
- * MIT Licensed as described in the file LICENSE
- */
-
-#include <esp_log.h>
-//#include <esp_idf_lib_helpers.h>
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ #include <esp_log.h>
 #include "bmp280.h"
 
-#define I2C_FREQ_HZ 100000 // Max 1MHz for esp-idf
-
-static const char *TAG = "BMP280";
-
-/**
- * BMP280 registers
- */
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG                    "BMP280"
+#define I2C_FREQ_HZ            100000 // Max 1MHz for esp-idf
+/* BMP280 registers */
 #define BMP280_REG_TEMP_XLSB   0xFC /* bits: 7-4 */
 #define BMP280_REG_TEMP_LSB    0xFB
 #define BMP280_REG_TEMP_MSB    0xFA
@@ -38,7 +26,6 @@ static const char *TAG = "BMP280";
 #define BMP280_REG_ID          0xD0
 #define BMP280_REG_CALIB       0x88
 #define BMP280_REG_HUM_CALIB   0x88
-
 #define BMP280_RESET_VALUE     0xB6
 
 #define CHECK(x) do { esp_err_t __; if ((__ = x) != ESP_OK) return __; } while (0)
@@ -52,6 +39,32 @@ static const char *TAG = "BMP280";
         } \
     } while (0)
 
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+ static esp_err_t read_hum_calibration_data(bmp280_t *dev);
+ static esp_err_t read_register16(i2c_dev_t *dev, uint8_t reg, uint16_t *r);
+ static esp_err_t read_calibration_data(bmp280_t *dev);
+
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t read_register16(i2c_dev_t *dev, uint8_t reg, uint16_t *r)
 {
     uint8_t d[] = { 0, 0 };
@@ -61,11 +74,9 @@ static esp_err_t read_register16(i2c_dev_t *dev, uint8_t reg, uint16_t *r)
     return ESP_OK;
 }
 
-inline static esp_err_t write_register8(i2c_dev_t *dev, uint8_t addr, uint8_t value)
-{
-    return i2c_dev_write_reg(dev, addr, &value, 1);
-}
-
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t read_calibration_data(bmp280_t *dev)
 {
     CHECK(read_register16(&dev->i2c_dev, 0x88, &dev->dig_T1));
@@ -98,6 +109,9 @@ static esp_err_t read_calibration_data(bmp280_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t read_hum_calibration_data(bmp280_t *dev)
 {
     uint16_t h4, h5;
@@ -121,6 +135,77 @@ static esp_err_t read_hum_calibration_data(bmp280_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+inline static esp_err_t write_register8(i2c_dev_t *dev, uint8_t addr, uint8_t value)
+{
+    return i2c_dev_write_reg(dev, addr, &value, 1);
+}
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+static inline int32_t compensate_temperature(bmp280_t *dev, int32_t adc_temp, int32_t *fine_temp)
+{
+    int32_t var1, var2;
+
+    var1 = ((((adc_temp >> 3) - ((int32_t)dev->dig_T1 << 1))) * (int32_t)dev->dig_T2) >> 11;
+    var2 = (((((adc_temp >> 4) - (int32_t)dev->dig_T1) * ((adc_temp >> 4) - (int32_t)dev->dig_T1)) >> 12) * (int32_t)dev->dig_T3) >> 14;
+    *fine_temp = var1 + var2;
+    return (*fine_temp * 5 + 128) >> 8;
+}
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+static inline uint32_t compensate_pressure(bmp280_t *dev, int32_t adc_press, int32_t fine_temp)
+{
+    int64_t var1, var2, p;
+
+    var1 = (int64_t)fine_temp - 128000;
+    var2 = var1 * var1 * (int64_t)dev->dig_P6;
+    var2 = var2 + ((var1 * (int64_t)dev->dig_P5) << 17);
+    var2 = var2 + (((int64_t)dev->dig_P4) << 35);
+    var1 = ((var1 * var1 * (int64_t)dev->dig_P3) >> 8) + ((var1 * (int64_t)dev->dig_P2) << 12);
+    var1 = (((int64_t)1 << 47) + var1) * ((int64_t)dev->dig_P1) >> 33;
+
+    if (var1 == 0){
+        return 0;  // avoid exception caused by division by zero
+    }
+    p = 1048576 - adc_press;
+    p = (((p << 31) - var2) * 3125) / var1;
+    var1 = ((int64_t)dev->dig_P9 * (p >> 13) * (p >> 13)) >> 25;
+    var2 = ((int64_t)dev->dig_P8 * p) >> 19;
+
+    p = ((p + var1 + var2) >> 8) + ((int64_t)dev->dig_P7 << 4);
+    return p;
+}
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+static inline uint32_t compensate_humidity(bmp280_t *dev, int32_t adc_hum, int32_t fine_temp)
+{
+    int32_t v_x1_u32r;
+
+    v_x1_u32r = fine_temp - (int32_t)76800;
+    v_x1_u32r = ((((adc_hum << 14) - ((int32_t)dev->dig_H4 << 20) - ((int32_t)dev->dig_H5 * v_x1_u32r)) + (int32_t)16384) >> 15)
+            * (((((((v_x1_u32r * (int32_t)dev->dig_H6) >> 10) * (((v_x1_u32r * (int32_t)dev->dig_H3) >> 11) + (int32_t)32768)) >> 10)
+                    + (int32_t)2097152) * (int32_t)dev->dig_H2 + 8192) >> 14);
+    v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (int32_t)dev->dig_H1) >> 4);
+    v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
+    v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
+    return v_x1_u32r >> 12;
+}
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_init_desc(bmp280_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
     CHECK_ARG(dev);
@@ -136,12 +221,18 @@ esp_err_t bmp280_init_desc(bmp280_t *dev, uint8_t addr, i2c_port_t port, gpio_nu
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_free_desc(bmp280_t *dev)
 {
     CHECK_ARG(dev);
     return i2c_dev_delete_mutex(&dev->i2c_dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_init_default_params(bmp280_params_t *params)
 {
     CHECK_ARG(params);
@@ -154,6 +245,9 @@ esp_err_t bmp280_init_default_params(bmp280_params_t *params)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_init(bmp280_t *dev, bmp280_params_t *params)
 {
     CHECK_ARG(dev && params);
@@ -200,6 +294,9 @@ esp_err_t bmp280_init(bmp280_t *dev, bmp280_params_t *params)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_force_measurement(bmp280_t *dev)
 {
     uint8_t ctrl;
@@ -215,6 +312,9 @@ esp_err_t bmp280_force_measurement(bmp280_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_is_measuring(bmp280_t *dev, bool *busy)
 {
     CHECK_ARG(dev && busy);
@@ -229,68 +329,10 @@ esp_err_t bmp280_is_measuring(bmp280_t *dev, bool *busy)
     return ESP_OK;
 }
 
-/**
- * Compensation algorithm is taken from BMP280 datasheet.
- *
- * Return value is in degrees Celsius.
- */
-static inline int32_t compensate_temperature(bmp280_t *dev, int32_t adc_temp, int32_t *fine_temp)
-{
-    int32_t var1, var2;
 
-    var1 = ((((adc_temp >> 3) - ((int32_t)dev->dig_T1 << 1))) * (int32_t)dev->dig_T2) >> 11;
-    var2 = (((((adc_temp >> 4) - (int32_t)dev->dig_T1) * ((adc_temp >> 4) - (int32_t)dev->dig_T1)) >> 12) * (int32_t)dev->dig_T3) >> 14;
-    *fine_temp = var1 + var2;
-    return (*fine_temp * 5 + 128) >> 8;
-}
-
-/**
- * Compensation algorithm is taken from BMP280 datasheet.
- *
- * Return value is in Pa, 24 integer bits and 8 fractional bits.
- */
-static inline uint32_t compensate_pressure(bmp280_t *dev, int32_t adc_press, int32_t fine_temp)
-{
-    int64_t var1, var2, p;
-
-    var1 = (int64_t)fine_temp - 128000;
-    var2 = var1 * var1 * (int64_t)dev->dig_P6;
-    var2 = var2 + ((var1 * (int64_t)dev->dig_P5) << 17);
-    var2 = var2 + (((int64_t)dev->dig_P4) << 35);
-    var1 = ((var1 * var1 * (int64_t)dev->dig_P3) >> 8) + ((var1 * (int64_t)dev->dig_P2) << 12);
-    var1 = (((int64_t)1 << 47) + var1) * ((int64_t)dev->dig_P1) >> 33;
-
-    if (var1 == 0){
-        return 0;  // avoid exception caused by division by zero
-    }
-    p = 1048576 - adc_press;
-    p = (((p << 31) - var2) * 3125) / var1;
-    var1 = ((int64_t)dev->dig_P9 * (p >> 13) * (p >> 13)) >> 25;
-    var2 = ((int64_t)dev->dig_P8 * p) >> 19;
-
-    p = ((p + var1 + var2) >> 8) + ((int64_t)dev->dig_P7 << 4);
-    return p;
-}
-
-/**
- * Compensation algorithm is taken from BME280 datasheet.
- *
- * Return value is in Pa, 24 integer bits and 8 fractional bits.
- */
-static inline uint32_t compensate_humidity(bmp280_t *dev, int32_t adc_hum, int32_t fine_temp)
-{
-    int32_t v_x1_u32r;
-
-    v_x1_u32r = fine_temp - (int32_t)76800;
-    v_x1_u32r = ((((adc_hum << 14) - ((int32_t)dev->dig_H4 << 20) - ((int32_t)dev->dig_H5 * v_x1_u32r)) + (int32_t)16384) >> 15)
-            * (((((((v_x1_u32r * (int32_t)dev->dig_H6) >> 10) * (((v_x1_u32r * (int32_t)dev->dig_H3) >> 11) + (int32_t)32768)) >> 10)
-                    + (int32_t)2097152) * (int32_t)dev->dig_H2 + 8192) >> 14);
-    v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (int32_t)dev->dig_H1) >> 4);
-    v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
-    v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-    return v_x1_u32r >> 12;
-}
-
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_read_fixed(bmp280_t *dev, int32_t *temperature, uint32_t *pressure, uint32_t *humidity)
 {
     int32_t adc_pressure;
@@ -324,6 +366,9 @@ esp_err_t bmp280_read_fixed(bmp280_t *dev, int32_t *temperature, uint32_t *press
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t bmp280_read_float(bmp280_t *dev, float *temperature, float *pressure, float *humidity)
 {
     int32_t fixed_temperature;

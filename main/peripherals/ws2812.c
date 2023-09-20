@@ -1,12 +1,6 @@
-/* Created 19 Nov 2016 by Chris Osborn <fozztexx@fozztexx.com>
- * http://insentricity.com
- *
- * Uses the RMT peripheral on the ESP32 for very accurate timing of
- * signals sent to the WS2812 LEDs.
- *
- * This code is placed in the public domain (or CC0 licensed, at your option).
- */
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include "ws2812.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
@@ -20,22 +14,24 @@
 #include <stdlib.h>
 #include <driver/rmt.h>
 
-#define ETS_RMT_CTRL_INUM 18
-#define ESP_RMT_CTRL_DISABLE ESP_RMT_CTRL_DIABLE /* Typo in esp_intr.h */
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define ETS_RMT_CTRL_INUM     18
+#define ESP_RMT_CTRL_DISABLE  ESP_RMT_CTRL_DIABLE /* Typo in esp_intr.h */
+#define DIVIDER               4     /* Above 4, timings start to deviate*/
+#define DURATION              12.5 /* minimum time of a single RMT duration in nanoseconds based on clock */
+#define PULSE_T0H             (350 / (DURATION * DIVIDER));
+#define PULSE_T1H             (900 / (DURATION * DIVIDER));
+#define PULSE_T0L             (900 / (DURATION * DIVIDER));
+#define PULSE_T1L             (350 / (DURATION * DIVIDER));
+#define PULSE_TRS             (50000 / (DURATION * DIVIDER));
+#define MAX_PULSES            32
+#define RMTCHANNEL            0
 
-#define DIVIDER 4     /* Above 4, timings start to deviate*/
-#define DURATION 12.5 /* minimum time of a single RMT duration \
-       in nanoseconds based on clock */
-
-#define PULSE_T0H (350 / (DURATION * DIVIDER));
-#define PULSE_T1H (900 / (DURATION * DIVIDER));
-#define PULSE_T0L (900 / (DURATION * DIVIDER));
-#define PULSE_T1L (350 / (DURATION * DIVIDER));
-#define PULSE_TRS (50000 / (DURATION * DIVIDER));
-
-#define MAX_PULSES 32
-
-#define RMTCHANNEL 0
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
 typedef union
 {
@@ -49,12 +45,34 @@ typedef union
   uint32_t val;
 } rmtPulsePair;
 
-static uint8_t *ws2812_buffer = NULL;
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+ static uint8_t *ws2812_buffer = NULL;
 static unsigned int ws2812_pos, ws2812_len, ws2812_half;
 static xSemaphoreHandle ws2812_sem = NULL;
 static intr_handle_t rmt_intr_handle = NULL;
 static rmtPulsePair ws2812_bits[2];
 
+ /********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void ws2812_initRMTChannel(int rmtChannel)
 {
   RMT.apb_conf.fifo_mask = 1;      // enable memory access, instead of FIFO mode.
@@ -75,6 +93,9 @@ void ws2812_initRMTChannel(int rmtChannel)
   return;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void ws2812_copy()
 {
   unsigned int i, j, offset, len, bit;
@@ -112,6 +133,9 @@ void ws2812_copy()
   return;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void ws2812_handleInterrupt(void *arg)
 {
   portBASE_TYPE taskAwoken = 0;
@@ -130,6 +154,10 @@ void ws2812_handleInterrupt(void *arg)
   return;
 }
 
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void ws2812_init(int gpioNum)
 {
   DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_RMT_CLK_EN);
@@ -157,6 +185,9 @@ void ws2812_init(int gpioNum)
   return;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void ws2812_setColors(unsigned int length, rgbVal *array)
 {
   unsigned int i;

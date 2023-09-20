@@ -1,49 +1,38 @@
-/**
- * @file ds3231.c
- *
- * ESP-IDF driver for DS337 RTC and DS3231 high precision RTC module
- *
- * Ported from esp-open-rtos
- *
- * Copyright (C) 2015 Richard A Burton <richardaburton@gmail.com>\n
- * Copyright (C) 2016 Bhuvanchandra DV <bhuvanchandra.dv@gmail.com>\n
- * Copyright (C) 2018 Ruslan V. Uss <unclerus@gmail.com>
- *
- * MIT Licensed as described in the file LICENSE
- */
-// #include <esp_err.h>
-// #include <esp_idf_lib_helpers.h>
-#include "ds3231.h"
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ #include "ds3231.h"
 
-#define I2C_FREQ_HZ 100000
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define I2C_FREQ_HZ             100000
+#define DS3231_STAT_OSCILLATOR  0x80
+#define DS3231_STAT_32KHZ       0x08
+#define DS3231_STAT_ALARM_2     0x02
+#define DS3231_STAT_ALARM_1     0x01
 
-#define DS3231_STAT_OSCILLATOR 0x80
-#define DS3231_STAT_32KHZ 0x08
-#define DS3231_STAT_ALARM_2 0x02
-#define DS3231_STAT_ALARM_1 0x01
-
-#define DS3231_CTRL_OSCILLATOR 0x80
+#define DS3231_CTRL_OSCILLATOR  0x80
 #define DS3231_CTRL_SQUAREWAVE_BB 0x40
-#define DS3231_CTRL_TEMPCONV 0x20
-#define DS3231_CTRL_ALARM_INTS 0x04
-#define DS3231_CTRL_ALARM2_INT 0x02
-#define DS3231_CTRL_ALARM1_INT 0x01
+#define DS3231_CTRL_TEMPCONV    0x20
+#define DS3231_CTRL_ALARM_INTS  0x04
+#define DS3231_CTRL_ALARM2_INT  0x02
+#define DS3231_CTRL_ALARM1_INT  0x01
 
-#define DS3231_ALARM_WDAY 0x40
-#define DS3231_ALARM_NOTSET 0x80
+#define DS3231_ALARM_WDAY       0x40
+#define DS3231_ALARM_NOTSET     0x80
+#define DS3231_ADDR_TIME        0x00
+#define DS3231_ADDR_ALARM1      0x07
+#define DS3231_ADDR_ALARM2      0x0b
+#define DS3231_ADDR_CONTROL     0x0e
+#define DS3231_ADDR_STATUS      0x0f
+#define DS3231_ADDR_AGING       0x10
+#define DS3231_ADDR_TEMP        0x11
 
-#define DS3231_ADDR_TIME 0x00
-#define DS3231_ADDR_ALARM1 0x07
-#define DS3231_ADDR_ALARM2 0x0b
-#define DS3231_ADDR_CONTROL 0x0e
-#define DS3231_ADDR_STATUS 0x0f
-#define DS3231_ADDR_AGING 0x10
-#define DS3231_ADDR_TEMP 0x11
-
-#define DS3231_12HOUR_FLAG 0x40
-#define DS3231_12HOUR_MASK 0x1f
-#define DS3231_PM_FLAG 0x20
-#define DS3231_MONTH_MASK 0x1f
+#define DS3231_12HOUR_FLAG      0x40
+#define DS3231_12HOUR_MASK      0x1f
+#define DS3231_PM_FLAG          0x20
+#define DS3231_MONTH_MASK       0x1f
 
 #define CHECK_ARG(ARG)                  \
     do                                  \
@@ -52,28 +41,82 @@
             return ESP_ERR_INVALID_ARG; \
     } while (0)
 
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 enum
 {
     DS3231_SET = 0,
     DS3231_CLEAR,
     DS3231_REPLACE
 };
-
-static int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-extern int day, month, year;
-
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+ extern int day, month, year;
 extern unsigned short day_counter;
 
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+static int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+ /********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+static uint8_t bcd2dec(uint8_t val);
+static uint8_t dec2bcd(uint8_t val);
+static esp_err_t ds3231_set_flag(i2c_dev_t *dev, uint8_t addr, uint8_t bits, uint8_t mode);
+
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint8_t bcd2dec(uint8_t val)
 {
     return (val >> 4) * 10 + (val & 0x0f);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static uint8_t dec2bcd(uint8_t val)
 {
     return ((val / 10) << 4) + (val % 10);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+static esp_err_t ds3231_set_flag(i2c_dev_t *dev, uint8_t addr, uint8_t bits, uint8_t mode)
+{
+    uint8_t data;
+
+    /* get status register */
+    esp_err_t res = i2c_dev_read_reg(dev, addr, &data, 1);
+    if (res != ESP_OK)
+        return res;
+    /* clear the flag */
+    if (mode == DS3231_REPLACE)
+        data = bits;
+    else if (mode == DS3231_SET)
+        data |= bits;
+    else
+        data &= ~bits;
+
+    return i2c_dev_write_reg(dev, addr, &data, 1);
+}
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
     CHECK_ARG(dev);
@@ -86,6 +129,9 @@ esp_err_t ds3231_init_desc(i2c_dev_t *dev, i2c_port_t port, gpio_num_t sda_gpio,
     return i2c_dev_create_mutex(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_free_desc(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -93,6 +139,9 @@ esp_err_t ds3231_free_desc(i2c_dev_t *dev)
     return i2c_dev_delete_mutex(dev);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_set_time(i2c_dev_t *dev, struct tm *time)
 {
     CHECK_ARG(dev && time);
@@ -117,6 +166,9 @@ esp_err_t ds3231_set_time(i2c_dev_t *dev, struct tm *time)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_set_alarm(i2c_dev_t *dev, ds3231_alarm_t alarms, struct tm *time1,
                            ds3231_alarm1_rate_t option1, struct tm *time2, ds3231_alarm2_rate_t option2)
 {
@@ -151,13 +203,9 @@ esp_err_t ds3231_set_alarm(i2c_dev_t *dev, ds3231_alarm_t alarms, struct tm *tim
     return ESP_OK;
 }
 
-/* Get a byte containing just the requested bits
- * pass the register address to read, a mask to apply to the register and
- * an uint* for the output
- * you can test this value directly as true/false for specific bit mask
- * of use a mask of 0xff to just return the whole register byte
- * returns true to indicate success
- */
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 static esp_err_t ds3231_get_flag(i2c_dev_t *dev, uint8_t addr, uint8_t mask, uint8_t *flag)
 {
     uint8_t data;
@@ -172,31 +220,9 @@ static esp_err_t ds3231_get_flag(i2c_dev_t *dev, uint8_t addr, uint8_t mask, uin
     return ESP_OK;
 }
 
-/* Set/clear bits in a byte register, or replace the byte altogether
- * pass the register address to modify, a byte to replace the existing
- * value with or containing the bits to set/clear and one of
- * DS3231_SET/DS3231_CLEAR/DS3231_REPLACE
- * returns true to indicate success
- */
-static esp_err_t ds3231_set_flag(i2c_dev_t *dev, uint8_t addr, uint8_t bits, uint8_t mode)
-{
-    uint8_t data;
-
-    /* get status register */
-    esp_err_t res = i2c_dev_read_reg(dev, addr, &data, 1);
-    if (res != ESP_OK)
-        return res;
-    /* clear the flag */
-    if (mode == DS3231_REPLACE)
-        data = bits;
-    else if (mode == DS3231_SET)
-        data |= bits;
-    else
-        data &= ~bits;
-
-    return i2c_dev_write_reg(dev, addr, &data, 1);
-}
-
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_oscillator_stop_flag(i2c_dev_t *dev, bool *flag)
 {
     CHECK_ARG(dev && flag);
@@ -212,6 +238,9 @@ esp_err_t ds3231_get_oscillator_stop_flag(i2c_dev_t *dev, bool *flag)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_clear_oscillator_stop_flag(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -223,6 +252,9 @@ esp_err_t ds3231_clear_oscillator_stop_flag(i2c_dev_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_alarm_flags(i2c_dev_t *dev, ds3231_alarm_t *alarms)
 {
     CHECK_ARG(dev && alarms);
@@ -234,6 +266,9 @@ esp_err_t ds3231_get_alarm_flags(i2c_dev_t *dev, ds3231_alarm_t *alarms)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_clear_alarm_flags(i2c_dev_t *dev, ds3231_alarm_t alarms)
 {
     CHECK_ARG(dev);
@@ -245,6 +280,9 @@ esp_err_t ds3231_clear_alarm_flags(i2c_dev_t *dev, ds3231_alarm_t alarms)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_enable_alarm_ints(i2c_dev_t *dev, ds3231_alarm_t alarms)
 {
     CHECK_ARG(dev);
@@ -256,6 +294,9 @@ esp_err_t ds3231_enable_alarm_ints(i2c_dev_t *dev, ds3231_alarm_t alarms)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_disable_alarm_ints(i2c_dev_t *dev, ds3231_alarm_t alarms)
 {
     CHECK_ARG(dev);
@@ -270,6 +311,9 @@ esp_err_t ds3231_disable_alarm_ints(i2c_dev_t *dev, ds3231_alarm_t alarms)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_enable_32khz(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -281,6 +325,9 @@ esp_err_t ds3231_enable_32khz(i2c_dev_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_disable_32khz(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -292,6 +339,9 @@ esp_err_t ds3231_disable_32khz(i2c_dev_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_enable_squarewave(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -303,6 +353,9 @@ esp_err_t ds3231_enable_squarewave(i2c_dev_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_disable_squarewave(i2c_dev_t *dev)
 {
     CHECK_ARG(dev);
@@ -314,6 +367,9 @@ esp_err_t ds3231_disable_squarewave(i2c_dev_t *dev)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_set_squarewave_freq(i2c_dev_t *dev, ds3231_sqwave_freq_t freq)
 {
     CHECK_ARG(dev);
@@ -330,6 +386,9 @@ esp_err_t ds3231_set_squarewave_freq(i2c_dev_t *dev, ds3231_sqwave_freq_t freq)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_raw_temp(i2c_dev_t *dev, int16_t *temp)
 {
     CHECK_ARG(dev && temp);
@@ -345,6 +404,9 @@ esp_err_t ds3231_get_raw_temp(i2c_dev_t *dev, int16_t *temp)
     return ESP_OK;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_temp_integer(i2c_dev_t *dev, int8_t *temp)
 {
     CHECK_ARG(temp);
@@ -358,6 +420,9 @@ esp_err_t ds3231_get_temp_integer(i2c_dev_t *dev, int8_t *temp)
     return res;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_temp_float(i2c_dev_t *dev, float *temp)
 {
     CHECK_ARG(temp);
@@ -371,6 +436,9 @@ esp_err_t ds3231_get_temp_float(i2c_dev_t *dev, float *temp)
     return res;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 esp_err_t ds3231_get_time(i2c_dev_t *dev, struct tm *time)
 {
     CHECK_ARG(dev && time);
@@ -407,13 +475,17 @@ esp_err_t ds3231_get_time(i2c_dev_t *dev, struct tm *time)
     return ESP_OK;
 }
 
-//----------------------------------------------------------------------------------------------------
-
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 int is_leap(int y)
 {
     return ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0);
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void next_day()
 {
     day += 1;
@@ -438,6 +510,9 @@ void next_day()
     }
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void set_date(int d, int m, int y)
 {
     m < 1 ? m = 1 : 0;
@@ -459,6 +534,9 @@ void set_date(int d, int m, int y)
     return;
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void skip_days(int x)
 {
     int i;
@@ -466,6 +544,9 @@ void skip_days(int x)
         next_day();
 }
 
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
 void print_date()
 {
     printf("day: %d month: %d year: %d\n", day, month, year);
