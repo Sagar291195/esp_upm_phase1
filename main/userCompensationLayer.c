@@ -1,28 +1,84 @@
-/**
- * @file userCompensationLayer.c
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This contain the user compensation layer functions definations. All the data realted to the user compensation is caluelated and done here
- * @version 1.1
- * @date 2022-06-29
- *
- * @copyright Copyright (c) 2022
- *
- */
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <userCompensationLayer.h>
 #include <string.h>
 #include <esp_err.h>
 #include <esp_log.h>
 
 #include "storage/calibration.h"
-/**********************************************defines******************************/
 
-#define TAG "user compensation"
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG         "User compensation"
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
-/*************************************function prototypes******************************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
 
-/****************************************function definations******************************/
+/********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+static float _fFlowCalculation(float fDeltaPressure, float fDensity);
+static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure);
+
+/********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+*                           
+********************************************************************************************/
+static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure)
+{
+    float exponential =  exp((17.5043 * fTemperature) / (241.2 + fTemperature));
+
+    float density = (1.0 / (287.06 * (fTemperature + 273.15)) *
+           ((fPressure*100)- (230.617 * (fHumidity / 100.0) * exponential)));
+
+    ESP_LOGD(TAG, "Density : %f", density);       
+    return density;
+}
+
+/********************************************************************************************
+*                           
+********************************************************************************************/
+static float _fFlowCalculation(float fDeltaPressure, float fDensity)
+{
+    float fResult = 0.0;
+    if (isnan(fDeltaPressure))
+    {
+        fResult = 0.0;
+        return fResult;
+    }
+
+    // fResult = sqrt(fabs(fDeltaPressure)) / sqrt(fDensity) * 0.3758940103; // for test
+    // fResult = (fDeltaPressure < 0.0) ? -fResult : fResult;                // check si négatif
+    /* using the formula Q= F(dp)* den_char / den_real
+     * Putting F=1 and den_char =1.2     
+     * fResult = .118 * fDeltaPressure * 1.2/fDensity;
+     * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
+    
+    fResult = (0.759 * (pow(fDeltaPressure, 0.5288)) * (1.2 / fDensity));
+    ESP_LOGD(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
+    return fResult;
+}
+
+/********************************************************************************************
+*                           GLOBAL FUNCTIONS
+********************************************************************************************/
+ 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetVolumetricFlowUserCompensated()
 {
     float result = fGetVolumetricFlow_featureData();
@@ -31,6 +87,9 @@ float fGetVolumetricFlowUserCompensated()
     return result;
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetInternalPressureUserCompensated()
 {
     float result = fGetBme280PressureAverages();
@@ -40,6 +99,9 @@ float fGetInternalPressureUserCompensated()
     return result;
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetInternalHumidityUserCompesated()
 {
     float result = fGetBme280HumidityAverages();
@@ -50,6 +112,9 @@ float fGetInternalHumidityUserCompesated()
     return result;
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetInternalTemperatureUserCompesated()
 {
     float result = fGetBme280TemperatureAverages();
@@ -58,6 +123,9 @@ float fGetInternalTemperatureUserCompesated()
     return result;
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue)
 {
     external_sensor_data_t sensorvalues;
@@ -73,7 +141,9 @@ void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue
     ESP_LOGD(TAG, "Calibrated External sensor values are temp %0.2f humidiy %0.2f pressure %0.2f", calibratedvalue->fTemperature, calibratedvalue->fHumidity, calibratedvalue->fPressure);
 }
 
-
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetMassFlowUserCompensated(void)
 {
     float fResult = 0.0;
@@ -106,53 +176,11 @@ float fGetMassFlowUserCompensated(void)
     return fResult;
 }
 
-/**
- * @brief calculates the air density
- *
- * @param fTemperature external temperature manufacture compensated
- * @param fHumidity externalt humidity manufacture compensated
- * @param fPressure external pressure manufacture compensated
- * @return float Air density
- */
-static float _fDensityCalculation(float fTemperature, float fHumidity, float fPressure)
-{
-    float exponential =  exp((17.5043 * fTemperature) / (241.2 + fTemperature));
 
-    float density = (1.0 / (287.06 * (fTemperature + 273.15)) *
-           ((fPressure*100)- (230.617 * (fHumidity / 100.0) * exponential)));
 
-    ESP_LOGD(TAG, "Density : %f", density);       
-    return density;
-}
-
-/**
- * @brief Calutes the flow rate
- *
- * @param fDeltaPressure air mass flow
- * @param fDensity air density
- * @return float
- */
-static float _fFlowCalculation(float fDeltaPressure, float fDensity)
-{
-    float fResult = 0.0;
-    if (isnan(fDeltaPressure))
-    {
-        fResult = 0.0;
-        return fResult;
-    }
-
-    // fResult = sqrt(fabs(fDeltaPressure)) / sqrt(fDensity) * 0.3758940103; // for test
-    // fResult = (fDeltaPressure < 0.0) ? -fResult : fResult;                // check si négatif
-    /* using the formula Q= F(dp)* den_char / den_real
-     * Putting F=1 and den_char =1.2     
-     * fResult = .118 * fDeltaPressure * 1.2/fDensity;
-     * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
-    
-    fResult = (0.759 * (pow(fDeltaPressure, 0.5288)) * (1.2 / fDensity));
-    ESP_LOGD(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
-    return fResult;
-}
-
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetExternal_AirDesity_Raw(void)
 {
     float result =0;
@@ -164,11 +192,17 @@ float fGetExternal_AirDesity_Raw(void)
 
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetInternalAirDensity_Raw()
 {
     return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
 float fGetExternal_AirDesity_Comp(void)
 {
     float result =0;
@@ -180,11 +214,17 @@ float fGetExternal_AirDesity_Comp(void)
 
 }
 
+ /********************************************************************************************
+ *                           
+ ********************************************************************************************/
 float fGetInternalAirDensity_Comp(void)
 {
     return _fDensityCalculation(fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated());
 }
 
+ /********************************************************************************************
+ *                           
+ ********************************************************************************************/
 float fGetVolumetricFlow_featureData()
 {
     float result =0;

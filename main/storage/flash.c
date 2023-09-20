@@ -1,37 +1,47 @@
-/**********************************************************************
+/********************************************************************************************
  *                              INCLUDES
- ***********************************************************************/
-
-
-
+ ********************************************************************************************/ 
 #include "flash.h"
 
-/***********************************************************************
+/********************************************************************************************
  *                              DEFINES
- **********************************************************************/
+ ********************************************************************************************/
 #define TAG                 "FLASH"
 #define DB_FILENAME         "/spiffs/file.db"
-/***********************************************************************
- *                              TYPEDEF
- **********************************************************************/
 
-/***********************************************************************
- *                             VARIBALES
- **********************************************************************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
 SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
 sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
 sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
 const char *data = "Callback function has been called";
 char *zErrMsg;
-/***********************************************************************
- *                           STATIC PROTOTYP
- **********************************************************************/
+
+/********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
 static void vCreateDataBase(void);
 static esp_err_t vInitializeSpiffs(void);
+static int db_open(const char *filename, sqlite3 **db);
+static int callback(void *data, int argc, char **argv, char **azColName);
+static int db_exec(sqlite3 *db, const char *sql);
 
-/***********************************************************************
+/********************************************************************************************
  *                           STATIC FUNCTIONS
- **********************************************************************/
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 static esp_err_t vInitializeSpiffs()
 {
     ESP_LOGW(TAG, "Initializing SPIFFS, for first time it will take 5-10 mins to format....");
@@ -76,12 +86,9 @@ static esp_err_t vInitializeSpiffs()
     return ret;
 }
 
-/**
- * @brief Open the database
- * @param filename filename in the spiffs, sdcard or flash. File contain the database.
- * @param db double pointer to the database name
- * @return int error code
- */
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 static int db_open(const char *filename, sqlite3 **db)
 {
     int rc = sqlite3_open(filename, db);
@@ -98,15 +105,9 @@ static int db_open(const char *filename, sqlite3 **db)
     return rc;
 }
 
-/**
- * @brief This callback is used to check the value into db each time when it is called
- *
- * @param data data is the user data has been passed for any purpose
- * @param argc no of colums presents
- * @param argv  value in the column
- * @param azColName column name
- * @return int
- */
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 static int callback(void *data, int argc, char **argv, char **azColName)
 {
     int i;
@@ -121,13 +122,9 @@ static int callback(void *data, int argc, char **argv, char **azColName)
     return 0;
 }
 
-/**
- * @brief Execute the db query
- *
- * @param db datebase on which we need to execute the query
- * @param sql sql command
- * @return int error code
- */
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 static int db_exec(sqlite3 *db, const char *sql)
 {
 
@@ -146,6 +143,9 @@ static int db_exec(sqlite3 *db, const char *sql)
     return rc;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 static void vCreateDataBase(void)
 {
     // creating the semaphore for thread safe execution
@@ -185,9 +185,13 @@ static void vCreateDataBase(void)
     sqlite3_close(dbArchivedMeasurement); // closing the database
 }
 
-/***********************************************************************
+/********************************************************************************************
  *                           GLOBAL FUNCTIONS
- **********************************************************************/
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvsread_value_parameter(char *storagename, char *key, void *value)
 {
     nvs_handle_t my_handle;
@@ -225,6 +229,9 @@ bool nvsread_value_parameter(char *storagename, char *key, void *value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvswrite_value_float(char *storagename, char *key, float value)
 {
     nvs_handle_t my_handle;
@@ -257,6 +264,9 @@ bool nvswrite_value_float(char *storagename, char *key, float value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvswrite_value_parameters(char *storagename, char *key, void *value, uint16_t length)
 {
     nvs_handle_t my_handle;
@@ -289,6 +299,9 @@ bool nvswrite_value_parameters(char *storagename, char *key, void *value, uint16
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvsread_value_u32(char *storagename, char *key, uint32_t *value)
 {
     nvs_handle nvsHandle;
@@ -310,6 +323,9 @@ bool nvsread_value_u32(char *storagename, char *key, uint32_t *value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvswrite_value_u32(char *storagename, char *key, uint32_t value)
 {
     nvs_handle nvsHandle;
@@ -340,6 +356,9 @@ bool nvswrite_value_u32(char *storagename, char *key, uint32_t value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvsread_value_u8(char *storagename, char *key, uint8_t *value)
 {
     nvs_handle nvsHandle;
@@ -361,6 +380,9 @@ bool nvsread_value_u8(char *storagename, char *key, uint8_t *value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool nvswrite_value_u8(char *storagename, char *key, uint8_t value)
 {
     nvs_handle nvsHandle;
@@ -391,6 +413,9 @@ bool nvswrite_value_u8(char *storagename, char *key, uint8_t value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 void nvs_storage_initialize(void)
 {
     esp_log_level_set(TAG, ESP_LOG_WARN);
@@ -404,6 +429,9 @@ void nvs_storage_initialize(void)
     }
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary)
 {
     ESP_LOGI(TAG, "Sample number is %d and sequnce number is %d", sampleNumber, sequenceNumber);
@@ -486,6 +514,9 @@ void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequence
     }
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t *sequenceSummary)
 {
     bool bReadData = false;

@@ -1,23 +1,26 @@
-/**********************************************************************
+/********************************************************************************************
  *                              INCLUDES
- ***********************************************************************/
-
+ ********************************************************************************************/
 #include "flash.h"
 #include "calibration.h"
 
-/**********************************************************************
+/********************************************************************************************
  *                              DEFINES
- ***********************************************************************/
+ ********************************************************************************************/
 #define TAG                         "CALIBRATION"
 #define CALIBRATION_STORGE_NAME     "calibration"
 
-/**********************************************************************
- *                              TYPEDEF
- ***********************************************************************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
-/**********************************************************************
- *                             VARIBALES
- ***********************************************************************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+ /********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
 static char ext_temperaturekey[] = "ext-temp";  // key to store data in flash
 static char ext_pressurekey[] = "ext-pressure"; // key to store data in flash
 static char ext_humiditykey[] = "ext-humidity"; // key to store data in flash
@@ -36,17 +39,21 @@ static char sensorvalue3[] = "sensorvalue3";
 
 calibration_t calibrationdata; // variable to store calibration data
 
-/**********************************************************************
+/********************************************************************************************
  *                           STATIC PROTOTYPE
- ***********************************************************************/
+ ********************************************************************************************/
 
-/**********************************************************************
+/********************************************************************************************
  *                           STATIC FUNCTIONS
- ***********************************************************************/
+ ********************************************************************************************/
 
-/**********************************************************************
+/********************************************************************************************
  *                           GLOBAL FUNCTIONS
- ***********************************************************************/
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void nvsread_calibrationdata(void)
 {
     bool ret = false;
@@ -210,36 +217,58 @@ void nvsread_calibrationdata(void)
     }
 }
 
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_ext_temperature(void)
 {
     return calibrationdata.external_temperature_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_ext_pressure(void)
 {
     return calibrationdata.external_pressure_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_ext_humidity(void)
 {
     return calibrationdata.external_humidity_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_int_temperature(void)
 {
     return calibrationdata.internal_temperature_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_int_pressure(void)
 {
     return calibrationdata.internal_pressure_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_int_humidity(void)
 {
     return calibrationdata.internal_humidity_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_flow_coeffA1(void)
 {
     return calibrationdata.flow_coeffA1_calibration;
@@ -250,125 +279,191 @@ float getcalibrationvalue_flow_coeffA2(void)
     return calibrationdata.flow_coeffA2_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_flow_coeffA3(void)
 {
     return calibrationdata.flow_coeffA3_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_flow_coeffB1(void)
 {
     return calibrationdata.flow_coeffB1_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_flow_coeffB2(void)
 {
     return calibrationdata.flow_coeffB2_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibrationvalue_flow_coeffB3(void)
 {
     return calibrationdata.flow_coeffB3_calibration;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibration_reference_sensorvalue1(void)
 {
     return calibrationdata.flow_reference_sensorvalue1;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibration_reference_sensorvalue2(void)
 {
     return calibrationdata.flow_reference_sensorvalue2;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 float getcalibration_reference_sensorvalue3(void)
 {
     return calibrationdata.flow_reference_sensorvalue3;
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_ext_temperature(float value)
 {
     calibrationdata.external_temperature_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, ext_temperaturekey, calibrationdata.external_temperature_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_ext_pressure(float value)
 {
     calibrationdata.external_pressure_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, ext_pressurekey, calibrationdata.external_pressure_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_ext_humidity(float value)
 {
     calibrationdata.external_humidity_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, ext_humiditykey, calibrationdata.external_humidity_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_int_temperature(float value)
 {
     calibrationdata.internal_temperature_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, int_temperaturekey, calibrationdata.internal_temperature_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_int_pressure(float value)
 {
     calibrationdata.internal_pressure_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, int_pressurekey, calibrationdata.internal_pressure_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_int_humidity(float value)
 {
     calibrationdata.internal_humidity_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, int_huniditykey, calibrationdata.internal_humidity_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffA1(float value)
 {
     calibrationdata.flow_coeffA1_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffA1, calibrationdata.flow_coeffA1_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffA2(float value)
 {
     calibrationdata.flow_coeffA2_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffA2, calibrationdata.flow_coeffA2_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffA3(float value)
 {
     calibrationdata.flow_coeffA3_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffA3, calibrationdata.flow_coeffA3_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffB1(float value)
 {
     calibrationdata.flow_coeffB1_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffB1, calibrationdata.flow_coeffB1_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffB2(float value)
 {
     calibrationdata.flow_coeffB2_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffB2, calibrationdata.flow_coeffB2_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibrationvalue_flow_coeffB3(float value)
 {
     calibrationdata.flow_coeffB3_calibration = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, flow_coeffB3, calibrationdata.flow_coeffB3_calibration);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibration_flow_reference_sensorvalue1(float value)
 {
     calibrationdata.flow_reference_sensorvalue1 = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, sensorvalue1, calibrationdata.flow_reference_sensorvalue1);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibration_flow_reference_sensorvalue2(float value)
 {
     calibrationdata.flow_reference_sensorvalue2 = value;
     nvswrite_value_float(CALIBRATION_STORGE_NAME, sensorvalue2, calibrationdata.flow_reference_sensorvalue2);
 }
 
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
 void setcalibration_flow_reference_sensorvalue3(float value)
 {
     calibrationdata.flow_reference_sensorvalue3 = value;

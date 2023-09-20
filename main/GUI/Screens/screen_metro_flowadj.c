@@ -50,7 +50,7 @@ int metroflowUnit;
 float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 static int flow_calibration_point_count = 0;
 
-char *getSetPt;
+const char *getSetPt;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scrFlowAdj;

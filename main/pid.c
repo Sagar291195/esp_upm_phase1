@@ -1,9 +1,3 @@
-/*
- * SPDX-FileCopyrightText: 2015-2021 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Apache-2.0
- */
-
 #include <stdbool.h>
 #include <sys/param.h>
 #include "esp_check.h"
@@ -12,8 +6,14 @@
 
 #include "esp_upm.h"
 
-static const char *TAG = "pid_ctrl";
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG            "pid_ctrl"
 
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 typedef struct pid_ctrl_block_t pid_ctrl_block_t;
 typedef float (*pid_cal_func_t)(pid_ctrl_block_t *pid, float error);
 
@@ -32,63 +32,79 @@ struct pid_ctrl_block_t {
     pid_cal_func_t calculate_func; // calculation function, depends on actual PID type set by user
 };
 
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           STATIC VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           STATIC PROTOTYPE
+ ********************************************************************************************/
+ static float pid_calc_incremental(pid_ctrl_block_t *pid, float error);
+ static float pid_calc_positional(pid_ctrl_block_t *pid, float error);
+
+ /********************************************************************************************
+ *                           STATIC FUNCTIONS
+ ********************************************************************************************/
+
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 static float pid_calc_positional(pid_ctrl_block_t *pid, float error)
 {
     float output = 0;
-    /* Add current error to the integral error */
-    pid->integral_err += error;
-    /* If the integral error is out of the range, it will be limited */
-    pid->integral_err = MIN(pid->integral_err, pid->max_integral);
+    
+    pid->integral_err += error;                                         /* Add current error to the integral error */
+    pid->integral_err = MIN(pid->integral_err, pid->max_integral);      /* If the integral error is out of the range, it will be limited */
     pid->integral_err = MAX(pid->integral_err, pid->min_integral);
 
-    /* Calculate the pid control value by location formula */
-    /* u(k) = e(k)*Kp + (e(k)-e(k-1))*Kd + integral*Ki */
-    output = error * pid->Kp +
-             (error - pid->previous_err1) * pid->Kd +
+    output = error * pid->Kp +                          /* Calculate the pid control value by location formula */
+             (error - pid->previous_err1) * pid->Kd +   /* u(k) = e(k)*Kp + (e(k)-e(k-1))*Kd + integral*Ki */
              pid->integral_err * pid->Ki;
 
-    /* If the output is out of the range, it will be limited */
-    output = MIN(output, pid->max_output);
+    output = MIN(output, pid->max_output);              /* If the output is out of the range, it will be limited */
     output = MAX(output, pid->min_output);
 
-    /* Update previous error */
-    pid->previous_err1 = error;
-
+    pid->previous_err1 = error;         /* Update previous error */
     return output;
 }
 
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 static float pid_calc_incremental(pid_ctrl_block_t *pid, float error)
 {
     float output = 0;
 
-    /* Calculate the pid control value by increment formula */
-    /* du(k) = (e(k)-e(k-1))*Kp + (e(k)-2*e(k-1)+e(k-2))*Kd + e(k)*Ki */
-    /* u(k) = du(k) + u(k-1) */
-    output = (error - pid->previous_err1) * pid->Kp +
-             (error - 2 * pid->previous_err1 + pid->previous_err2) * pid->Kd +
-             error * pid->Ki +
-             pid->last_output;
-
-    /* If the output is beyond the range, it will be limited */
-    output = MIN(output, pid->max_output);
+    output = (error - pid->previous_err1) * pid->Kp +                                /* Calculate the pid control value by increment formula */
+             (error - 2 * pid->previous_err1 + pid->previous_err2) * pid->Kd +       /* du(k) = (e(k)-e(k-1))*Kp + (e(k)-2*e(k-1)+e(k-2))*Kd + e(k)*Ki */
+             error * pid->Ki +                                                       /* u(k) = du(k) + u(k-1) */   
+             pid->last_output;          
+    
+    output = MIN(output, pid->max_output);      /* If the output is beyond the range, it will be limited */
     output = MAX(output, pid->min_output);
 
-    /* Update previous error */
-    pid->previous_err2 = pid->previous_err1;
+    pid->previous_err2 = pid->previous_err1;    /* Update previous error */
     pid->previous_err1 = error;
-
-    /* Update last output */
-    pid->last_output = output;
-
+    pid->last_output = output;                  /* Update last output */
     return output;
 }
-
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 esp_err_t pid_new_control_block(const pid_ctrl_config_t *config, pid_ctrl_block_handle_t *ret_pid)
 {
     esp_err_t ret = ESP_OK;
     pid_ctrl_block_t *pid = NULL;
-    /* Check the input pointer */
-    ESP_GOTO_ON_FALSE(config && ret_pid, ESP_ERR_INVALID_ARG, err, TAG, "invalid argument");
+   
+    ESP_GOTO_ON_FALSE(config && ret_pid, ESP_ERR_INVALID_ARG, err, TAG, "invalid argument");     /* Check the input pointer */
 
     pid = calloc(1, sizeof(pid_ctrl_block_t));
     ESP_GOTO_ON_FALSE(pid, ESP_ERR_NO_MEM, err, TAG, "no mem for PID control block");
@@ -103,13 +119,9 @@ err:
     return ret;
 }
 
-esp_err_t pid_del_control_block(pid_ctrl_block_handle_t pid)
-{
-    ESP_RETURN_ON_FALSE(pid, ESP_ERR_INVALID_ARG, TAG, "invalid argument");
-    free(pid);
-    return ESP_OK;
-}
-
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 esp_err_t pid_compute(pid_ctrl_block_handle_t pid, float input_error, float *ret_result)
 {
     ESP_RETURN_ON_FALSE(pid && ret_result, ESP_ERR_INVALID_ARG, TAG, "invalid argument");
@@ -117,6 +129,10 @@ esp_err_t pid_compute(pid_ctrl_block_handle_t pid, float input_error, float *ret
     return ESP_OK;
 }
 
+
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_parameter_t *params)
 {
     ESP_RETURN_ON_FALSE(pid && params, ESP_ERR_INVALID_ARG, TAG, "invalid argument");
@@ -127,8 +143,10 @@ esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_para
     pid->min_output = params->min_output;
     pid->max_integral = params->max_integral;
     pid->min_integral = params->min_integral;
+
     /* Set the calculate function according to the PID type */
-    switch (params->cal_type) {
+    switch (params->cal_type) 
+    {
     case PID_CAL_TYPE_INCREMENTAL:
         pid->calculate_func = pid_calc_incremental;
         break;
@@ -141,6 +159,9 @@ esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_para
     return ESP_OK;
 }
 
+ /********************************************************************************************
+ *                         
+ ********************************************************************************************/
 void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
 {
     ESP_LOGI(TAG, "kp %0.2f, ki %0.2f, kd %0.2f, akp %0.2f, aki %0.2f, akd %0.2f, ncoff %0.2f, acoff %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd, fNcoff, fACoff);
@@ -163,9 +184,6 @@ void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, 
         fACoff = 1;
     }
 
-    /* setting the pid parameters to the nvs flash */
-    vSetPIDParametersToNvs(&PID_parameters);
-
-    /* also setting the pid parameters to the pid control block */
-    setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);
+    vSetPIDParametersToNvs(&PID_parameters);    /* setting the pid parameters to the nvs flash */
+    setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);   /* also setting the pid parameters to the pid control block */
 }

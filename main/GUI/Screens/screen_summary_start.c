@@ -573,15 +573,13 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 
 void startTimer(void)
 {
-    // printf("Timer Start time: %s \n", guiTime);
+    esp_timer_handle_t JTCesp_timer_handle;    // JTC = Job Time Counter
     const esp_timer_create_args_t esp_timer_create_args = {
         .callback = start_timer_callback,
         .name = "Job Time Counter"};
-    esp_timer_handle_t JTCesp_timer_handle; // JTC = Job Time Counter
+   
     esp_timer_create(&esp_timer_create_args, &JTCesp_timer_handle);
-
     esp_timer_start_once(JTCesp_timer_handle, totalSecond * 1000000);
-    // printf("Timer Started for  Min = %d \n", totalSecond / 60);
 }
 
 void start_timer_callback(void *args)
@@ -590,7 +588,6 @@ void start_timer_callback(void *args)
     {
         vUpdateInfoWidgetTask();
     }
-
     PumpStopForcefully = false;
 }
 

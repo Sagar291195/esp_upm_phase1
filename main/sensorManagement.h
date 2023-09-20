@@ -1,54 +1,34 @@
-
-
-/**
- * @file sensorManagement.h
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief this header file managed all the sensor present in the system.
- * @version 1.1
- * @date 2022-06-21
- *
- * @copyright Copyright (c) 2022
- *
- */
-
-
 #ifndef __SENSORMANAGEMENT_H__
 #define __SENSORMANAGEMENT_H__
 
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <stdio.h>
 #include <esp_err.h>
 
 #include "esp_upm.h"
 
-/********************************defines*******************************************/
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define INA3221_CHANNEL                         3       //!< Number of channels in INA3221
+#define EXTERNAL_SENSOR_TEMPERATURE_MIN_VALUE   -10     /* lower range of the external temperature sensor */
+#define EXTERNAL_SENSOR_TEMPERATURE_MAX_VALUE   45      /* higher range of the external temperature sensor */
+#define EXTERNAL_SENSOR_HUMIDITY_MIN_VALUE      0       /* Lower range of the external humidity sensor */
+#define EXTERNAL_SENSOR_HUMIDITY_MAX_VALUE      95      /* higher range of External sensor humidity value */
+#define EXTERNAL_SENSOR_PRESSURE_MIN_VALUE      650     /* Lower range of External sensor pressure value */
+#define EXTERNAL_SENOSR_PRESSURE_MAX_VALUE      1100    /* higher range of the external sensor pressure value */
+#define HEAD_LOSS_MIN_VALUE                     70      /* head loss is differece between the internal pressure and external pressure headloss mininum value*/
+#define HEAD_LOSS_MAX_VALUE                     145     /* head loss maximum value */
+#define MAX_TOLERACE_IN_HUMIDITY                5.0     /* Maximum tolerance of humidity in percentage */
+#define MAX_TOLERACE_IN_TEMPERATURE             5.0     /* Max tolerac in the temperature in degree celcius */
+#define MAX_TOLERACE_IN_PRESSURE                5.0     /* Maximum tolerance in the pressure in hPa */
+#define MAX_TOLERACE_IN_HEAD_LOSS               5.0     /* maximum tolerance in the head loss */
 
-#define INA3221_CHANNEL 3   //!< Number of channels in INA3221
-/*  lower range of the external temperature sensor */
-#define EXTERNAL_SENSOR_TEMPERATURE_MIN_VALUE -10
-/* higher range of the external temperature sensor */
-#define EXTERNAL_SENSOR_TEMPERATURE_MAX_VALUE 45
-/* Lower range of the external humidity sensor */
-#define EXTERNAL_SENSOR_HUMIDITY_MIN_VALUE 0
-/* higher range of External sensor humidity value */
-#define EXTERNAL_SENSOR_HUMIDITY_MAX_VALUE 95
-/* Lower range of External sensor pressure value */
-#define EXTERNAL_SENSOR_PRESSURE_MIN_VALUE 650
-/* higher range of the external sensor pressure value */
-#define EXTERNAL_SENOSR_PRESSURE_MAX_VALUE 1100
- /* head loss is differece between the internal pressure and external pressure headloss mininum value*/
-#define HEAD_LOSS_MIN_VALUE 70
-/* head loss maximum value */
-#define HEAD_LOSS_MAX_VALUE 145
-/* Maximum tolerance of humidity in percentage */
-#define MAX_TOLERACE_IN_HUMIDITY 5.0
-/* Max tolerac in the temperature in degree celcius */
-#define MAX_TOLERACE_IN_TEMPERATURE 5.0
-/* Maximum tolerance in the pressure in hPa */
-#define MAX_TOLERACE_IN_PRESSURE 5.0
- /* maximum tolerance in the head loss */
-#define MAX_TOLERACE_IN_HEAD_LOSS 5.0
-
-/**********************************************************struct***************************************************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /* INA sensor data */
 typedef struct INA3231_sensor_data
 {
@@ -67,8 +47,13 @@ typedef struct external_sensor_data
     float fGasResistance;
 } external_sensor_data_t;
 
-/**********************************************function prototypes*****************************************************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 /**
  * @brief Initializes all the sensor on the board
  */
@@ -118,7 +103,5 @@ float fGetSdp32DiffPressureAverageValue();
  * @return float 
  */
 float fGetSdp32TemperatuerAverageValue();
-
-
 
 #endif // __SENSORMANAGEMENT_H__

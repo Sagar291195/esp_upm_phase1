@@ -1,27 +1,24 @@
-/**
- * @file sequenceManagement.h
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This is the header file for the sequence management component.Sequence management component is responsible for managing the sequence of the sampless.
- * Conatins the results of the sequence which has been run
- * @version 1.1
- * @date 2022-05-17
- *
- * @copyright Copyright (c) 2022
- *
- */
 #ifndef __SEQUENCEMANAGEMENT_H__
 #define __SEQUENCEMANAGEMENT_H__
 
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "storage/parameters.h"
 
 /***************************************defines****************************************/
-/* maximum number of samples in the system */
-#define MAXIMUM_NO_OF_SAMPLES 20
+#define MAXIMUM_NO_OF_SAMPLES   20    /* maximum number of samples in the system */
 
-/******************************variables***************************/
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /* the structue of the particular sequnce  to be tested */
 typedef struct sequence
 {
@@ -56,8 +53,14 @@ typedef struct sequenceSummary
     headLoss_t headLoss;
 } sequenceSummary_t;
 
-/*********************************prototype declaration**************************************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
 
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+ 
 /**
  * @brief initialize the sample array to zero
  */

@@ -17,21 +17,26 @@
 #include <time.h>
 #include <esp_app_format.h>
 
-/*************************************function prototypes***************************************/
 
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
 /**
  * @brief Set the system date and time to the given time. Front end should give the structure like that
- * @code struct tm navier_time_set =
-                    {
-                        .tm_year = year_Roller_int,
-                        .tm_mon = month_Roller_int,
-                        .tm_mday = day_Roller_int,
-                        .tm_hour = hour_Roller_int,
-                        .tm_min = min_Roller_int,
-                        .tm_sec = sec_Roller_int
-                        };
- *
+ * @code struct tm navier_time_set 
  * @param time time to be set
  */
 void vSetDateAndTimeOfTheDevice(struct tm time);
@@ -39,11 +44,6 @@ void vSetDateAndTimeOfTheDevice(struct tm time);
 /**
  * @brief Get the current date and time of the system and return it in the given structure
  * @code  year_Roller_int = tm.tm_year;
- *        month_Roller_int = tm.tm_mon;
- *        day_Roller_int = tm.tm_mday;
- *        hour_Roller_int = tm.tm_hour;
- *        min_Roller_int = tm.tm_min;
- *        sec_Roller_int = tm.tm_sec;
 * @param time[in] pointer to the structure to which the current time is to be returned
  */
 void vGetCurrentDateAndTime(struct tm *time);

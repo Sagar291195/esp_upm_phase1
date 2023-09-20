@@ -1,25 +1,27 @@
-/*
- * SPDX-FileCopyrightText: 2015-2021 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: Apache-2.0
- */
+#ifndef _PID_H
+#define _PID_H
 
-#pragma once
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include "esp_err.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /* PID calculation type */
 typedef enum {
     PID_CAL_TYPE_INCREMENTAL, /*!< Incremental PID control */
     PID_CAL_TYPE_POSITIONAL,  /*!< Positional PID control */
 } pid_calculate_type_t;
-
-/* Type of PID control block handle */
-typedef struct pid_ctrl_block_t *pid_ctrl_block_handle_t;
 
 /* PID control parameters */
 typedef struct {
@@ -38,6 +40,14 @@ typedef struct {
     pid_ctrl_parameter_t init_param; // Initial parameters
 } pid_ctrl_config_t;
 
+typedef struct pid_ctrl_block_t *pid_ctrl_block_handle_t;    /* Type of PID control block handle */
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 /**
  * @brief Create a new PID control session, returns the handle of control block
  *
@@ -49,16 +59,6 @@ typedef struct {
  *      - ESP_ERR_NO_MEM: Created PID control block failed because out of memory
  */
 esp_err_t pid_new_control_block(const pid_ctrl_config_t *config, pid_ctrl_block_handle_t *ret_pid);
-
-/**
- * @brief Delete the PID control block
- *
- * @param[in] pid PID control block handle, created by `pid_new_control_block()`
- * @return
- *      - ESP_OK: Delete PID control block successfully
- *      - ESP_ERR_INVALID_ARG: Delete PID control block failed because of invalid argument
- */
-esp_err_t pid_del_control_block(pid_ctrl_block_handle_t pid);
 
 /**
  * @brief Update PID parameters
@@ -85,6 +85,9 @@ esp_err_t pid_compute(pid_ctrl_block_handle_t pid, float input_error, float *ret
 
 
 void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff);
+
 #ifdef __cplusplus
 }
 #endif
+
+#endif //_PID_H
