@@ -70,6 +70,8 @@ static void vInitiateSequenceSummaryStart();
 static void vMonitorSensorDataTask(void *pvParameters);
 static float fCalculateVariationInPercentage(float fMaxValue, float fMinValue, float fTargetValue);
 static void print_on_terminal(void);
+static void nvread_totalsequence_count(void);
+static void nvsread_sequencedata(void);
 
 /********************************************************************************************
  *                           STATIC FUNCTIONS
@@ -319,6 +321,34 @@ static void vCalculateSequneceEndSummary()
     vInsertSequenceSummaryIntoDataBase(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), xCurrentSequenceSummary); /*  save summary to the db */
 }
 
+/********************************************************************************************
+* 
+********************************************************************************************/
+static void nvread_totalsequence_count(void)
+{
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence count read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Total Sequence count : %d", uTotalSequenceCount);
+    }
+}
+
+/********************************************************************************************
+* 
+********************************************************************************************/
+static void nvsread_sequencedata(void)
+{
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence);
+    if(ret == false)
+    {
+      ESP_LOGE(TAG, "Total sequence summary read error");
+    }
+}
+
 
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
@@ -380,17 +410,6 @@ void vSetSequenceArrayToNVS()
     }
 }
 
-/********************************************************************************************
-* 
-********************************************************************************************/
-void vGetSequenceFromNvsToArray()
-{
-    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, STORAGE_KEY, (void *)totalSequence);
-    if(ret == false)
-    {
-      ESP_LOGE(TAG, "Total sequence summary read error");
-    }
-}
 
 /********************************************************************************************
 * 
@@ -413,6 +432,8 @@ sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber)
 ********************************************************************************************/
 void taskRunSample(void *pvParameters)
 {
+    uint8_t usequenceToRun;
+
     if (xStopTheRunningSequenceSemaphore == NULL)   /* creating semaphore for stopping the task if, the semaphore handle is NULL */
     {   
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
@@ -422,8 +443,7 @@ void taskRunSample(void *pvParameters)
         vSemaphoreDelete(xStopTheRunningSequenceSemaphore);
         xStopTheRunningSequenceSemaphore = xSemaphoreCreateBinary();
     }
-
-    uint8_t usequenceToRun;
+   
     memcpy(&usequenceToRun, pvParameters, sizeof(uint8_t));
     ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
 
@@ -436,7 +456,6 @@ void taskRunSample(void *pvParameters)
         ESP_LOGW(TAG, "monitor task handle is not null, it should be null here.Not creating the monitor task");
     }
 
-   
     vInitiateSequenceSummaryStart();     /* calculating and saving the end summary of the variables */
     bDeleteUpdateScreenAndVaulesTask = false;   /* setting the delete the update value task to false so that task does not deleted when created */
     vShowWorkInProgressScreen();    /*  showing the work in progress screen */
@@ -446,7 +465,7 @@ void taskRunSample(void *pvParameters)
     
     setMotorPIDSetTargetValue(totalSequence[usequenceToRun - 1].fFlowSetPoint);     /*  seting the flow set point */
     MotorPWMStart(motorPID_DEFAULT_ENTRY_POINT);    /*  starting the motor so we have some initial value for sdp sensor and calculate flowrate and the pid controller can compute  */
-    setStateOfMotor(true); // run the motor
+    setStateOfMotor(true);                      // run the motor
     ESP_LOGD(TAG, "Starting the motor");
     ESP_LOGD(TAG, "get state of motor %d", getIsMotorRunning());
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
@@ -501,21 +520,7 @@ uint8_t uGetSequenceNumberToBeSaved()
     return uTotalSequenceCount + 1;
 }
 
-/********************************************************************************************
-* 
-********************************************************************************************/
-void vGetTotalSequenceCountFromNvs()
-{
-    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
-    if(ret == false)
-    {
-      ESP_LOGE(TAG, "Total sequence count read error");
-    }
-    else
-    {
-        ESP_LOGI(TAG, "Total Sequence count : %d", uTotalSequenceCount);
-    }
-}
+
 
 /********************************************************************************************
 * 
@@ -534,8 +539,8 @@ void vSetTotalSequenceCountToNvs()
 ********************************************************************************************/
 void nvsread_sequence_parameters()
 {
-    vGetTotalSequenceCountFromNvs();
-    vGetSequenceFromNvsToArray();
+    nvread_totalsequence_count();
+    nvsread_sequencedata();
 }
 
 

@@ -34,8 +34,8 @@ static char pid_parameterskey[] = "pid-parameters";  // key to store data in fla
 /********************************************************************************************
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
-static void vGetTotalLitersFromNvs(void);
-static void vGetTotalHoursFromNvs(void);
+static void nvsread_totalliters_count(void);
+static void nvsread_totalhours_count(void);
 
 /********************************************************************************************
  *                           STATIC FUNCTIONS
@@ -45,7 +45,7 @@ static void vGetTotalHoursFromNvs(void);
 /********************************************************************************************
  *    
  ********************************************************************************************/
-static void vGetTotalHoursFromNvs(void)
+static void nvsread_totalhours_count(void)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_hourskey, &totalHoursCounter);
     if(ret == false)
@@ -61,7 +61,7 @@ static void vGetTotalHoursFromNvs(void)
 /********************************************************************************************
  *    
  ********************************************************************************************/
-static void vGetTotalLitersFromNvs(void)
+static void nvsread_totalliters_count(void)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_literskey, &totalLitersCounter);
     if(ret == false)
@@ -203,8 +203,8 @@ float fGetTotalLitersHasBeenPassInGivenSequence()
  ********************************************************************************************/
 void nvsread_hours_liters_value()
 {
-  vGetTotalLitersFromNvs();
-  vGetTotalHoursFromNvs();  
+  nvsread_totalliters_count();
+  nvsread_totalhours_count();  
 }
 
 /********************************************************************************************

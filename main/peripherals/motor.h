@@ -193,7 +193,7 @@ uint16_t getMotorPIDSampleComputeTime();
  * @brief Initailize the motor and pid controller
  *
  */
-void vInitializeMotor();
+void motor_initialization();
 
 #ifdef __cplusplus
 }

@@ -92,7 +92,7 @@ void app_main()
     gui_update_semaphore = xSemaphoreCreateMutex();
 
     wakeupmodeInit();           // enabling the device from the wake mode
-    Init_Buzzer();              // This will initiate the buzze in the system
+    buzzer_initialization();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
     
@@ -101,10 +101,10 @@ void app_main()
     nvsread_hours_liters_value();
     nvsread_sequence_parameters();
 
-    vInitiateSensorsOnBoard();          // Initiating all i2c sensors on the board
-    vInitializeTimeManagement();        // Initializing the time management of the device
-    vStartSampleManagementService();    // Installing the sample management service
-    vInitializeMotor();                 // Installing the sample management service
+    sensor_initialization();          // Initiating all i2c sensors on the board
+    timemanagement_intialization();        // Initializing the time management of the device
+    start_samplemanagement_service();    // Installing the sample management service
+    motor_initialization();                 // Installing the sample management service
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "Code Version: ESPUPM 8-04-2022 V2");

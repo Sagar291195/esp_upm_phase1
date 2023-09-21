@@ -98,7 +98,7 @@ TaskHandle_t xGetHandleSampleManagementService();
 /**
  * @brief this fuction start the sample management service
  */
-void vStartSampleManagementService();
+void start_samplemanagement_service();
 
 
 /**

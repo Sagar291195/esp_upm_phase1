@@ -52,7 +52,7 @@ void vGetCurrentDateAndTime(struct tm *time);
  * @brief initialize the time management and set the system time to complile time of the system
  *
  */
-void vInitializeTimeManagement();
+void timemanagement_intialization();
 
 /**
  * @brief get the end date and itme of the sequence in the given array

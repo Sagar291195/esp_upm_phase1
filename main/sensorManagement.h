@@ -57,7 +57,7 @@ typedef struct external_sensor_data
 /**
  * @brief Initializes all the sensor on the board
  */
-void vInitiateSensorsOnBoard();
+void sensor_initialization();
 
 /**
  * @brief get the average bme 280 temperature average values

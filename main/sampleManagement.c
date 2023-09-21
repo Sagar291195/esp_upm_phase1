@@ -309,7 +309,7 @@ void vSetCurrentRunningSequenceNumber(uint8_t uSequenceNumber)
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void vStartSampleManagementService()
+void start_samplemanagement_service()
 {
     xTaskCreate(vSampleManagementServiceFunction, "SampleManagementService", 4 * 1028, NULL, 5, &xHandleSampleManagementService);
 }
@@ -478,7 +478,7 @@ void vStopCurrentSample()
             vTaskDelete(xHandleSampleManagementService);
             xHandleSampleManagementService = NULL;
         }
-        vStartSampleManagementService();    /* restarting the sample management service once again */
+        start_samplemanagement_service();    /* restarting the sample management service once again */
     }
 }
 

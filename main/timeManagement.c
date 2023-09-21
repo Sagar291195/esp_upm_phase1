@@ -132,7 +132,7 @@ void vSetSystemTimeUsingCompileTime()
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vInitializeTimeManagement()
+void timemanagement_intialization()
 {
     ESP_LOGI(TAG, "Initializing time management");
     vSetSystemTimeUsingCompileTime();

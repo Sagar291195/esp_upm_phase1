@@ -360,7 +360,7 @@ uint16_t getMotorPIDSampleComputeTime()
 /********************************************************************************************
  *  
  ********************************************************************************************/
-void vInitializeMotor()
+void motor_initialization()
 {
     xTaskCreate(motorTask, "motorTask", 2 * 2048, NULL, 5, NULL);
 }

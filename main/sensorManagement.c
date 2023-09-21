@@ -601,7 +601,7 @@ float fGetSdp32TemperatuerAverageValue()
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void vInitiateSensorsOnBoard()
+void sensor_initialization(void)
 {
     vInitiateRTCSensor();
     vTaskDelay(1000);

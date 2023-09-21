@@ -90,10 +90,6 @@ sequence_t *pGetAddressOfSequenceArray();
  */
 void vSetSequenceArrayToNVS();
 
-/**
- * @brief retrive the samples from the nvs and stores into the array
- */
-void vGetSequenceFromNvsToArray();
 
 /**
  * @brief return the number of Sequence in the array or in the given sample
