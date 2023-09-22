@@ -50,6 +50,7 @@ LV_IMG_DECLARE(archiv_icon)
  **********************/
 char guiTime[25];
 
+lv_obj_t *crnt_screen;
 lv_obj_t *scrSummaryEndArch;
 lv_obj_t *xseParentContainer_seArch;
 lv_obj_t *_xseContStatusBar_seArch;

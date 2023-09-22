@@ -35,6 +35,7 @@ extern char guiMinDef[32];
 extern bool defaultParaSelected;
 extern int dashboardflg;
 extern int totalSecond;
+extern lv_obj_t *crnt_screen;
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/

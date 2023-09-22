@@ -35,12 +35,8 @@ LV_IMG_DECLARE(left_arrow_icon)
  **********************/
 static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask);
 static void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask);
-static void startTimer(void);
-static void vUpdateInfoWidgetTask(void);
-static void infoWidgetUpdateTask_cb(lv_task_t *infoWidgetUpdateTask);
 static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event);
-static void start_timer_callback(void *args);
 
 /**********************
  *  STATIC VARIABLES
@@ -62,8 +58,6 @@ char guiMinDef[32];
 
 int xSpacebwline = 2;
 int strttmrcount = 0;
-bool PumpStopForcefully;
-
 bool defaultParaSelected;
 
 /* refers to the current ongoing screen */
@@ -571,40 +565,6 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         set_rollermovck_flag(false);
         pxDashboardScreen();
     }
-}
-
-static void startTimer(void)
-{
-    esp_timer_handle_t JTCesp_timer_handle;    // JTC = Job Time Counter
-    const esp_timer_create_args_t esp_timer_create_args = {
-        .callback = start_timer_callback,
-        .name = "Job Time Counter"};
-   
-    esp_timer_create(&esp_timer_create_args, &JTCesp_timer_handle);
-    esp_timer_start_once(JTCesp_timer_handle, totalSecond * 1000000);
-}
-
-static void start_timer_callback(void *args)
-{
-    if (PumpStopForcefully != true)
-    {
-        vUpdateInfoWidgetTask();
-    }
-    PumpStopForcefully = false;
-}
-
-static void infoWidgetUpdateTask_cb(lv_task_t *infoWidgetUpdateTask)
-{
-    dashboardflg = 2;
-    DashboardInfoWidget();
-    lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
-    lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
-}
-
-static void vUpdateInfoWidgetTask(void)
-{
-    infoWidgetUpdateTask = lv_task_create(infoWidgetUpdateTask_cb, 100, LV_TASK_PRIO_MID, NULL);
-    lv_task_once(infoWidgetUpdateTask);
 }
 
 /**********************
