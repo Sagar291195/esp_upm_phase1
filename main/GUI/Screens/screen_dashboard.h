@@ -1,10 +1,3 @@
-/**
- * @file screen_dashboard.h
- *
- */
-
-//   SCREEN_CODE_H
-
 #ifndef SCREEN_DASHBOARD_H
 #define SCREEN_DASHBOARD_H
 
@@ -13,49 +6,31 @@ extern "C"
 {
 #endif
 
-    /*********************
-     *      INCLUDES
-     *********************/
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 
-    /*********************
-     *      DEFINES
-     *********************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
-    /**********************
-     *     TYPEDEFS
-     **********************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+extern lv_obj_t *xStopButtonLabel;
+extern lv_obj_t *_xStopBtn;
 
-    /**********************
-     *  GLOBAL MACROS
-     **********************/
-
-    /**********************
-     *  GLOBAL VARIABLES
-     **********************/
-    extern lv_obj_t *xStopButtonLabel;
-    extern lv_obj_t *_xStopBtn;
-    extern lv_obj_t *_xStopBtn;
-
-    extern bool PumpStopForcefully;
-    /**********************
-     *  GLOBAL PROTOTYPES
-     **********************/
-
-    void DashboardInfoWidget(void);
-    void pxDashboardScreen(void);
-    void BigButton(void);
-    void startJobBTN(void);
-    void stopBTN(void);
-
-    void _xTimeLabel_refr_func(lv_task_t *refresherTask); /*This function wil be called periodically to refresh the guiTime label*/
-
-    void vUpdateDashboardScreen();
-    /*  this fuction will display the job finished on the screen  */
-    void vShowJobFinishedDashboardScreen();
-
-    /**********************
-     *    ERROR ASSERT
-     **********************/
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
+void DashboardInfoWidget(void);
+void pxDashboardScreen(void);
+void vUpdateDashboardScreen();
+void vShowJobFinishedDashboardScreen();
 
 #ifdef __cplusplus
 } /* extern "C" */

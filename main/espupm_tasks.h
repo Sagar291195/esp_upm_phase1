@@ -56,7 +56,6 @@ typedef struct
  ********************************************************************************************/
 extern char today_Date_Msg[200];
 extern char guiDate[40];
-extern bool buzzer_on;
 
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
@@ -65,6 +64,9 @@ void ds3231_task(void *pvParameters);
 void buzzer_task(void *pvParamters);
 void ws2812_task(void *pvParamters);
 void set_navier_time_flag(bool value);
+bool get_buzzeron_stat(void);
+void set_buzzeron_stat(bool stat);
+struct tm get_current_time(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

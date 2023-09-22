@@ -35,6 +35,7 @@ LV_IMG_DECLARE(ok_icon)
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask);
 static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void QuitBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 
@@ -1185,7 +1186,7 @@ void sssSummarySampleScreen(void)
         screenid = SCR_SUMMARY_SAMPLE;
 }
 
-void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
+static void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
 {
         if (lv_obj_get_screen(__sssTimeLabel) == lv_scr_act())
         {

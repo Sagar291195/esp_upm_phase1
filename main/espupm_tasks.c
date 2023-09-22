@@ -46,7 +46,6 @@ struct tm navier_time;
  *                            STATIC VARIABLES
  ********************************************************************************************/
 float noOfSamplesSdp32[NO_OF_SAMPLES_SDP32] = {0};      /* array which stores the number of samples in a second for the sdp32 sensor */
-unsigned short day_counter;
 lv_task_t *infoWgtUpdtWaitToProgTask;                   /*Task to be called after wait time is over */
 char today_Date_Msg[200];
 char month_name[5] = "";
@@ -67,7 +66,6 @@ char guiTime[25];
 char guiDate[40];
 char guiHrDef[25];
 char guiMinDef[32];
-char guiDateNext1[200];
 char GuiDateRollerStr[700];
 char guiSeqDate0[25];
 char guiSeqDate1[25];
@@ -135,7 +133,6 @@ void ds3231_task(void *pvParameters)
     while (1)
     {
         vTaskDelay(pdMS_TO_TICKS(1000));
-
         if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
         {
             if (navier_set_time)
@@ -179,65 +176,50 @@ void ds3231_task(void *pvParameters)
             sprintf(guiHrDef, "%d", navier_time.tm_hour);
             sprintf(guiMinDef, "%d", navier_time.tm_min);
 
-            char now[5] = "Now";
             sprintf(today_Date_Msg, "Today is %2d %s %04d", navier_time.tm_mday, month_name, navier_time.tm_year + 1900);
-
-            sprintf(guiDateNext1, " %s \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n %04d-%02d-%02d   \n",
-                    now, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 0, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 1, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 2, navier_time.tm_year + 1900, navier_time.tm_mon + 1, navier_time.tm_mday + 3);
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(0);
-            day_counter = 0;
             sprintf(guiSeqDate0, "%04d/%02d/%02d", year, month, day);
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(1);
-            day_counter = 0;
             sprintf(guiSeqDate1, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(2);
-            day_counter = 0;
             sprintf(guiSeqDate2, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(3);
-            day_counter = 0;
             sprintf(guiSeqDate3, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(4);
-            day_counter = 0;
             sprintf(guiSeqDate3, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(5);
-            day_counter = 0;
             sprintf(guiSeqDate4, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(6);
-            day_counter = 0;
             sprintf(guiSeqDate5, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(7);
-            day_counter = 0;
             sprintf(guiSeqDate6, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(8);
-            day_counter = 0;
             sprintf(guiSeqDate7, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(9);
-            day_counter = 0;
             sprintf(guiSeqDate8, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             set_date(navier_time.tm_mday, navier_time.tm_mon + 1, navier_time.tm_year + 1900);
             skip_days(10);
-            day_counter = 0;
             sprintf(guiSeqDate9, "%04d/%02d/%02d", year, month, day); // day, month, year
 
             sprintf(GuiDateRollerStr, "%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n", guiSeqDate0, guiSeqDate1, guiSeqDate2, guiSeqDate3, guiSeqDate4, guiSeqDate5, guiSeqDate6, guiSeqDate7, guiSeqDate8, guiSeqDate9);
@@ -289,13 +271,20 @@ void ds3231_task(void *pvParameters)
             {
                 strcpy(month_name, "DEC");
             }
-
-            // xSemaphoreGive(i2c_communication_semaphore);
         }
     }
 
     vTaskDelete(NULL);
 }
+
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
+struct tm get_current_time(void)
+{
+    return navier_time;
+}
+ 
 
 /********************************************************************************************
  *                          
@@ -316,6 +305,22 @@ void buzzer_task(void *pvParamters)
         vTaskDelay(100);
     }
     vTaskDelete(NULL);
+}
+
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
+bool get_buzzeron_stat(void)
+{
+    return buzzer_on;
+}
+
+/********************************************************************************************
+ *                          
+ ********************************************************************************************/
+void set_buzzeron_stat(bool stat)
+{
+    buzzer_on = stat;
 }
 
 /********************************************************************************************

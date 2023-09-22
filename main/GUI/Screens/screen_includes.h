@@ -1,13 +1,3 @@
-
-
-/**
- * @file screen_includes.h
- *
- */
-
-// SCREEN_INCLUDES_H
-// SCREEN_INCLUDES_H
-
 #ifndef SCREEN_INCLUDES_H
 #define SCREEN_INCLUDES_H
 
@@ -16,15 +6,16 @@ extern "C"
 {
 #endif
 
-    /*********************
-     *      INCLUDES
-     *********************/
-
-#include <stdbool.h>
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 #include "../../lvgl/lvgl.h"
 
@@ -54,62 +45,57 @@ extern "C"
 #include "../Widgets/ResumeInfoWidget.h"
 #include "../Widgets/sequence_widget.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
 #include "esp_upm.h"
 #include "espupm_tasks.h"
 
-/*********************
- *      DEFINES
- *********************/
-#define NUM_OF_FLOW_CALIBRATION_POINT 3
-    /**********************
-     *      TYPEDEFS
-     **********************/
-    enum
-    {
-        SCR_PASSWORD,
-        SCR_DASHBOARD,
-        SCR_METROLOGY_PASSWORD,
-        SCR_CHANGE_PASSWORD,
-        SCR_METROLOGY_MENU,
-        SCR_EXTERNAL_TEMPERATURE_SETTINGS,
-        SCR_EXTERNAL_TEMPERATURE_ADJUST,
-        SCR_EXTERNAL_PRESSURE_SETTINGS,
-        SCR_EXTERNAL_PRESSURE_ADJUST,
-        SCR_EXTERNAL_HUMIDITY_SETTINGS,
-        SCR_EXTERNAL_HUMIDITY_ADJUST,
-        SCR_INTERNAL_TEMPERATURE_SETTINGS,
-        SCR_INTERNAL_TEMPERATURE_ADJUST,
-        SCR_INTERNAL_PRESSURE_SETTINGS,
-        SCR_INTERNAL_PRESSURE_ADJUST,
-        SCR_INTERNAL_HUMIDITY_SETTINGS,
-        SCR_INTERNAL_HUMIDITY_ADJUST,
-        SCR_FLOW_SETTINGS,
-        SCR_FLOW_ADJUST,
-        SCR_FLOW_CALIBRATION,
-        SCR_FLOW_PARAMETER,
-        SCR_ARCHIEVE,
-        SCR_INFO,
-        SCR_PARAMETER,
-        SCR_PIDTUNE,
-        SCR_PRESET,
-        SCR_SERVICE,
-        SCR_SUMMARY_START,
-        SCR_SUMMARY_END,
-        SCR_SUMMARY_SAMPLE,
-    } metrology_screen_t;
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define NUM_OF_FLOW_CALIBRATION_POINT   3
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
+enum
+{
+    SCR_PASSWORD,
+    SCR_DASHBOARD,
+    SCR_METROLOGY_PASSWORD,
+    SCR_CHANGE_PASSWORD,
+    SCR_METROLOGY_MENU,
+    SCR_EXTERNAL_TEMPERATURE_SETTINGS,
+    SCR_EXTERNAL_TEMPERATURE_ADJUST,
+    SCR_EXTERNAL_PRESSURE_SETTINGS,
+    SCR_EXTERNAL_PRESSURE_ADJUST,
+    SCR_EXTERNAL_HUMIDITY_SETTINGS,
+    SCR_EXTERNAL_HUMIDITY_ADJUST,
+    SCR_INTERNAL_TEMPERATURE_SETTINGS,
+    SCR_INTERNAL_TEMPERATURE_ADJUST,
+    SCR_INTERNAL_PRESSURE_SETTINGS,
+    SCR_INTERNAL_PRESSURE_ADJUST,
+    SCR_INTERNAL_HUMIDITY_SETTINGS,
+    SCR_INTERNAL_HUMIDITY_ADJUST,
+    SCR_FLOW_SETTINGS,
+    SCR_FLOW_ADJUST,
+    SCR_FLOW_CALIBRATION,
+    SCR_FLOW_PARAMETER,
+    SCR_ARCHIEVE,
+    SCR_INFO,
+    SCR_PARAMETER,
+    SCR_PIDTUNE,
+    SCR_PRESET,
+    SCR_SERVICE,
+    SCR_SUMMARY_START,
+    SCR_SUMMARY_END,
+    SCR_SUMMARY_SAMPLE,
+} metrology_screen_t;
 
-    extern uint8_t screenid;
-    extern int global_CurveDegree;
-    /**********************
-     * GLOBAL PROTOTYPES
-     **********************/
-
-    /**********************
-     *      MACROS
-     **********************/
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
+extern uint8_t screenid;
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 
 #ifdef __cplusplus
 } /* extern "C" */

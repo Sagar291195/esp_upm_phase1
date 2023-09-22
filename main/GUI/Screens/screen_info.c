@@ -30,7 +30,7 @@ LV_IMG_DECLARE(left_arrow_icon)
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
+static void infoTimeLabel_refr_func(lv_task_t *inforefresherTask);
 static void _infoBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 
 /**********************
@@ -98,7 +98,6 @@ void CallScreenInfo(void)
     infoTimeLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(infoTimeLabel, _infoContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12, 5);
     lv_label_set_text(infoTimeLabel, guiTime);
-    // lv_task_create(infoTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     static lv_style_t infoTimeLabelStyle;
     lv_style_init(&infoTimeLabelStyle);
@@ -251,7 +250,7 @@ void CallScreenInfo(void)
     screenid = SCR_INFO;
 }
 
-void infoTimeLabel_refr_func(lv_task_t *inforefresherTask)
+static void infoTimeLabel_refr_func(lv_task_t *inforefresherTask)
 {
     if (lv_obj_get_screen(infoTimeLabel) == lv_scr_act())
     {

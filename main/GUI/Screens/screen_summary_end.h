@@ -1,30 +1,26 @@
-/**
- *  @file   : screen_summary_end.h
- *  @brief  : This screen is to show the summary of entered preset values
- *  @details: This file is to show summary screen,
- *
- */
+#ifndef SCREEN_SUMMARY_END_H
+#define SCREEN_SUMMARY_END_H
 
-/*********************
- *      INCLUDES
- *********************/
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-/*********************
- *      DEFINES
- *********************/
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+ 
+ /********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 
-/**********************
- *     TYPEDEFS
- **********************/
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 
-/**********************
- *  GLOBAL MACROS
- **********************/
-
-/**********************
- *  GLOBAL VARIABLES
- **********************/
-
+/********************************************************************************************
+ *                           GLOBAL VARIABLES
+ ********************************************************************************************/
 lv_obj_t *crnt_screen;
 lv_obj_t *scrSummaryEnd;
 lv_obj_t *xseParentContainer_se;
@@ -114,25 +110,18 @@ lv_obj_t *_xseBTNValidLbl_se;
 
 lv_task_t *__xserefresherTask;
 
-char *Seq_Number;
 char guiMinDef[32];
-
-char _xsSProllerbuf[32];
-char WseqNum1[5];
 char _xsDurHourRollerbuf[32];
-char _xsDurMinutrollerbuf[32];
 
-/**********************
- *  GLOBAL PROTOTYPES
- **********************/
+/********************************************************************************************
+ *                           GLOBAL FUNCTIONS
+ ********************************************************************************************/
 void xseSummaryEndScreen(void);
 void SequenceWidgetArrange(void);
-// void xSSE_ArchData(void);
-void xDrawSummaryHeading(void);
-void xDrawArchHeadNav(void);
 
-void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask);
 
-/**********************
- *    ERROR ASSERT
- **********************/
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif /*SCREEN_SUMMARY_END_H*/

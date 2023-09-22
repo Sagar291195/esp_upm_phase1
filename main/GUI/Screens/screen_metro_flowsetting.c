@@ -44,7 +44,7 @@ static void __mfsValidAdjBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
-
+int global_CurveDegree = 4;
 lv_obj_t *crnt_screen;
 lv_obj_t *scrFlowSetting;
 lv_obj_t *mfsParentCont;

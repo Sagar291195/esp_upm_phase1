@@ -28,7 +28,7 @@ char MenuBTN_INFO[10] = "INFO";
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
+static void _xTimeLabel_refr_func(lv_task_t *refresherTask); 
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -41,8 +41,6 @@ char MenuBTN_INFO[10] = "INFO";
  *  GLOBAL VARIABLES
  **********************/
 
-// extern var
-int global_DashbordBTNflag;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scr_dashbord;
@@ -161,8 +159,17 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
     }
 }
 
-// Envent handler for menuscreen touching off
+bool get_archiv_or_summary_screen_stat(void)
+{
+    return iArchORSummaryScrn;
+}
 
+void set_archiv_or_summary_screen(bool val)
+{
+    iArchORSummaryScrn = val;
+}
+
+// Envent handler for menuscreen touching off
 static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
@@ -246,7 +253,6 @@ void pxDashboardScreen(void)
     lv_style_set_text_font(&_xTimeLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_style_set_text_color(&_xTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xTimeLabel, LV_LABEL_PART_MAIN, &_xTimeLabelStyle);
-    // lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
     refresherTask = lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_HIGHEST, NULL);
 
     // Create Label for Battery icon
@@ -408,8 +414,6 @@ void pxDashboardScreen(void)
     lv_style_set_radius(&xStopButtonLabelStyle, LV_LABEL_PART_MAIN, 0);
     lv_obj_add_style(xStopButtonLabel, LV_LABEL_PART_MAIN, &xStopButtonLabelStyle);
     // lv_obj_set_style_local_border_width(_xStartBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
-
-    // BigButton();
 
     //========================================================================================
     // Create a Menu List list
@@ -587,7 +591,7 @@ void DashboardInfoWidget(void)
  *
  * @param refresherTask task handle
  */
-void _xTimeLabel_refr_func(lv_task_t *refresherTask)
+static void _xTimeLabel_refr_func(lv_task_t *refresherTask)
 {
     if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
     {

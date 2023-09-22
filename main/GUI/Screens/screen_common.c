@@ -34,11 +34,7 @@
  *  GLOBAL VARIABLES
  **********************/
 extern char guiTime[25];
-extern char guiDateNext1[200];
-extern char GuiDateRollerStr[700];
 char stopDate[40];
-
-int totalSecond;
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -59,7 +55,6 @@ void delay(int number_of_seconds)
 void getSeqStopDT(int afterHr, int afterMin, int currHr, int currMin)
 {
     int getHr = 0;    //
-    int getMin = 0;   //
     int totalHr = 0;  //
     int totalMin = 0; //
 
@@ -77,15 +72,10 @@ void getSeqStopDT(int afterHr, int afterMin, int currHr, int currMin)
 
     if (totalMin >= 60)
     {
-        getMin = totalMin - 60;
         getHr++;
     }
-    else
-    {
-        getMin = totalMin;
-    }
+    
     stopHr = getHr;
-    stopMin = getMin;
 }
 
 void getStopDate(int xdurHr, int xstopHr)

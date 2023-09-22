@@ -100,8 +100,6 @@ void xCallArchvScreen(void)
     lv_style_set_text_color(&_xseTimeLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseTimeLabel_seArch, LV_LABEL_PART_MAIN, &_xseTimeLabelStyle_se);
 
-    //__xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
-
     // Create Label for Battery icon
     __xseBatteryLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseBatteryLabel_seArch, _xseContStatusBar_seArch, LV_ALIGN_IN_TOP_RIGHT, -10, 5);

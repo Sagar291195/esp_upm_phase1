@@ -44,8 +44,6 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 /**********************
  *  STATIC VARIABLES
  **********************/
-
-int global_CurveDegree = 4;
 int metroflowUnit;
 float reference_flowcalibration_Points[NUM_OF_FLOW_CALIBRATION_POINT];
 static int flow_calibration_point_count = 0;

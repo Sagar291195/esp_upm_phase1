@@ -54,7 +54,6 @@ enum
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
  extern int day, month, year;
-extern unsigned short day_counter;
 
  /********************************************************************************************
  *                           STATIC VARIABLES
@@ -489,7 +488,6 @@ int is_leap(int y)
 void next_day()
 {
     day += 1;
-    day_counter++;
     if (day > days_in_month[month])
     {
         day = 1;

@@ -37,7 +37,10 @@ LV_IMG_DECLARE(ok_icon)
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static void xDrawSummaryHeading(void);
+static void xDrawArchHeadNav(void);
 
+static void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask);
 static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event);
 static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event);
@@ -54,8 +57,6 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-
-bool iArchORSummaryScrn;
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -143,8 +144,7 @@ void xseSummaryEndScreen(void)
     lv_obj_set_style_local_bg_color(_xseSummaryParent_se, LV_PAGE_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
     lv_obj_set_style_local_border_width(_xseSummaryParent_se, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0);
 
-    // iArchORSummaryScrn
-    if (iArchORSummaryScrn == 0)
+    if (get_archiv_or_summary_screen_stat() == 0)
     {
         xDrawSummaryHeading();
     }
@@ -152,52 +152,6 @@ void xseSummaryEndScreen(void)
     {
         xDrawArchHeadNav();
     }
-
-    // xDrawSummaryHeading();
-
-    // xDrawArchHeadNav();
-
-    // //Crate a container to contain Summary Start Header
-
-    // __xseParaHeadingCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
-    // lv_obj_set_size(__xseParaHeadingCont_se, 300, 70);
-    // lv_obj_set_width(__xseParaHeadingCont_se, lv_page_get_width_fit(_xseSummaryParent_se));
-    // lv_obj_align(__xseParaHeadingCont_se, _xseSummaryParent_se, LV_ALIGN_IN_TOP_MID, 0,2);
-    // lv_obj_set_style_local_bg_color(__xseParaHeadingCont_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
-    // lv_obj_set_style_local_border_width(__xseParaHeadingCont_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
-
-    // // Create Black Arrow Container
-
-    // lv_obj_t * _xseBackArrowContainer;
-    // _xseBackArrowContainer = lv_cont_create(__xseParaHeadingCont_se, NULL);
-    // lv_obj_set_size(_xseBackArrowContainer, 60, 60);
-    // lv_obj_set_width(_xseBackArrowContainer, lv_page_get_width_fit(_xseSummaryParent_se));
-    // lv_obj_align(_xseBackArrowContainer, __xseParaHeadingCont_se, LV_ALIGN_IN_LEFT_MID, 0,0);
-    // lv_obj_set_style_local_bg_color(_xseBackArrowContainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D) ); //5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
-    // lv_obj_set_style_local_border_width(_xseBackArrowContainer, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0 );
-    // lv_obj_set_event_cb(_xseBackArrowContainer, __xseBackArrow_event_handler);
-
-    // // Create Back arrow img
-
-    // ___xseBackArrowLabel_se = lv_img_create(_xseBackArrowContainer, NULL);
-    // lv_img_set_src(___xseBackArrowLabel_se, &left_arrow_icon);
-    // lv_obj_align(___xseBackArrowLabel_se, _xseBackArrowContainer, LV_ALIGN_IN_LEFT_MID, 0 , 0);
-    // lv_obj_set_click(___xseBackArrowLabel_se, true);
-    // lv_obj_set_style_local_image_recolor_opa(___xseBackArrowLabel_se, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
-    // lv_obj_set_style_local_image_recolor(___xseBackArrowLabel_se, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    // lv_obj_set_event_cb(___xseBackArrowLabel_se, __xseBackArrow_event_handler);
-
-    // //Create Label for Sequences "Heading"
-
-    // ___xseSummaryHeadingLbl_se = lv_label_create(__xseParaHeadingCont_se, NULL);
-    // lv_obj_align(___xseSummaryHeadingLbl_se, __xseParaHeadingCont_se, LV_ALIGN_IN_BOTTOM_MID, -60, -35);
-    // lv_label_set_text(___xseSummaryHeadingLbl_se, "   Summary  ");
-
-    // static lv_style_t _xseParameterHeadingStyle_se;
-    // lv_style_init(&_xseParameterHeadingStyle_se);
-    // lv_style_set_text_font(&_xseParameterHeadingStyle_se, LV_STATE_DEFAULT  ,&lv_font_montserrat_22); //signal_20
-    // lv_style_set_text_color(&_xseParameterHeadingStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
-    // lv_obj_add_style(___xseSummaryHeadingLbl_se, LV_LABEL_PART_MAIN, &_xseParameterHeadingStyle_se);
 
     __xseBaseContainer_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_set_size(__xseBaseContainer_se, 300, 550);
@@ -365,7 +319,6 @@ void xseSummaryEndScreen(void)
     // Put Var Text label here
     __xseVarSQDurLbl_se = lv_label_create(_xseContSQDur_se, NULL);
     lv_obj_align(__xseVarSQDurLbl_se, _xseContSQDur_se, LV_ALIGN_IN_RIGHT_MID, x_align, 0);
-    // lv_label_set_text_fmt(__xseVarSQDurLbl_se, "%sH%sM", _xsDurHourrollerbuf, _xsDurMinutrollerbuf );
     lv_label_set_text(__xseVarSQDurLbl_se, xSampleSummary.cDuration); // entering the duration
     lv_obj_add_style(__xseVarSQDurLbl_se, LV_LABEL_PART_MAIN, &_xVarTxtStyle_se);
 
@@ -738,7 +691,7 @@ void xseSummaryEndScreen(void)
     screenid = SCR_SUMMARY_END;
 }
 
-void xDrawSummaryHeading(void)
+static void xDrawSummaryHeading(void)
 {
     // Crate a container to contain Summary Start Header
     __xseParaHeadingCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
@@ -780,7 +733,7 @@ void xDrawSummaryHeading(void)
 }
 
 /* Create the heading for the archive screen (Summary) */
-void xDrawArchHeadNav(void)
+static void xDrawArchHeadNav(void)
 {
     __xseParaHeadingCont_se = lv_cont_create(_xseSummaryParent_se, NULL);
     lv_obj_set_size(__xseParaHeadingCont_se, 300, 130);
@@ -859,7 +812,6 @@ void xDrawArchHeadNav(void)
 
 void SequenceWidgetArrange(void)
 {
-    // int NumOfSeq = atoi(WseqNum1);
     lv_obj_t *curr_obj = __xseBaseContainer_se;
     // int NumOfSeq = 1;
     sequence_t *xSequenceData = pGetAddressOfSequenceArray();
@@ -877,8 +829,8 @@ void SequenceWidgetArrange(void)
         lv_obj_set_style_local_bg_color(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
         lv_obj_set_style_local_border_opa(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
         sqSquenceNum(Seq, i + 1);
-        sqSetFlowSetPoint(Seq, xSequenceData[i].fFlowSetPoint); //_xsSProllerbuf
-        sqSetDuration(Seq, xSequenceData[i].uDurationHour);     //_xsDurHourrollerbuf,, _xsDurMinutrollerbuf
+        sqSetFlowSetPoint(Seq, xSequenceData[i].fFlowSetPoint); 
+        sqSetDuration(Seq, xSequenceData[i].uDurationHour);     
         if (xSequenceData[i].bSucessfullyRun)
         {
             sqSetProblem(Seq, "NONE");
@@ -895,7 +847,7 @@ void SequenceWidgetArrange(void)
     }
 }
 
-void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
+static void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
 {
     if (lv_obj_get_screen(__xseTimeLabel_se) == lv_scr_act())
     {
@@ -914,7 +866,7 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xserefresherTask);
         // printf("Back to Dashbord from presetscrn\n");
         global_DashbordBTNflag = 1;
-        iArchORSummaryScrn = 0;
+        set_archiv_or_summary_screen(0);
         xsPresetScreenAdvance();
     }
 }
@@ -924,10 +876,9 @@ static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 
     if (event == LV_EVENT_RELEASED)
     {
-        // Function
         lv_task_del(__xserefresherTask);
         dashboardflg = 0;
-        iArchORSummaryScrn = 0;
+        set_archiv_or_summary_screen(0);
         pxDashboardScreen();
     }
 }
