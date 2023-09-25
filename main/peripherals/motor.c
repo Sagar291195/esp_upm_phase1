@@ -263,29 +263,27 @@ void setStateOfMotor(bool state)
  ********************************************************************************************/
 void motorPidComputeAndSetOutput(float input)
 {
-    ESP_LOGD(TAG, "input %f", input);
-    ESP_LOGD(TAG, "setpoint %f", pid_setTargetVaule);
+    
     float fOutputDuty = 0;
 
-    /*computing the error percentage  */
-    float error = (pid_setTargetVaule - input) / pid_setTargetVaule;
-    ESP_LOGD(TAG, "ERROR %f", error);
+    
+    ESP_LOGD(TAG, "input %f, setpoint %f", input, pid_setTargetVaule);
+    float error = (pid_setTargetVaule - input) / pid_setTargetVaule;    /*computing the error percentage  */
     /* if error is less than the default error then set the normal pid pramaters */
     if (fabs(error) < motorPID_DEFAULT_ERROR)
     {
+        
         setMotorPwmPidSetKpKiKd(fKp, fKi, fKd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUTE_TIME_STABLE_IN_MS;
     }
     else
     {
+        ESP_LOGD(TAG, "ERROR %f", error);
         setMotorPwmPidSetKpKiKd(fAkp, fAki, fAkd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
     }
     ESP_ERROR_CHECK_WITHOUT_ABORT(pid_compute(pid_ctrl, error, &fOutputDuty));
-    ESP_LOGD(TAG, "output %f", fOutputDuty);
-
-    /*setiing the motor duty cycle */
-    motorPWMSetDutyCycle(fOutputDuty);
+    motorPWMSetDutyCycle(fOutputDuty);      /*setiing the motor duty cycle */
 }
 
 /********************************************************************************************
