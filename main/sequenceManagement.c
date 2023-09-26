@@ -109,8 +109,6 @@ static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
     TickType_t xLastWakeTime = xTaskGetTickCount();
     uint64_t uSequnceDurationInSec = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60));
     float fPercentageOfJobDone = 0;
-
-    
     vSetTotalSecondPassesInGivenSequence(0);    /* setting the total volume and seconds pass in the sequence to zero */
     vSetTotalLitersHasBeenPassInGivenSequence(0);
 
@@ -163,9 +161,8 @@ static void vMonitorSensorDataTask(void *pvParameters)
         uCounterForCalculatingMeanValues++;
 
         get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
-        vGetExternalSensorData(&raw_sensor_data);
-       
-        vGet_INA3221_sensor_data(&xInaSensorData[0]);   /* getting the INA data */
+        get_external_sensor_data(&raw_sensor_data);
+        get_ina3221_sensor_data(&xInaSensorData[0]);   /* getting the INA data */
 
         /* calulating the mean temp, humidity and pressure */
         xCurrentSequenceSummary.ambientTemperature.fMeanTemperature = ((xCurrentSequenceSummary.ambientTemperature.fMeanTemperature * (uCounterForCalculatingMeanValues - 1)) + external_sensor_data.fTemperature) / uCounterForCalculatingMeanValues;
@@ -184,24 +181,18 @@ static void vMonitorSensorDataTask(void *pvParameters)
         {
             xCurrentSequenceSummary.ambientTemperature.bIsInRange = false;  /* raise the flag inside the sequence summary to indicate the error */
         }
-
-        
         if ((external_sensor_data.fHumidity < EXTERNAL_SENSOR_HUMIDITY_MIN_VALUE) || (external_sensor_data.fHumidity > EXTERNAL_SENSOR_HUMIDITY_MAX_VALUE)) /* checking if the external sensor humidity is valid or not */
         {
             xCurrentSequenceSummary.ambientHumidity.bIsInRange = false;  /* raise the flag inside the sequence summary to indicate the error */
         }
-
-        
         if ((external_sensor_data.fPressure < EXTERNAL_SENSOR_PRESSURE_MIN_VALUE) || (external_sensor_data.fPressure > EXTERNAL_SENOSR_PRESSURE_MAX_VALUE)) /* checking if the external sensor pressure is valid or not */
         {
             xCurrentSequenceSummary.ambientPressure.bIsInRange = false;  /* raise the flag inside the sequence summary to indicate the error */
         }
 
         uint64_t uConterForAirFlowRate = uCounterForCalculatingMeanValues - 10; // we need to calulate the air flow rate after the 10 seconds or iteration has been passed. All above calculations will be performed for the air flow as well
-
         if (uConterForAirFlowRate > 0) // after 10 seconds or iteration has been passed
         {
-           
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMean = ((xCurrentSequenceSummary.airflowVolumetric.fAirflowMean * (uConterForAirFlowRate - 1)) + xCurrentSequenceSummary.airflowVolumetric.fAirflowMean) / uConterForAirFlowRate; /* calculating the mean air flow rate */
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue > fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue : fGetVolumetricFlowUserCompensated();/* calculating the max and min for the air flow rate */
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue < fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue : fGetVolumetricFlowUserCompensated();
@@ -213,16 +204,15 @@ static void vMonitorSensorDataTask(void *pvParameters)
             printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
             printf("------------------Settings-----------------------\n");
             bOneTime = true;
-            //printf(" hardware Time,SDP_temperature,SDP_MassFlow,External_pressure_BME,External_temp_BME,External_humidity_BME,totalliter,TotalHour,C1BusVolt,C1ShuntVolt,C1ShuntCurr,C2BusVolt,C2ShuntVolt,C2ShuntCurr,C3BusVolt,C3ShuntVolt,C3ShuntCurr,RealFlowRate,External AirDensity,internal BME280 temperature,internal BME280 pressure,internal BME280 humidity,internal BME280 Airdensity\n");
         }
         printf("\n\n\nTime: RTC Time: %s",  guiTime );
         printf("Hardware Time: %llu,\n", esp_timer_get_time());
-        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowUserCompensated());
+        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", get_sdp32_temperature_value(), get_sdp32_pressure_value(), fGetMassFlowUserCompensated());
         printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
         printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
         printf("Channel 2: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent);
         printf("External: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw());
-        printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", fGetBme280TemperatureAverages(), fGetBme280HumidityAverages(), fGetBme280PressureAverages(),  fGetInternalAirDensity_Raw());
+        printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  fGetInternalAirDensity_Raw());
         printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
         printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
         printf("Feature: Volumetric Flow Comp: %0.2f LPM, Hour Counter : %0.2f, Volume Counter : %0.2f\n", fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());

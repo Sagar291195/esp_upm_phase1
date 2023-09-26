@@ -92,7 +92,7 @@ float fGetVolumetricFlowUserCompensated()
 ********************************************************************************************/
 float fGetInternalPressureUserCompensated()
 {
-    float result = fGetBme280PressureAverages();
+    float result = get_internal_pressure_value();
     /*  add some user compensation */
     result = result - getcalibrationvalue_int_pressure();
     ESP_LOGD(TAG, "Internal Pressure USER COMPENSATED is %0.2f", result);
@@ -104,7 +104,7 @@ float fGetInternalPressureUserCompensated()
 ********************************************************************************************/
 float fGetInternalHumidityUserCompesated()
 {
-    float result = fGetBme280HumidityAverages();
+    float result = get_internal_humidity_value();
 
     /* add some user compensation */
     result = result - getcalibrationvalue_int_humidity();
@@ -117,7 +117,7 @@ float fGetInternalHumidityUserCompesated()
 ********************************************************************************************/
 float fGetInternalTemperatureUserCompesated()
 {
-    float result = fGetBme280TemperatureAverages();
+    float result = get_internal_temperature_value();
     result = result - getcalibrationvalue_int_temperature(); /* add some user compensation */
     ESP_LOGD(TAG, "Internal Temperature user compensated is %0.2f", result);
     return result;
@@ -129,15 +129,14 @@ float fGetInternalTemperatureUserCompesated()
 void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue)
 {
     external_sensor_data_t sensorvalues;
-    vGetExternalSensorData(&sensorvalues);
 
+    get_external_sensor_data(&sensorvalues);
     float offset_temp = getcalibrationvalue_ext_temperature();
     float offset_pressure = getcalibrationvalue_ext_pressure();
     float offset_humidity = getcalibrationvalue_ext_humidity();
     calibratedvalue->fTemperature = (sensorvalues.fTemperature - offset_temp);
     calibratedvalue->fPressure = (sensorvalues.fPressure - offset_pressure);
     calibratedvalue->fHumidity = (sensorvalues.fHumidity - offset_humidity);
-    
     ESP_LOGD(TAG, "Calibrated External sensor values are temp %0.2f humidiy %0.2f pressure %0.2f", calibratedvalue->fTemperature, calibratedvalue->fHumidity, calibratedvalue->fPressure);
 }
 
@@ -150,7 +149,7 @@ float fGetMassFlowUserCompensated(void)
     float coeffA = 0.0;
     float coeffB = 0.0;
 
-    fResult = fGetSdp32DiffPressureAverageValue();
+    fResult = get_sdp32_pressure_value();
     /*  do some calulation to get the mass flow  */
     if (fResult > 0 && fResult <= getcalibration_reference_sensorvalue1())
     {
@@ -186,7 +185,7 @@ float fGetExternal_AirDesity_Raw(void)
     float result =0;
     external_sensor_data_t xAverageData;
 
-    vGetExternalSensorData(&xAverageData);    
+    get_external_sensor_data(&xAverageData);    
     result =  _fDensityCalculation(xAverageData.fTemperature, xAverageData.fHumidity, xAverageData.fPressure);
     return result;
 
@@ -197,7 +196,7 @@ float fGetExternal_AirDesity_Raw(void)
 ********************************************************************************************/
 float fGetInternalAirDensity_Raw()
 {
-    return _fDensityCalculation(fGetBme280TemperatureAverages(),fGetBme280HumidityAverages(),fGetBme280PressureAverages());
+    return _fDensityCalculation(get_internal_temperature_value(),get_internal_humidity_value(),get_internal_pressure_value());
 }
 
 /********************************************************************************************
