@@ -54,7 +54,7 @@ static void nvsread_totalhours_count(void)
     }
     else
     {
-      ESP_LOGI(TAG, "Total Hours Count : %0.2f", totalHoursCounter);
+      ESP_LOGI(TAG, "Total Hours Count = %0.2f", totalHoursCounter);
     }
 }
 
@@ -70,7 +70,7 @@ static void nvsread_totalliters_count(void)
     }
     else
     {
-      ESP_LOGI(TAG, "Total Liters count : %0.2f", totalLitersCounter);
+      ESP_LOGI(TAG, "Total Liters count = %0.2f", totalLitersCounter);
     }
 }
 

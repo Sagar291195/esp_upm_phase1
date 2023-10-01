@@ -137,7 +137,8 @@ static void external_sensor_read_task(void *pvParameters)
                             external_sensor_data_average.fTemperature = temp_external_sensor_average.fTemperature / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.fHumidity = temp_external_sensor_average.fHumidity / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.fGasResistance = temp_external_sensor_average.fGasResistance / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            ESP_LOGD(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
+                            ESP_LOGI(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
+                            memset(&temp_external_sensor_average, 0x00, sizeof(temp_external_sensor_average));
                         }
                     }
                 }
@@ -153,10 +154,10 @@ static void external_sensor_read_task(void *pvParameters)
 ********************************************************************************************/ 
 static void internal_sensor_read_task(void *pvParamters)
 {
-    static float temp_bme280_temperature_average = 0;  
-    static float temp_bme280_pressure_average = 0;     
-    static float temp_bme280_humidity_average = 0; 
-    static uint8_t internal_sensor_read_count = 0;
+    float temp_bme280_temperature_average = 0;  
+    float temp_bme280_pressure_average = 0;     
+    float temp_bme280_humidity_average = 0; 
+    uint8_t internal_sensor_read_count = 0;
     float pressure, temperature, humidity;
     bmp280_t dev;
     bmp280_params_t params;
@@ -212,7 +213,10 @@ static void internal_sensor_read_task(void *pvParamters)
                     internal_temperature_average = temp_bme280_temperature_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_pressure_average = temp_bme280_pressure_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_humidity_average = temp_bme280_humidity_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                    ESP_LOGD(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, internal_pressure_average);
+                    ESP_LOGI(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, (internal_pressure_average/100));
+                    temp_bme280_temperature_average = 0;
+                    temp_bme280_pressure_average = 0;
+                    temp_bme280_humidity_average = 0;
                 }
             }
             xSemaphoreGive(i2c_communication_semaphore);
@@ -293,7 +297,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ina3221_sensor_data[i].fBusVoltage = bus_voltage;
                 ina3221_sensor_data[i].fShuntVoltage = shunt_voltage;
                 ina3221_sensor_data[i].fShuntCurrent = shunt_current;
-                ESP_LOGD(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
+                ESP_LOGI(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
@@ -363,7 +367,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
-                ESP_LOGD(TAG, "SDP32 Temperature %0.2f, Pressure  %0.2f, massflow : %d", sdp32_temperature_value, sdp32_pressure_value, massFlow);
+                ESP_LOGI(TAG, "SDP32 Temperature %0.2f, Pressure  %0.2f, massflow : %d", sdp32_temperature_value, sdp32_pressure_value, massFlow);
             }
 
         }

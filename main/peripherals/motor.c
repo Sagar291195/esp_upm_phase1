@@ -59,18 +59,10 @@ uint16_t PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
  ********************************************************************************************/
 static void motorTask(void *pvParameters);
 static void setMotorPwmPidSetKpKiKd(float fKp, float fKi, float fKd);
-static void settedPIDParameters(void);
 
  /********************************************************************************************
  *                           STATIC FUNCTIONS
  ********************************************************************************************/
-/********************************************************************************************
- *  
- ********************************************************************************************/
-static void settedPIDParameters(void)
-{
-    ESP_LOGI(TAG, "KP %0.2f, KI %0.2f, KD %0.2f, AKP %0.2f, AKI %0.2f, AKD %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd);
-}
 
 /********************************************************************************************
  *  
@@ -90,8 +82,7 @@ static void motorTask(void *pvParameters)
         /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", get_sdp32_pressure_value());
-           
+            ESP_LOGD(TAG, "Average sdp32 pressure = %0.2f", get_sdp32_pressure_value());
             flowRate = fGetVolumetricFlowUserCompensated();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {
@@ -102,7 +93,7 @@ static void motorTask(void *pvParameters)
             {
                 fTempVariable = fGetTotalLiterCount();
                 fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);   /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                ESP_LOGD(TAG, "FLOW rate IS from motor %0.2f, Total liter : %.2f", flowRate, fTempVariable);
+                ESP_LOGD(TAG, "Flow rate : motor = %0.2f, Total liter = %.2f", flowRate, fTempVariable);
                 vSetTotalLiterCount(fTempVariable); /* updating the total liters flow in the variable */
             }
             motorPidComputeAndSetOutput(flowRate);  /* computing the duty cycle and set it */
@@ -209,7 +200,7 @@ void initializePIDController(void)
                           pid_parameters.fAkp / pid_parameters.fACoff,
                           pid_parameters.fAki / pid_parameters.fACoff,
                           pid_parameters.fAkd / pid_parameters.fACoff);
-    settedPIDParameters();
+    ESP_LOGI(TAG, "KP %0.2f, KI %0.2f, KD %0.2f, AKP %0.2f, AKI %0.2f, AKD %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd);
 }
 
 /********************************************************************************************
@@ -263,22 +254,19 @@ void setStateOfMotor(bool state)
  ********************************************************************************************/
 void motorPidComputeAndSetOutput(float input)
 {
-    
     float fOutputDuty = 0;
 
-    
     ESP_LOGD(TAG, "input %f, setpoint %f", input, pid_setTargetVaule);
     float error = (pid_setTargetVaule - input) / pid_setTargetVaule;    /*computing the error percentage  */
     /* if error is less than the default error then set the normal pid pramaters */
     if (fabs(error) < motorPID_DEFAULT_ERROR)
     {
-        
+        ESP_LOGD(TAG, "ERROR %f", error);
         setMotorPwmPidSetKpKiKd(fKp, fKi, fKd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUTE_TIME_STABLE_IN_MS;
     }
     else
     {
-        ESP_LOGD(TAG, "ERROR %f", error);
         setMotorPwmPidSetKpKiKd(fAkp, fAki, fAkd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
     }

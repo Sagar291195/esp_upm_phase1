@@ -66,7 +66,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External Temperature Calibration : %.02f", calibrationdata.external_temperature_calibration);
+        ESP_LOGI(TAG, "External Temperature Calibration = %.02f", calibrationdata.external_temperature_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, ext_humiditykey, &calibrationdata.external_humidity_calibration);
     if (ret == false)
@@ -76,7 +76,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External Humidity Calibration : %.02f", calibrationdata.external_humidity_calibration);
+        ESP_LOGI(TAG, "External Humidity Calibration = %.02f", calibrationdata.external_humidity_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, ext_pressurekey, &calibrationdata.external_pressure_calibration);
     if (ret == false)
@@ -86,7 +86,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External pressure Calibration : %.02f", calibrationdata.external_pressure_calibration);
+        ESP_LOGI(TAG, "External pressure Calibration = %.02f", calibrationdata.external_pressure_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_temperaturekey, &calibrationdata.internal_temperature_calibration);
     if (ret == false)
@@ -96,7 +96,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal Temperature Calibration : %.02f", calibrationdata.internal_temperature_calibration);
+        ESP_LOGI(TAG, "Internal Temperature Calibration = %.02f", calibrationdata.internal_temperature_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_pressurekey, &calibrationdata.internal_pressure_calibration);
     if (ret == false)
@@ -106,7 +106,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal Pressure Calibration : %.02f", calibrationdata.internal_pressure_calibration);
+        ESP_LOGI(TAG, "Internal Pressure Calibration = %.02f", calibrationdata.internal_pressure_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_huniditykey, &calibrationdata.internal_humidity_calibration);
@@ -117,7 +117,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal humidity Calibration : %.02f", calibrationdata.internal_humidity_calibration);
+        ESP_LOGI(TAG, "Internal humidity Calibration = %.02f", calibrationdata.internal_humidity_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA1, &calibrationdata.flow_coeffA1_calibration);
@@ -128,7 +128,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A1 Calibration : %.02f", calibrationdata.flow_coeffA1_calibration);
+        ESP_LOGI(TAG, "Flow coeff A1 Calibration = %.02f", calibrationdata.flow_coeffA1_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA2, &calibrationdata.flow_coeffA2_calibration);
@@ -139,7 +139,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A2 Calibration : %.02f", calibrationdata.flow_coeffA2_calibration);
+        ESP_LOGI(TAG, "Flow coeff A2 Calibration = %.02f", calibrationdata.flow_coeffA2_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA3, &calibrationdata.flow_coeffA3_calibration);
@@ -150,7 +150,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A3 Calibration : %.02f", calibrationdata.flow_coeffA3_calibration);
+        ESP_LOGI(TAG, "Flow coeff A3 Calibration = %.02f", calibrationdata.flow_coeffA3_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB1, &calibrationdata.flow_coeffB1_calibration);
@@ -161,7 +161,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B1 Calibration : %.02f", calibrationdata.flow_coeffB1_calibration);
+        ESP_LOGI(TAG, "Flow coeff B1 Calibration = %.02f", calibrationdata.flow_coeffB1_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB2, &calibrationdata.flow_coeffB2_calibration);
@@ -172,7 +172,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B2 Calibration : %.02f", calibrationdata.flow_coeffB2_calibration);
+        ESP_LOGI(TAG, "Flow coeff B2 Calibration = %.02f", calibrationdata.flow_coeffB2_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB3, &calibrationdata.flow_coeffB3_calibration);
@@ -183,7 +183,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B3 Calibration : %.02f", calibrationdata.flow_coeffB3_calibration);
+        ESP_LOGI(TAG, "Flow coeff B3 Calibration = %.02f", calibrationdata.flow_coeffB3_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue1, &calibrationdata.flow_reference_sensorvalue1);
@@ -193,7 +193,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 1 : %.02f", calibrationdata.flow_reference_sensorvalue1);
+        ESP_LOGI(TAG, "Flow sensor value 1 = %.02f", calibrationdata.flow_reference_sensorvalue1);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue2, &calibrationdata.flow_reference_sensorvalue2);
@@ -203,7 +203,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue2);
+        ESP_LOGI(TAG, "Flow sensor value 2 = %.02f", calibrationdata.flow_reference_sensorvalue2);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue3, &calibrationdata.flow_reference_sensorvalue3);
@@ -213,7 +213,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue3);
+        ESP_LOGI(TAG, "Flow sensor value 2 = %.02f", calibrationdata.flow_reference_sensorvalue3);
     }
 }
 

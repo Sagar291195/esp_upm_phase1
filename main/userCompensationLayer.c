@@ -68,7 +68,7 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
      * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
     
     fResult = (0.759 * (pow(fDeltaPressure, 0.5288)) * (1.2 / fDensity));
-    ESP_LOGD(TAG, "Pressure  : %.2f, Density : %.02f, Flow : %.02f", fDeltaPressure, fDensity, fResult);
+    ESP_LOGD(TAG, "Pressure  = %.2f, Density = %.02f, Flow = %.02f", fDeltaPressure, fDensity, fResult);
     return fResult;
 }
 
@@ -82,8 +82,7 @@ static float _fFlowCalculation(float fDeltaPressure, float fDensity)
 float fGetVolumetricFlowUserCompensated()
 {
     float result = fGetVolumetricFlow_featureData();
-    /* apply the user compensation */
-    ESP_LOGD(TAG, "user compensated Voulumetric flow is %0.2f", result);
+    ESP_LOGD(TAG, "Volumetric flow = %0.2f", result);    /* apply the user compensation */
     return result;
 }
 

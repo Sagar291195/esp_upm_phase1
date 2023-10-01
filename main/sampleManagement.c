@@ -70,7 +70,7 @@ static void vInitializeEndSummaryVariableToZero(void)
 ********************************************************************************************/
 void vSetCounterValuesEndSummaryDetails()
 {
-    ESP_LOGD(TAG, "Setting the end summary details");
+    ESP_LOGI(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
     vGetCurrentDateAndTime(&timeinfo);
     char cStopDate[40];
@@ -100,8 +100,8 @@ void vSetCounterValuesEndSummaryDetails()
     xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - xEndSummary.xGenericSummary.xHourCounter.fStartHour;
     
     xEndSummary.xGenericSummary.xHourCounter.fVariation = fabs(((xEndSummary.xGenericSummary.xHourCounter.fTargetHour - xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour) / xEndSummary.xGenericSummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", xEndSummary.xGenericSummary.xHourCounter.fTargetHour, xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", xEndSummary.xGenericSummary.xHourCounter.fVariation);
+    ESP_LOGI(TAG, "Hour counter target and effective values are %.2f and %.2f", xEndSummary.xGenericSummary.xHourCounter.fTargetHour, xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour);
+    ESP_LOGI(TAG, "variation in hour is %.2f", xEndSummary.xGenericSummary.xHourCounter.fVariation);
 
     strcpy(xEndSummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
@@ -162,7 +162,6 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
             ESP_LOGI(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
-           
             vSetSequenceToRun(&uCurrentRunningSequenceNumber);   /*  created the sequence to run */
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* waiting for the sequence to finish */
             ESP_LOGD(TAG, "Task notification has been received");

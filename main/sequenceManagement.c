@@ -1,14 +1,6 @@
-/**
- * @file sequenceManagement.c
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief This file consist the sequence management implementation
- * @version 1.1
- * @date 2022-05-17
- *
- * @copyright Copyright (c) 2022
- *
- */
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <sequenceManagement.h>
 #include <string.h>
 #include <nvs.h>

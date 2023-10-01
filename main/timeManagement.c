@@ -1,14 +1,6 @@
-/**
- * @file timeManagement.c
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief Create the implementation of the time related function in the system. This function also initialize the rtc time function
- * @version 1.1
- * @date 2022-05-19
- *
- * @copyright Copyright (c) 2022
- *
- */
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <timeManagement.h>
 
 #include <esp_log.h>

@@ -356,7 +356,7 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                 }
                 else if (screenid == SCR_CHANGE_PASSWORD)
                 {
-                    ESP_LOGI(TAG, "Change Password 1 : %s, %d", pass, temppasword);
+                    ESP_LOGI(TAG, "Change Password 1 = %s, %d", pass, temppasword);
                     lv_textarea_set_text(mpsEnterCalValTA, "");
                     lv_label_set_text(pswdmsg, "Re Enter Metrology Code");
                     passNo = true;
@@ -371,7 +371,7 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
             if (RepassLength == 4)
             {
                 retemppasword = atoi(Re_pass);
-                ESP_LOGI(TAG, "Change Password 2 : %s, %d", Re_pass, retemppasword);
+                ESP_LOGI(TAG, "Change Password 2 = %s, %d", Re_pass, retemppasword);
                 passNo = false;
                 if (retemppasword == temppasword)
                 {
@@ -384,8 +384,8 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                 }
                 else
                 {
-                    ESP_LOGI(TAG, "Password not matched for change : %s , %s", pass, Re_pass);
-                    ESP_LOGI(TAG, "Password not matched for change : %d , %d", temppasword, retemppasword);
+                    ESP_LOGI(TAG, "Password not matched for change = %s , %s", pass, Re_pass);
+                    ESP_LOGI(TAG, "Password not matched for change = %d , %d", temppasword, retemppasword);
                     lv_textarea_set_text(mpsEnterCalValTA, "");
                     lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
                     timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);

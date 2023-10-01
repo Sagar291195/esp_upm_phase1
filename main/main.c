@@ -81,11 +81,11 @@ void app_main()
     }
     else if (err != ESP_OK)
     {
-        ESP_LOGI(TAG, "Nvs cannot be initialized due to %s", esp_err_to_name(err));
+        ESP_LOGI(TAG, "nvs cannot be initialized due to %s", esp_err_to_name(err));
     }
     else
     {
-        ESP_LOGD(TAG, "Nvs initialized");
+        ESP_LOGI(TAG, "nvs initialize successfully");
     }
 
     i2c_communication_semaphore = xSemaphoreCreateMutex();
@@ -108,11 +108,6 @@ void app_main()
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "Code Version: ESPUPM 8-04-2022 V2");
-
-    /* If you want to use a task to create the graphic, you NEED to create a Pinned task
-     * Otherwise there can be problem such as memory corruption and so on.
-     * NOTE: When not using Wi-Fi nor Bluetooth you can pin the guiTask to core 0
-     * */
 
     xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
     vTaskDelay(500 / portTICK_PERIOD_MS);
