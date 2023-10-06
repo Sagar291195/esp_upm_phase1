@@ -70,7 +70,7 @@ static void vInitializeEndSummaryVariableToZero(void)
 ********************************************************************************************/
 void vSetCounterValuesEndSummaryDetails()
 {
-    ESP_LOGI(TAG, "Setting the end summary details");
+    ESP_LOGD(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
     vGetCurrentDateAndTime(&timeinfo);
     char cStopDate[40];
@@ -100,8 +100,8 @@ void vSetCounterValuesEndSummaryDetails()
     xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - xEndSummary.xGenericSummary.xHourCounter.fStartHour;
     
     xEndSummary.xGenericSummary.xHourCounter.fVariation = fabs(((xEndSummary.xGenericSummary.xHourCounter.fTargetHour - xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour) / xEndSummary.xGenericSummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
-    ESP_LOGI(TAG, "Hour counter target and effective values are %.2f and %.2f", xEndSummary.xGenericSummary.xHourCounter.fTargetHour, xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour);
-    ESP_LOGI(TAG, "variation in hour is %.2f", xEndSummary.xGenericSummary.xHourCounter.fVariation);
+    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", xEndSummary.xGenericSummary.xHourCounter.fTargetHour, xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour);
+    ESP_LOGD(TAG, "variation in hour is %.2f", xEndSummary.xGenericSummary.xHourCounter.fVariation);
 
     strcpy(xEndSummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
@@ -132,21 +132,21 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
     while (1)
     {
         
-        ESP_LOGI(TAG, "Waiting for the new sequnce to run");    /* waitingg for the signal to start the sequences */
+        ESP_LOGD(TAG, "Waiting for the new sequnce to run");    /* waitingg for the signal to start the sequences */
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        ESP_LOGI(TAG, "Starting the sequence");
+        ESP_LOGD(TAG, "Starting the sequence");
 
         /* iterating over the sequences.valid sequence are those which are less thatn the number of the sequnces and
          * also the invalid sequnce number 0 */
         while ((uCurrentRunningSequenceNumber <= uGetNoOfSequenceInArray()) && (uCurrentRunningSequenceNumber != 0))
         {
 
-            ESP_LOGI(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
 
             if ((uCurrentRunningSequenceNumber != 0) && (uCurrentRunningSequenceNumber != 1))               /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from */
             {                                                                                               /* the front end. this need to be changed in the phase 2 */                            
-                ESP_LOGI(TAG, "showing the wait in progress screeen");
+                ESP_LOGD(TAG, "showing the wait in progress screeen");
                 vShowWaitInProgressScreen(); // first sample wait screen has been shown by the gui itself
             }
 
@@ -160,7 +160,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 ESP_LOGE(TAG, "Error: Delay time is less than 0 means that time has already passed, but can force start the sequence now");
             }
 
-            ESP_LOGI(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
 
             vSetSequenceToRun(&uCurrentRunningSequenceNumber);   /*  created the sequence to run */
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* waiting for the sequence to finish */
@@ -169,34 +169,34 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             {
                 break;
             }
-            ESP_LOGI(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber);
+            ESP_LOGD(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber);
          
             if ((uCurrentRunningSequenceNumber == uGetNoOfSequenceInArray()) || bSampleForcedStop == true)     /* show the summary screen, when all the sequneces are finished or we forced stop the samples by pressing the stop button*/
             {
                 
                 vSetCounterValuesEndSummaryDetails();   /* filling the end summary, when not force stopped */
-                ESP_LOGI(TAG, "end of the Sample reached"); /* now need to save the end summary */
+                ESP_LOGD(TAG, "end of the Sample reached"); /* now need to save the end summary */
                 if (!bSampleForcedStop) /* our job is finished, need to show the finised job summary screen only when the sample is time end */
                 {   
                     vShowJobFinishedScreen();
                 }
                 
-                ESP_LOGI(TAG, "Setting the sequence number to 0");  /* if the sequence is the last sequence in the array, then the sample is over, not set the sequence to run to 0. indicating that no sequnce is in progress */
+                ESP_LOGD(TAG, "Setting the sequence number to 0");  /* if the sequence is the last sequence in the array, then the sample is over, not set the sequence to run to 0. indicating that no sequnce is in progress */
                 vSetCurrentRunningSequenceNumber(0);
-                ESP_LOGI(TAG, "Saving the sequence number to nvs flash");
+                ESP_LOGD(TAG, "Saving the sequence number to nvs flash");
                 vSetCurrentSequenceNumberToNvsFlash();
                 bSampleForcedStop = false;
                 break;
             }
             else
             {
-                ESP_LOGI(TAG, "Icrementing the sequence number");
+                ESP_LOGD(TAG, "Icrementing the sequence number");
                 uCurrentRunningSequenceNumber++;    /* if the sequence is not the last sequence in the array, then  increment the sequence number and set it to nvs flash */
                 vSetCurrentSequenceNumberToNvsFlash();
             }
-            ESP_LOGI(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber - 1);
+            ESP_LOGD(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber - 1);
         }
-        ESP_LOGI(TAG, "END of the Sample task ha been reached, now iterating for the new loop");
+        ESP_LOGD(TAG, "END of the Sample task ha been reached, now iterating for the new loop");
     }
 
     ESP_LOGE(TAG, "Error: Sample Management Service Task is exiting");
@@ -215,7 +215,7 @@ static void vGetSampleNumberFromNvsFlash(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Unique saved sample number in nvs flash is %u", uUniqueSampleNumber);
+        ESP_LOGD(TAG, "Unique saved sample number in nvs flash is %u", uUniqueSampleNumber);
     }
 }
 
@@ -231,7 +231,7 @@ static void vGetCurrentSequenceNumberFromNvsFlash(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
+        ESP_LOGD(TAG, "Current saved sample number in nvs flash is %d", uCurrentRunningSequenceNumber);
     }
 }
 
@@ -393,7 +393,7 @@ bool bIsSampleRunsWithoutProblem()
     {
         if (seq->bSucessfullyRun == false)
         {
-            ESP_LOGI(TAG, "Sequence %d has not run sucessfully not checking further", uSequenceNumber);
+            ESP_LOGD(TAG, "Sequence %d has not run sucessfully not checking further", uSequenceNumber);
             return false;
         }
     }
@@ -469,7 +469,7 @@ void vStopCurrentSample()
     }
     else // is sequnce is not running then, take out the sample management service out of the blocked state so that the current sample will stop.
     {
-        ESP_LOGI(TAG, "No sample is currently running, deleting the sample management service");
+        ESP_LOGD(TAG, "No sample is currently running, deleting the sample management service");
         vSetCurrentRunningSequenceNumber(0);    /* setting the current sample number to invalidate or zero */
         vSetCurrentSequenceNumberToNvsFlash(); // settin to the nvs flash
         if (xHandleSampleManagementService != NULL) /* deleting the sample management service task */
@@ -519,7 +519,7 @@ void vControllerSampleIsValid()
 ********************************************************************************************/
 void vStartJob()
 {
-    ESP_LOGI(TAG, "Starting the job");
+    ESP_LOGD(TAG, "Starting the job");
     vNotifySampleMangementToProceed();  /* giving the task notification to start the sample management */
 }
 
@@ -576,7 +576,7 @@ void vUpdateWorkInProgressScreen()
 ********************************************************************************************/
 void vShowJobFinishedScreen()
 {
-    ESP_LOGI(TAG, "Showing the job finish screen");
+    ESP_LOGD(TAG, "Showing the job finish screen");
     vTaskDelay(100);
     vShowJobFinishedDashboardScreen();
 }
@@ -594,7 +594,7 @@ void vControllerSampleStop()
 ********************************************************************************************/
 void vControllerShowEndSummayScreen()
 {
-    ESP_LOGI(TAG, "Showing the end summary screen");
+    ESP_LOGD(TAG, "Showing the end summary screen");
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
         xseSummaryEndScreen();

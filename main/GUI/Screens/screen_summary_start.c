@@ -556,8 +556,6 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         }
         /* now sample is valid and can be saved into the memory and proceed for the sample execution */
         vControllerSampleIsValid();
-        // printf("Back to Dashbord from presetscrn\n");
-        // printf("xdat value is: %d \n", xdt );
         defaultParaSelected = false;
         global_DashbordBTNflag = 2;
         /* Creating the dashboard screen and setting the dashboard to the ready mode. */

@@ -613,7 +613,7 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        ESP_LOGI(TAG, "Button Pressed : %d", xBTN);
+        ESP_LOGD(TAG, "Button Pressed : %d", xBTN);
         switch (xBTN)
         {
         case 0:

@@ -83,7 +83,7 @@ static void external_sensor_read_task(void *pvParameters)
         ESP_LOGE(TAG, "Unable to initaite the bme680 sensor");
         vTaskDelete(NULL);
     }
-    ESP_LOGI(TAG, "Bme 680 sucessfully initiated");
+    ESP_LOGD(TAG, "Bme 680 sucessfully initiated");
 
     bme680_set_oversampling_rates(&sensor, BME680_OSR_8X, BME680_OSR_8X, BME680_OSR_8X);    // Changes the oversampling rates to 4x oversampling for all
     bme680_set_filter_size(&sensor, BME680_IIR_SIZE_7); // Change the IIR filter size for temperature and pressure to 7 for accuracy
@@ -91,7 +91,7 @@ static void external_sensor_read_task(void *pvParameters)
     
     uint32_t duration;      // as long as sensor configuration isn't changed, duration is constant
     bme680_get_measurement_duration(&sensor, &duration);
-    ESP_LOGI(TAG, "Bme 680 duration is %d", duration);
+    ESP_LOGD(TAG, "Bme 680 duration is %d", duration);
     TickType_t last_wakeup = xTaskGetTickCount();
     bme680_values_float_t values;
    
@@ -137,7 +137,7 @@ static void external_sensor_read_task(void *pvParameters)
                             external_sensor_data_average.fTemperature = temp_external_sensor_average.fTemperature / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.fHumidity = temp_external_sensor_average.fHumidity / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.fGasResistance = temp_external_sensor_average.fGasResistance / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            ESP_LOGI(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
+                            ESP_LOGD(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
                             memset(&temp_external_sensor_average, 0x00, sizeof(temp_external_sensor_average));
                         }
                     }
@@ -179,7 +179,7 @@ static void internal_sensor_read_task(void *pvParamters)
         }
         else
         {
-            ESP_LOGI(TAG, "Initiated the bme280 sensor");
+            ESP_LOGD(TAG, "Initiated the bme280 sensor");
         }
     }
 
@@ -213,7 +213,7 @@ static void internal_sensor_read_task(void *pvParamters)
                     internal_temperature_average = temp_bme280_temperature_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_pressure_average = temp_bme280_pressure_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_humidity_average = temp_bme280_humidity_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                    ESP_LOGI(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, (internal_pressure_average/100));
+                    ESP_LOGD(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, (internal_pressure_average/100));
                     temp_bme280_temperature_average = 0;
                     temp_bme280_pressure_average = 0;
                     temp_bme280_humidity_average = 0;
@@ -238,7 +238,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
     memset(&dev.i2c_dev, 0, sizeof(i2c_dev_t));
 
     ESP_ERROR_CHECK_WITHOUT_ABORT(ina3221_init_desc(&dev, INA3221_I2C_ADDR, 0, SDA_GPIO, SCL_GPIO));
-    ESP_LOGI(TAG, "Ina3231 has been inititated");
+    ESP_LOGD(TAG, "Ina3231 has been inititated");
     vTaskDelay(pdMS_TO_TICKS(500));
 
     if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
@@ -251,7 +251,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
         ESP_ERROR_CHECK_WITHOUT_ABORT(ina3221_set_warning_alert(&dev, WARNING_CHANNEL - 1, WARNING_CURRENT)); // Set overcurrent security flag
         xSemaphoreGive(i2c_communication_semaphore);
     }
-    ESP_LOGI(TAG, "Ina3231 has been inititated");
+    ESP_LOGD(TAG, "Ina3231 has been inititated");
     vTaskDelay(pdMS_TO_TICKS(500));
     float bus_voltage;
     float shunt_voltage;
@@ -297,7 +297,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ina3221_sensor_data[i].fBusVoltage = bus_voltage;
                 ina3221_sensor_data[i].fShuntVoltage = shunt_voltage;
                 ina3221_sensor_data[i].fShuntCurrent = shunt_current;
-                ESP_LOGI(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
+                ESP_LOGD(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
@@ -332,7 +332,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
     }
     vTaskDelay(pdMS_TO_TICKS(20));
 
-    ESP_LOGI(TAG, "Starting sdp32 sensor in massflow mode");
+    ESP_LOGD(TAG, "Starting sdp32 sensor in massflow mode");
     if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
     {
         sdp32_send_cmd_read(&dev, massFlowRead);
@@ -367,7 +367,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
-                ESP_LOGI(TAG, "SDP32 Temperature %0.2f, Pressure  %0.2f, massflow : %d", sdp32_temperature_value, sdp32_pressure_value, massFlow);
+                ESP_LOGD(TAG, "SDP32 Temperature %0.2f, Pressure  %0.2f, massflow : %d", sdp32_temperature_value, sdp32_pressure_value, massFlow);
             }
 
         }

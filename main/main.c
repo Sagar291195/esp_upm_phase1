@@ -81,7 +81,7 @@ void app_main()
     }
     else if (err != ESP_OK)
     {
-        ESP_LOGI(TAG, "nvs cannot be initialized due to %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "nvs cannot be initialized due to %s", esp_err_to_name(err));
     }
     else
     {
