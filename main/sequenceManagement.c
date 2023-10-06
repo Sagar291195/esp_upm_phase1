@@ -91,10 +91,10 @@ static void print_on_terminal(void)
 ********************************************************************************************/
 static void vUpdateScreenAndSaveValuesEverySecond(void *pvParameters)
 {
-    ESP_LOGI(TAG, "Starting the task to update the screen and save the values to the nvs flash");
+    ESP_LOGD(TAG, "Starting the task to update the screen and save the values to the nvs flash");
     uint8_t usequenceToRun;
     memcpy(&usequenceToRun, pvParameters, sizeof(uint8_t));
-    ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
+    ESP_LOGD(TAG, "Running sequence %d", usequenceToRun);
 
     float fTotalHourCountTemp = 0;
     uint32_t uTotalTimePassInSec = 0;
@@ -196,18 +196,10 @@ static void vMonitorSensorDataTask(void *pvParameters)
             printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
             printf("------------------Settings-----------------------\n");
             bOneTime = true;
+
+            printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
         }
-        printf("\n\n\nTime: RTC Time: %s",  guiTime );
-        printf("Hardware Time: %llu,\n", esp_timer_get_time());
-        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", get_sdp32_temperature_value(), get_sdp32_pressure_value(), fGetMassFlowUserCompensated());
-        printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
-        printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
-        printf("Channel 2: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent);
-        printf("External: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw());
-        printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  fGetInternalAirDensity_Raw());
-        printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
-        printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
-        printf("Feature: Volumetric Flow Comp: %0.2f LPM, Hour Counter : %0.2f, Volume Counter : %0.2f\n", fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
+        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), fGetMassFlowUserCompensated(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  fGetInternalAirDensity_Raw(), external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp(), fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp(), fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 
     vTaskDelete(NULL);
@@ -427,7 +419,7 @@ void taskRunSample(void *pvParameters)
     }
    
     memcpy(&usequenceToRun, pvParameters, sizeof(uint8_t));
-    ESP_LOGI(TAG, "Running sequence %d", usequenceToRun);
+    ESP_LOGD(TAG, "Running sequence %d", usequenceToRun);
 
     if (xTaskHandleMonitorSensorData == NULL)    /* starting the monitor data task */
     {
@@ -451,7 +443,7 @@ void taskRunSample(void *pvParameters)
     ESP_LOGD(TAG, "Starting the motor");
     ESP_LOGD(TAG, "get state of motor %d", getIsMotorRunning());
     uint32_t udurationInMs = ((totalSequence[usequenceToRun - 1].uDurationHour * 3600) + (totalSequence[usequenceToRun - 1].uDurationMinutes * 60)) * 1000;
-    ESP_LOGI(TAG, "Duration in ms %d", udurationInMs);
+    ESP_LOGD(TAG, "Duration in ms %d", udurationInMs);
 
     if (xSemaphoreTake(xStopTheRunningSequenceSemaphore, (udurationInMs / portTICK_PERIOD_MS)) == pdTRUE)
     {
