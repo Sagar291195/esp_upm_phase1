@@ -319,7 +319,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
     static uint8_t sdp32_read_count = 0;     /* index for calculating the average values */
     int16_t massFlow;
     int16_t temperature;
-    float temp_value;
+    float temp_value = 0;
     
     memset(&dev, 0, sizeof(sdp32_t));
     ESP_ERROR_CHECK_WITHOUT_ABORT(sdp32_init_desc(&dev, SDP32_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO)); /* initializing spd32 sensor */
@@ -406,17 +406,17 @@ float get_internal_pressure_value(void)
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void get_ina3221_sensor_data(INA3231_sensor_data_t *INA3221_sensor_data_des)
+void get_ina3221_sensor_data(INA3231_sensor_data_t *ina_sensor)
 {
-    memcpy(INA3221_sensor_data_des, ina3221_sensor_data, INA3221_CHANNEL * sizeof(INA3231_sensor_data_t));
+    memcpy(ina_sensor, ina3221_sensor_data, INA3221_CHANNEL * sizeof(INA3231_sensor_data_t));
 }
 
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void get_external_sensor_data(external_sensor_data_t *external_sensor_data_des)
+void get_external_sensor_data_raw(external_sensor_data_t *external_sensor_reading)
 {
-    memcpy(external_sensor_data_des, &external_sensor_data_average, sizeof(external_sensor_data_t));
+    memcpy(external_sensor_reading, &external_sensor_data_average, sizeof(external_sensor_data_t));
 }
 
 /********************************************************************************************

@@ -153,7 +153,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
         uCounterForCalculatingMeanValues++;
 
         get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
-        get_external_sensor_data(&raw_sensor_data);
+        get_external_sensor_data_raw(&raw_sensor_data);
         get_ina3221_sensor_data(&xInaSensorData[0]);   /* getting the INA data */
 
         /* calulating the mean temp, humidity and pressure */
@@ -186,8 +186,8 @@ static void vMonitorSensorDataTask(void *pvParameters)
         if (uConterForAirFlowRate > 0) // after 10 seconds or iteration has been passed
         {
             xCurrentSequenceSummary.airflowVolumetric.fAirflowMean = ((xCurrentSequenceSummary.airflowVolumetric.fAirflowMean * (uConterForAirFlowRate - 1)) + xCurrentSequenceSummary.airflowVolumetric.fAirflowMean) / uConterForAirFlowRate; /* calculating the mean air flow rate */
-            xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue > fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue : fGetVolumetricFlowUserCompensated();/* calculating the max and min for the air flow rate */
-            xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue < fGetVolumetricFlowUserCompensated()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue : fGetVolumetricFlowUserCompensated();
+            xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue > get_volumetric_flow()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMaxValue : get_volumetric_flow();/* calculating the max and min for the air flow rate */
+            xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue = (xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue < get_volumetric_flow()) ? xCurrentSequenceSummary.airflowVolumetric.fAirflowMinValue : get_volumetric_flow();
         }
 
         if (!bOneTime)
@@ -199,7 +199,7 @@ static void vMonitorSensorDataTask(void *pvParameters)
 
             printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
         }
-        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), fGetMassFlowUserCompensated(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  fGetInternalAirDensity_Raw(), external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp(), fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp(), fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
+        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_massflow_value(), xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent, xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent, xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent, raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 
     vTaskDelete(NULL);

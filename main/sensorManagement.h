@@ -87,10 +87,10 @@ void get_ina3221_sensor_data(INA3231_sensor_data_t *INA3221_sensor_data_des);
 /**
  * @brief Get the bme 680, external sensor data.
  * @snippet external_sensor_data_t external_sensor_data;
- *          get_external_sensor_data(&external_sensor_data);
+ *          get_external_sensor_data_raw(&external_sensor_data);
  * @param external_sensor_data_des 
  */
-void get_external_sensor_data(external_sensor_data_t *external_sensor_data_des);
+void get_external_sensor_data_raw(external_sensor_data_t *external_sensor_data_des);
 
 /**
  * @brief get the differential pressure average value 

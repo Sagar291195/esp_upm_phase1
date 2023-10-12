@@ -83,7 +83,7 @@ static void motorTask(void *pvParameters)
         while (getIsMotorRunning())
         {
             ESP_LOGD(TAG, "Average sdp32 pressure = %0.2f", get_sdp32_pressure_value());
-            flowRate = fGetVolumetricFlowUserCompensated();  /* calulating the current flow rate */
+            flowRate = get_volumetric_flow();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {
                 ESP_LOGD(TAG, "flow rate is nan");

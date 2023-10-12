@@ -130,7 +130,7 @@ void sensor_value_update(lv_task_t *taskhandle)
     reference_value = atof(tempbuffer);
     if (screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST)
     {
-        get_external_sensor_data(&external_sensorvalue); 
+        get_external_sensor_data_raw(&external_sensorvalue); 
         sensorvalue = external_sensorvalue.fTemperature;
     }
     else if (screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
@@ -139,7 +139,7 @@ void sensor_value_update(lv_task_t *taskhandle)
     }
     else if (screenid == SCR_EXTERNAL_PRESSURE_ADJUST)
     {
-        get_external_sensor_data(&external_sensorvalue);
+        get_external_sensor_data_raw(&external_sensorvalue);
         sensorvalue = external_sensorvalue.fPressure;
     }
     else if (screenid == SCR_INTERNAL_PRESSURE_ADJUST)
@@ -148,7 +148,7 @@ void sensor_value_update(lv_task_t *taskhandle)
     }
     else if (screenid == SCR_EXTERNAL_HUMIDITY_ADJUST)
     {
-        get_external_sensor_data(&external_sensorvalue);
+        get_external_sensor_data_raw(&external_sensorvalue);
         sensorvalue = external_sensorvalue.fHumidity;
     }
     else if (screenid == SCR_INTERNAL_HUMIDITY_ADJUST)
@@ -446,7 +446,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
 
         if (screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST)
         {
-            get_external_sensor_data(&external_sensordata);
+            get_external_sensor_data_raw(&external_sensordata);
             calibrationvalue = (external_sensordata.fTemperature - referencevalue);
             setcalibrationvalue_ext_temperature(calibrationvalue);
             ESP_LOGI(TAG, "External Temperature calibration = %.02f", calibrationvalue);
@@ -461,7 +461,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
         }
         else if (screenid == SCR_EXTERNAL_PRESSURE_ADJUST)
         {
-            get_external_sensor_data(&external_sensordata);
+            get_external_sensor_data_raw(&external_sensordata);
             calibrationvalue = (external_sensordata.fPressure - referencevalue);
             setcalibrationvalue_ext_pressure(calibrationvalue);
             ESP_LOGI(TAG, "External Pressure calibration = %.02f", calibrationvalue);
@@ -476,7 +476,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
         }
         else if (screenid == SCR_EXTERNAL_HUMIDITY_ADJUST)
         {
-            get_external_sensor_data(&external_sensordata);
+            get_external_sensor_data_raw(&external_sensordata);
             calibrationvalue = (external_sensordata.fHumidity - referencevalue);
             setcalibrationvalue_ext_humidity(calibrationvalue);
             ESP_LOGI(TAG, "External Humidity calibration = %.02f", calibrationvalue);
