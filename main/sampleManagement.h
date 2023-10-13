@@ -26,8 +26,8 @@
 /* structure holds the  end sample summary */
 typedef struct xSampleSummary
 {   
-    xGenericSummary_t xGenericSummary;  //generic summary
-    char cStartTime[10];    //sample start time
+    generic_summary_t genericsummary;  //generic summary
+    char starttime[10];    //sample start time
     char cStopTime[10];     //sample stop time     
     uint16_t uSampleNumber; //sample number to which this summary belongs
     float fFlowSetPoint;    //flow set point 

@@ -132,43 +132,6 @@ void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue
 /********************************************************************************************
 *                           
 ********************************************************************************************/
-float get_massflow_value(void)
-{
-    float fResult = 0.0;
-    float coeffA = 0.0;
-    float coeffB = 0.0;
-
-    fResult = get_sdp32_pressure_value();
-    /*  do some calulation to get the mass flow  */
-    if (fResult > 0 && fResult <= getcalibration_reference_sensorvalue1())
-    {
-        coeffA = getcalibrationvalue_flow_coeffA1();
-        coeffB = getcalibrationvalue_flow_coeffB1();
-    }
-    else if (fResult <= getcalibration_reference_sensorvalue2())
-    {
-        coeffA = getcalibrationvalue_flow_coeffA2();
-        coeffB = getcalibrationvalue_flow_coeffB2();
-    }
-    else if (fResult <= getcalibration_reference_sensorvalue3())
-    {
-        coeffA = getcalibrationvalue_flow_coeffA3();
-        coeffB = getcalibrationvalue_flow_coeffB3();
-    }else{
-        coeffA = getcalibrationvalue_flow_coeffA3();
-        coeffB = getcalibrationvalue_flow_coeffB3();
-    }
-
-    
-    fResult = ((coeffA * fResult) + coeffB);
-    return fResult;
-}
-
-
-
-/********************************************************************************************
-*                           
-********************************************************************************************/
 float get_external_air_density_raw(void)
 {
     float result =0;
@@ -220,6 +183,6 @@ float get_internal_air_density_calibrated(void)
 float get_volumetric_flow(void)
 {
     float result =0;
-    result = flow_calculation(get_massflow_value(), get_external_air_density_calibrated());
+    result = flow_calculation(get_sdp32_massflow_value(), get_external_air_density_calibrated());
     return result;
 }

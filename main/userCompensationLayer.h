@@ -28,7 +28,6 @@ float get_internal_pressure_calibrated(void);
 float get_internal_humidity_calibrated(void);
 float get_internal_temperature_calibrated(void);
 void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue);
-float get_massflow_value(void);
 float get_volumetric_flow(void);
 float get_external_air_density_raw(void);
 float get_internal_air_density_raw(void);

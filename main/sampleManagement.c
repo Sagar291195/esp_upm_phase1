@@ -81,7 +81,7 @@ void vSetCounterValuesEndSummaryDetails()
     sprintf(cStopDate, "%d/%d/%d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
 
     
-    strcpy(endsummary.xGenericSummary.cStopDate, cStopDate);   /* copy end date */
+    strcpy(endsummary.genericsummary.cStopDate, cStopDate);   /* copy end date */
     sprintf(endsummary.cStopTime, "%dH:%dM", timeinfo.tm_hour, timeinfo.tm_min);   /*  copy end times  */
 
     if (bIsSampleRunsWithoutProblem())   /* checking if sample runs sucessfully */
@@ -93,16 +93,16 @@ void vSetCounterValuesEndSummaryDetails()
         strcpy(endsummary.hasProblem, "Yes");
     }
 
-    endsummary.xGenericSummary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
-    endsummary.xGenericSummary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - endsummary.xGenericSummary.xVolumeCounter.fStartVolume;
+    endsummary.genericsummary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
+    endsummary.genericsummary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - endsummary.genericsummary.xVolumeCounter.fStartVolume;
 
-    endsummary.xGenericSummary.xVolumeCounter.fVariation = fabs(((endsummary.xGenericSummary.xVolumeCounter.fTargetVolume - endsummary.xGenericSummary.xVolumeCounter.fEffectiveVolume) / endsummary.xGenericSummary.xVolumeCounter.fTargetVolume) * 100);  /* calculating the variation in volume */
-    endsummary.xGenericSummary.xHourCounter.fEndHour = fGetTotalHoursCount();
-    endsummary.xGenericSummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - endsummary.xGenericSummary.xHourCounter.fStartHour;
+    endsummary.genericsummary.xVolumeCounter.fVariation = fabs(((endsummary.genericsummary.xVolumeCounter.fTargetVolume - endsummary.genericsummary.xVolumeCounter.fEffectiveVolume) / endsummary.genericsummary.xVolumeCounter.fTargetVolume) * 100);  /* calculating the variation in volume */
+    endsummary.genericsummary.xHourCounter.fEndHour = fGetTotalHoursCount();
+    endsummary.genericsummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - endsummary.genericsummary.xHourCounter.fStartHour;
     
-    endsummary.xGenericSummary.xHourCounter.fVariation = fabs(((endsummary.xGenericSummary.xHourCounter.fTargetHour - endsummary.xGenericSummary.xHourCounter.fEffectiveHour) / endsummary.xGenericSummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.xGenericSummary.xHourCounter.fTargetHour, endsummary.xGenericSummary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", endsummary.xGenericSummary.xHourCounter.fVariation);
+    endsummary.genericsummary.xHourCounter.fVariation = fabs(((endsummary.genericsummary.xHourCounter.fTargetHour - endsummary.genericsummary.xHourCounter.fEffectiveHour) / endsummary.genericsummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
+    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.genericsummary.xHourCounter.fTargetHour, endsummary.genericsummary.xHourCounter.fEffectiveHour);
+    ESP_LOGD(TAG, "variation in hour is %.2f", endsummary.genericsummary.xHourCounter.fVariation);
 
     strcpy(endsummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
@@ -358,16 +358,16 @@ void vSetInitialCounterValuesToEndSummary()
     vInitializeEndSummaryVariableToZero();   /* Construct a new v Initialize End Summary Variable To Zero object */
     
     get_sequence_info(&xSequenceNumber, 1); /*  getting the 1 sequence from the sequence array  */
-    strcpy(endsummary.xGenericSummary.cStartDate, xSequenceNumber.cStartDate);
-    sprintf(endsummary.cStartTime, "%dH:%dM", xSequenceNumber.uStartHour, xSequenceNumber.uStartMin);  /* getting the start time of the sequnce */
+    strcpy(endsummary.genericsummary.cStartDate, xSequenceNumber.cStartDate);
+    sprintf(endsummary.starttime, "%dH:%dM", xSequenceNumber.uStartHour, xSequenceNumber.uStartMin);  /* getting the start time of the sequnce */
     endsummary.uSampleNumber = uGetCurrentSampleNumber();   /* setiing the sample number */
     endsummary.fFlowSetPoint = xSequenceNumber.fFlowSetPoint;  /* flow set point  */
     endsummary.uSequenceNumber = get_no_of_sequence_in_array();    /* setting the total number of sequnce in the sample */
     get_total_duration_sample(cDuration, sizeof(cDuration));    /* getting the duration of the sample */
     strcpy(endsummary.cDuration, cDuration);
     strcpy(endsummary.cStartPerson, xSequenceNumber.cStartPerson); /* coping the start person */
-    endsummary.xGenericSummary.xVolumeCounter.fStartVolume = fGetTotalLiterCount();    /* getting the initial total lites before the starting of the sequnece */
-    endsummary.xGenericSummary.xHourCounter.fStartHour = fGetTotalHoursCount();        /* getting the total hours count before the starting of the sequence  */
+    endsummary.genericsummary.xVolumeCounter.fStartVolume = fGetTotalLiterCount();    /* getting the initial total lites before the starting of the sequnece */
+    endsummary.genericsummary.xHourCounter.fStartHour = fGetTotalHoursCount();        /* getting the total hours count before the starting of the sequence  */
 
     if (bIsSampleRunsWithoutProblem())   /* checking if sample runs sucessfully */
     {
@@ -379,8 +379,8 @@ void vSetInitialCounterValuesToEndSummary()
     }
 
     
-    endsummary.xGenericSummary.xVolumeCounter.fTargetVolume = get_target_volumecount(); /* setting the targeted volume and hour values */
-    endsummary.xGenericSummary.xHourCounter.fTargetHour = get_target_hourcount();
+    endsummary.genericsummary.xVolumeCounter.fTargetVolume = get_target_volumecount(); /* setting the targeted volume and hour values */
+    endsummary.genericsummary.xHourCounter.fTargetHour = get_target_hourcount();
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
 }
 
@@ -438,10 +438,10 @@ float get_target_hourcount(void)
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void vGetEndSummaryVariable(sample_summary_t *xSampleSummary)
+void vGetEndSummaryVariable(sample_summary_t *samplebuf)
 {
-    memset(xSampleSummary, 0, sizeof(sample_summary_t));
-    memcpy(xSampleSummary, &endsummary, sizeof(sample_summary_t));
+    memset(samplebuf, 0, sizeof(sample_summary_t));
+    memcpy(samplebuf, &endsummary, sizeof(sample_summary_t));
 }
 
 /********************************************************************************************

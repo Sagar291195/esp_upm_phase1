@@ -286,12 +286,12 @@ void xseSummaryEndScreen(void)
 
     ___xseStartDateTxt_se = lv_label_create(__xseBaseContainer_se, NULL);
     lv_obj_align(___xseStartDateTxt_se, ___xseStartTxt_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
-    lv_label_set_text(___xseStartDateTxt_se, xSampleSummary.xGenericSummary.cStartDate); // setting start date
+    lv_label_set_text(___xseStartDateTxt_se, xSampleSummary.genericsummary.cStartDate); // setting start date
     lv_obj_add_style(___xseStartDateTxt_se, LV_LABEL_PART_MAIN, &_xStartStopDateTxtStyle);
 
     ___xseStopDateTxt_se = lv_label_create(__xseBaseContainer_se, NULL);
     lv_obj_align(___xseStopDateTxt_se, ___xseStopTxt_se, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
-    lv_label_set_text(___xseStopDateTxt_se, xSampleSummary.xGenericSummary.cStopDate); // entering stop date
+    lv_label_set_text(___xseStopDateTxt_se, xSampleSummary.genericsummary.cStopDate); // entering stop date
     lv_obj_add_style(___xseStopDateTxt_se, LV_LABEL_PART_MAIN, &_xStartStopDateTxtStyle);
 
     ___xseStrtTmCont_se = lv_cont_create(__xseBaseContainer_se, NULL);
@@ -304,7 +304,7 @@ void xseSummaryEndScreen(void)
     // Label for Start Time of sequence
     ____xseStrtTmVal_se = lv_label_create(___xseStrtTmCont_se, NULL);
     lv_obj_align(____xseStrtTmVal_se, ___xseStrtTmCont_se, LV_ALIGN_IN_TOP_RIGHT, -30, 0);
-    lv_label_set_text(____xseStrtTmVal_se, xSampleSummary.cStartTime); // End time for sample
+    lv_label_set_text(____xseStrtTmVal_se, xSampleSummary.starttime); // End time for sample
     lv_obj_set_style_local_text_font(____xseStrtTmVal_se, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_14);
     lv_obj_set_style_local_text_color(____xseStrtTmVal_se, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
@@ -565,7 +565,7 @@ void xseSummaryEndScreen(void)
     // Create a label for start Value
     __xseStartVal_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStartVal_se, __xseStartTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-    lv_label_set_text_fmt(__xseStartVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fStartVolume); // start volume counter
+    lv_label_set_text_fmt(__xseStartVal_se, "%0.2lf L", xSampleSummary.genericsummary.xVolumeCounter.fStartVolume); // start volume counter
     lv_obj_add_style(__xseStartVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Stop text
@@ -577,13 +577,13 @@ void xseSummaryEndScreen(void)
     // Create a label for stop Value
     __xseStopVal_se = lv_label_create(_xseStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseStopVal_se, __xseStopTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-    lv_label_set_text_fmt(__xseStopVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fEndVolume); //  stop vlume counter
+    lv_label_set_text_fmt(__xseStopVal_se, "%0.2lf L", xSampleSummary.genericsummary.xVolumeCounter.fEndVolume); //  stop vlume counter
     lv_obj_add_style(__xseStopVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Target Value
     __xseTargetVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseTargetVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 10, 10);
-    lv_label_set_text_fmt(__xseTargetVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fTargetVolume); // target volume counter
+    lv_label_set_text_fmt(__xseTargetVal_se, "%0.2lf L", xSampleSummary.genericsummary.xVolumeCounter.fTargetVolume); // target volume counter
     lv_obj_add_style(__xseTargetVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a Target Heading
@@ -595,7 +595,7 @@ void xseSummaryEndScreen(void)
     // Create a label for EFFECTIVE Value
     __xseEffectiveVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseEffectiveVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_MID, -10, 10);
-    lv_label_set_text_fmt(__xseEffectiveVal_se, "%0.2lf L", xSampleSummary.xGenericSummary.xVolumeCounter.fEffectiveVolume); // effective volume counter
+    lv_label_set_text_fmt(__xseEffectiveVal_se, "%0.2lf L", xSampleSummary.genericsummary.xVolumeCounter.fEffectiveVolume); // effective volume counter
     lv_obj_add_style(__xseEffectiveVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Text
@@ -607,7 +607,7 @@ void xseSummaryEndScreen(void)
     // Create a label for VARIATION Value
     __xseVariationVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseVariationVal_se, _xseStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_RIGHT, -30, 10);
-    lv_label_set_text_fmt(__xseVariationVal_se, "%0.2f ", xSampleSummary.xGenericSummary.xVolumeCounter.fVariation); // variation for the volume
+    lv_label_set_text_fmt(__xseVariationVal_se, "%0.2f ", xSampleSummary.genericsummary.xVolumeCounter.fVariation); // variation for the volume
     lv_obj_add_style(__xseVariationVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     lv_obj_t *varPerSymb = lv_label_create(_xseSummaryParent_se, NULL);
@@ -663,7 +663,7 @@ void xseSummaryEndScreen(void)
     // Create a label for start Value
     __xseHrStartVal_se = lv_label_create(_xseHrStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseHrStartVal_se, __xseHrStartTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-    lv_label_set_text_fmt(__xseHrStartVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fStartHour); // start hour
+    lv_label_set_text_fmt(__xseHrStartVal_se, "%0.2fH", xSampleSummary.genericsummary.xHourCounter.fStartHour); // start hour
     lv_obj_add_style(__xseHrStartVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Stop text
@@ -675,13 +675,13 @@ void xseSummaryEndScreen(void)
     // Create a label for stop Value
     __xseHrStopVal_se = lv_label_create(_xseHrStartStopTxtValCont_se, NULL);
     lv_obj_align(__xseHrStopVal_se, __xseHrStopTxt_se, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
-    lv_label_set_text_fmt(__xseHrStopVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fEndHour); // end hour
+    lv_label_set_text_fmt(__xseHrStopVal_se, "%0.2fH", xSampleSummary.genericsummary.xHourCounter.fEndHour); // end hour
     lv_obj_add_style(__xseHrStopVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for Target Value
     __xseHrTargetVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrTargetVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_LEFT, 10, 10);
-    lv_label_set_text_fmt(__xseHrTargetVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fTargetHour); // target hour
+    lv_label_set_text_fmt(__xseHrTargetVal_se, "%0.2fH", xSampleSummary.genericsummary.xHourCounter.fTargetHour); // target hour
     lv_obj_add_style(__xseHrTargetVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a Target Heading
@@ -693,7 +693,7 @@ void xseSummaryEndScreen(void)
     // Create a label for EFFECTIVE Value
     __xseHrEffectiveVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrEffectiveVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_MID, -10, 10);
-    lv_label_set_text_fmt(__xseHrEffectiveVal_se, "%0.2fH", xSampleSummary.xGenericSummary.xHourCounter.fEffectiveHour); // effective hour
+    lv_label_set_text_fmt(__xseHrEffectiveVal_se, "%0.2fH", xSampleSummary.genericsummary.xHourCounter.fEffectiveHour); // effective hour
     lv_obj_add_style(__xseHrEffectiveVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for EFFECTIVE Text
@@ -705,7 +705,7 @@ void xseSummaryEndScreen(void)
     // Create a label for VARIATION Value
     __xseHrVariationVal_se = lv_label_create(_xseSummaryParent_se, NULL);
     lv_obj_align(__xseHrVariationVal_se, _xseHrStartStopTxtValCont_se, LV_ALIGN_OUT_BOTTOM_RIGHT, -30, 10);
-    lv_label_set_text_fmt(__xseHrVariationVal_se, "%0.2f%%", xSampleSummary.xGenericSummary.xHourCounter.fVariation); // variation in hour  in %age
+    lv_label_set_text_fmt(__xseHrVariationVal_se, "%0.2f%%", xSampleSummary.genericsummary.xHourCounter.fVariation); // variation in hour  in %age
     lv_obj_add_style(__xseHrVariationVal_se, LV_LABEL_PART_MAIN, &_xStartStopTxtValStyle_se);
 
     // Create a label for VARIATION TEXT

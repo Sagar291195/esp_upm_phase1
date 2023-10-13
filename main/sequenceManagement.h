@@ -34,18 +34,18 @@ typedef struct sequence
 } sequence_t;
 
 /*  this structure holds the summary of the sequence after the results */
-typedef struct xGenericSummary
+typedef struct genericsummary
 {
     char cStartDate[40];
     char cStopDate[40];
     volumeCounter_t xVolumeCounter;
     hourCounter_t xHourCounter;
-} xGenericSummary_t;
+} generic_summary_t;
 
 /* structure to store summary of sequence */
 typedef struct sequenceSummary
 {   
-    xGenericSummary_t summary;
+    generic_summary_t summary;
     airflowVolumetric_t airflowVolumetric;
     ambientTemperature_t ambientTemperature;
     ambientPressure_t ambientPressure;

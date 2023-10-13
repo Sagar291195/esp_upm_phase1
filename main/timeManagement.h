@@ -70,7 +70,7 @@ void get_end_date_time_sequence(char *endDate, uint8_t sequenceNumber, uint8_t s
  * @param[in] uSequenceNumber Sequnce numbet to which date and time has been determine
  * @param[out] cStartDate  array pointer of start date
  * @param[in] sizeOfStartDate size of start date array
- * @param[out] cStartTime start time array pointer
+ * @param[out] starttime start time array pointer
  * @param[in] uSizeOfStartTime size of start time array
  */
 void get_start_date_time_sequence(uint8_t uSequenceNumber, char *cStartDate, uint8_t sizeOfStartDate, char *cStartTime, uint8_t uSizeOfStartTime);

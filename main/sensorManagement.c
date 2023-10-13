@@ -320,6 +320,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
     int16_t massFlow;
     int16_t temperature;
     float temp_value = 0;
+    int16_t sensorvalue = 0;
     
     memset(&dev, 0, sizeof(sdp32_t));
     ESP_ERROR_CHECK_WITHOUT_ABORT(sdp32_init_desc(&dev, SDP32_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO)); /* initializing spd32 sensor */
@@ -356,8 +357,8 @@ static void sdp32_sensor_read_task(void *pvParameters)
         }
         else
         {
-            massFlow = (read_buff[0] << 8) | read_buff[1];
-            temp_value =  ((float)massFlow) / SDP32_DIFF_PRESSURE_SCALE_FACTOR;
+            sensorvalue = (read_buff[0] << 8) | read_buff[1];
+            temp_value =  ((float)sensorvalue) / SDP32_DIFF_PRESSURE_SCALE_FACTOR;
             temp_sdp32_pressure += temp_value;
             temperature = (read_buff[3] << 8) | read_buff[4];
             sdp32_temperature_value = ((float)temperature) / SDP32_DIFF_TEMPERATURE_SCALE_FACTOR;
@@ -435,6 +436,15 @@ float get_sdp32_temperature_value(void)
     return sdp32_temperature_value;
 }
 
+/********************************************************************************************
+*                           
+********************************************************************************************/
+float get_sdp32_massflow_value(void)
+{
+    float fResult = get_sdp32_pressure_value();
+
+    return fResult;
+}
 /********************************************************************************************
 * 
 ********************************************************************************************/

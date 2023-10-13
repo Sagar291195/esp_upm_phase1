@@ -104,4 +104,6 @@ float get_sdp32_pressure_value();
  */
 float get_sdp32_temperature_value();
 
+
+float get_sdp32_massflow_value(void);
 #endif // __SENSORMANAGEMENT_H__

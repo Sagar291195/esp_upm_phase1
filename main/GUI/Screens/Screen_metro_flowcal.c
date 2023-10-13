@@ -456,7 +456,7 @@ void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask)
         get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
         get_external_sensor_data_raw(&raw_sensor_data);
         printf("Hardware Time: %llu,\n", esp_timer_get_time());
-        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_massflow_value());
+        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value());
         printf("External: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw());
         printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw());
         printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated());
