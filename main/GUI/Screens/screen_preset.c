@@ -875,7 +875,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             startTimeLabelAdgFlg = true;
             defaultParaSelected = false;
 
-            vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+            vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
 
             //======================================
             if (strcmp(_xaDaterollerbuf, _xaDaterollerNull) == 0)
@@ -940,7 +940,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             startTimeLabelAdgFlg = true;
             defaultParaSelected = false;
             defaultParametrs();
-            vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+            vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
         }
         xssSummaryStartScreen();
     }
@@ -986,7 +986,7 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         SeqCounter++;
         // save value of previous sequence
-        vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+        vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
 
         ESP_LOGD(TAG, "_NextSeq_event_handler call = %d", SeqCounter);
         lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);

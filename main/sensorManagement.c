@@ -104,9 +104,9 @@ static void external_sensor_read_task(void *pvParameters)
             xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY);
             if (bme680_get_results_float(&sensor, &values) == ESP_OK)       // get the results and do something with them
             {
-                temp_external_sensor_average.fTemperature = values.temperature;
-                temp_external_sensor_average.fHumidity = values.humidity;
-                temp_external_sensor_average.fPressure = values.pressure;
+                temp_external_sensor_average.temperature = values.temperature;
+                temp_external_sensor_average.humidity = values.humidity;
+                temp_external_sensor_average.pressure = values.pressure;
                 memcpy(&external_sensor_data_average, &temp_external_sensor_average, sizeof(temp_external_sensor_average));
             }            
         }
@@ -125,19 +125,19 @@ static void external_sensor_read_task(void *pvParameters)
                 {
                     if (bme680_get_results_float(&sensor, &values) == ESP_OK)        // get the results and do something with them
                     {
-                        temp_external_sensor_average.fTemperature += values.temperature;
-                        temp_external_sensor_average.fHumidity += values.humidity;
-                        temp_external_sensor_average.fPressure += values.pressure; // converting to Pa unit
-                        temp_external_sensor_average.fGasResistance += values.gas_resistance;
+                        temp_external_sensor_average.temperature += values.temperature;
+                        temp_external_sensor_average.humidity += values.humidity;
+                        temp_external_sensor_average.pressure += values.pressure; // converting to Pa unit
+                        temp_external_sensor_average.gas_resistance += values.gas_resistance;
                         external_sensor_read_count++;
                         if (external_sensor_read_count == NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BME)
                         {
                             external_sensor_read_count = 0;
-                            external_sensor_data_average.fPressure = temp_external_sensor_average.fPressure / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            external_sensor_data_average.fTemperature = temp_external_sensor_average.fTemperature / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            external_sensor_data_average.fHumidity = temp_external_sensor_average.fHumidity / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            external_sensor_data_average.fGasResistance = temp_external_sensor_average.fGasResistance / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            ESP_LOGD(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.fTemperature, external_sensor_data_average.fHumidity, external_sensor_data_average.fPressure);
+                            external_sensor_data_average.pressure = temp_external_sensor_average.pressure / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
+                            external_sensor_data_average.temperature = temp_external_sensor_average.temperature / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
+                            external_sensor_data_average.humidity = temp_external_sensor_average.humidity / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
+                            external_sensor_data_average.gas_resistance = temp_external_sensor_average.gas_resistance / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
+                            ESP_LOGD(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.temperature, external_sensor_data_average.humidity, external_sensor_data_average.pressure);
                             memset(&temp_external_sensor_average, 0x00, sizeof(temp_external_sensor_average));
                         }
                     }
@@ -294,9 +294,9 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ESP_ERROR_CHECK_WITHOUT_ABORT(ina3221_get_bus_voltage(&dev, i, &bus_voltage));  // Get voltage in volts   
                 ESP_ERROR_CHECK_WITHOUT_ABORT(ina3221_get_shunt_value(&dev, i, &shunt_voltage, &shunt_current));    // Get voltage in millivolts and current in milliamperes
                 xSemaphoreGive(i2c_communication_semaphore);
-                ina3221_sensor_data[i].fBusVoltage = bus_voltage;
-                ina3221_sensor_data[i].fShuntVoltage = shunt_voltage;
-                ina3221_sensor_data[i].fShuntCurrent = shunt_current;
+                ina3221_sensor_data[i].bus_voltage = bus_voltage;
+                ina3221_sensor_data[i].shunt_voltage = shunt_voltage;
+                ina3221_sensor_data[i].shunt_current = shunt_current;
                 ESP_LOGD(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -440,7 +440,7 @@ float get_sdp32_temperature_value(void)
 ********************************************************************************************/
 void sensor_initialization(void)
 {
-    vInitiateRTCSensor();
+    rtc_sensor_initialize();
     vTaskDelay(1000);
     xTaskCreate(external_sensor_read_task, "external", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);

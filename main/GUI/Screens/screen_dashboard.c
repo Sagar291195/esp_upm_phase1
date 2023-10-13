@@ -543,7 +543,7 @@ void DashboardInfoWidget(void)
         vSetResumeInfoRemainingMinute(IW_create, 00);
 
         vSetResumeInfoTotalSeq(IW_create, uGetCurrentRunningSequenceNumber());
-        vSetResumeInfoCurrentSeq(IW_create, uGetNoOfSequenceInArray());
+        vSetResumeInfoCurrentSeq(IW_create, get_no_of_sequence_in_array());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
@@ -677,7 +677,7 @@ void vUpdateDashboardScreen(void)
     /* need to add function to get the remainin hours and minutes from backend */
     uint16_t hour = 0;
     uint8_t min = 0;
-    vGetNumberOfHourAndMinutesLeftInStartingSequence(&hour, &min);
+    get_remaining_hours_minutes_sequence(&hour, &min);
     vSetResumeInfoRemainingHour(IW_create, hour);
     vSetResumeInfoRemainingMinute(IW_create, min);
 }

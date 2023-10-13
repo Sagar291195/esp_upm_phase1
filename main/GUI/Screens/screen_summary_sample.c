@@ -353,7 +353,7 @@ void sssSummarySampleScreen(void)
         ___sssTotalSeq = lv_label_create(__sssSequenceNumCont, NULL);
         lv_obj_align(___sssTotalSeq, ___sssSlash, LV_ALIGN_OUT_LEFT_TOP, 0, 0);
         char buff[10];
-        itoa(uGetNoOfSequenceInArray(), buff, 10);
+        itoa(get_no_of_sequence_in_array(), buff, 10);
         lv_label_set_text_fmt(___sssTotalSeq, "%s", buff);
 
         static lv_style_t _sssTotalSeqStyle;
@@ -387,7 +387,7 @@ void sssSummarySampleScreen(void)
         // Create Status icon img
         ___sssStatusMark_SeqSum = lv_img_create(__sssSeqSumCont, NULL);
         /* checking if sequnece run sucessfully and set the ok or cross sign accordingly */
-        sequence_t *pSeq = pGetSequenceFromArray(uSequnceNumber);
+        sequence_t *pSeq = get_sequencedata(uSequnceNumber);
         if (pSeq->bSucessfullyRun)
         {
                 lv_img_set_src(___sssStatusMark_SeqSum, &ok_icon);

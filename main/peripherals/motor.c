@@ -191,10 +191,10 @@ void initializePIDController(void)
     struct_PID_parameters_t pid_parameters;
     /* getting the parameters of the pid controller from nvs flash, if not found, the below function
      * will set the default values */
-    vGetPIDParametersFromNvs(&pid_parameters);
+    nvsread_pid_parameters(&pid_parameters);
 
     /* configuring  the parameters of the pid controller */
-    setMotorPIDParameters(pid_parameters.fKp / pid_parameters.fNcoff,
+    save_motor_pid_parameter(pid_parameters.fKp / pid_parameters.fNcoff,
                           pid_parameters.fKi / pid_parameters.fNcoff,
                           pid_parameters.fKd / pid_parameters.fNcoff,
                           pid_parameters.fAkp / pid_parameters.fACoff,
@@ -277,7 +277,7 @@ void motorPidComputeAndSetOutput(float input)
 /********************************************************************************************
  *  
  ********************************************************************************************/
-void setMotorPIDParameters(float fKpv, float fKiv, float fKdv, float fAkpv, float fAkiv, float fAkdv)
+void save_motor_pid_parameter(float fKpv, float fKiv, float fKdv, float fAkpv, float fAkiv, float fAkdv)
 {
     fKp = fKpv;
     fKi = fKiv;

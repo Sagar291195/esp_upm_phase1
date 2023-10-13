@@ -235,7 +235,7 @@ void vSetTotalHoursValueToNvs()
 /********************************************************************************************
  *    
  ********************************************************************************************/
-void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
+void nvswrite_pid_parameters(struct_PID_parameters_t *paramaters)
 {
     (void)nvswrite_value_parameters(PARAMETERS_STORGE_NAME, pid_parameterskey, paramaters, sizeof(struct_PID_parameters_t));
 }
@@ -243,7 +243,7 @@ void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
 /********************************************************************************************
  *    
  ********************************************************************************************/
-void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters)
+void nvsread_pid_parameters(struct_PID_parameters_t *paramaters)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, pid_parameterskey, paramaters);
     if(ret == false){

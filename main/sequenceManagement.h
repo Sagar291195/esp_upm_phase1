@@ -64,7 +64,7 @@ typedef struct sequenceSummary
 /**
  * @brief initialize the sample array to zero
  */
-void vInitializeSequenceArray();
+void sequence_array_initialize();
 
 /**
  * @brief Set the given sample data into the sample array
@@ -77,87 +77,86 @@ void vInitializeSequenceArray();
  * @param uDurationMinutes duration minutes of the sample
  * @param cStartPerson person who started the sample
  */
-void vSetSequenceValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin, float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, char *pStartPerson);
+void set_sequence_values(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin,
+                                float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, 
+                                char *pStartPerson);
 
 /**
  * @brief return the address of the sample array
  * @return sequence_t* address of the sample array
  */
-sequence_t *pGetAddressOfSequenceArray();
+sequence_t *get_sequence_array(void);
 
 /**
  * @brief save the sequence array to nvs
  */
-void vSetSequenceArrayToNVS();
+void nvswrite_sequence_array(void);
 
 
 /**
  * @brief return the number of Sequence in the array or in the given sample
  * @return uint8_t no of samples in the array
  */
-uint8_t uGetNoOfSequenceInArray();
+uint8_t get_no_of_sequence_in_array();
 
 /**
  * @brief Get the values of the particular smaple from the smaple array. It will return the address of the particular sample
  * @param uSequenceNumber sample numberto get
  * @return sequence_t* whole sample data
  */
-sequence_t *pGetSequenceFromArray(uint8_t uSequenceNumber);
+sequence_t *get_sequencedata(uint8_t uSequenceNumber);
 
 /**
  * @brief Get the waiting  time in sec to in starting the sequence
  * @param uSequenceNumber delay of the sequnce number to be caluclated
  * @return unsighed long dealy in sec
  */
-int32_t uGetNumberOfSecondRemainingToStartSequence(uint8_t uSequenceNumber);
+int32_t get_reamining_time_start_sequence(uint8_t uSequenceNumber);
 
 /**
  * @brief set the sequence to be started in a task.
  * @param uSequenceNumber Sequence to be started
  */
-void vSetSequenceToRun(uint8_t *uSequenceNumber);
-
+void set_sequence_running(uint8_t *uSequenceNumber);
 
 /**
  * @brief Get the sequence number to be saved. This fucntion gives the sequcne number to be show on the gui which is free or not written now 
  * @return uint8_t free sequence number
  */
-uint8_t uGetSequenceNumberToBeSaved();
-
+uint8_t get_sequence_number_tosave(void);
 
 /**
  * @brief All in one function to get the variable from the nvs flash into the memory 
  */
-void nvsread_sequence_parameters();
+void nvsread_sequence_parameters(void);
 
 /**
  * @brief set the total sequence count to the nvs flash
  */
-void vSetTotalSequenceCountToNvs();
+void nvswrite_totalsequence_count(void);
 
 /**
  * @brief Get the Nth sequence from the array 
  * @param xNthSequece nth sequence to be returned
  * @param uSequenceNumber Sequence number  to be returned
  */
-void vGetNthSaequenceFromArray(sequence_t* xNthSequece, uint8_t uSequenceNumber);
+void get_sequence_info(sequence_t* xNthSequece, uint8_t uSequenceNumber);
 
 /**
  * @brief Stops the onging sequence. Current sequnce will be interrupted either by the person or  when the sequnce is over
  */
-void vStopCurrentSequence();
+void stop_current_sequence(void);
 
 /**
  * @brief will stop the running sequence. Use this funtion from the front end to stop the sequence.
  */
-void vStopTheRunningSequnence();
-
+void stop_running_sequence(void);
 
 /**
  * @brief check if sequence management in progress
  * @return true 
  * @return false 
  */
-bool bIsSequenceRunning();
+bool is_sequence_running(void);
 
 #endif // __SEQUENCEMANAGEMENT_H__

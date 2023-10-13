@@ -266,7 +266,7 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_color(&_xStartStopTxtStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 
     /* loading the values of the end summary variable */
-    xSampleSummary_t xSampleSummary;
+    sample_summary_t xSampleSummary;
     vGetEndSummaryVariable(&xSampleSummary);
 
     ___xseStartTxt_se = lv_label_create(__xseBaseContainer_se, NULL);
@@ -901,8 +901,8 @@ void SequenceWidgetArrange(void)
 {
     lv_obj_t *curr_obj = __xseBaseContainer_se;
     // int NumOfSeq = 1;
-    sequence_t *xSequenceData = pGetAddressOfSequenceArray();
-    for (uint8_t i = 0; i < uGetNoOfSequenceInArray(); i++)
+    sequence_t *sequencedata = get_sequence_array();
+    for (uint8_t i = 0; i < get_no_of_sequence_in_array(); i++)
     {
         _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
         lv_obj_align(_xseSeque1_se, curr_obj, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
@@ -916,9 +916,9 @@ void SequenceWidgetArrange(void)
         lv_obj_set_style_local_bg_color(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
         lv_obj_set_style_local_border_opa(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
         sqSquenceNum(Seq, i + 1);
-        sqSetFlowSetPoint(Seq, xSequenceData[i].fFlowSetPoint); 
-        sqSetDuration(Seq, xSequenceData[i].uDurationHour);     
-        if (xSequenceData[i].bSucessfullyRun)
+        sqSetFlowSetPoint(Seq, sequencedata[i].fFlowSetPoint); 
+        sqSetDuration(Seq, sequencedata[i].uDurationHour);     
+        if (sequencedata[i].bSucessfullyRun)
         {
             sqSetProblem(Seq, "NONE");
             sqSetBtnColor(Seq, STATE_OK);

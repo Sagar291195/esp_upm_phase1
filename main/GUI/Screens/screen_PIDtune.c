@@ -1880,7 +1880,7 @@ static void pidSaveBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         aCoff = atof(aCoffBuf);
 
         /* setting the pid parameters  */
-        vSetPIDParameters(KpVal, KiVal, KdVal, Kp_aVal, Ki_aVal, Kd_aVal, nCoff, aCoff);
+        save_pid_parameters(KpVal, KiVal, KdVal, Kp_aVal, Ki_aVal, Kd_aVal, nCoff, aCoff);
     }
 }
 

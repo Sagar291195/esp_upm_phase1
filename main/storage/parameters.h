@@ -225,7 +225,7 @@ void vSetTotalLitersHasBeenPassInGivenSequence(float fLiters);
  */
 float fGetTotalLitersHasBeenPassInGivenSequence();
 
-void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters);
-void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters);
+void nvsread_pid_parameters(struct_PID_parameters_t *paramaters);
+void nvswrite_pid_parameters(struct_PID_parameters_t *paramaters);
 
 #endif  /*__PARAMETERS_H__*/

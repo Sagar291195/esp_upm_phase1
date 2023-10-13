@@ -32,19 +32,19 @@
 /* INA sensor data */
 typedef struct INA3231_sensor_data
 {
-    float fBusVoltage;
-    float fShuntVoltage;
-    float fShuntCurrent;
+    float bus_voltage;
+    float shunt_voltage;
+    float shunt_current;
 } INA3231_sensor_data_t;
 
 
 /* data structure for the external sensor */
 typedef struct external_sensor_data
 {
-    float fTemperature;
-    float fPressure;
-    float fHumidity;
-    float fGasResistance;
+    float temperature;
+    float pressure;
+    float humidity;
+    float gas_resistance;
 } external_sensor_data_t;
 
 /********************************************************************************************

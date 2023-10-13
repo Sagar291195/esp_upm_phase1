@@ -38,10 +38,11 @@ extern SemaphoreHandle_t gui_update_semaphore;
  ********************************************************************************************/
 static uint32_t uUniqueSampleNumber = 0;    /* This is the unique sample number in the system. Since sample  */
 static uint8_t uCurrentRunningSequenceNumber = 0;   /* tells about the current running sequnce. */
+static sample_summary_t endsummary;    /* this variable stores the end summary for the current sample */
+bool bSampleForcedStop = false;     /* this variable stores the state of the sample. true signifies that a force stop for the sample has been achieved */
+
 QueueHandle_t xSequenceQueue;
 static TaskHandle_t xHandleSampleManagementService = NULL;  /* task handle for the sample management Service */
-static xSampleSummary_t xEndSummary;    /* this variable stores the end summary for the current sample */
-bool bSampleForcedStop = false;     /* this variable stores the state of the sample. true signifies that a force stop for the sample has been achieved */
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -62,7 +63,7 @@ static void vSetCurrentSequenceNumberToNvsFlash(void);
 ********************************************************************************************/
 static void vInitializeEndSummaryVariableToZero(void)
 {
-    memset(&xEndSummary, 0, sizeof(xEndSummary));
+    memset(&endsummary, 0, sizeof(endsummary));
 }
 
 /********************************************************************************************
@@ -72,7 +73,7 @@ void vSetCounterValuesEndSummaryDetails()
 {
     ESP_LOGD(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
-    vGetCurrentDateAndTime(&timeinfo);
+    get_current_date_time(&timeinfo);
     char cStopDate[40];
 
     timeinfo.tm_year = timeinfo.tm_year + 1900;
@@ -80,30 +81,30 @@ void vSetCounterValuesEndSummaryDetails()
     sprintf(cStopDate, "%d/%d/%d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
 
     
-    strcpy(xEndSummary.xGenericSummary.cStopDate, cStopDate);   /* copy end date */
-    sprintf(xEndSummary.cStopTime, "%dH:%dM", timeinfo.tm_hour, timeinfo.tm_min);   /*  copy end times  */
+    strcpy(endsummary.xGenericSummary.cStopDate, cStopDate);   /* copy end date */
+    sprintf(endsummary.cStopTime, "%dH:%dM", timeinfo.tm_hour, timeinfo.tm_min);   /*  copy end times  */
 
     if (bIsSampleRunsWithoutProblem())   /* checking if sample runs sucessfully */
     {
-        strcpy(xEndSummary.hasProblem, "No");
+        strcpy(endsummary.hasProblem, "No");
     }
     else
     {
-        strcpy(xEndSummary.hasProblem, "Yes");
+        strcpy(endsummary.hasProblem, "Yes");
     }
 
-    xEndSummary.xGenericSummary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
-    xEndSummary.xGenericSummary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - xEndSummary.xGenericSummary.xVolumeCounter.fStartVolume;
+    endsummary.xGenericSummary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();
+    endsummary.xGenericSummary.xVolumeCounter.fEffectiveVolume = fGetTotalLiterCount() - endsummary.xGenericSummary.xVolumeCounter.fStartVolume;
 
-    xEndSummary.xGenericSummary.xVolumeCounter.fVariation = fabs(((xEndSummary.xGenericSummary.xVolumeCounter.fTargetVolume - xEndSummary.xGenericSummary.xVolumeCounter.fEffectiveVolume) / xEndSummary.xGenericSummary.xVolumeCounter.fTargetVolume) * 100);  /* calculating the variation in volume */
-    xEndSummary.xGenericSummary.xHourCounter.fEndHour = fGetTotalHoursCount();
-    xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - xEndSummary.xGenericSummary.xHourCounter.fStartHour;
+    endsummary.xGenericSummary.xVolumeCounter.fVariation = fabs(((endsummary.xGenericSummary.xVolumeCounter.fTargetVolume - endsummary.xGenericSummary.xVolumeCounter.fEffectiveVolume) / endsummary.xGenericSummary.xVolumeCounter.fTargetVolume) * 100);  /* calculating the variation in volume */
+    endsummary.xGenericSummary.xHourCounter.fEndHour = fGetTotalHoursCount();
+    endsummary.xGenericSummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - endsummary.xGenericSummary.xHourCounter.fStartHour;
     
-    xEndSummary.xGenericSummary.xHourCounter.fVariation = fabs(((xEndSummary.xGenericSummary.xHourCounter.fTargetHour - xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour) / xEndSummary.xGenericSummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", xEndSummary.xGenericSummary.xHourCounter.fTargetHour, xEndSummary.xGenericSummary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", xEndSummary.xGenericSummary.xHourCounter.fVariation);
+    endsummary.xGenericSummary.xHourCounter.fVariation = fabs(((endsummary.xGenericSummary.xHourCounter.fTargetHour - endsummary.xGenericSummary.xHourCounter.fEffectiveHour) / endsummary.xGenericSummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
+    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.xGenericSummary.xHourCounter.fTargetHour, endsummary.xGenericSummary.xHourCounter.fEffectiveHour);
+    ESP_LOGD(TAG, "variation in hour is %.2f", endsummary.xGenericSummary.xHourCounter.fVariation);
 
-    strcpy(xEndSummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
+    strcpy(endsummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
 }
 
@@ -138,10 +139,10 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
         /* iterating over the sequences.valid sequence are those which are less thatn the number of the sequnces and
          * also the invalid sequnce number 0 */
-        while ((uCurrentRunningSequenceNumber <= uGetNoOfSequenceInArray()) && (uCurrentRunningSequenceNumber != 0))
+        while ((uCurrentRunningSequenceNumber <= get_no_of_sequence_in_array()) && (uCurrentRunningSequenceNumber != 0))
         {
 
-            ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, get_no_of_sequence_in_array());
 
 
             if ((uCurrentRunningSequenceNumber != 0) && (uCurrentRunningSequenceNumber != 1))               /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from */
@@ -150,7 +151,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 vShowWaitInProgressScreen(); // first sample wait screen has been shown by the gui itself
             }
 
-            ulrequiredDelay = uGetNumberOfSecondRemainingToStartSequence(uCurrentRunningSequenceNumber);    /*  getting the delay time for the current sequence */
+            ulrequiredDelay = get_reamining_time_start_sequence(uCurrentRunningSequenceNumber);    /*  getting the delay time for the current sequence */
             if (ulrequiredDelay >= 0)
             {
                 vTaskDelay(pdMS_TO_TICKS(ulrequiredDelay * 1000));
@@ -160,9 +161,9 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 ESP_LOGE(TAG, "Error: Delay time is less than 0 means that time has already passed, but can force start the sequence now");
             }
 
-            ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, uGetNoOfSequenceInArray());
+            ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, get_no_of_sequence_in_array());
 
-            vSetSequenceToRun(&uCurrentRunningSequenceNumber);   /*  created the sequence to run */
+            set_sequence_running(&uCurrentRunningSequenceNumber);   /*  created the sequence to run */
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);    /* waiting for the sequence to finish */
             ESP_LOGD(TAG, "Task notification has been received");
             if (uCurrentRunningSequenceNumber == 0)
@@ -171,7 +172,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             }
             ESP_LOGD(TAG, "Sequence %d finished", uCurrentRunningSequenceNumber);
          
-            if ((uCurrentRunningSequenceNumber == uGetNoOfSequenceInArray()) || bSampleForcedStop == true)     /* show the summary screen, when all the sequneces are finished or we forced stop the samples by pressing the stop button*/
+            if ((uCurrentRunningSequenceNumber == get_no_of_sequence_in_array()) || bSampleForcedStop == true)     /* show the summary screen, when all the sequneces are finished or we forced stop the samples by pressing the stop button*/
             {
                 
                 vSetCounterValuesEndSummaryDetails();   /* filling the end summary, when not force stopped */
@@ -326,7 +327,7 @@ TaskHandle_t xGetHandleSampleManagementService()
 ********************************************************************************************/
 void vSaveEndSummaryToNvsFlash()
 {
-    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary, sizeof(xEndSummary));
+    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &endsummary, sizeof(endsummary));
     if(ret == false)
     {
       ESP_LOGE(TAG, "End summary write error");
@@ -338,7 +339,7 @@ void vSaveEndSummaryToNvsFlash()
 ********************************************************************************************/
 void vGetEndSummaryFromNvsFlash()
 {
-    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &xEndSummary);
+    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, END_SUMMARY_STORAGE_KEY, &endsummary);
     if(ret == false)
     {
       ESP_LOGE(TAG, "End summary read error");
@@ -356,30 +357,30 @@ void vSetInitialCounterValuesToEndSummary()
    
     vInitializeEndSummaryVariableToZero();   /* Construct a new v Initialize End Summary Variable To Zero object */
     
-    vGetNthSaequenceFromArray(&xSequenceNumber, 1); /*  getting the 1 sequence from the sequence array  */
-    strcpy(xEndSummary.xGenericSummary.cStartDate, xSequenceNumber.cStartDate);
-    sprintf(xEndSummary.cStartTime, "%dH:%dM", xSequenceNumber.uStartHour, xSequenceNumber.uStartMin);  /* getting the start time of the sequnce */
-    xEndSummary.uSampleNumber = uGetCurrentSampleNumber();   /* setiing the sample number */
-    xEndSummary.fFlowSetPoint = xSequenceNumber.fFlowSetPoint;  /* flow set point  */
-    xEndSummary.uSequenceNumber = uGetNoOfSequenceInArray();    /* setting the total number of sequnce in the sample */
-    vGetTotalDuartionOfSample(cDuration, sizeof(cDuration));    /* getting the duration of the sample */
-    strcpy(xEndSummary.cDuration, cDuration);
-    strcpy(xEndSummary.cStartPerson, xSequenceNumber.cStartPerson); /* coping the start person */
-    xEndSummary.xGenericSummary.xVolumeCounter.fStartVolume = fGetTotalLiterCount();    /* getting the initial total lites before the starting of the sequnece */
-    xEndSummary.xGenericSummary.xHourCounter.fStartHour = fGetTotalHoursCount();        /* getting the total hours count before the starting of the sequence  */
+    get_sequence_info(&xSequenceNumber, 1); /*  getting the 1 sequence from the sequence array  */
+    strcpy(endsummary.xGenericSummary.cStartDate, xSequenceNumber.cStartDate);
+    sprintf(endsummary.cStartTime, "%dH:%dM", xSequenceNumber.uStartHour, xSequenceNumber.uStartMin);  /* getting the start time of the sequnce */
+    endsummary.uSampleNumber = uGetCurrentSampleNumber();   /* setiing the sample number */
+    endsummary.fFlowSetPoint = xSequenceNumber.fFlowSetPoint;  /* flow set point  */
+    endsummary.uSequenceNumber = get_no_of_sequence_in_array();    /* setting the total number of sequnce in the sample */
+    get_total_duration_sample(cDuration, sizeof(cDuration));    /* getting the duration of the sample */
+    strcpy(endsummary.cDuration, cDuration);
+    strcpy(endsummary.cStartPerson, xSequenceNumber.cStartPerson); /* coping the start person */
+    endsummary.xGenericSummary.xVolumeCounter.fStartVolume = fGetTotalLiterCount();    /* getting the initial total lites before the starting of the sequnece */
+    endsummary.xGenericSummary.xHourCounter.fStartHour = fGetTotalHoursCount();        /* getting the total hours count before the starting of the sequence  */
 
     if (bIsSampleRunsWithoutProblem())   /* checking if sample runs sucessfully */
     {
-        strcpy(xEndSummary.hasProblem, "No");
+        strcpy(endsummary.hasProblem, "No");
     }
     else
     {
-        strcpy(xEndSummary.hasProblem, "Yes");
+        strcpy(endsummary.hasProblem, "Yes");
     }
 
     
-    xEndSummary.xGenericSummary.xVolumeCounter.fTargetVolume = fGetTargetVolumeCount(); /* setting the targeted volume and hour values */
-    xEndSummary.xGenericSummary.xHourCounter.fTargetHour = fGetTargetHourCount();
+    endsummary.xGenericSummary.xVolumeCounter.fTargetVolume = get_target_volumecount(); /* setting the targeted volume and hour values */
+    endsummary.xGenericSummary.xHourCounter.fTargetHour = get_target_hourcount();
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
 }
 
@@ -388,8 +389,8 @@ void vSetInitialCounterValuesToEndSummary()
 ********************************************************************************************/
 bool bIsSampleRunsWithoutProblem()
 {
-    sequence_t *seq = pGetAddressOfSequenceArray(); /* iterating over the sequence to check about  if the given sequcence has runs sucessfully  */
-    for (uint8_t uSequenceNumber = 0; uSequenceNumber < uGetNoOfSequenceInArray(); uSequenceNumber++)
+    sequence_t *seq = get_sequence_array(); /* iterating over the sequence to check about  if the given sequcence has runs sucessfully  */
+    for (uint8_t uSequenceNumber = 0; uSequenceNumber < get_no_of_sequence_in_array(); uSequenceNumber++)
     {
         if (seq->bSucessfullyRun == false)
         {
@@ -403,31 +404,29 @@ bool bIsSampleRunsWithoutProblem()
 /********************************************************************************************
 * 
 ********************************************************************************************/
-float fGetTargetVolumeCount()
+float get_target_volumecount(void)
 {
-    float fTargetVolumeCount = 0;
+    float target_volumecount = 0;
 
-   
-    sequence_t *seq = pGetAddressOfSequenceArray();  /* iterating over the sequence to get the target volume count  */
-
-    for (uint8_t uSequenceNumber = 0; uSequenceNumber < uGetNoOfSequenceInArray(); uSequenceNumber++)
+    sequence_t *seq = get_sequence_array();  /* iterating over the sequence to get the target volume count  */
+    for (uint8_t uSequenceNumber = 0; uSequenceNumber < get_no_of_sequence_in_array(); uSequenceNumber++)
     {
         /* target volume is determine by formula, target volume = start volume + (flow set point(per min) * duration(min)) */
-        fTargetVolumeCount = fTargetVolumeCount + (seq->fFlowSetPoint * ((seq->uDurationHour * 60) + seq->uDurationMinutes));
+        target_volumecount = target_volumecount + (seq->fFlowSetPoint * ((seq->uDurationHour * 60) + seq->uDurationMinutes));
     }
-    ESP_LOGD(TAG, "target volume count is %f", fTargetVolumeCount);
-    return fTargetVolumeCount;
+    ESP_LOGD(TAG, "target volume count is %f", target_volumecount);
+    return target_volumecount;
 }
 
 /********************************************************************************************
 * 
 ********************************************************************************************/
-float fGetTargetHourCount()
+float get_target_hourcount(void)
 {
     float fTargerHourCounter = 0;
 
-    sequence_t *seq = pGetAddressOfSequenceArray(); /* iterating over the sequence to get the target hour count */
-    for (uint8_t uSequenceNumber = 0; uSequenceNumber < uGetNoOfSequenceInArray(); uSequenceNumber++)
+    sequence_t *seq = get_sequence_array(); /* iterating over the sequence to get the target hour count */
+    for (uint8_t uSequenceNumber = 0; uSequenceNumber < get_no_of_sequence_in_array(); uSequenceNumber++)
     {
         fTargerHourCounter = fTargerHourCounter + (((seq->uDurationHour * 60) + seq->uDurationMinutes));            /* converting the duration to minutes and adding it */
     }
@@ -439,10 +438,10 @@ float fGetTargetHourCount()
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void vGetEndSummaryVariable(xSampleSummary_t *xSampleSummary)
+void vGetEndSummaryVariable(sample_summary_t *xSampleSummary)
 {
-    memset(xSampleSummary, 0, sizeof(xSampleSummary_t));
-    memcpy(xSampleSummary, &xEndSummary, sizeof(xSampleSummary_t));
+    memset(xSampleSummary, 0, sizeof(sample_summary_t));
+    memcpy(xSampleSummary, &endsummary, sizeof(sample_summary_t));
 }
 
 /********************************************************************************************
@@ -462,10 +461,10 @@ void vStopCurrentSample()
     bSampleForcedStop = true; /* setting the force stop sample flag to true */
 
     
-    if (bIsSequenceRunning())   /* if sequce is running stopping it */
+    if (is_sequence_running())   /* if sequce is running stopping it */
     {
         ESP_LOGD(TAG, "Sequnce is running stopping it");
-        vStopTheRunningSequnence();
+        stop_running_sequence();
     }
     else // is sequnce is not running then, take out the sample management service out of the blocked state so that the current sample will stop.
     {
@@ -486,7 +485,7 @@ void vStopCurrentSample()
 ********************************************************************************************/
 void vSaveSampleValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStartHour, uint8_t uStartMin, float fFlowSetPoint, uint8_t uDurationHour, uint8_t uDurationMinutes, char *pStartPerson)
 {
-    vSetSequenceValues(uSequenceNumber, pStartDate, uStartHour, uStartMin, fFlowSetPoint, uDurationHour, uDurationMinutes, pStartPerson);
+    set_sequence_values(uSequenceNumber, pStartDate, uStartHour, uStartMin, fFlowSetPoint, uDurationHour, uDurationMinutes, pStartPerson);
 }
 
 /********************************************************************************************
@@ -494,22 +493,21 @@ void vSaveSampleValues(uint8_t uSequenceNumber, char *pStartDate, uint8_t uStart
 ********************************************************************************************/
 void vControllerInitializeSampleArray()
 {
-    ESP_LOGD(TAG, "iniitalizing the array");
-    vInitializeSequenceArray();
+    sequence_array_initialize();
 }
 
 /********************************************************************************************
 * 
 ********************************************************************************************/
-void vControllerSampleIsValid()
+void vControllerSampleIsValid(void)
 {
     ESP_LOGD(TAG, "Sample is valid");
 
     vSetCurrentRunningSequenceNumber(1);    /*  Set the current running sequece number to 1. because we are starting the sequence from 1 */
     vIncrementCurrentSampleNumber();    /* incrementing the unique sample number  */
     vSetSampleNumberToNvsFlash();       /* saving the sample number in the flash memory */
-    vSetSequenceArrayToNVS();           /* saving the sequences to the nvs flash */
-    vSetTotalSequenceCountToNvs();      /* Setting the total sequence to the nvs flash */
+    nvswrite_sequence_array();           /* saving the sequences to the nvs flash */
+    nvswrite_totalsequence_count();      /* Setting the total sequence to the nvs flash */
     vSetInitialCounterValuesToEndSummary(); /* we need to set some values which we mention in the end summary, like start date and total liter and hour counts */
     vStartJob();     /* start the job */
 }
