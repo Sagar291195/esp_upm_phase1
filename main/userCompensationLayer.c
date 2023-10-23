@@ -216,7 +216,7 @@ float get_volumetric_flow(void)
     
     
     volumetric_flow_calibrated = (coeffA * volumetric_flow_raw) + coeffB;
-    ESP_LOGI(TAG, "Volumetric flow raw = %.2f, Coeffiecient A = %.2f, B = %.2f, compensated = %.2f",
+    ESP_LOGD(TAG, "Volumetric flow raw = %.2f, Coeffiecient A = %.2f, B = %.2f, compensated = %.2f",
             volumetric_flow_raw, coeffA, coeffB, volumetric_flow_calibrated);
     return volumetric_flow_calibrated;
 }

@@ -12,7 +12,7 @@
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
-#define TAG                 "Demo"
+#define TAG                 "MAIN"
 #define LV_TICK_PERIOD_MS   1
 
 #ifdef CONFIG_NEW_HW
@@ -73,6 +73,8 @@ static void wakeupmodeInit(void)
  ********************************************************************************************/
 void app_main()
 {
+    printf("\n\n####################################################################################\n");
+    ESP_LOGI(TAG, "Firmware Version : 1.0.0.0");
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -90,24 +92,20 @@ void app_main()
 
     i2c_communication_semaphore = xSemaphoreCreateMutex();
     gui_update_semaphore = xSemaphoreCreateMutex();
-
-    wakeupmodeInit();           // enabling the device from the wake mode
+    wakeupmodeInit();                   // enabling the device from the wake mode
     buzzer_initialization();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    
     nvs_storage_initialize();     // Initiating the data managament api
     nvsread_calibrationdata();          // Read calibration data from flash
     nvsread_hours_liters_value();
     nvsread_sequence_parameters();
-
     sensor_initialization();          // Initiating all i2c sensors on the board
     timemanagement_intialization();        // Initializing the time management of the device
     start_samplemanagement_service();    // Installing the sample management service
     motor_initialization();                 // Installing the sample management service
-
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    ESP_LOGI(TAG, "Code Version: ESPUPM 8-04-2022 V2");
+    
 
     xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
     vTaskDelay(500 / portTICK_PERIOD_MS);
