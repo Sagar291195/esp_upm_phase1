@@ -22,27 +22,12 @@
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
- /* sample header structure */
-typedef struct sampleHeader
-{   
-    float fTotalLitersStart;     //sample start total number of liters 
-    float fToatlHoursStart;      //samples hour start 
-    char cStartPerson[40];       //sample start person 
-} sampleHeader_t;
-
-/* sample footer structure  */
-typedef struct sampleFooter
-{   
-    float ftotalLitersEnd;  //sample end total number of liters
-    float ftoatlHoursEnd;   //sample end hour
-    char cEndPerson[40];
-} sampleFooter_t;
 
 /* structure holds the  end sample summary */
 typedef struct xSampleSummary
 {   
-    xGenericSummary_t xGenericSummary;  //generic summary
-    char cStartTime[10];    //sample start time
+    generic_summary_t genericsummary;  //generic summary
+    char starttime[10];    //sample start time
     char cStopTime[10];     //sample stop time     
     uint16_t uSampleNumber; //sample number to which this summary belongs
     float fFlowSetPoint;    //flow set point 
@@ -51,7 +36,7 @@ typedef struct xSampleSummary
     char cStartPerson[40];  //start person of the sample
     char cEndPerson[40];    // end person of the sample
     char hasProblem[5];     //check whether the sample has problem or not.It has only 2 values yes or no 
-}xSampleSummary_t;
+}sample_summary_t;
 
 /********************************************************************************************
  *                           GLOBAL VARIABLES
@@ -98,7 +83,7 @@ TaskHandle_t xGetHandleSampleManagementService();
 /**
  * @brief this fuction start the sample management service
  */
-void vStartSampleManagementService();
+void start_samplemanagement_service();
 
 
 /**
@@ -130,13 +115,13 @@ bool bIsSampleRunsWithoutProblem();
  * @brief calculate the target volume in the sample
  * @return float target volume counter
  */
-float fGetTargetVolumeCount();
+float get_target_volumecount(void);
 
 /**
  * @brief Get the total number of targetd hour in the sample
  * @return float target hour counter
  */
-float fGetTargetHourCount();
+float get_target_hourcount(void);
 
 /**
  * @brief Initialize the end summary structure according to the sample gather
@@ -147,7 +132,7 @@ void vSetInitialCounterValuesToEndSummary();
  * @brief fetch the end summary variable from the back end.
  * @param xSampleSummary variable which hold the end summary
  */
-void vGetEndSummaryVariable(xSampleSummary_t *xSampleSummary);
+void vGetEndSummaryVariable(sample_summary_t *xSampleSummary);
 
 /**
  * @brief This function will indicate the sample management to move further. Sample management need the indication either to proceed in the new sample or indicated by the sequnce management regarding the completion of the sequence. 

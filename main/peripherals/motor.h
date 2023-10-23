@@ -113,7 +113,7 @@ void setMotorPIDSetTargetValue(float setValue);
  * @param fAki
  * @param fAkd
  */
-void setMotorPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd);
+void save_motor_pid_parameter(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd);
 
 /**
  * @brief Set the Motor Pid Limits object
@@ -193,7 +193,7 @@ uint16_t getMotorPIDSampleComputeTime();
  * @brief Initailize the motor and pid controller
  *
  */
-void vInitializeMotor();
+void motor_initialization();
 
 #ifdef __cplusplus
 }

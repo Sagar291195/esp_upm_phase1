@@ -24,9 +24,12 @@ typedef struct calibration_strct{
     float flow_coeffB2_calibration;             //flow calibration coeff B2
     float flow_coeffA3_calibration;             //flow calibration coeff A3
     float flow_coeffB3_calibration;             //flow calibration coeff B3
-    float flow_reference_sensorvalue1;          //reference sensor value1
-    float flow_reference_sensorvalue2;          //reference sensor value2
-    float flow_reference_sensorvalue3;          //reference sensor value3
+    float flow_reference_airdensityvalue1;          //reference airdensity value1
+    float flow_reference_airdensityvalue2;          //reference airdensity value2
+    float flow_reference_airdensityvalue3;          //reference airdensity value3
+    float flow_reference_massflowvalue1;          //reference sensor value1
+    float flow_reference_massflowvalue2;          //reference sensor value2
+    float flow_reference_massflowvalue3;          //reference sensor value3
 }calibration_t;
 
 /********************************************************************************************
@@ -146,7 +149,7 @@ float getcalibrationvalue_flow_coeffB3(void);
  * @return float sensor value
  *   
 */
-float getcalibration_reference_sensorvalue1(void);
+float getcalibration_airdensity_value1(void);
 
 /**
  * @brief Get reference sensor value
@@ -154,7 +157,7 @@ float getcalibration_reference_sensorvalue1(void);
  * @return float sensor value
  *   
 */
-float getcalibration_reference_sensorvalue2(void);
+float getcalibration_airdensity_value2(void);
 
 /**
  * @brief Get reference sensor value
@@ -162,8 +165,11 @@ float getcalibration_reference_sensorvalue2(void);
  * @return float sensor value
  *   
 */
-float getcalibration_reference_sensorvalue3(void);
+float getcalibration_airdensity_value3(void);
 
+float getcalibration_massflow_value1(void);
+float getcalibration_massflow_value2(void);
+float getcalibration_massflow_value3(void);
 /**
  * @brief Get external temperature calibration data 
  * @param value external temperature offset value
@@ -266,7 +272,7 @@ void setcalibrationvalue_flow_coeffB3(float value);
  * @return None
  *   
 */
-void setcalibration_flow_reference_sensorvalue1(float value);
+void setcalibration_flow_airdensity1(float value);
 
 /**
  * @brief Set refernce sensor value 2
@@ -274,7 +280,7 @@ void setcalibration_flow_reference_sensorvalue1(float value);
  * @return None
  *   
 */
-void setcalibration_flow_reference_sensorvalue2(float value);
+void setcalibration_flow_airdensity2(float value);
 
 /**
  * @brief Set refernce sensor value 3
@@ -282,5 +288,9 @@ void setcalibration_flow_reference_sensorvalue2(float value);
  * @return None
  *   
 */
-void setcalibration_flow_reference_sensorvalue3(float value);
+void setcalibration_flow_airdensity3(float value);
+void setcalibration_flow_reference_massflowvalue1(float value);
+void setcalibration_flow_reference_massflowvalue2(float value);
+void setcalibration_flow_reference_massflowvalue3(float value);
+float get_average_airdensity_value(void);
 #endif

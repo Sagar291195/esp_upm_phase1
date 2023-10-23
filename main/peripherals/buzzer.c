@@ -59,7 +59,7 @@ static void buzzer_init_gpio(void)
 /********************************************************************************************
  *  
  ********************************************************************************************/
-void Init_Buzzer(void)
+void buzzer_initialization(void)
 {
     gpio_pad_select_gpio(BUZZER);
     gpio_set_direction(BUZZER, GPIO_MODE_OUTPUT);

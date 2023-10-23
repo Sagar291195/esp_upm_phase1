@@ -9,7 +9,7 @@
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
-#define TAG            "pid_ctrl"
+#define TAG            "PID"
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -162,18 +162,18 @@ esp_err_t pid_update_parameters(pid_ctrl_block_handle_t pid, const pid_ctrl_para
  /********************************************************************************************
  *                         
  ********************************************************************************************/
-void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
+void save_pid_parameters(float fKp, float fKi, float fKd, float fAkp, float fAki, float fAkd, float fNcoff, float fACoff)
 {
     ESP_LOGI(TAG, "kp %0.2f, ki %0.2f, kd %0.2f, akp %0.2f, aki %0.2f, akd %0.2f, ncoff %0.2f, acoff %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd, fNcoff, fACoff);
-    struct_PID_parameters_t PID_parameters;
-    PID_parameters.fKp = fKp;
-    PID_parameters.fKi = fKi;
-    PID_parameters.fKd = fKd;
-    PID_parameters.fAkp = fAkp;
-    PID_parameters.fAki = fAki;
-    PID_parameters.fAkd = fAkd;
-    PID_parameters.fNcoff = fNcoff;
-    PID_parameters.fACoff = fACoff;
+    struct_PID_parameters_t pid_param;
+    pid_param.fKp = fKp;
+    pid_param.fKi = fKi;
+    pid_param.fKd = fKd;
+    pid_param.fAkp = fAkp;
+    pid_param.fAki = fAki;
+    pid_param.fAkd = fAkd;
+    pid_param.fNcoff = fNcoff;
+    pid_param.fACoff = fACoff;
     if (fNcoff == 0)
     {
         fNcoff = 1;
@@ -184,6 +184,6 @@ void vSetPIDParameters(float fKp, float fKi, float fKd, float fAkp, float fAki, 
         fACoff = 1;
     }
 
-    vSetPIDParametersToNvs(&PID_parameters);    /* setting the pid parameters to the nvs flash */
-    setMotorPIDParameters(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);   /* also setting the pid parameters to the pid control block */
+    nvswrite_pid_parameters(&pid_param);    /* setting the pid parameters to the nvs flash */
+    save_motor_pid_parameter(fKp / fNcoff, fKi / fNcoff, fKd / fNcoff, fAkp / fACoff, fAki / fACoff, fAkd / fACoff);   /* also setting the pid parameters to the pid control block */
 }

@@ -1,5 +1,6 @@
-#ifndef SCREEN_COMMON_H
-#define SCREEN_COMMON_H
+
+#ifndef SCREEN_SET_TIMEDATE_H
+#define SCREEN_SET_TIMEDATE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -9,11 +10,17 @@ extern "C"
 /********************************************************************************************
  *                              INCLUDES
  ********************************************************************************************/
- #include "screen_includes.h"
  
  /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
+#define DAY_ROLLER_DEF      9
+#define MONTH_ROLLER_DEF    5
+#define YEAR_ROLLER_DEF     121
+
+#define HOUR_ROLLER_DEF     18
+#define MIN_ROLLER_DEF      10
+#define SEC_ROLLER_DEF      10
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -22,33 +29,15 @@ extern "C"
 /********************************************************************************************
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
-extern int stopHr;
-extern int global_DashbordBTNflag;
-extern bool startTimeLabelAdgFlg;
 
-extern char guiTime[25];
-extern char guiSeqDate1[25];
-extern char GuiDateRollerStr[700];
-extern char guiHrDef[25];
-extern char guiMinDef[32];
 
-extern bool defaultParaSelected;
-extern int dashboardflg;
-extern int totalSecond;
-extern lv_obj_t *crnt_screen;
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
-void getSeqStopDT(int afterHr, int afterMin, int currHr, int currMin);
-void getStopDate(int durHr1, int stopHr1);
-void DashboardInfoWidget(void);
-
-void set_archiv_or_summary_screen(bool val);
-bool get_archiv_or_summary_screen_stat(void);
-void set_rollermovck_flag(bool val);
-
+void screen_set_time_date(void);
+void get_new_set_time(struct tm *time);
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*SCREEN_COMMON_H*/
+#endif /*SCREEN_SET_TIMEDATE_H*/

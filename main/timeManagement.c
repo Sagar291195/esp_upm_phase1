@@ -1,14 +1,6 @@
-/**
- * @file timeManagement.c
- * @author Ankit Bansal (iotdevelope@gmail.com)
- * @brief Create the implementation of the time related function in the system. This function also initialize the rtc time function
- * @version 1.1
- * @date 2022-05-19
- *
- * @copyright Copyright (c) 2022
- *
- */
-
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <timeManagement.h>
 
 #include <esp_log.h>
@@ -60,7 +52,7 @@ i2c_dev_t dev;
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vInitiateRTCSensor()
+void rtc_sensor_initialize()
 {
     ESP_LOGI(TAG, "Initializing RTC Sensor");
 
@@ -75,7 +67,7 @@ void vInitiateRTCSensor()
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vSetDateAndTimeOfTheDevice(struct tm time)
+void set_time_date_device(struct tm time)
 {
     time.tm_year = time.tm_year - 1900; // adjusting the year
     time.tm_mon = time.tm_mon - 1;      // adjusting the month
@@ -91,7 +83,7 @@ void vSetDateAndTimeOfTheDevice(struct tm time)
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vGetCurrentDateAndTime(struct tm *time)
+void get_current_date_time(struct tm *time)
 {
     if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
     {
@@ -121,10 +113,10 @@ void vSetSystemTimeUsingCompileTime()
     tm.tm_year = tm.tm_year + 1900; // adjusting the year
     tm.tm_mon = tm.tm_mon + 1;
     ESP_LOGD(TAG, "setting the system time");
-    vSetDateAndTimeOfTheDevice(tm);
+    set_time_date_device(tm);
 
     struct tm currentTime = {0};
-    vGetCurrentDateAndTime(&currentTime);
+    get_current_date_time(&currentTime);
     strftime(now, sizeof(now), "%d %b %Y %H:%M", &currentTime);
     ESP_LOGI(TAG, "Current time is %s", now);
 }
@@ -132,7 +124,7 @@ void vSetSystemTimeUsingCompileTime()
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vInitializeTimeManagement()
+void timemanagement_intialization()
 {
     ESP_LOGI(TAG, "Initializing time management");
     vSetSystemTimeUsingCompileTime();
@@ -141,12 +133,12 @@ void vInitializeTimeManagement()
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate, char *endTime, uint8_t sizeOfEndTimes)
+void get_end_date_time_sequence(char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate, char *endTime, uint8_t sizeOfEndTimes)
 {
     esp_log_level_set(TAG, ESP_LOG_INFO);
     sequenceNumber--;
 
-    sequence_t *seq = pGetAddressOfSequenceArray();
+    sequence_t *seq = get_sequence_array();
     struct tm startTimeTm = {0};
     startTimeTm.tm_hour = seq[0].uStartHour;
     startTimeTm.tm_min = seq[0].uStartMin;
@@ -176,9 +168,9 @@ void vGetEndDateAndTimeOfSequence(char *endDate, uint8_t sequenceNumber, uint8_t
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void uGetStartSequenceDateAndTime(uint8_t uSequenceNumber, char *cStartDate, uint8_t sizeOfStartDate, char *cStartTime, uint8_t uSizeOfStartTime)
+void get_start_date_time_sequence(uint8_t uSequenceNumber, char *cStartDate, uint8_t sizeOfStartDate, char *cStartTime, uint8_t uSizeOfStartTime)
 {
-    sequence_t *seq = pGetAddressOfSequenceArray();
+    sequence_t *seq = get_sequence_array();
     sprintf(cStartDate, "%s", seq[uSequenceNumber - 1].cStartDate);
     sprintf(cStartTime, "%02d:%02d:00", seq[uSequenceNumber - 1].uStartHour, seq[uSequenceNumber - 1].uStartMin);
 }
@@ -186,12 +178,12 @@ void uGetStartSequenceDateAndTime(uint8_t uSequenceNumber, char *cStartDate, uin
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vGetTotalDuartionOfSample(char *cTotalDuration, uint8_t uSizeOfArray)
+void get_total_duration_sample(char *cTotalDuration, uint8_t uSizeOfArray)
 {
     uint16_t uTotalDurationMinutes = 0;                     /* iterating over the sequence array to get the total minutes of duration */
-    sequence_t *seq = pGetAddressOfSequenceArray();         /* getting the pointer to the sequence array  */
+    sequence_t *seq = get_sequence_array();         /* getting the pointer to the sequence array  */
     
-    for (uint8_t i = 0; i < uGetNoOfSequenceInArray(); i++)
+    for (uint8_t i = 0; i < get_no_of_sequence_in_array(); i++)
     {
         uTotalDurationMinutes += seq[i].uDurationHour * 60 + seq[i].uDurationMinutes;
     }
@@ -205,9 +197,9 @@ void vGetTotalDuartionOfSample(char *cTotalDuration, uint8_t uSizeOfArray)
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void vGetNumberOfHourAndMinutesLeftInStartingSequence(uint16_t *hour, uint8_t *minutes)
+void get_remaining_hours_minutes_sequence(uint16_t *hour, uint8_t *minutes)
 {
-    sequence_t *seq = pGetAddressOfSequenceArray();
+    sequence_t *seq = get_sequence_array();
     uint32_t uTotalDurationSecondsLeft = 0;
 
     uTotalDurationSecondsLeft = seq[uGetCurrentRunningSequenceNumber() - 1].uDurationHour * 3600 + seq[uGetCurrentRunningSequenceNumber() - 1].uDurationMinutes * 60;

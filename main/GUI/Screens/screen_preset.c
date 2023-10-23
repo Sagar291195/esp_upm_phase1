@@ -37,10 +37,7 @@ LV_IMG_DECLARE(left_arrow_icon)
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
-// call backs
-// static void event_handler(lv_obj_t * obj, lv_event_t event);
-// static void Calender_event_handler(lv_obj_t * obj, lv_event_t event);
+static void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask);
 static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event);
 static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event);
@@ -121,25 +118,20 @@ char _xsDurMinutrollerNull[32] = "";
 char defaultSP[5] = "7.0";
 char defaultDurHr[5] = "24";
 char defaultDurMin[5] = "00";
-
-char WseqNum1[5] = "1"; // To be updated
-
 char WseqDate1[60] = "2021-06-06";
 char WseqTime1[130] = "16:28:00";
 char WseqSetPt1[32] = "5.0";
 char WseqDurHr1[32] = "24";
 char WseqDurMin1[32] = "00";
-// char WseqNum1[5] = "1"; //
 int WseqStatus1 = 0;
 
 int startHr = 0;
 int startMin = 0;
 int stopHr = 0;
-int stopMin = 0;
 int durHr = 0;
 int durMin = 0;
 
-float SetPoint_Value;
+
 
 bool defaultParaSelected;
 
@@ -332,15 +324,6 @@ void xsPresetScreenAdvance(void)
     // Roller to hold date
     _xaDateroller = lv_roller_create(_xaDMYCon_Adv, NULL);
     lv_roller_set_options(_xaDateroller, GuiDateRollerStr, LV_ROLLER_MODE_INIFINITE);
-    // lv_roller_set_options(_xaDateroller, guiDateNext1 /*guiDateNext2 guiDateNext3*/ , LV_ROLLER_MODE_INIFINITE);
-    // lv_roller_set_options(_xaDateroller, guiDateNext2  , LV_ROLLER_MODE_INIFINITE);
-    // lv_roller_set_options(_xaDateroller, guiDateNext3 , LV_ROLLER_MODE_INIFINITE);
-
-    // lv_roller_set_options(_xaDateroller, "Thur 2 March\n"
-    //                                      "Today       \n"
-    //                                      "Thur 4 March\n"
-    //                                      "Thur 5 March\n"
-    //                                         , LV_ROLLER_MODE_INIFINITE);
 
     lv_roller_set_visible_row_count(_xaDateroller, 3);
     lv_obj_align(_xaDateroller, _xaDMYCon_Adv, LV_ALIGN_IN_LEFT_MID, 4, 1);
@@ -384,8 +367,9 @@ void xsPresetScreenAdvance(void)
                                          "23\n",
                           LV_ROLLER_MODE_INIFINITE);
 
+    struct tm current_time = get_current_time();
     lv_roller_set_visible_row_count(_xaHourroller, 3);
-    lv_roller_set_selected(_xaHourroller, navier_time.tm_hour + 1, LV_ANIM_OFF);
+    lv_roller_set_selected(_xaHourroller, current_time.tm_hour + 1, LV_ANIM_OFF);
     lv_obj_align(_xaHourroller, _xaDateroller, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
 
     // lv_obj_set_size(_xaHourroller, 20, 60);
@@ -464,7 +448,7 @@ void xsPresetScreenAdvance(void)
                           LV_ROLLER_MODE_INIFINITE);
 
     lv_roller_set_visible_row_count(_xaMinutroller, 3);
-    lv_roller_set_selected(_xaMinutroller, navier_time.tm_min + 1, LV_ANIM_OFF);
+    lv_roller_set_selected(_xaMinutroller, current_time.tm_min + 1, LV_ANIM_OFF);
     lv_obj_align(_xaMinutroller, _xaHourroller, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     // lv_obj_set_size(_xaMinutroller, 20, 60);
     lv_obj_set_click(_xaMinutroller, false);
@@ -851,8 +835,8 @@ void xsPresetScreenAdvance(void)
     screenid = SCR_PRESET;
 }
 
-// void _xaTimeLabel_Adv_refr_func(void* p) //*_xarefresherTask
-void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask)
+
+static void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask)
 {
     if (lv_obj_get_screen(_xaTimeLabel_Adv) == lv_scr_act())
     {
@@ -860,48 +844,6 @@ void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask)
     }
 }
 
-void setRollerParameterNull(void)
-{
-    //======================================
-    if (strcmp(_xaDaterollerbuf, _xaDaterollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xaDaterollerbuf, "%s", guiDate); // Default Date is Current data
-    }
-
-    if (strcmp(_xaHourrollerbuf, _xaHourrollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xaHourrollerbuf, "%s", guiHrDef);
-    }
-
-    if (strcmp(_xaMinutrollerbuf, _xaMinutrollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xaMinutrollerbuf, "%s", guiMinDef);
-    }
-
-    if (strcmp(_xsSProllerbuf, _xsSProllerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xsSProllerbuf, "%s", defaultSP);
-    }
-    if (strcmp(_xsDurHourrollerbuf, _xsDurHourrollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xsDurHourrollerbuf, "%s", defaultDurHr);
-    }
-    if (strcmp(_xsDurHourrollerbuf, _xsDurHourrollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xsDurHourrollerbuf, "%s", defaultDurHr);
-    }
-    if (strcmp(_xsDurMinutrollerbuf, _xsDurMinutrollerNull) == 0)
-    {
-        defaultParaSelected = true;
-        sprintf(_xsDurMinutrollerbuf, "%s", defaultDurMin);
-    }
-}
 
 /**************************
  *   STATIC FUNCTIONS     *
@@ -920,7 +862,6 @@ static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     }
 }
 
-// lv_roller_set_selected(roller1, id);
 
 static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
 {
@@ -934,7 +875,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             startTimeLabelAdgFlg = true;
             defaultParaSelected = false;
 
-            vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+            vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
 
             //======================================
             if (strcmp(_xaDaterollerbuf, _xaDaterollerNull) == 0)
@@ -976,17 +917,13 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
                 sprintf(_xsDurMinutrollerbuf, "%s", defaultDurMin);
             }
 
-            //======
-            //======
-
             // Calculate total duration minute
             totalSecond = atoi(_xsDurHourrollerbuf) * 60 * 60 + atoi(_xsDurMinutrollerbuf) * 60;
-            SetPoint_Value = atof(_xsSProllerbuf);
-            // printf("Total Job Duration in Second is %d\n", totalSecond);
-
             startHr = atoi(_xaHourrollerbuf);
             startMin = atoi(_xaMinutrollerbuf);
-            if (startMin == navier_time.tm_min)
+
+            struct tm current_time = get_current_time();
+            if (startMin == current_time.tm_min)
                 startMin += 1;
             durHr = atoi(_xsDurHourrollerbuf);
             durMin = atoi(_xsDurMinutrollerbuf);
@@ -1003,13 +940,16 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
             startTimeLabelAdgFlg = true;
             defaultParaSelected = false;
             defaultParametrs();
-            vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+            vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
         }
-
-        //===========
-
         xssSummaryStartScreen();
     }
+}
+
+
+void set_rollermovck_flag(bool val)
+{
+    rollerMovCkFlag = val;
 }
 
 void defaultParametrs(void)
@@ -1028,9 +968,6 @@ void defaultParametrs(void)
 
     durHr = atoi(_xsDurHourrollerbuf);
     durMin = atoi(_xsDurMinutrollerbuf);
-
-    SetPoint_Value = atof(_xsSProllerbuf);
-
     totalSecond = atoi(_xsDurHourrollerbuf) * 60 * 60 + atoi(_xsDurMinutrollerbuf) * 60;
 
     getSeqStopDT(durHr, durMin, startHr, startMin);
@@ -1049,7 +986,7 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         SeqCounter++;
         // save value of previous sequence
-        vSaveSampleValues(uGetSequenceNumberToBeSaved(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
+        vSaveSampleValues(get_sequence_number_tosave(), _xaDaterollerbuf, atoi(_xaHourrollerbuf), atoi(_xaMinutrollerbuf), atof(_xsSProllerbuf), atoi(_xsDurHourrollerbuf), atoi(_xsDurMinutrollerbuf), "Mark");
 
         ESP_LOGD(TAG, "_NextSeq_event_handler call = %d", SeqCounter);
         lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
@@ -1059,147 +996,126 @@ static void _NextSeq_event_handler(lv_obj_t *obj, lv_event_t event)
         {
         case 1:
             Seq_Number = "2";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 2:
             Seq_Number = "3";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 3:
             Seq_Number = "4";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 4:
             Seq_Number = "5";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 5:
             Seq_Number = "6";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 6:
             Seq_Number = "7";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 7:
             Seq_Number = "8";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 8:
             Seq_Number = "9";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 9:
             Seq_Number = "10";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 10:
             Seq_Number = "11";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 11:
             Seq_Number = "12";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 12:
             Seq_Number = "13";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 13:
             Seq_Number = "14";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 14:
             Seq_Number = "15";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 15:
             Seq_Number = "16";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 16:
             Seq_Number = "17";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 17:
             Seq_Number = "18";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 18:
             Seq_Number = "19";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 19:
             Seq_Number = "20";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         case 20:
             Seq_Number = "1";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;
 
         default:
             Seq_Number = "1";
-            sprintf(WseqNum1, "%s", Seq_Number);
             lv_label_set_text(_xaSeq_Num_Adv, Seq_Number);
             lv_obj_align(_xaSeq_Num_Adv, _xaParameterHeading_Adv, LV_ALIGN_OUT_RIGHT_TOP, 2, 0);
             break;

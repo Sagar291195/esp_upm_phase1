@@ -34,8 +34,8 @@ static char pid_parameterskey[] = "pid-parameters";  // key to store data in fla
 /********************************************************************************************
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
-static void vGetTotalLitersFromNvs(void);
-static void vGetTotalHoursFromNvs(void);
+static void nvsread_totalliters_count(void);
+static void nvsread_totalhours_count(void);
 
 /********************************************************************************************
  *                           STATIC FUNCTIONS
@@ -45,7 +45,7 @@ static void vGetTotalHoursFromNvs(void);
 /********************************************************************************************
  *    
  ********************************************************************************************/
-static void vGetTotalHoursFromNvs(void)
+static void nvsread_totalhours_count(void)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_hourskey, &totalHoursCounter);
     if(ret == false)
@@ -54,14 +54,14 @@ static void vGetTotalHoursFromNvs(void)
     }
     else
     {
-      ESP_LOGI(TAG, "Total Hours Count : %0.2f", totalHoursCounter);
+      ESP_LOGI(TAG, "Total Hours Count = %0.2f", totalHoursCounter);
     }
 }
 
 /********************************************************************************************
  *    
  ********************************************************************************************/
-static void vGetTotalLitersFromNvs(void)
+static void nvsread_totalliters_count(void)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, total_literskey, &totalLitersCounter);
     if(ret == false)
@@ -70,7 +70,7 @@ static void vGetTotalLitersFromNvs(void)
     }
     else
     {
-      ESP_LOGI(TAG, "Total Liters count : %0.2f", totalLitersCounter);
+      ESP_LOGI(TAG, "Total Liters count = %0.2f", totalLitersCounter);
     }
 }
 
@@ -203,8 +203,8 @@ float fGetTotalLitersHasBeenPassInGivenSequence()
  ********************************************************************************************/
 void nvsread_hours_liters_value()
 {
-  vGetTotalLitersFromNvs();
-  vGetTotalHoursFromNvs();  
+  nvsread_totalliters_count();
+  nvsread_totalhours_count();  
 }
 
 /********************************************************************************************
@@ -235,7 +235,7 @@ void vSetTotalHoursValueToNvs()
 /********************************************************************************************
  *    
  ********************************************************************************************/
-void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
+void nvswrite_pid_parameters(struct_PID_parameters_t *paramaters)
 {
     (void)nvswrite_value_parameters(PARAMETERS_STORGE_NAME, pid_parameterskey, paramaters, sizeof(struct_PID_parameters_t));
 }
@@ -243,7 +243,7 @@ void vSetPIDParametersToNvs(struct_PID_parameters_t *paramaters)
 /********************************************************************************************
  *    
  ********************************************************************************************/
-void vGetPIDParametersFromNvs(struct_PID_parameters_t *paramaters)
+void nvsread_pid_parameters(struct_PID_parameters_t *paramaters)
 {
     bool ret = nvsread_value_parameter(PARAMETERS_STORGE_NAME, pid_parameterskey, paramaters);
     if(ret == false){

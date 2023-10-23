@@ -59,18 +59,10 @@ uint16_t PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
  ********************************************************************************************/
 static void motorTask(void *pvParameters);
 static void setMotorPwmPidSetKpKiKd(float fKp, float fKi, float fKd);
-static void settedPIDParameters(void);
 
  /********************************************************************************************
  *                           STATIC FUNCTIONS
  ********************************************************************************************/
-/********************************************************************************************
- *  
- ********************************************************************************************/
-static void settedPIDParameters(void)
-{
-    ESP_LOGI(TAG, "KP %0.2f, KI %0.2f, KD %0.2f, AKP %0.2f, AKI %0.2f, AKD %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd);
-}
 
 /********************************************************************************************
  *  
@@ -90,9 +82,7 @@ static void motorTask(void *pvParameters)
         /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "AVERAGE SDP VALUE IN CALUCULATION IS %0.2f", fGetSdp32DiffPressureAverageValue());
-           
-            flowRate = fGetVolumetricFlowUserCompensated();  /* calulating the current flow rate */
+            flowRate = get_volumetric_flow();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {
                 ESP_LOGD(TAG, "flow rate is nan");
@@ -102,7 +92,7 @@ static void motorTask(void *pvParameters)
             {
                 fTempVariable = fGetTotalLiterCount();
                 fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);   /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                ESP_LOGD(TAG, "FLOW rate IS from motor %0.2f, Total liter : %.2f", flowRate, fTempVariable);
+                ESP_LOGD(TAG, "Flow rate : motor = %0.2f, Total liter = %.2f", flowRate, fTempVariable);
                 vSetTotalLiterCount(fTempVariable); /* updating the total liters flow in the variable */
             }
             motorPidComputeAndSetOutput(flowRate);  /* computing the duty cycle and set it */
@@ -200,16 +190,16 @@ void initializePIDController(void)
     struct_PID_parameters_t pid_parameters;
     /* getting the parameters of the pid controller from nvs flash, if not found, the below function
      * will set the default values */
-    vGetPIDParametersFromNvs(&pid_parameters);
+    nvsread_pid_parameters(&pid_parameters);
 
     /* configuring  the parameters of the pid controller */
-    setMotorPIDParameters(pid_parameters.fKp / pid_parameters.fNcoff,
+    save_motor_pid_parameter(pid_parameters.fKp / pid_parameters.fNcoff,
                           pid_parameters.fKi / pid_parameters.fNcoff,
                           pid_parameters.fKd / pid_parameters.fNcoff,
                           pid_parameters.fAkp / pid_parameters.fACoff,
                           pid_parameters.fAki / pid_parameters.fACoff,
                           pid_parameters.fAkd / pid_parameters.fACoff);
-    settedPIDParameters();
+    ESP_LOGI(TAG, "KP %0.2f, KI %0.2f, KD %0.2f, AKP %0.2f, AKI %0.2f, AKD %0.2f", fKp, fKi, fKd, fAkp, fAki, fAkd);
 }
 
 /********************************************************************************************
@@ -263,16 +253,14 @@ void setStateOfMotor(bool state)
  ********************************************************************************************/
 void motorPidComputeAndSetOutput(float input)
 {
-    ESP_LOGD(TAG, "input %f", input);
-    ESP_LOGD(TAG, "setpoint %f", pid_setTargetVaule);
     float fOutputDuty = 0;
 
-    /*computing the error percentage  */
-    float error = (pid_setTargetVaule - input) / pid_setTargetVaule;
-    ESP_LOGD(TAG, "ERROR %f", error);
+    ESP_LOGD(TAG, "input %f, setpoint %f", input, pid_setTargetVaule);
+    float error = (pid_setTargetVaule - input) / pid_setTargetVaule;    /*computing the error percentage  */
     /* if error is less than the default error then set the normal pid pramaters */
     if (fabs(error) < motorPID_DEFAULT_ERROR)
     {
+        ESP_LOGD(TAG, "ERROR %f", error);
         setMotorPwmPidSetKpKiKd(fKp, fKi, fKd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUTE_TIME_STABLE_IN_MS;
     }
@@ -282,16 +270,13 @@ void motorPidComputeAndSetOutput(float input)
         PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
     }
     ESP_ERROR_CHECK_WITHOUT_ABORT(pid_compute(pid_ctrl, error, &fOutputDuty));
-    ESP_LOGD(TAG, "output %f", fOutputDuty);
-
-    /*setiing the motor duty cycle */
-    motorPWMSetDutyCycle(fOutputDuty);
+    motorPWMSetDutyCycle(fOutputDuty);      /*setiing the motor duty cycle */
 }
 
 /********************************************************************************************
  *  
  ********************************************************************************************/
-void setMotorPIDParameters(float fKpv, float fKiv, float fKdv, float fAkpv, float fAkiv, float fAkdv)
+void save_motor_pid_parameter(float fKpv, float fKiv, float fKdv, float fAkpv, float fAkiv, float fAkdv)
 {
     fKp = fKpv;
     fKi = fKiv;
@@ -360,7 +345,7 @@ uint16_t getMotorPIDSampleComputeTime()
 /********************************************************************************************
  *  
  ********************************************************************************************/
-void vInitializeMotor()
+void motor_initialization()
 {
     xTaskCreate(motorTask, "motorTask", 2 * 2048, NULL, 5, NULL);
 }

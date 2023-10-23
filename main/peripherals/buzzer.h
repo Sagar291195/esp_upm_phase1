@@ -24,7 +24,7 @@ extern "C" {
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
-void Init_Buzzer(void);
+void buzzer_initialization(void);
 void readyModeBuzzBeep(void);
 void workInProgressBuzzBeep(void);
 void jobFinishedModeBuzzBeep(void);

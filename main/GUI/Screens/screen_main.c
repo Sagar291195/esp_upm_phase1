@@ -4,7 +4,7 @@
 
 void Init_Screen(void)
 {
-    // xScreenPidTune();
+    // screen_set_time_date();
     // Screen_Password();
     // vTestScreen1();
     // cScrTransitCheck();
@@ -28,6 +28,4 @@ void Init_Screen(void)
     // callMetroHumiditySettingScreen();
     // callMetroPressureSettingScreen();
     // callMetroTempSettingScreen();
-
-    // vTestScreen();
 }

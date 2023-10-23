@@ -32,19 +32,19 @@
 /* INA sensor data */
 typedef struct INA3231_sensor_data
 {
-    float fBusVoltage;
-    float fShuntVoltage;
-    float fShuntCurrent;
+    float bus_voltage;
+    float shunt_voltage;
+    float shunt_current;
 } INA3231_sensor_data_t;
 
 
 /* data structure for the external sensor */
 typedef struct external_sensor_data
 {
-    float fTemperature;
-    float fPressure;
-    float fHumidity;
-    float fGasResistance;
+    float temperature;
+    float pressure;
+    float humidity;
+    float gas_resistance;
 } external_sensor_data_t;
 
 /********************************************************************************************
@@ -57,51 +57,53 @@ typedef struct external_sensor_data
 /**
  * @brief Initializes all the sensor on the board
  */
-void vInitiateSensorsOnBoard();
+void sensor_initialization();
 
 /**
  * @brief get the average bme 280 temperature average values
  * @return float
  */
-float fGetBme280TemperatureAverages(void);
+float get_internal_temperature_value(void);
 /**
  * @brief get the humidity average values of bme 280
  * @return float
  */
-float fGetBme280HumidityAverages(void);
+float get_internal_humidity_value(void);
 
 /**
  * @brief get the average pressure average values of bme 280
  * @return float
  */
-float fGetBme280PressureAverages(void);
+float get_internal_pressure_value(void);
 
 /**
  * @brief Give the ina3231 sensor data of all three channels
- * @snippet: INA3231_sensor_data_t INA3231_sensor_data[INA3221_CHANNEL];
- *        vGetINA3231Data(&INA3231_sensor_data[0]);
+ * @snippet: INA3231_sensor_data_t ina3221_sensor_data[INA3221_CHANNEL];
+ *        vGetINA3231Data(&ina3221_sensor_data[0]);
  * @param INA3221_sensor_data_des data array of all the channels
  */
-void vGet_INA3221_sensor_data(INA3231_sensor_data_t *INA3221_sensor_data_des);
+void get_ina3221_sensor_data(INA3231_sensor_data_t *INA3221_sensor_data_des);
 
 /**
  * @brief Get the bme 680, external sensor data.
  * @snippet external_sensor_data_t external_sensor_data;
- *          vGetExternalSensorData(&external_sensor_data);
+ *          get_external_sensor_data_raw(&external_sensor_data);
  * @param external_sensor_data_des 
  */
-void vGetExternalSensorData(external_sensor_data_t *external_sensor_data_des);
+void get_external_sensor_data_raw(external_sensor_data_t *external_sensor_data_des);
 
 /**
  * @brief get the differential pressure average value 
  * @return float 
  */
-float fGetSdp32DiffPressureAverageValue();
+float get_sdp32_pressure_value();
 
 /**
  * @brief get the sdp32 
  * @return float 
  */
-float fGetSdp32TemperatuerAverageValue();
+float get_sdp32_temperature_value();
 
+
+float get_sdp32_massflow_value(void);
 #endif // __SENSORMANAGEMENT_H__

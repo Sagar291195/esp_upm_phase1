@@ -33,7 +33,8 @@ LV_IMG_DECLARE(left_arrow_icon)
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
+static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask);
+static void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask);
 static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 
@@ -56,10 +57,7 @@ char *_pHourCountVal_ = "2300.13 H";
 char guiMinDef[32];
 
 int xSpacebwline = 2;
-int global_DashbordBTNflag;
 int strttmrcount = 0;
-bool PumpStopForcefully;
-
 bool defaultParaSelected;
 
 /* refers to the current ongoing screen */
@@ -261,7 +259,7 @@ void xssSummaryStartScreen(void)
 
     // Create Label for Start Date
     /* geting the first sequence start date */
-    sequence_t *seq = pGetAddressOfSequenceArray();
+    sequence_t *seq = get_sequence_array();
 
     __xssStartDateLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStartDateLbl_ss, __xssStartTxtLbl_ss, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
@@ -272,7 +270,7 @@ void xssSummaryStartScreen(void)
     char endDate[50];
     char endTime[50];
     /* sending the date of time of the 1st sequence to be run */
-    vGetEndDateAndTimeOfSequence(endDate, 1, sizeof(endDate), endTime, sizeof(endTime));
+    get_end_date_time_sequence(endDate, 1, sizeof(endDate), endTime, sizeof(endTime));
     __xssStopDateLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStopDateLbl_ss, __xssStopTxtLbl_ss, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__xssStopDateLbl_ss, endDate); // guiSeqDate1 ,  _pStopDate_
@@ -363,8 +361,8 @@ void xssSummaryStartScreen(void)
     __xssSeqNumValueLbl_ss = lv_label_create(_xssSeqNumBaseCont_ss, NULL);
     lv_obj_align(__xssSeqNumValueLbl_ss, _xssSeqNumBaseCont_ss, LV_ALIGN_IN_RIGHT_MID, _xmargin, 0);
     char seqNum[4];
-    sprintf(seqNum, "%d", uGetNoOfSequenceInArray());
-    lv_label_set_text(__xssSeqNumValueLbl_ss, seqNum); // WseqNum1  _pSeqNum_
+    sprintf(seqNum, "%d", get_no_of_sequence_in_array());
+    lv_label_set_text(__xssSeqNumValueLbl_ss, seqNum); 
     lv_obj_add_style(__xssSeqNumValueLbl_ss, LV_LABEL_PART_MAIN, &xssWhiteVarValueStyle_ss);
 
     _xssDurationCont_ss = lv_cont_create(_xssSummayCont_ss, NULL);
@@ -482,8 +480,7 @@ void xssSummaryStartScreen(void)
 }
 
 // This is the task to GUI Time label updating
-
-void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
+static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
 {
     if (lv_obj_get_screen(__xssTimeLabel_ss) == lv_scr_act())
     {
@@ -491,7 +488,7 @@ void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
     }
 }
 
-void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
+static void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
 {
     if (__xssStartBTNCountTask != NULL)
     {
@@ -536,8 +533,7 @@ static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         __xssStartBTNCountTask = NULL;
         // printf("Back to Dashbord from presetscrn\n");
         global_DashbordBTNflag = 1;
-        rollerMovCkFlag = false;
-        // rollerMovCkFlag = false;
+        set_rollermovck_flag(false);
         xsPresetScreenAdvance();
     }
 }
@@ -560,49 +556,13 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         }
         /* now sample is valid and can be saved into the memory and proceed for the sample execution */
         vControllerSampleIsValid();
-        // printf("Back to Dashbord from presetscrn\n");
-        // printf("xdat value is: %d \n", xdt );
         defaultParaSelected = false;
         global_DashbordBTNflag = 2;
         /* Creating the dashboard screen and setting the dashboard to the ready mode. */
         dashboardflg = 3;
-        rollerMovCkFlag = false;
+        set_rollermovck_flag(false);
         pxDashboardScreen();
     }
-}
-
-void startTimer(void)
-{
-    esp_timer_handle_t JTCesp_timer_handle;    // JTC = Job Time Counter
-    const esp_timer_create_args_t esp_timer_create_args = {
-        .callback = start_timer_callback,
-        .name = "Job Time Counter"};
-   
-    esp_timer_create(&esp_timer_create_args, &JTCesp_timer_handle);
-    esp_timer_start_once(JTCesp_timer_handle, totalSecond * 1000000);
-}
-
-void start_timer_callback(void *args)
-{
-    if (PumpStopForcefully != true)
-    {
-        vUpdateInfoWidgetTask();
-    }
-    PumpStopForcefully = false;
-}
-
-void infoWidgetUpdateTask_cb(lv_task_t *infoWidgetUpdateTask)
-{
-    dashboardflg = 2;
-    DashboardInfoWidget();
-    lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
-    lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
-}
-
-void vUpdateInfoWidgetTask(void)
-{
-    infoWidgetUpdateTask = lv_task_create(infoWidgetUpdateTask_cb, 100, LV_TASK_PRIO_MID, NULL);
-    lv_task_once(infoWidgetUpdateTask);
 }
 
 /**********************

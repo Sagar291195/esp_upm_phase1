@@ -24,16 +24,14 @@
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
 
-float fGetInternalPressureUserCompensated();
-float fGetVolumetricFlowUserCompensated();
-float fGetInternalHumidityUserCompesated();
-float fGetInternalTemperatureUserCompesated();
+float get_internal_pressure_calibrated(void);
+float get_internal_humidity_calibrated(void);
+float get_internal_temperature_calibrated(void);
 void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue);
-float fGetMassFlowUserCompensated(void);
-float fGetExternal_AirDesity_Raw();
-float fGetInternalAirDensity_Raw();
-float fGetVolumetricFlow_featureData();
-float fGetExternal_AirDesity_Comp(void);
-float fGetInternalAirDensity_Comp(void);
+float get_volumetric_flow(void);
+float get_external_air_density_raw(void);
+float get_internal_air_density_raw(void);
+float get_external_air_density_calibrated(void);
+float get_internal_air_density_calibrated(void);
 
 #endif // __USERCOMPENSATIONLAYER_H__

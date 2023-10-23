@@ -15,11 +15,11 @@
 
 int global_DashbordBTNflag = 1;
 int dashboardflg = 0;
-char MenuBTN_SERVICE[10] = "PID TUNE";
-char MenuBTN_ARCHIV[10] = "ARCHIV";
-char MenuBTN_METROLOGY[10] = "METROLOGY";
-char MenuBTN_PARAMETER[10] = "PARAMETER";
-char MenuBTN_INFO[10] = "INFO";
+char MenuBTN_SERVICE[20] = "SET TIME DATE";
+char MenuBTN_ARCHIV[20] = "ARCHIV";
+char MenuBTN_METROLOGY[20] = "METROLOGY";
+char MenuBTN_PARAMETER[20] = "PARAMETER";
+char MenuBTN_INFO[20] = "INFO";
 
 /**********************
  *      TYPEDEFS
@@ -28,7 +28,7 @@ char MenuBTN_INFO[10] = "INFO";
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
+static void _xTimeLabel_refr_func(lv_task_t *refresherTask); 
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -41,8 +41,6 @@ char MenuBTN_INFO[10] = "INFO";
  *  GLOBAL VARIABLES
  **********************/
 
-// extern var
-int global_DashbordBTNflag;
 
 lv_obj_t *crnt_screen;
 lv_obj_t *scr_dashbord;
@@ -130,7 +128,9 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 
         if (!strcmp(btntext, MenuBTN_SERVICE))
         {
-            xScreenPidTune();
+            lv_task_del(refresherTask);
+            refresherTask = NULL;
+            screen_set_time_date();
         }
         if (!strcmp(btntext, MenuBTN_ARCHIV))
         {
@@ -161,8 +161,17 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
     }
 }
 
-// Envent handler for menuscreen touching off
+bool get_archiv_or_summary_screen_stat(void)
+{
+    return iArchORSummaryScrn;
+}
 
+void set_archiv_or_summary_screen(bool val)
+{
+    iArchORSummaryScrn = val;
+}
+
+// Envent handler for menuscreen touching off
 static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
@@ -174,31 +183,24 @@ static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 
 // Event handler associated to menu icon btn to call menu screen
 
-bool bxCatchMenuClick = 0;
+
 static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event)
 {
-
+    static bool bxCatchMenuClick = true;
     if (event == LV_EVENT_RELEASED)
     {
 
-        if (bxCatchMenuClick == 0)
+        if (bxCatchMenuClick == true)
         {
             lv_obj_set_hidden(xMenulist1, false);
             lv_obj_align(container, NULL, LV_ALIGN_CENTER, 250, 0);
-        }
-        if (bxCatchMenuClick == 1)
-        {
-            lv_obj_set_hidden(xMenulist1, true);
-            lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0, 0);
-            // lv_anim_start(&a);
-        }
-        if (bxCatchMenuClick == 0)
-        {
-            bxCatchMenuClick = bxCatchMenuClick + 1;
+            bxCatchMenuClick = false;
         }
         else
         {
-            bxCatchMenuClick = 0;
+            bxCatchMenuClick = true;
+             lv_obj_set_hidden(xMenulist1, true);
+            lv_obj_align(container, NULL, LV_ALIGN_CENTER, 0, 0);
         }
     }
 }
@@ -246,7 +248,6 @@ void pxDashboardScreen(void)
     lv_style_set_text_font(&_xTimeLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_style_set_text_color(&_xTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xTimeLabel, LV_LABEL_PART_MAIN, &_xTimeLabelStyle);
-    // lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
     refresherTask = lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_HIGHEST, NULL);
 
     // Create Label for Battery icon
@@ -289,15 +290,20 @@ void pxDashboardScreen(void)
     lv_obj_align(_xListBtn, _xTimeLabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, -17);
     lv_obj_set_size(_xListBtn, 44, 44);
     lv_obj_set_event_cb(_xListBtn, event_handler_xListBtn);
-    // lv_obj_reset_style_list(_xStopBtn, LV_BTN_PART_MAIN);
 
     static lv_style_t _xListBtnStyle;
-    lv_style_init(&_xListBtnStyle);
+    lv_style_reset(&_xListBtnStyle);
     lv_style_set_radius(&_xListBtnStyle, LV_STATE_DEFAULT, 0);
-    lv_style_set_bg_color(&_xListBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); //====================>>>>>
-    // lv_style_set_border_color(&_xListBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_style_set_bg_color(&_xListBtnStyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); 
+    lv_style_set_bg_color(&_xListBtnStyle, LV_STATE_PRESSED, LV_COLOR_MAKE(0x39, 0x89, 0xBD)); 
+    lv_style_set_bg_color(&_xListBtnStyle, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)); 
     lv_style_set_border_opa(&_xListBtnStyle, LV_STATE_DEFAULT, LV_OPA_MIN);
     lv_style_set_border_width(&_xListBtnStyle, LV_STATE_PRESSED, 0);
+    lv_style_set_border_width(&_xListBtnStyle, LV_STATE_FOCUSED, 0);
+    lv_style_set_border_width(&_xListBtnStyle, LV_STATE_DEFAULT, 0);
+    lv_style_set_outline_opa(&_xListBtnStyle, LV_STATE_DEFAULT, 0);
+    lv_style_set_outline_opa(&_xListBtnStyle, LV_STATE_FOCUSED, 0);
+    lv_style_set_outline_opa(&_xListBtnStyle, LV_STATE_PRESSED, 0);
     lv_obj_add_style(_xListBtn, LV_BTN_PART_MAIN, &_xListBtnStyle);
 
     // create label for list
@@ -307,7 +313,7 @@ void pxDashboardScreen(void)
     lv_label_set_text(_xListLabelClick, LV_SYMBOL_LIST);
 
     static lv_style_t _xListLabelClickStyle;
-    lv_style_init(&_xListLabelClickStyle);
+    lv_style_reset(&_xListLabelClickStyle);
     lv_style_set_text_font(&_xListLabelClickStyle, LV_STATE_DEFAULT, &lv_font_montserrat_36);
     lv_style_set_text_color(&_xListLabelClickStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_style_set_border_width(&_xListLabelClickStyle, LV_LABEL_PART_MAIN, 0);
@@ -337,30 +343,7 @@ void pxDashboardScreen(void)
     lv_style_set_text_color(&_xTodaysDateLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_add_style(_xTodaysDateLabel, LV_LABEL_PART_MAIN, &_xTodaysDateLabelStyle);
 
-    //============================================================================================
-
-    // IW_create = pxCreateResumeInfo(container);
-    // lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0,0 );
-    // vSetResumeInfoState(IW_create, RESUMEINFO_READY , "Ready");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_WORK_IN_PROGRESS , "    Work in progress");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_WAIT , "  Wait in progress");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_EXPORT_DATA , "      Export In Progress");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_METROLOGY_NEEDED , "     Metrology needed");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_ALERT_SERVICE , "Alert Service");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_JOB_FINISHED , "Job finished");
-    // vSetResumeInfoState(IW_create, RESUMEINFO_PROBLEM , "Problem");
-    // vSetResumeInfoPercent(IW_create, 62)    ;
-    // vSetResumeInfoLitersInt(IW_create, 4050);
-    // vSetResumeInfoLitersFloat(IW_create, 65);
-    // vSetResumeInfoHour(IW_create, 1100, 58) ;
-    // lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT,LV_COLOR_MAKE(0x38, 0x38, 0x38) );
-    // lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN );
-
     DashboardInfoWidget();
-
-    //===================================================================================================================================
-
-    // Creat a stop Button
 
     _xStopBtn = lv_btn_create(container, NULL);
     lv_obj_align(_xStopBtn, IW_create, LV_ALIGN_OUT_BOTTOM_MID, -85, 20);
@@ -407,14 +390,11 @@ void pxDashboardScreen(void)
     lv_style_set_border_opa(&xStopButtonLabelStyle, LV_LABEL_PART_MAIN, 0);
     lv_style_set_radius(&xStopButtonLabelStyle, LV_LABEL_PART_MAIN, 0);
     lv_obj_add_style(xStopButtonLabel, LV_LABEL_PART_MAIN, &xStopButtonLabelStyle);
-    // lv_obj_set_style_local_border_width(_xStartBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
 
-    // BigButton();
 
     //========================================================================================
     // Create a Menu List list
     xMenulist1 = lv_list_create(xParentcontainer, NULL);
-    // lv_obj_set_size(xMenulist1, 160, 200);
     lv_obj_align(xMenulist1, xParentcontainer, LV_ALIGN_IN_TOP_LEFT, 0, 0);
     lv_obj_set_height(xMenulist1, 480);
     lv_obj_set_width(xMenulist1, 250);
@@ -432,78 +412,98 @@ void pxDashboardScreen(void)
     lv_obj_add_style(xMenulist1, LV_STATE_DEFAULT, &listStyle);
 
     /*Add buttons to the list*/
-    // lv_obj_t * list_btn;
     list_btn = lv_list_add_btn(xMenulist1, &navier_logo, NULL); // LV_SYMBOL_FILE
     lv_obj_set_event_cb(list_btn, event_handler);
-    lv_obj_set_click(list_btn, false);
+    
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_click(list_btn, false);
 
     list_btn = lv_list_add_btn(xMenulist1, NULL, NULL); // LV_SYMBOL_FILE
     lv_obj_set_event_cb(list_btn, event_handler);
     lv_obj_set_click(list_btn, false);
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
-    list_btn = lv_list_add_btn(xMenulist1, &service_icon, "PID TUNE"); // LV_SYMBOL_FILE
-    // lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35,0x9F,0xE2));
+    list_btn = lv_list_add_btn(xMenulist1, &service_icon, "SET TIME DATE"); 
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
     lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_obj_set_event_cb(list_btn, event_handler);
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
-    // lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT,LV_OPA_60);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_margin_all(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 1);
     lv_obj_set_style_local_radius(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 8);
+    lv_obj_set_event_cb(list_btn, event_handler);
 
     list_btn = lv_list_add_btn(xMenulist1, &archiv_icon, "ARCHIV");
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
     lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_obj_set_event_cb(list_btn, event_handler);
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
-    // lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT,LV_OPA_60);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_margin_all(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
     lv_obj_set_style_local_radius(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 8);
+    lv_obj_set_event_cb(list_btn, event_handler);
 
     list_btn = lv_list_add_btn(xMenulist1, &metrology_icon, "METROLOGY");
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
     lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_obj_set_event_cb(list_btn, event_handler);
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
-    // lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT,LV_OPA_60);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);;
     lv_obj_set_style_local_margin_all(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
     lv_obj_set_style_local_radius(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 8);
+    lv_obj_set_event_cb(list_btn, event_handler);
 
     list_btn = lv_list_add_btn(xMenulist1, &parameter_icon, "PARAMETER");
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
     lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_obj_set_event_cb(list_btn, event_handler);
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
-    // lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT,LV_OPA_60);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_margin_all(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 2);
     lv_obj_set_style_local_radius(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 8);
+    lv_obj_set_event_cb(list_btn, event_handler);
 
     list_btn = lv_list_add_btn(xMenulist1, &info_icon, "INFO");
     lv_obj_set_style_local_border_width(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 5);
     lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
-    lv_obj_set_event_cb(list_btn, event_handler);
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
+    lv_obj_set_style_local_border_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_text_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
-    // lv_obj_set_style_local_bg_opa(list_btn, LV_BTN_PART_MAIN ,LV_STATE_DEFAULT,LV_OPA_60);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_FOCUSED, 0);
+    lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_margin_all(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 4);
     lv_obj_set_style_local_radius(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, 8);
+    lv_obj_set_event_cb(list_btn, event_handler);
 
-    //===================================================================================
-
-    //=========================================Language Test Code=========================
-
-    //=====================================================================================
     crnt_screen = scr_dashbord;
     screenid = SCR_DASHBOARD;
 }
@@ -539,7 +539,7 @@ void DashboardInfoWidget(void)
         vSetResumeInfoRemainingMinute(IW_create, 00);
 
         vSetResumeInfoTotalSeq(IW_create, uGetCurrentRunningSequenceNumber());
-        vSetResumeInfoCurrentSeq(IW_create, uGetNoOfSequenceInArray());
+        vSetResumeInfoCurrentSeq(IW_create, get_no_of_sequence_in_array());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
@@ -587,7 +587,7 @@ void DashboardInfoWidget(void)
  *
  * @param refresherTask task handle
  */
-void _xTimeLabel_refr_func(lv_task_t *refresherTask)
+static void _xTimeLabel_refr_func(lv_task_t *refresherTask)
 {
     if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
     {
@@ -609,7 +609,7 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        ESP_LOGI(TAG, "Button Pressed : %d", xBTN);
+        ESP_LOGD(TAG, "Button Pressed : %d", xBTN);
         switch (xBTN)
         {
         case 0:
@@ -673,7 +673,7 @@ void vUpdateDashboardScreen(void)
     /* need to add function to get the remainin hours and minutes from backend */
     uint16_t hour = 0;
     uint8_t min = 0;
-    vGetNumberOfHourAndMinutesLeftInStartingSequence(&hour, &min);
+    get_remaining_hours_minutes_sequence(&hour, &min);
     vSetResumeInfoRemainingHour(IW_create, hour);
     vSetResumeInfoRemainingMinute(IW_create, min);
 }

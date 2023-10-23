@@ -130,30 +130,30 @@ void sensor_value_update(lv_task_t *taskhandle)
     reference_value = atof(tempbuffer);
     if (screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST)
     {
-        vGetExternalSensorData(&external_sensorvalue); 
-        sensorvalue = external_sensorvalue.fTemperature;
+        get_external_sensor_data_raw(&external_sensorvalue); 
+        sensorvalue = external_sensorvalue.temperature;
     }
     else if (screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
     {
-        sensorvalue = fGetBme280TemperatureAverages();
+        sensorvalue = get_internal_temperature_value();
     }
     else if (screenid == SCR_EXTERNAL_PRESSURE_ADJUST)
     {
-        vGetExternalSensorData(&external_sensorvalue);
-        sensorvalue = external_sensorvalue.fPressure;
+        get_external_sensor_data_raw(&external_sensorvalue);
+        sensorvalue = external_sensorvalue.pressure;
     }
     else if (screenid == SCR_INTERNAL_PRESSURE_ADJUST)
     {
-        sensorvalue = fGetBme280PressureAverages();
+        sensorvalue = get_internal_pressure_value();
     }
     else if (screenid == SCR_EXTERNAL_HUMIDITY_ADJUST)
     {
-        vGetExternalSensorData(&external_sensorvalue);
-        sensorvalue = external_sensorvalue.fHumidity;
+        get_external_sensor_data_raw(&external_sensorvalue);
+        sensorvalue = external_sensorvalue.humidity;
     }
     else if (screenid == SCR_INTERNAL_HUMIDITY_ADJUST)
     {
-        sensorvalue = fGetBme280HumidityAverages();
+        sensorvalue = get_internal_humidity_value();
     }
     lv_label_set_text_fmt(_mtaFactoryValueLbl, "%0.2f", sensorvalue);
     if(isnan(reference_value) == false){
@@ -446,47 +446,47 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
 
         if (screenid == SCR_EXTERNAL_TEMPERATURE_ADJUST)
         {
-            vGetExternalSensorData(&external_sensordata);
-            calibrationvalue = (external_sensordata.fTemperature - referencevalue);
+            get_external_sensor_data_raw(&external_sensordata);
+            calibrationvalue = (external_sensordata.temperature - referencevalue);
             setcalibrationvalue_ext_temperature(calibrationvalue);
-            ESP_LOGI(TAG, "External Temperature calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "External Temperature calibration = %.02f", calibrationvalue);
             callMetroPressureSettingScreen();
         }
         else if (screenid == SCR_INTERNAL_TEMPERATURE_ADJUST)
         {
-            calibrationvalue = (fGetBme280TemperatureAverages() - referencevalue);
+            calibrationvalue = (get_internal_temperature_value() - referencevalue);
             setcalibrationvalue_int_temperature(calibrationvalue);
-            ESP_LOGI(TAG, "Internal Temperature calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "Internal Temperature calibration = %.02f", calibrationvalue);
             callMetroPressureSettingScreen();
         }
         else if (screenid == SCR_EXTERNAL_PRESSURE_ADJUST)
         {
-            vGetExternalSensorData(&external_sensordata);
-            calibrationvalue = (external_sensordata.fPressure - referencevalue);
+            get_external_sensor_data_raw(&external_sensordata);
+            calibrationvalue = (external_sensordata.pressure - referencevalue);
             setcalibrationvalue_ext_pressure(calibrationvalue);
-            ESP_LOGI(TAG, "External Pressure calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "External Pressure calibration = %.02f", calibrationvalue);
             callMetroHumiditySettingScreen();
         }
         else if (screenid == SCR_INTERNAL_PRESSURE_ADJUST)
         {
-            calibrationvalue = (fGetBme280PressureAverages() - referencevalue);
+            calibrationvalue = (get_internal_pressure_value() - referencevalue);
             setcalibrationvalue_int_pressure(calibrationvalue);
-            ESP_LOGI(TAG, "Internal Pressure calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "Internal Pressure calibration = %.02f", calibrationvalue);
             callMetroHumiditySettingScreen();
         }
         else if (screenid == SCR_EXTERNAL_HUMIDITY_ADJUST)
         {
-            vGetExternalSensorData(&external_sensordata);
-            calibrationvalue = (external_sensordata.fHumidity - referencevalue);
+            get_external_sensor_data_raw(&external_sensordata);
+            calibrationvalue = (external_sensordata.humidity - referencevalue);
             setcalibrationvalue_ext_humidity(calibrationvalue);
-            ESP_LOGI(TAG, "External Humidity calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "External Humidity calibration = %.02f", calibrationvalue);
             callMetroTempSettingScreen();
         }
         else if (screenid == SCR_INTERNAL_HUMIDITY_ADJUST)
         {
-            calibrationvalue = (fGetBme280HumidityAverages() - referencevalue);
+            calibrationvalue = (get_internal_humidity_value() - referencevalue);
             setcalibrationvalue_int_humidity(calibrationvalue);
-            ESP_LOGI(TAG, "Internal Humidity calibration : %.02f", calibrationvalue);
+            ESP_LOGI(TAG, "Internal Humidity calibration = %.02f", calibrationvalue);
             callMetroFlowSettingScreen();
         }
         lv_task_del(calibration_screenupdate_task);

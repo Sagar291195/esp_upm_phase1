@@ -44,7 +44,6 @@ static int db_exec(sqlite3 *db, const char *sql);
  ********************************************************************************************/
 static esp_err_t vInitializeSpiffs()
 {
-    ESP_LOGW(TAG, "Initializing SPIFFS, for first time it will take 5-10 mins to format....");
     esp_vfs_littlefs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = "storage",
@@ -133,12 +132,12 @@ static int db_exec(sqlite3 *db, const char *sql)
     int rc = sqlite3_exec(db, sql, callback, (void *)data, &zErrMsg);
     if (rc != SQLITE_OK)
     {
-        ESP_LOGE(TAG, "SQL error: %s\n", zErrMsg);
+        ESP_LOGE(TAG, "SQL error: %s", zErrMsg);
         sqlite3_free(zErrMsg);
     }
     else
     {
-        ESP_LOGI(TAG, "DB Operation done successfully\n");
+        ESP_LOGI(TAG, "DB Operation done successfully");
     }
     return rc;
 }
@@ -156,11 +155,11 @@ static void vCreateDataBase(void)
     FILE *dbFile = fopen(DB_FILENAME, "r");
     if (dbFile == NULL)
     {
-        ESP_LOGW(TAG, "File not present may be due to the first run not creating it!");
+        ESP_LOGE(TAG, "File not present may be due to the first run not creating it!");
         dbFile = fopen(DB_FILENAME, "w");
     }
-
     fclose(dbFile);
+
     dbFile = fopen(DB_FILENAME, "rw");  /* opening the file for the writing purposes */
     db_open(DB_FILENAME, &dbRawMeasurement);    /*  opening the database at the given location */
     /* creating the raw measurement database */
@@ -418,13 +417,12 @@ bool nvswrite_value_u8(char *storagename, char *key, uint8_t value)
  ********************************************************************************************/
 void nvs_storage_initialize(void)
 {
-    esp_log_level_set(TAG, ESP_LOG_WARN);
-
     /* initializing our spiffs */
     esp_err_t err = vInitializeSpiffs();
     /* Creating the db only when we have initialize the spiffs sucessfully */
     if (err == ESP_OK)
     {
+        ESP_LOGI(TAG, "creating the database");
         vCreateDataBase();
     }
 }

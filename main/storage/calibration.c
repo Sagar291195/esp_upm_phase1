@@ -33,9 +33,12 @@ static char flow_coeffA2[] = "flow_coeffA2";    // key to store data in flash
 static char flow_coeffB2[] = "flow_coeffB2";    // key to store data in flash
 static char flow_coeffA3[] = "flow_coeffA3";    // key to store data in flash
 static char flow_coeffB3[] = "flow_coeffB3";    // key to store data in flash
-static char sensorvalue1[] = "sensorvalue1";
-static char sensorvalue2[] = "sensorvalue2";
-static char sensorvalue3[] = "sensorvalue3";
+static char airdensity1[] = "airdensity1";
+static char airdensity2[] = "airdensity2";
+static char airdensity3[] = "airdensity3";
+static char massflow1[] = "massflow1";
+static char massflow2[] = "massflow2";
+static char massflow3[] = "massflow3";
 
 calibration_t calibrationdata; // variable to store calibration data
 
@@ -66,7 +69,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External Temperature Calibration : %.02f", calibrationdata.external_temperature_calibration);
+        ESP_LOGI(TAG, "External Temperature Calibration = %.02f", calibrationdata.external_temperature_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, ext_humiditykey, &calibrationdata.external_humidity_calibration);
     if (ret == false)
@@ -76,7 +79,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External Humidity Calibration : %.02f", calibrationdata.external_humidity_calibration);
+        ESP_LOGI(TAG, "External Humidity Calibration = %.02f", calibrationdata.external_humidity_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, ext_pressurekey, &calibrationdata.external_pressure_calibration);
     if (ret == false)
@@ -86,7 +89,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "External pressure Calibration : %.02f", calibrationdata.external_pressure_calibration);
+        ESP_LOGI(TAG, "External pressure Calibration = %.02f", calibrationdata.external_pressure_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_temperaturekey, &calibrationdata.internal_temperature_calibration);
     if (ret == false)
@@ -96,7 +99,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal Temperature Calibration : %.02f", calibrationdata.internal_temperature_calibration);
+        ESP_LOGI(TAG, "Internal Temperature Calibration = %.02f", calibrationdata.internal_temperature_calibration);
     }
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_pressurekey, &calibrationdata.internal_pressure_calibration);
     if (ret == false)
@@ -106,7 +109,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal Pressure Calibration : %.02f", calibrationdata.internal_pressure_calibration);
+        ESP_LOGI(TAG, "Internal Pressure Calibration = %.02f", calibrationdata.internal_pressure_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, int_huniditykey, &calibrationdata.internal_humidity_calibration);
@@ -117,7 +120,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Internal humidity Calibration : %.02f", calibrationdata.internal_humidity_calibration);
+        ESP_LOGI(TAG, "Internal humidity Calibration = %.02f", calibrationdata.internal_humidity_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA1, &calibrationdata.flow_coeffA1_calibration);
@@ -128,7 +131,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A1 Calibration : %.02f", calibrationdata.flow_coeffA1_calibration);
+        ESP_LOGI(TAG, "Flow coeff A1 Calibration = %.02f", calibrationdata.flow_coeffA1_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA2, &calibrationdata.flow_coeffA2_calibration);
@@ -139,7 +142,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A2 Calibration : %.02f", calibrationdata.flow_coeffA2_calibration);
+        ESP_LOGI(TAG, "Flow coeff A2 Calibration = %.02f", calibrationdata.flow_coeffA2_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffA3, &calibrationdata.flow_coeffA3_calibration);
@@ -150,7 +153,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff A3 Calibration : %.02f", calibrationdata.flow_coeffA3_calibration);
+        ESP_LOGI(TAG, "Flow coeff A3 Calibration = %.02f", calibrationdata.flow_coeffA3_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB1, &calibrationdata.flow_coeffB1_calibration);
@@ -161,7 +164,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B1 Calibration : %.02f", calibrationdata.flow_coeffB1_calibration);
+        ESP_LOGI(TAG, "Flow coeff B1 Calibration = %.02f", calibrationdata.flow_coeffB1_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB2, &calibrationdata.flow_coeffB2_calibration);
@@ -172,7 +175,7 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B2 Calibration : %.02f", calibrationdata.flow_coeffB2_calibration);
+        ESP_LOGI(TAG, "Flow coeff B2 Calibration = %.02f", calibrationdata.flow_coeffB2_calibration);
     }
 
     ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, flow_coeffB3, &calibrationdata.flow_coeffB3_calibration);
@@ -183,38 +186,69 @@ void nvsread_calibrationdata(void)
     }
     else
     {
-        ESP_LOGI(TAG, "Flow coeff B3 Calibration : %.02f", calibrationdata.flow_coeffB3_calibration);
+        ESP_LOGI(TAG, "Flow coeff B3 Calibration = %.02f", calibrationdata.flow_coeffB3_calibration);
     }
 
-    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue1, &calibrationdata.flow_reference_sensorvalue1);
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, airdensity1, &calibrationdata.flow_reference_airdensityvalue1);
     if (ret == false)
     {
-        ESP_LOGE(TAG, "Flow sensor value1 read error");
+        ESP_LOGE(TAG, "Flow airdensity value1 read error");
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 1 : %.02f", calibrationdata.flow_reference_sensorvalue1);
+        ESP_LOGI(TAG, "Flow airdensity value 1 = %.02f", calibrationdata.flow_reference_airdensityvalue1);
     }
 
-    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue2, &calibrationdata.flow_reference_sensorvalue2);
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, airdensity2, &calibrationdata.flow_reference_airdensityvalue2);
     if (ret == false)
     {
-        ESP_LOGE(TAG, "Flow sensor value2 read error");
+        ESP_LOGE(TAG, "Flow airdensity value2 read error");
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue2);
+        ESP_LOGI(TAG, "Flow airdensity value 2 = %.02f", calibrationdata.flow_reference_airdensityvalue2);
     }
 
-    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, sensorvalue3, &calibrationdata.flow_reference_sensorvalue3);
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, airdensity3, &calibrationdata.flow_reference_airdensityvalue3);
     if (ret == false)
     {
-        ESP_LOGE(TAG, "Flow sensor value3 read error");
+        ESP_LOGE(TAG, "Flow airdensity value3 read error");
     }
     else
     {
-        ESP_LOGI(TAG, "Flow sensor value 2 : %.02f", calibrationdata.flow_reference_sensorvalue3);
+        ESP_LOGI(TAG, "Flow airdensity value 3 = %.02f", calibrationdata.flow_reference_airdensityvalue3);
     }
+
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, massflow1, &calibrationdata.flow_reference_massflowvalue1);
+    if (ret == false)
+    {
+        ESP_LOGE(TAG, "Flow massflow value1 read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Flow massflow value 1 = %.02f", calibrationdata.flow_reference_massflowvalue1);
+    }
+
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, massflow2, &calibrationdata.flow_reference_massflowvalue2);
+    if (ret == false)
+    {
+        ESP_LOGE(TAG, "Flow massflow value2 read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Flow massflow value 2 = %.02f", calibrationdata.flow_reference_massflowvalue2);
+    }
+
+    ret = nvsread_value_parameter(CALIBRATION_STORGE_NAME, massflow3, &calibrationdata.flow_reference_massflowvalue3);
+    if (ret == false)
+    {
+        ESP_LOGE(TAG, "Flow massflow value3 read error");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Flow massflow value 3 = %.02f", calibrationdata.flow_reference_massflowvalue3);
+    }
+
 }
 
 
@@ -314,26 +348,51 @@ float getcalibrationvalue_flow_coeffB3(void)
 /********************************************************************************************
  *                
  ********************************************************************************************/
-float getcalibration_reference_sensorvalue1(void)
+float getcalibration_airdensity_value1(void)
 {
-    return calibrationdata.flow_reference_sensorvalue1;
+    return calibrationdata.flow_reference_airdensityvalue1;
 }
 
 /********************************************************************************************
  *                
  ********************************************************************************************/
-float getcalibration_reference_sensorvalue2(void)
+float getcalibration_airdensity_value2(void)
 {
-    return calibrationdata.flow_reference_sensorvalue2;
+    return calibrationdata.flow_reference_airdensityvalue2;
 }
 
 /********************************************************************************************
  *                
  ********************************************************************************************/
-float getcalibration_reference_sensorvalue3(void)
+float getcalibration_airdensity_value3(void)
 {
-    return calibrationdata.flow_reference_sensorvalue3;
+    return calibrationdata.flow_reference_airdensityvalue3;
 }
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+float getcalibration_massflow_value1(void)
+{
+    return calibrationdata.flow_reference_massflowvalue1;
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+float getcalibration_massflow_value2(void)
+{
+    return calibrationdata.flow_reference_massflowvalue2;
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+float getcalibration_massflow_value3(void)
+{
+    return calibrationdata.flow_reference_massflowvalue3;
+}
+
 
 /********************************************************************************************
  *                
@@ -446,26 +505,66 @@ void setcalibrationvalue_flow_coeffB3(float value)
 /********************************************************************************************
  *                
  ********************************************************************************************/
-void setcalibration_flow_reference_sensorvalue1(float value)
+void setcalibration_flow_airdensity1(float value)
 {
-    calibrationdata.flow_reference_sensorvalue1 = value;
-    nvswrite_value_float(CALIBRATION_STORGE_NAME, sensorvalue1, calibrationdata.flow_reference_sensorvalue1);
+    calibrationdata.flow_reference_airdensityvalue1 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, airdensity1, calibrationdata.flow_reference_airdensityvalue1);
 }
 
 /********************************************************************************************
  *                
  ********************************************************************************************/
-void setcalibration_flow_reference_sensorvalue2(float value)
+void setcalibration_flow_airdensity2(float value)
 {
-    calibrationdata.flow_reference_sensorvalue2 = value;
-    nvswrite_value_float(CALIBRATION_STORGE_NAME, sensorvalue2, calibrationdata.flow_reference_sensorvalue2);
+    calibrationdata.flow_reference_airdensityvalue2 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, airdensity2, calibrationdata.flow_reference_airdensityvalue2);
 }
 
 /********************************************************************************************
  *                
  ********************************************************************************************/
-void setcalibration_flow_reference_sensorvalue3(float value)
+void setcalibration_flow_airdensity3(float value)
 {
-    calibrationdata.flow_reference_sensorvalue3 = value;
-    nvswrite_value_float(CALIBRATION_STORGE_NAME, sensorvalue3, calibrationdata.flow_reference_sensorvalue3);
+    calibrationdata.flow_reference_airdensityvalue3 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, airdensity3, calibrationdata.flow_reference_airdensityvalue3);
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+void setcalibration_flow_reference_massflowvalue1(float value)
+{
+    calibrationdata.flow_reference_massflowvalue1 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, massflow1, calibrationdata.flow_reference_massflowvalue1);
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+void setcalibration_flow_reference_massflowvalue2(float value)
+{
+    calibrationdata.flow_reference_massflowvalue2 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, massflow2, calibrationdata.flow_reference_massflowvalue2);
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+void setcalibration_flow_reference_massflowvalue3(float value)
+{
+    calibrationdata.flow_reference_massflowvalue3 = value;
+    nvswrite_value_float(CALIBRATION_STORGE_NAME, massflow3, calibrationdata.flow_reference_massflowvalue3);
+}
+
+/********************************************************************************************
+ *                
+ ********************************************************************************************/
+float get_average_airdensity_value(void)
+{
+    float average_airdensity = 0;
+
+    average_airdensity = (calibrationdata.flow_reference_airdensityvalue1 + calibrationdata.flow_reference_airdensityvalue2 +
+            calibrationdata.flow_reference_airdensityvalue3)/3;
+
+    return average_airdensity;        
 }

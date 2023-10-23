@@ -51,6 +51,8 @@ static void __fasPlusBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 static void __fasMinusBTN_event_handler(lv_obj_t *obj, lv_event_t event);
 static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask);
 
+void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask);
+
 /**********************
  *  STATIC VARIABLES
  **********************/
@@ -103,7 +105,8 @@ static float flow_coeffA3 = 0;
 static float flow_coeffB1 = 0;
 static float flow_coeffB2 = 0;
 static float flow_coeffB3 = 0;
-static float reference_sensorValue[NUM_OF_FLOW_CALIBRATION_POINT];
+static float massflow_value_buffer[NUM_OF_FLOW_CALIBRATION_POINT];
+static float airdensity_buffer[NUM_OF_FLOW_CALIBRATION_POINT];
 
 /**********************
  *      MACROS
@@ -152,7 +155,7 @@ void CallMetroFlowCalibrationScreen(void)
     lv_style_set_text_color(&_fasTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasTimeLabel, LV_LABEL_PART_MAIN, &_fasTimeLabelStyle);
 
-    _fasTimeRefTask = lv_task_create(_fasTimeRefTask_Call, 100, LV_TASK_PRIO_LOW, NULL);
+    _fasTimeRefTask = lv_task_create(screen_metro_flowcal_refresh, 100, LV_TASK_PRIO_LOW, NULL);
 
     // Create Label for Battery icon
     __fasBatteryLabel = lv_label_create(_fasContStatusBar, NULL);
@@ -425,20 +428,39 @@ static void _fas_MotorTask_Call(lv_task_t *_fasMotorTask)
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
 }
 
-void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
+void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask)
 {
-    float sensorvalue = 0;
+    float massflow_value = 0;
     float reference_value = 0;
-
+    external_sensor_data_t external_sensor_data;
+    external_sensor_data_t raw_sensor_data;
+    INA3231_sensor_data_t xInaSensorData[INA3221_CHANNEL];
+    bool bOneTime = false;
+   
     if (screenid == SCR_FLOW_CALIBRATION)
     {
-        sensorvalue = fGetSdp32DiffPressureAverageValue();
+        massflow_value = get_sdp32_massflow_value();
         reference_value = reference_flowcalibration_Points[get_flow_calibration_point_cout()];
-        percentError = (((reference_value - sensorvalue) / reference_value) * 100);
+        percentError = (((reference_value - massflow_value) / reference_value) * 100);
 
         lv_label_set_text(__fasTimeLabel, guiTime);
-        lv_label_set_text_fmt(_fasRefValInt, "%0.2f", sensorvalue);
+        lv_label_set_text_fmt(_fasRefValInt, "%0.2f", massflow_value);
         lv_label_set_text_fmt(_fasCorrectionValueLbl, "%0.2f", percentError);
+
+        if (!bOneTime)
+        {
+            printf("------------------Settings-----------------------\n");
+            printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
+            printf("------------------Settings-----------------------\n");
+            bOneTime = true;
+
+            printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
+        }
+        get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
+        get_external_sensor_data_raw(&raw_sensor_data);
+        get_ina3221_sensor_data(&xInaSensorData[0]);   /* getting the INA data */
+        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value(), xInaSensorData[0].bus_voltage, xInaSensorData[0].shunt_voltage, xInaSensorData[0].shunt_current, xInaSensorData[1].bus_voltage, xInaSensorData[1].shunt_voltage, xInaSensorData[1].shunt_current, xInaSensorData[2].bus_voltage, xInaSensorData[2].shunt_voltage, xInaSensorData[2].shunt_current, raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
+
 
         if (percentError > -10.0 && percentError < 10.0)
         {
@@ -448,27 +470,6 @@ void _fasTimeRefTask_Call(lv_task_t *_fasTimeRefTask)
         {
             lv_img_set_src(_fasStatusIcon, &cross_icon);
         }
-
-        external_sensor_data_t external_sensor_data;
-        external_sensor_data_t raw_sensor_data;
-        INA3231_sensor_data_t xInaSensorData[INA3221_CHANNEL];
-
-        get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
-        vGetExternalSensorData(&raw_sensor_data);
-        vGet_INA3221_sensor_data(&xInaSensorData[0]);
-     
-
-        printf("\n\n\nTime: RTC Time: %s",  guiTime );
-        printf("Hardware Time: %llu,\n", esp_timer_get_time());
-        printf("SDP: Temperature: %0.2f, Dp : %0.2f Pa, MassFlow : %0.2f STDL,\n", fGetSdp32TemperatuerAverageValue(), fGetSdp32DiffPressureAverageValue(), fGetMassFlowUserCompensated());
-        printf("Channel 0: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[0].fBusVoltage, xInaSensorData[0].fShuntVoltage, xInaSensorData[0].fShuntCurrent);
-        printf("Channel 1: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[1].fBusVoltage, xInaSensorData[1].fShuntVoltage, xInaSensorData[1].fShuntCurrent);
-        printf("Channel 2: Bus Voltage: %0.2f V, Shunt Voltage: %0.2f mV, Shunt Current: %0.2f mA,\n", xInaSensorData[2].fBusVoltage, xInaSensorData[2].fShuntVoltage, xInaSensorData[2].fShuntCurrent);
-        printf("External: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", raw_sensor_data.fTemperature, raw_sensor_data.fHumidity, raw_sensor_data.fPressure, fGetExternal_AirDesity_Raw());
-        printf("Internal: Temperature Raw: %0.2f, Humidity Raw: %0.2f %%, Pressure Raw: %0.2f hPa, Air Density Raw: %0.2f\n", fGetBme280TemperatureAverages(), fGetBme280HumidityAverages(), fGetBme280PressureAverages(),  fGetInternalAirDensity_Raw());
-        printf("External: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", external_sensor_data.fTemperature, external_sensor_data.fHumidity, external_sensor_data.fPressure, fGetExternal_AirDesity_Comp());
-        printf("Internal: Temperature Comp: %0.2f, Humidity Comp: %0.2f %%, Pressure Comp: %0.2f hPa, Air Density Raw: %0.2f\n", fGetInternalTemperatureUserCompesated(), fGetInternalHumidityUserCompesated(), fGetInternalPressureUserCompensated(),  fGetInternalAirDensity_Comp());
-        printf("Feature: Volumetric Flow Comp: %0.2f LPM, Hour Counter : %0.2f, Volume Counter : %0.2f\n", fGetVolumetricFlowUserCompensated(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 }
 
@@ -520,8 +521,8 @@ static void __fasMinusBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     int calibration_count = 0;
-    float previous_sensor_reading = 0;
-    float current_sensor_reading = 0;
+    float previous_massflow_value = 0;
+    float current_massflow_value = 0;
     float previous_reference_value = 0;
     float current_reference_value = 0;
     float coeffA = 0;
@@ -532,20 +533,23 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         calibration_count = get_flow_calibration_point_cout();
         if (calibration_count == 0)
         {
-            previous_sensor_reading = 0;
+            previous_massflow_value = 0;
             previous_reference_value = 0;
         }
         else
         {
             previous_reference_value = reference_flowcalibration_Points[calibration_count - 1];
-            previous_sensor_reading = reference_sensorValue[calibration_count - 1];
+            previous_massflow_value = massflow_value_buffer[calibration_count - 1];
         }
 
         current_reference_value = reference_flowcalibration_Points[calibration_count];
-        current_sensor_reading = fGetSdp32DiffPressureAverageValue();
+        current_massflow_value = get_sdp32_massflow_value();
 
-        coeffA = (previous_sensor_reading - current_sensor_reading) / (previous_reference_value - current_reference_value);
-        coeffB = current_reference_value - (coeffA * current_sensor_reading);
+        coeffA = (previous_massflow_value - current_massflow_value) / (previous_reference_value - current_reference_value);
+        coeffB = current_reference_value - (coeffA * current_massflow_value);
+        ESP_LOGI(TAG,"Previous mass flow = %.2f, current massflow = %.2f", previous_massflow_value, current_massflow_value);
+        ESP_LOGI(TAG, "Previous reference = %.2f, current reference = %.2f", previous_reference_value, current_reference_value);
+        ESP_LOGI(TAG, "coeffA = %.2f, coeffB = %.2f", coeffA, coeffB);
 
         if (calibration_count == 0)
         {
@@ -563,8 +567,11 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             flow_coeffB3 = coeffB;
         }
 
-        reference_sensorValue[calibration_count] = current_sensor_reading;
+        massflow_value_buffer[calibration_count] = current_massflow_value;
+        airdensity_buffer[calibration_count] = get_external_air_density_calibrated();
         calibration_count++;
+
+        
 
         if (calibration_count >= NUM_OF_FLOW_CALIBRATION_POINT)
         {
@@ -576,9 +583,13 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             setcalibrationvalue_flow_coeffB2(flow_coeffB2);
             setcalibrationvalue_flow_coeffB3(flow_coeffB3);
 
-            setcalibration_flow_reference_sensorvalue1(reference_sensorValue[0]);
-            setcalibration_flow_reference_sensorvalue2(reference_sensorValue[1]);
-            setcalibration_flow_reference_sensorvalue3(reference_sensorValue[2]);
+            setcalibration_flow_airdensity1(airdensity_buffer[0]);
+            setcalibration_flow_airdensity2(airdensity_buffer[1]);
+            setcalibration_flow_airdensity3(airdensity_buffer[2]);
+
+            setcalibration_flow_reference_massflowvalue1(massflow_value_buffer[0]);
+            setcalibration_flow_reference_massflowvalue2(massflow_value_buffer[1]);
+            setcalibration_flow_reference_massflowvalue3(massflow_value_buffer[2]);
 
             lv_task_del(_fasTimeRefTask);
             lv_task_del(_fasMotorTask);
@@ -591,7 +602,8 @@ static void __fasValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         {
             lv_task_del(_fasTimeRefTask);
             lv_task_del(_fasMotorTask);
-            ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, 100));
+            _fasDutyCycle = 15000;
+             ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, 0));
             ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
             set_flow_calibration_point_cout(calibration_count);
             callMetroFlowAdjustScreen();
