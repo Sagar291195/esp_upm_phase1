@@ -39,7 +39,7 @@ extern "C"
 #include "screen_info.h"
 #include "screen_service.h"
 #include "screen_password.h"
-#include "screen_PIDtune.h"
+#include "screen_set_timedate.h"
 #include "screen_archive.h"
 
 #include "../Widgets/ResumeInfoWidget.h"
@@ -81,7 +81,7 @@ enum
     SCR_ARCHIEVE,
     SCR_INFO,
     SCR_PARAMETER,
-    SCR_PIDTUNE,
+    SCR_SET_TIMEDATE,
     SCR_PRESET,
     SCR_SERVICE,
     SCR_SUMMARY_START,

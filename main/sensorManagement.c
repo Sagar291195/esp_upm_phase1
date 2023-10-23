@@ -28,6 +28,7 @@
 #define NO_OF_SAMPLES_SDP32                     10
 #define SDA_GPIO                                21      /* i2c sda pin */
 #define SCL_GPIO                                22      /* i2c scl pin */
+#define MASSFLOW_CALCULATION_FACTOR             0.1
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -441,9 +442,9 @@ float get_sdp32_temperature_value(void)
 ********************************************************************************************/
 float get_sdp32_massflow_value(void)
 {
-    float fResult = get_sdp32_pressure_value();
-
-    return fResult;
+    float massflow;
+    massflow = sdp32_pressure_value*MASSFLOW_CALCULATION_FACTOR;
+    return massflow;
 }
 /********************************************************************************************
 * 

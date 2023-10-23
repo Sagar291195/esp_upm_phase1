@@ -82,7 +82,6 @@ static void motorTask(void *pvParameters)
         /* if motor is runnng then we need to calculate the duty cycle so that to make the constant volume flow */
         while (getIsMotorRunning())
         {
-            ESP_LOGD(TAG, "Average sdp32 pressure = %0.2f", get_sdp32_pressure_value());
             flowRate = get_volumetric_flow();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {

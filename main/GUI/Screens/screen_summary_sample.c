@@ -1197,7 +1197,6 @@ static void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-
 static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
         if (event == LV_EVENT_RELEASED)
@@ -1212,7 +1211,6 @@ static void QuitBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
-                // xseSummaryEndScreen();
                 dashboardflg = 0;
                 pxDashboardScreen();
         }

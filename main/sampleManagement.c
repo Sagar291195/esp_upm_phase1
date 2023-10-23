@@ -144,7 +144,6 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
 
             ESP_LOGD(TAG, "Starting sequence %d/%d", uCurrentRunningSequenceNumber, get_no_of_sequence_in_array());
 
-
             if ((uCurrentRunningSequenceNumber != 0) && (uCurrentRunningSequenceNumber != 1))               /* showing the wait in progress screen. wait sreen for the 1st sequene has been set from */
             {                                                                                               /* the front end. this need to be changed in the phase 2 */                            
                 ESP_LOGD(TAG, "showing the wait in progress screeen");

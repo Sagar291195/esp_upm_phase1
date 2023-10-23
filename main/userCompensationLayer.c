@@ -27,7 +27,9 @@
 /********************************************************************************************
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
+#if 0
 static float flow_calculation(float differential_pressure, float airdensity);
+#endif
 static float density_calculation(float temperature, float humidity, float pressure);
 
 /********************************************************************************************
@@ -48,6 +50,7 @@ static float density_calculation(float temperature, float humidity, float pressu
     return density;
 }
 
+#if 0
 /********************************************************************************************
 *                           
 ********************************************************************************************/
@@ -68,10 +71,9 @@ static float flow_calculation(float differential_pressure, float airdensity)
      * updating the flow rate to flow value =  0,759 * SDPvalue^05288 */
     
     fResult = (0.759 * (pow(differential_pressure, 0.5288)) * (1.2 / airdensity));
-    ESP_LOGD(TAG, "Pressure  = %.2f, Density = %.02f, Flow = %.02f", differential_pressure, airdensity, fResult);
     return fResult;
 }
-
+#endif
 /********************************************************************************************
 *                           GLOBAL FUNCTIONS
 ********************************************************************************************/
@@ -147,7 +149,7 @@ float get_external_air_density_raw(void)
 /********************************************************************************************
 *                           
 ********************************************************************************************/
-float get_internal_air_density_raw()
+float get_internal_air_density_raw(void)
 {
     return density_calculation(get_internal_temperature_value(),get_internal_humidity_value(), 
                 get_internal_pressure_value());
@@ -182,7 +184,39 @@ float get_internal_air_density_calibrated(void)
  ********************************************************************************************/
 float get_volumetric_flow(void)
 {
-    float result =0;
-    result = flow_calculation(get_sdp32_massflow_value(), get_external_air_density_calibrated());
-    return result;
+    float volumetric_flow_raw = 0;
+    float volumetric_flow_calibrated = 0;
+    float calibrated_airdensity = 0;
+    float current_airdensity = 0;
+    float current_massflow = 0;
+    float coeffA = 0;
+    float coeffB = 0;
+
+    calibrated_airdensity = get_average_airdensity_value();
+    current_airdensity = get_external_air_density_calibrated();
+    current_massflow = get_sdp32_massflow_value();
+
+    volumetric_flow_raw = (current_massflow * (calibrated_airdensity/current_airdensity));
+
+    if(volumetric_flow_raw < getcalibration_massflow_value1())
+    {
+        coeffA = getcalibrationvalue_flow_coeffA1();
+        coeffB = getcalibrationvalue_flow_coeffB1();
+    }
+    else if(volumetric_flow_raw < getcalibration_massflow_value2())
+    {
+        coeffA = getcalibrationvalue_flow_coeffA2();
+        coeffB = getcalibrationvalue_flow_coeffB2();
+    }
+    else 
+    {
+        coeffA = getcalibrationvalue_flow_coeffA3();
+        coeffB = getcalibrationvalue_flow_coeffB3();
+    }
+    
+    
+    volumetric_flow_calibrated = (coeffA * volumetric_flow_raw) + coeffB;
+    ESP_LOGI(TAG, "Volumetric flow raw = %.2f, Coeffiecient A = %.2f, B = %.2f, compensated = %.2f",
+            volumetric_flow_raw, coeffA, coeffB, volumetric_flow_calibrated);
+    return volumetric_flow_calibrated;
 }

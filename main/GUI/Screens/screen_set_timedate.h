@@ -1,6 +1,6 @@
 
-#ifndef SCREEN_PIDTUNE_H
-#define SCREEN_PIDTUNE_H
+#ifndef SCREEN_SET_TIMEDATE_H
+#define SCREEN_SET_TIMEDATE_H
 
 #ifdef __cplusplus
 extern "C"
@@ -29,28 +29,15 @@ extern "C"
 /********************************************************************************************
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
-extern int day_Roller_int;
-extern int month_Roller_int;
-extern int year_Roller_int;
 
-extern int hour_Roller_int;
-extern int min_Roller_int;
-extern int sec_Roller_int;
 
-extern const int DD;
-extern const int MM;
-extern const int YYYY;
-
-extern const int HH;
-extern const int min;
-extern const int sec;
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
-void xScreenPidTune(void);
-
+void screen_set_time_date(void);
+void get_new_set_time(struct tm *time);
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*SCREEN_PIDTUNE_H*/
+#endif /*SCREEN_SET_TIMEDATE_H*/

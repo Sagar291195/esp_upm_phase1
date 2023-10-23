@@ -56,12 +56,6 @@ int global_DashbordBTNflag;
 int day, month, year;
 int totalSecond;
 bool navier_set_time;
-int day_Roller_int;
-int month_Roller_int;
-int year_Roller_int;
-int hour_Roller_int;
-int min_Roller_int;
-int sec_Roller_int;
 char guiTime[25];
 char guiDate[40];
 char guiHrDef[25];
@@ -137,16 +131,10 @@ void ds3231_task(void *pvParameters)
         {
             if (navier_set_time)
             {
-                struct tm navier_time_set = {
-                    .tm_year = year_Roller_int - 1900, // since 1900 (2020 - 1900)
-                    .tm_mon = month_Roller_int - 1,    // 0-based
-                    .tm_mday = day_Roller_int,
-                    .tm_hour = hour_Roller_int,
-                    .tm_min = min_Roller_int,
-                    .tm_sec = sec_Roller_int};
-
+                struct tm new_set_time;
+                get_new_set_time(&new_set_time);
                 printf("Time Setting Execution started \n");
-                if (ds3231_set_time(&dev, &navier_time_set) != ESP_OK)
+                if (ds3231_set_time(&dev, &new_set_time) != ESP_OK)
                 {
                     printf("Could not net time \n");
                 }

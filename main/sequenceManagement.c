@@ -248,15 +248,12 @@ static void vInitiateSequenceSummaryStart()
 static void vCalculateSequneceEndSummary()
 {
     struct tm timeinfo = {0};
-    get_current_date_time(&timeinfo);
     char cStopDate[40];
 
-    // sprintf(cStopDate, "%d/%d/%d", timeinfo.tm_mday, timeinfo.tm_mon, timeinfo.tm_year);
+    get_current_date_time(&timeinfo);
     timeinfo.tm_year = timeinfo.tm_year + 1900;
     timeinfo.tm_mon = timeinfo.tm_mon + 1;
-    sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);
-
-    
+    sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);    
     strcpy(sequencesummary.summary.cStopDate, cStopDate);   /* copy end date */
    
     sequencesummary.summary.xVolumeCounter.fEndVolume = fGetTotalLiterCount();   /* setting  the end volume and the effective volume */
