@@ -289,7 +289,7 @@ static void vCalculateSequneceEndSummary()
     {
         totalSequence[uGetCurrentRunningSequenceNumber() - 1].bSucessfullyRun = false;
     }
-    vInsertSequenceSummaryIntoDataBase(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), sequencesummary); /*  save summary to the db */
+    database_save_sequence_summary(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), sequencesummary); /*  save summary to the db */
 }
 
 /********************************************************************************************
@@ -297,7 +297,7 @@ static void vCalculateSequneceEndSummary()
 ********************************************************************************************/
 static void nvread_totalsequence_count(void)
 {
-    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
+    bool ret = nvsread_value_u8(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, &uTotalSequenceCount);
     if(ret == false)
     {
       ESP_LOGE(TAG, "Total sequence count read error");
@@ -498,7 +498,7 @@ uint8_t get_sequence_number_tosave(void)
 ********************************************************************************************/
 void nvswrite_totalsequence_count(void)
 {
-    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
+    bool ret = nvswrite_value_u8(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, uTotalSequenceCount);
     if(ret == false)
     {
       ESP_LOGE(TAG, "Total sequence count write error");

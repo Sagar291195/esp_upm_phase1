@@ -56,7 +56,7 @@ typedef struct
  * @param seqNum sequence number
  * @return pointer to the created object
  */
-lv_obj_t *sqCreateSequence(lv_obj_t *sqParent, uint8_t seqNum);
+lv_obj_t *sqCreateSequence(lv_obj_t *sqParent, uint8_t *seqNum);
 
 /**
  * Set the Flow Set Point Number

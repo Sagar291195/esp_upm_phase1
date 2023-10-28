@@ -531,7 +531,6 @@ static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xssTMrefresherTask);
         lv_task_del(__xssStartBTNCountTask);
         __xssStartBTNCountTask = NULL;
-        // printf("Back to Dashbord from presetscrn\n");
         global_DashbordBTNflag = 1;
         set_rollermovck_flag(false);
         xsPresetScreenAdvance();

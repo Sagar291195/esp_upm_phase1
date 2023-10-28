@@ -208,6 +208,7 @@ static inline uint32_t compensate_humidity(bmp280_t *dev, int32_t adc_hum, int32
  ********************************************************************************************/
 esp_err_t bmp280_init_desc(bmp280_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)
 {
+    
     CHECK_ARG(dev);
     if (addr != BMP280_I2C_ADDRESS_0 && addr != BMP280_I2C_ADDRESS_1){
         ESP_LOGE(TAG, "Invalid I2C address");
@@ -250,6 +251,7 @@ esp_err_t bmp280_init_default_params(bmp280_params_t *params)
  ********************************************************************************************/
 esp_err_t bmp280_init(bmp280_t *dev, bmp280_params_t *params)
 {
+    esp_log_level_set(TAG, ESP_LOG_WARN);
     CHECK_ARG(dev && params);
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     CHECK_LOGE(dev, i2c_dev_read_reg(&dev->i2c_dev, BMP280_REG_ID, &dev->id, 1), "Sensor not found");

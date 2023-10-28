@@ -144,7 +144,7 @@ lv_task_t *__xserefresherTask;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-
+static uint8_t sequence_number[MAXIMUM_NO_OF_SAMPLES] = {0};
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -900,9 +900,10 @@ static void xDrawArchHeadNav(void)
 void SequenceWidgetArrange(void)
 {
     lv_obj_t *curr_obj = __xseBaseContainer_se;
-    // int NumOfSeq = 1;
     sequence_t *sequencedata = get_sequence_array();
-    for (uint8_t i = 0; i < get_no_of_sequence_in_array(); i++)
+    uint8_t totalseq = get_no_of_sequence_in_array();
+    memset(&sequence_number, 0x00, sizeof(sequence_number));
+    for (uint8_t i = 0; i < totalseq; i++)
     {
         _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
         lv_obj_align(_xseSeque1_se, curr_obj, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 20);
@@ -911,7 +912,8 @@ void SequenceWidgetArrange(void)
         lv_obj_set_style_local_border_width(_xseSeque1_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
         /*this will create the widget with the data of the sequence */
-        Seq = sqCreateSequence(_xseSeque1_se, i + 1);
+        sequence_number[i] = i+1;
+        Seq = sqCreateSequence(_xseSeque1_se, &sequence_number[i]);
         lv_obj_align(Seq, NULL, LV_ALIGN_CENTER, 0, 0);
         lv_obj_set_style_local_bg_color(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
         lv_obj_set_style_local_border_opa(Seq, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
@@ -951,7 +953,6 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xserefresherTask);
-        // printf("Back to Dashbord from presetscrn\n");
         global_DashbordBTNflag = 1;
         set_archiv_or_summary_screen(0);
         xsPresetScreenAdvance();
@@ -960,7 +961,6 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xserefresherTask);
@@ -972,17 +972,16 @@ static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-
     if (event == LV_EVENT_RELEASED)
     {
         sequenceSummary_t xSequnceSummary;
-        // printf("%d\n", (int)lv_obj_get_user_data(obj));
+        uint8_t seqnumber = *(uint8_t*)lv_obj_get_user_data(obj);
+
         /* if sample exits in the database then show */
-        if (vGetSequenceSummaryFromDataBase(uGetCurrentSampleNumber(), (uint32_t)lv_obj_get_user_data(obj), &xSequnceSummary))
+        if (database_get_sequence_summary(uGetCurrentSampleNumber(), seqnumber, &xSequnceSummary))
         {
             lv_task_del(__xserefresherTask);
-            // setting the smaple number and sequnce number before showing the sequnce data
-            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), (uint32_t)lv_obj_get_user_data(obj), &xSequnceSummary);
+            vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), seqnumber, &xSequnceSummary);
             sssSummarySampleScreen();
         }
         else

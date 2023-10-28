@@ -54,6 +54,6 @@ bool nvsread_value_u32(char *storagename, char *key, uint32_t *value);
 bool nvswrite_value_u8(char *storagename, char *key, uint8_t value);
 bool nvsread_value_u8(char *storagename, char *key, uint8_t *value);
 void nvs_storage_initialize(void);
-bool vGetSequenceSummaryFromDataBase(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t *sequenceSummary);
-void vInsertSequenceSummaryIntoDataBase(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary);
+bool database_get_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t *sequenceSummary);
+void database_save_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary);
 #endif  /*__FLASH_H__*/
