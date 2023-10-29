@@ -74,7 +74,7 @@ static void wakeupmodeInit(void)
 void app_main()
 {
     printf("\n\n####################################################################################\n");
-    ESP_LOGI(TAG, "Firmware Version : 1.0.0.1");
+    ESP_LOGI(TAG, "Firmware Version : %s", FIRMWARE_VERSION);
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {

@@ -62,7 +62,7 @@ void timemanagement_intialization();
  * @param endTime pointer to array of end time
  * @param sizeOfEndTimes size of end time array max 255
  */
-void get_end_date_time_sequence(char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate,char *endTime,uint8_t sizeOfEndTimes);
+void get_end_date_time_sequence(char *startdate, char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate,char *endTime,uint8_t sizeOfEndTimes);
 
 
 /**

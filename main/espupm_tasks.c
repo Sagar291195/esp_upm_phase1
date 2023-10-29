@@ -54,7 +54,6 @@ uint8_t cr, cg, cb;
 int dashboardflg;
 int global_DashbordBTNflag;
 int day, month, year;
-int totalSecond;
 bool navier_set_time;
 char guiTime[25];
 char guiDate[40];
@@ -210,7 +209,7 @@ void ds3231_task(void *pvParameters)
             skip_days(10);
             sprintf(guiSeqDate9, "%04d/%02d/%02d", year, month, day); // day, month, year
 
-            sprintf(GuiDateRollerStr, "%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n", guiSeqDate0, guiSeqDate1, guiSeqDate2, guiSeqDate3, guiSeqDate4, guiSeqDate5, guiSeqDate6, guiSeqDate7, guiSeqDate8, guiSeqDate9);
+            sprintf(GuiDateRollerStr, "%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n%s     \n\n", guiSeqDate0, guiSeqDate1, guiSeqDate2, guiSeqDate3, guiSeqDate4, guiSeqDate5, guiSeqDate6, guiSeqDate7, guiSeqDate8, guiSeqDate9);
             if (navier_time.tm_mon + 1 == 1)
             {
                 strcpy(month_name, "JAN");

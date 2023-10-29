@@ -347,7 +347,6 @@ void set_sequence_values(uint8_t uSequenceNumber, char *pStartDate, uint8_t uSta
     totalSequence[uSequenceNumber - 1].uDurationMinutes = uDurationMinutes;
     totalSequence[uSequenceNumber - 1].bSucessfullyRun = false; // setting the sucessfully run state to false
     strcpy((char *)&totalSequence[uSequenceNumber - 1].cStartPerson, pStartPerson);
-
     print_on_terminal();
     uTotalSequenceCount++;
 }

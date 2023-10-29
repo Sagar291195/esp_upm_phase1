@@ -158,7 +158,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             }
             else
             {
-                ESP_LOGW(TAG, "Delay time is less than 0 means that time has already passed, but can force start the sequence now");
+                ESP_LOGE(TAG, "Delay time is less than 0 means that time has already passed, but can force start the sequence now");
             }
 
             ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, get_no_of_sequence_in_array());
