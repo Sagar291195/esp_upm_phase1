@@ -101,7 +101,7 @@ void app_main()
     nvsread_hours_liters_value();
     nvsread_sequence_parameters();
     sensor_initialization();          // Initiating all i2c sensors on the board
-    timemanagement_intialization();        // Initializing the time management of the device
+    // timemanagement_intialization();        // Initializing the time management of the device
     start_samplemanagement_service();    // Installing the sample management service
     motor_initialization();                 // Installing the sample management service
     vTaskDelay(500 / portTICK_PERIOD_MS);
