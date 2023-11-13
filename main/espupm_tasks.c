@@ -135,7 +135,7 @@ void ds3231_task(void *pvParameters)
                 printf("Time Setting Execution started \n");
                 if (ds3231_set_time(&dev, &new_set_time) != ESP_OK)
                 {
-                    printf("Could not net time \n");
+                    printf("Could not set time \n");
                 }
                 printf("Time Setting Execution Done \n");
                 navier_set_time = false;

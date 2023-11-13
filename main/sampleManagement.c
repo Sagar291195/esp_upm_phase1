@@ -73,7 +73,8 @@ void vSetCounterValuesEndSummaryDetails()
 {
     ESP_LOGD(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
-    get_current_date_time(&timeinfo);
+
+    timeinfo = get_current_time();
     char cStopDate[40];
 
     timeinfo.tm_year = timeinfo.tm_year + 1900;

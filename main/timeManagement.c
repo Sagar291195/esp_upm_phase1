@@ -80,19 +80,6 @@ void set_time_date_device(struct tm time)
     }
 }
 
-/********************************************************************************************
-*                          
-********************************************************************************************/
-void get_current_date_time(struct tm *time)
-{
-    if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
-    {
-        ESP_ERROR_CHECK(ds3231_get_time(&dev, time));
-        xSemaphoreGive(i2c_communication_semaphore);
-    }
-    time->tm_year = time->tm_year; // adjusting the year
-    time->tm_mon = time->tm_mon; // adjusting the month
-}
 
 /********************************************************************************************
 *                          
@@ -114,11 +101,6 @@ void vSetSystemTimeUsingCompileTime()
     tm.tm_mon = tm.tm_mon + 1;
     ESP_LOGD(TAG, "setting the system time");
     set_time_date_device(tm);
-
-    struct tm currentTime = {0};
-    get_current_date_time(&currentTime);
-    strftime(now, sizeof(now), "%d %b %Y %H:%M", &currentTime);
-    ESP_LOGI(TAG, "Current time is %s", now);
 }
 
 /********************************************************************************************

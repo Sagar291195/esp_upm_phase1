@@ -250,7 +250,7 @@ static void vCalculateSequneceEndSummary()
     struct tm timeinfo = {0};
     char cStopDate[40];
 
-    get_current_date_time(&timeinfo);
+    timeinfo = get_current_time();
     timeinfo.tm_year = timeinfo.tm_year + 1900;
     timeinfo.tm_mon = timeinfo.tm_mon + 1;
     sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);    
@@ -467,8 +467,7 @@ int32_t get_reamining_time_start_sequence(uint8_t uSequenceNumber)
     timeinfo.tm_min = uStartMin;
     timeinfo.tm_sec = 0;
   
-    struct tm now = {0};
-    get_current_date_time(&now);     /* getting the current time of the system */
+    struct tm now = get_current_time();
     int32_t seconds = difftime(mktime(&timeinfo), mktime(&now));
     ESP_LOGD(TAG, "Seconds remaining is %d", seconds);
     return seconds;

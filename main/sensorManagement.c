@@ -449,8 +449,6 @@ float get_sdp32_massflow_value(void)
 ********************************************************************************************/
 void sensor_initialization(void)
 {
-    // rtc_sensor_initialize();
-    // vTaskDelay(1000);
     xTaskCreate(external_sensor_read_task, "external", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
     xTaskCreate(internal_sensor_read_task, "internal", 4 * 1024, NULL, 5, NULL);

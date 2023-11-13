@@ -42,13 +42,6 @@
 void set_time_date_device(struct tm time);
 
 /**
- * @brief Get the current date and time of the system and return it in the given structure
- * @code  year_Roller_int = tm.tm_year;
-* @param time[in] pointer to the structure to which the current time is to be returned
- */
-void get_current_date_time(struct tm *time);
-
-/**
  * @brief initialize the time management and set the system time to complile time of the system
  *
  */

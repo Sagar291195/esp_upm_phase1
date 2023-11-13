@@ -485,7 +485,7 @@ void xssSummaryStartScreen(void)
 // This is the task to GUI Time label updating
 static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
 {
-    if (lv_obj_get_screen(__xssTimeLabel_ss) == lv_scr_act())
+    if (screenid == SCR_SUMMARY_START)
     {
         lv_label_set_text(__xssTimeLabel_ss, guiTime);
     }
@@ -495,7 +495,7 @@ static void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
 {
     if (__xssStartBTNCountTask != NULL)
     {
-        if (lv_obj_get_screen(__xssTimeLabel_ss) == lv_scr_act())
+        if (screenid == SCR_SUMMARY_START)
         {
             if (defaultParaSelected == true && strttmrcount <= 10)
             {
@@ -559,13 +559,14 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             lv_task_del(__xssStartBTNCountTask);
             __xssStartBTNCountTask = NULL;
         }
+        ESP_LOGI(TAG, "start job button clicked");
         /* now sample is valid and can be saved into the memory and proceed for the sample execution */
         vControllerSampleIsValid();
         defaultParaSelected = false;
         global_DashbordBTNflag = 2;
-        /* Creating the dashboard screen and setting the dashboard to the ready mode. */
         dashboardflg = 3;
         set_rollermovck_flag(false);
+        ESP_LOGI(TAG, "creating dashboard screen");
         pxDashboardScreen();
     }
 }
