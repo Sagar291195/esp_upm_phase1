@@ -34,6 +34,29 @@
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
+typedef enum
+{
+    NORMAL_MODE,
+    DO_FIRMWARE_UPDATE,
+    DONE_FIRMWARE_UPDATE,
+    FIRMWARE_UPDATE_ERROR,
+}device_operating_mode;
+
+typedef enum{
+    NO_ERROR_FW_UDPATE,
+    ERROR_SSID_PASSWORD_NOT_AVAILABLE,
+    ERROR_WIFI_CONNECT,
+    ERROR_FIRMWARE_DOWNLOAD,
+    ERROR_FIRMWARE_ERASE,
+    ERROR_FIRMWARE_WRITE,
+}firmware_update_error_t;
+
+typedef struct
+{
+    uint8_t startbyte;
+    uint8_t device_operating_mode;
+    uint8_t fw_update_state;
+}device_state_t;
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -53,7 +76,12 @@ bool nvswrite_value_u32(char *storagename, char *key, uint32_t value);
 bool nvsread_value_u32(char *storagename, char *key, uint32_t *value);
 bool nvswrite_value_u8(char *storagename, char *key, uint8_t value);
 bool nvsread_value_u8(char *storagename, char *key, uint8_t *value);
+
+
 void nvs_storage_initialize(void);
+
+bool nvswrite_device_mode_settings(device_state_t *devicestate);
+bool nvsread_device_mode_settings(device_state_t *devicestate);
 bool database_get_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t *sequenceSummary);
 void database_save_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary);
 #endif  /*__FLASH_H__*/

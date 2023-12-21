@@ -9,6 +9,7 @@
 #include <sampleManagement.h>
 #include "gui/screens/screen_includes.h"
 
+#include "fw_update/ota.h"
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
@@ -28,7 +29,7 @@
 uint8_t screenid;                   /* variable to store current loaded screen id*/
 SemaphoreHandle_t i2c_communication_semaphore;    /* semaphore to Processes*/ 
 SemaphoreHandle_t gui_update_semaphore;   /* semaphore to GUId*/ 
-
+static device_state_t device_state;
 /********************************************************************************************
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
@@ -36,6 +37,8 @@ static void IRAM_ATTR lv_tick_task(void *arg);      /* lvgl task to count the ti
 static void guiTask(void *pvParameter);             /* This it the lvgl task */
 static void create_demo_application(void);          /* This function intiate the first screen to show */
 static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
+static uint8_t get_device_operating_mode( void );
+static uint8_t get_firmware_update_error( void );
 
 /********************************************************************************************
  *                              CODE
@@ -73,6 +76,7 @@ static void wakeupmodeInit(void)
  ********************************************************************************************/
 void app_main()
 {
+
     printf("\n\n####################################################################################\n");
     ESP_LOGI(TAG, "Firmware Version : %s", FIRMWARE_VERSION);
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
@@ -96,21 +100,41 @@ void app_main()
     buzzer_initialization();              // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    nvs_storage_initialize();     // Initiating the data managament api
-    nvsread_calibrationdata();          // Read calibration data from flash
-    nvsread_hours_liters_value();
-    nvsread_sequence_parameters();
-    sensor_initialization();          // Initiating all i2c sensors on the board
-    start_samplemanagement_service();    // Installing the sample management service
-    motor_initialization();                 // Installing the sample management service
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    
 
-    xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    xTaskCreatePinnedToCore(ds3231_task, "ds3231_task", 2048, NULL, 1, NULL, 1); //  RTS
-    xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
-    xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
+    nvs_storage_initialize();     // Initiating the data managament api
+    uint8_t devicemode = get_device_operating_mode();
+    
+    switch(devicemode)
+    {
+        case DO_FIRMWARE_UPDATE:
+             /*execute firmware update task here*/
+            break;
+
+        case FIRMWARE_UPDATE_ERROR:
+            /* start gui and display error message or warning */
+            xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            break;
+
+        case NORMAL_MODE:
+            nvsread_calibrationdata();          // Read calibration data from flash
+            nvsread_hours_liters_value();
+            nvsread_sequence_parameters();
+            sensor_initialization();          // Initiating all i2c sensors on the board
+            start_samplemanagement_service();    // Installing the sample management service
+            motor_initialization();                 // Installing the sample management service
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            
+            xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            xTaskCreatePinnedToCore(ds3231_task, "ds3231_task", 2048, NULL, 1, NULL, 1); //  RTS
+            xTaskCreatePinnedToCore(ws2812_task, "ws2812_task", 4096, NULL, 1, NULL, 1); // 0 /Leg
+            xTaskCreatePinnedToCore(buzzer_task, "buzzer_task", 4096, NULL, 1, NULL, 1); // 0 //Bizzer
+            break;
+
+        default:
+            break;    
+    }
 }
 
 /********************************************************************************************
@@ -181,4 +205,45 @@ static void guiTask(void *pvParameter)
     free(buf2);
 #endif
     vTaskDelete(NULL);
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static uint8_t get_device_operating_mode( void )
+{
+    bool ret = false;
+    ret = nvsread_device_mode_settings(&device_state);
+    if( ret == false )
+    {   
+        device_state.device_operating_mode = NORMAL_MODE;
+        device_state.fw_update_state = NO_ERROR_FW_UDPATE;
+        ret = nvswrite_device_mode_settings( &device_state );
+        if ( ret == false )
+        {
+            ESP_LOGE( TAG, "device mode settings write error" );
+        }
+    }
+    else
+    {
+        if ( device_state.device_operating_mode == DONE_FIRMWARE_UPDATE )
+        {
+            device_state.device_operating_mode =  NORMAL_MODE;
+            device_state.fw_update_state = NO_ERROR_FW_UDPATE;
+            ret = nvswrite_device_mode_settings( &device_state );
+            if ( ret == false )
+            {
+                ESP_LOGE( TAG, "device mode settings write error" );
+            }
+        }
+    }
+    return device_state.device_operating_mode;
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static uint8_t get_firmware_update_error( void )
+{
+    return device_state.fw_update_state;
 }
