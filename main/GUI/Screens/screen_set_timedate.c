@@ -53,10 +53,10 @@ char rollerNullVal[5] = "";
 
 char day_Roller_Default[5] = "01";
 char month_Roller_Default[5] = "01";
-char year_Roller_Default[5] = "2021";
+char year_Roller_Default[5] = "2023";
 
-char hour_Roller_Default[5] = "12";
-char min_Roller_Default[5] = "30";
+char hour_Roller_Default[5] = "00";
+char min_Roller_Default[5] = "00";
 char sec_Roller_Default[5] = "00";
 static struct tm set_time_data;
 lv_obj_t *crnt_screen;

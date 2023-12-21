@@ -80,19 +80,6 @@ void set_time_date_device(struct tm time)
     }
 }
 
-/********************************************************************************************
-*                          
-********************************************************************************************/
-void get_current_date_time(struct tm *time)
-{
-    if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
-    {
-        ESP_ERROR_CHECK(ds3231_get_time(&dev, time));
-        xSemaphoreGive(i2c_communication_semaphore);
-    }
-    time->tm_year = time->tm_year; // adjusting the year
-    time->tm_mon = time->tm_mon; // adjusting the month
-}
 
 /********************************************************************************************
 *                          
@@ -114,11 +101,6 @@ void vSetSystemTimeUsingCompileTime()
     tm.tm_mon = tm.tm_mon + 1;
     ESP_LOGD(TAG, "setting the system time");
     set_time_date_device(tm);
-
-    struct tm currentTime = {0};
-    get_current_date_time(&currentTime);
-    strftime(now, sizeof(now), "%d %b %Y %H:%M", &currentTime);
-    ESP_LOGI(TAG, "Current time is %s", now);
 }
 
 /********************************************************************************************
@@ -133,36 +115,34 @@ void timemanagement_intialization()
 /********************************************************************************************
 *                          
 ********************************************************************************************/
-void get_end_date_time_sequence(char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate, char *endTime, uint8_t sizeOfEndTimes)
+void get_end_date_time_sequence(char *startdate, char *endDate, uint8_t sequenceNumber, uint8_t sizeOfEndDate, char *endTime, uint8_t sizeOfEndTimes)
 {
-    esp_log_level_set(TAG, ESP_LOG_INFO);
-    sequenceNumber--;
-
-    sequence_t *seq = get_sequence_array();
+    struct tm stopTimeTm = {0};     /* converting the time_t format into the struct tm */
     struct tm startTimeTm = {0};
+    sequence_t *seq;
+    time_t startTimeT;
+    uint32_t year;
+    uint32_t month;
+    uint32_t date;
+
+    sscanf(startdate, "%4d/%2d/%2d", &year, &month, &date);
+    sequenceNumber--;
+    seq = get_sequence_array();
+
+    startTimeTm.tm_year = year-1900;
+    startTimeTm.tm_mon = month;
+    startTimeTm.tm_mday = date;
     startTimeTm.tm_hour = seq[0].uStartHour;
     startTimeTm.tm_min = seq[0].uStartMin;
 
-    time_t startTimeT = mktime(&startTimeTm); // converting the time into the time_t format epoch time
-    ESP_LOGD(TAG, "startTimeT %lu", startTimeT);
-    
+    ESP_LOGD(TAG, "Start date = %s time = %d %d", startdate, startTimeTm.tm_hour, startTimeTm.tm_min);
+    startTimeT = mktime(&startTimeTm); // converting the time into the time_t format epoch time   
     startTimeT = startTimeT + (seq[0].uDurationHour * 3600) + (seq[0].uDurationMinutes * 60);   /* now adding the duration in second to get the new time */
-    ESP_LOGD(TAG, "startTimeT %lu", startTimeT);
 
-   
-    struct tm stopTimeTm = {0};     /* converting the time_t format into the struct tm */\
     gmtime_r(&startTimeT, &stopTimeTm);
-
-    ESP_LOGD(TAG, "stop year is %d", stopTimeTm.tm_year);
-    ESP_LOGD(TAG, "stop month is %d", stopTimeTm.tm_mon);
-    ESP_LOGD(TAG, "stop day is %d", stopTimeTm.tm_mday);
-    ESP_LOGD(TAG, "stop hour is %d", stopTimeTm.tm_hour);
-    ESP_LOGD(TAG, "stop min is %d", stopTimeTm.tm_min);
-
-    strftime(endDate, sizeOfEndDate, "%Y/%m/%d", &stopTimeTm);
-    ESP_LOGD(TAG, "End date of sequence %d is %s", sequenceNumber, endDate);
-    strftime(endTime, sizeOfEndTimes, "%HH %MM", &stopTimeTm);
-    ESP_LOGD(TAG, "End time of sequence %d is %s", sequenceNumber, endTime);
+    sprintf(endDate, "%4d/%2d/%2d", (1900+stopTimeTm.tm_year), stopTimeTm.tm_mon, stopTimeTm.tm_mday);
+    sprintf(endTime, "%2dH %2dM", stopTimeTm.tm_hour, stopTimeTm.tm_min);
+    ESP_LOGD(TAG, "End Date = %s, End Time = %s", endDate, endTime);
 }
 
 /********************************************************************************************

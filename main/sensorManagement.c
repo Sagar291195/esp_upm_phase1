@@ -138,7 +138,7 @@ static void external_sensor_read_task(void *pvParameters)
                             external_sensor_data_average.temperature = temp_external_sensor_average.temperature / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.humidity = temp_external_sensor_average.humidity / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                             external_sensor_data_average.gas_resistance = temp_external_sensor_average.gas_resistance / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                            ESP_LOGD(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.temperature, external_sensor_data_average.humidity, external_sensor_data_average.pressure);
+                            ESP_LOGV(TAG, "External sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", external_sensor_data_average.temperature, external_sensor_data_average.humidity, external_sensor_data_average.pressure);
                             memset(&temp_external_sensor_average, 0x00, sizeof(temp_external_sensor_average));
                         }
                     }
@@ -214,7 +214,7 @@ static void internal_sensor_read_task(void *pvParamters)
                     internal_temperature_average = temp_bme280_temperature_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_pressure_average = temp_bme280_pressure_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
                     internal_humidity_average = temp_bme280_humidity_average / NUMBER_OF_SAMPLE_VALUES_FOR_AVERAGE_BMP;
-                    ESP_LOGD(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, (internal_pressure_average/100));
+                    ESP_LOGV(TAG, "Internal sensor Temp: %0.2f, Humidity: %0.2f, Pressure: %0.2f", internal_temperature_average, internal_humidity_average, (internal_pressure_average/100));
                     temp_bme280_temperature_average = 0;
                     temp_bme280_pressure_average = 0;
                     temp_bme280_humidity_average = 0;
@@ -298,7 +298,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ina3221_sensor_data[i].bus_voltage = bus_voltage;
                 ina3221_sensor_data[i].shunt_voltage = shunt_voltage;
                 ina3221_sensor_data[i].shunt_current = shunt_current;
-                ESP_LOGD(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
+                ESP_LOGV(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
@@ -318,7 +318,6 @@ static void sdp32_sensor_read_task(void *pvParameters)
     uint8_t massFlowRead[2] = {0x36, 0x03}; /* mass flow, temperature compensated diff pressure with average mode */
     static float temp_sdp32_pressure = 0;
     static uint8_t sdp32_read_count = 0;     /* index for calculating the average values */
-    int16_t massFlow;
     int16_t temperature;
     float temp_value = 0;
     int16_t sensorvalue = 0;
@@ -369,7 +368,6 @@ static void sdp32_sensor_read_task(void *pvParameters)
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
-                ESP_LOGD(TAG, "SDP32 Temperature %0.2f, Pressure  %0.2f, massflow : %d", sdp32_temperature_value, sdp32_pressure_value, massFlow);
             }
 
         }
@@ -442,7 +440,7 @@ float get_sdp32_temperature_value(void)
 ********************************************************************************************/
 float get_sdp32_massflow_value(void)
 {
-    float massflow;
+    float massflow = 0;
     massflow = sdp32_pressure_value*MASSFLOW_CALCULATION_FACTOR;
     return massflow;
 }
@@ -451,8 +449,6 @@ float get_sdp32_massflow_value(void)
 ********************************************************************************************/
 void sensor_initialization(void)
 {
-    rtc_sensor_initialize();
-    vTaskDelay(1000);
     xTaskCreate(external_sensor_read_task, "external", 4 * 1024, NULL, 5, NULL);
     vTaskDelay(1000);
     xTaskCreate(internal_sensor_read_task, "internal", 4 * 1024, NULL, 5, NULL);

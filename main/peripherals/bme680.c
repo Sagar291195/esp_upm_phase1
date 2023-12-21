@@ -978,19 +978,17 @@ esp_err_t bme680_set_ambient_temperature(bme680_t *dev, int16_t ambient)
  ********************************************************************************************/
 esp_err_t init_bme680(void)
 {
+    esp_log_level_set(TAG, ESP_LOG_WARN);
     ESP_ERROR_CHECK(bme680_init_desc(&bme680_sensor, BME680_I2C_ADDR_0, 0, SDA_GPIO, SCL_GPIO));
     ESP_ERROR_CHECK(bme680_init_sensor(&bme680_sensor));
     /** -- SENSOR CONFIGURATION PART (optional) --- */
     // Changes the oversampling rates to 4x oversampling for temperature
     // and 2x oversampling for humidity. Pressure measurement is skipped.
     bme680_set_oversampling_rates(&bme680_sensor, BME680_OSR_4X, BME680_OSR_1X, BME680_OSR_2X);
-    // Change the IIR filter size for temperature and pressure to 7.
-    bme680_set_filter_size(&bme680_sensor, BME680_IIR_SIZE_7);
-    // Change the heater profile 0 to 200 degree Celcius for 100 ms.
-    bme680_set_heater_profile(&bme680_sensor, 0, 200, 100);
+    bme680_set_filter_size(&bme680_sensor, BME680_IIR_SIZE_7);      // Change the IIR filter size for temperature and pressure to 7.
+    bme680_set_heater_profile(&bme680_sensor, 0, 200, 100);     // Change the heater profile 0 to 200 degree Celcius for 100 ms.
     bme680_use_heater_profile(&bme680_sensor, 0);
-    // Set ambient temperature to 10 degree Celsius
-    bme680_set_ambient_temperature(&bme680_sensor, 10);
+    bme680_set_ambient_temperature(&bme680_sensor, 10);  // Set ambient temperature to 10 degree Celsius
     return ESP_OK;
 }
 

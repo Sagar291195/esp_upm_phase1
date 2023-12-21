@@ -74,7 +74,7 @@ static void wakeupmodeInit(void)
 void app_main()
 {
     printf("\n\n####################################################################################\n");
-    ESP_LOGI(TAG, "Firmware Version : 1.0.0.0");
+    ESP_LOGI(TAG, "Firmware Version : %s", FIRMWARE_VERSION);
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -101,7 +101,6 @@ void app_main()
     nvsread_hours_liters_value();
     nvsread_sequence_parameters();
     sensor_initialization();          // Initiating all i2c sensors on the board
-    timemanagement_intialization();        // Initializing the time management of the device
     start_samplemanagement_service();    // Installing the sample management service
     motor_initialization();                 // Installing the sample management service
     vTaskDelay(500 / portTICK_PERIOD_MS);

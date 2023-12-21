@@ -13,7 +13,7 @@
 /*********************
  *      DEFINES
  *********************/
-
+#define TAG         "TIME"
 /**********************
  *      TYPEDEFS
  **********************/
@@ -34,7 +34,6 @@
  *  GLOBAL VARIABLES
  **********************/
 extern char guiTime[25];
-char stopDate[40];
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -42,12 +41,9 @@ char stopDate[40];
 
 void delay(int number_of_seconds)
 {
-    // Converting time into milli_seconds
-    int milli_seconds = 1000 * number_of_seconds;
-    // Storing start time
-    clock_t start_time = clock();
-    // looping till required time is not achieved
-    while (clock() < start_time + milli_seconds)
+    int milli_seconds = 1000 * number_of_seconds;   // Converting time into milli_seconds
+    clock_t start_time = clock();                   // Storing start time
+    while (clock() < start_time + milli_seconds)    // looping till required time is not achieved
         ;
 }
 
@@ -78,28 +74,30 @@ void getSeqStopDT(int afterHr, int afterMin, int currHr, int currMin)
     stopHr = getHr;
 }
 
+char enddata[40];
 void getStopDate(int xdurHr, int xstopHr)
 {
     int a = 24 - xdurHr;
+
     if (a == 0)
     {
-        sprintf(stopDate, "%s", guiSeqDate1);
+        sprintf(enddata, "%s", guiSeqDate1);
     }
     else if (a == xstopHr)
     {
-        sprintf(stopDate, "%s", guiSeqDate1);
+        sprintf(enddata, "%s", guiSeqDate1);
     }
     else if (a > xstopHr)
     {
-        sprintf(stopDate, "%s", guiDate);
+        sprintf(enddata, "%s", guiDate);
     }
     else if (a < xstopHr)
     {
-        sprintf(stopDate, "%s", guiSeqDate1);
+        sprintf(enddata, "%s", guiSeqDate1);
     }
     else
     {
-        sprintf(stopDate, "%s", guiSeqDate1);
+        sprintf(enddata, "%s", guiSeqDate1);
     }
 }
 

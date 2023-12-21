@@ -269,8 +269,10 @@ void xssSummaryStartScreen(void)
     // Create Label for Stop Date
     char endDate[50];
     char endTime[50];
+
     /* sending the date of time of the 1st sequence to be run */
-    get_end_date_time_sequence(endDate, 1, sizeof(endDate), endTime, sizeof(endTime));
+    get_end_date_time_sequence(seq[0].cStartDate, endDate, 1, sizeof(endDate), endTime, sizeof(endTime));
+    
     __xssStopDateLbl_ss = lv_label_create(_xssSummayCont_ss, NULL);
     lv_obj_align(__xssStopDateLbl_ss, __xssStopTxtLbl_ss, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_label_set_text(__xssStopDateLbl_ss, endDate); // guiSeqDate1 ,  _pStopDate_
@@ -475,6 +477,7 @@ void xssSummaryStartScreen(void)
     lv_style_set_text_font(&__xssStartJobTxtLabelStyle_ss, LV_STATE_DEFAULT, &lv_font_montserrat_22);
     lv_style_set_text_color(&__xssStartJobTxtLabelStyle_ss, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xssValidJobBtn_ss, LV_LABEL_PART_MAIN, &__xssStartJobTxtLabelStyle_ss);
+
     crnt_screen = scrSummaryStart; // scrSummaryStart
     screenid = SCR_SUMMARY_START;
 }
@@ -482,7 +485,7 @@ void xssSummaryStartScreen(void)
 // This is the task to GUI Time label updating
 static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
 {
-    if (lv_obj_get_screen(__xssTimeLabel_ss) == lv_scr_act())
+    if (screenid == SCR_SUMMARY_START)
     {
         lv_label_set_text(__xssTimeLabel_ss, guiTime);
     }
@@ -492,18 +495,21 @@ static void __xssStartJobBTN_refr_func(lv_task_t *__xssStartBTNCountTask)
 {
     if (__xssStartBTNCountTask != NULL)
     {
-        if (lv_obj_get_screen(__xssTimeLabel_ss) == lv_scr_act())
+        if (screenid == SCR_SUMMARY_START)
         {
             if (defaultParaSelected == true && strttmrcount <= 10)
             {
+                ESP_LOGD(TAG, "default parameters is selected : %d", strttmrcount);
                 strttmrcount++; // strttmrcount
                 vTaskDelay(1000);
                 int revstrttmrcount = 10 - strttmrcount;
                 lv_label_set_text_fmt(__xssStartJobTxtLabel_ss, "JOB STARTING IN %d Sec", revstrttmrcount);
                 lv_label_set_text_fmt(__xssStartTimeLbl_ss, "IN %d Sec", revstrttmrcount);
             }
+
             if (strttmrcount >= 10)
             {
+                ESP_LOGD(TAG, "start timer count : %d", strttmrcount);
                 /* now sample is valid and can be saved into the memory and proceed for the sample execution */
                 vControllerSampleIsValid();
                 lv_task_del(__xssTMrefresherTask);
@@ -531,7 +537,6 @@ static void __xssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xssTMrefresherTask);
         lv_task_del(__xssStartBTNCountTask);
         __xssStartBTNCountTask = NULL;
-        // printf("Back to Dashbord from presetscrn\n");
         global_DashbordBTNflag = 1;
         set_rollermovck_flag(false);
         xsPresetScreenAdvance();
@@ -554,13 +559,14 @@ static void stbBTN_event_handler(lv_obj_t *obj, lv_event_t event)
             lv_task_del(__xssStartBTNCountTask);
             __xssStartBTNCountTask = NULL;
         }
+        ESP_LOGI(TAG, "start job button clicked");
         /* now sample is valid and can be saved into the memory and proceed for the sample execution */
         vControllerSampleIsValid();
         defaultParaSelected = false;
         global_DashbordBTNflag = 2;
-        /* Creating the dashboard screen and setting the dashboard to the ready mode. */
         dashboardflg = 3;
         set_rollermovck_flag(false);
+        ESP_LOGI(TAG, "creating dashboard screen");
         pxDashboardScreen();
     }
 }

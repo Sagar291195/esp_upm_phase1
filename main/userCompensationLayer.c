@@ -46,7 +46,7 @@ static float density_calculation(float temperature, float humidity, float pressu
     float density = (1.0 / (287.06 * (temperature + 273.15)) *
            ((pressure*100)- (230.617 * (humidity / 100.0) * exponential)));
 
-    ESP_LOGD(TAG, "Density : %f", density);       
+    ESP_LOGV(TAG, "Density : %f", density);       
     return density;
 }
 
@@ -87,7 +87,7 @@ float get_internal_pressure_calibrated(void)
 {
     float result = get_internal_pressure_value();
     result = result - getcalibrationvalue_int_pressure();   
-    ESP_LOGD(TAG, "Internal Pressure calibrated =  %0.2f", result);
+    ESP_LOGV(TAG, "Internal Pressure calibrated =  %0.2f", result);
     return result;
 }
 
@@ -98,7 +98,7 @@ float get_internal_humidity_calibrated(void)
 {
     float result = get_internal_humidity_value();
     result = result - getcalibrationvalue_int_humidity();    
-    ESP_LOGD(TAG, "Internal Humidity calibrated = %0.2f", result);
+    ESP_LOGV(TAG, "Internal Humidity calibrated = %0.2f", result);
     return result;
 }
 
@@ -109,7 +109,7 @@ float get_internal_temperature_calibrated(void)
 {
     float result = get_internal_temperature_value();
     result = result - getcalibrationvalue_int_temperature(); /* add some user compensation */
-    ESP_LOGD(TAG, "Internal Temperature calibrated = %0.2f", result);
+    ESP_LOGV(TAG, "Internal Temperature calibrated = %0.2f", result);
     return result;
 }
 
@@ -127,7 +127,7 @@ void get_external_sensor_calibratedvalue(external_sensor_data_t *calibratedvalue
     calibratedvalue->temperature = (sensorvalues.temperature - offset_temp);
     calibratedvalue->pressure = (sensorvalues.pressure - offset_pressure);
     calibratedvalue->humidity = (sensorvalues.humidity - offset_humidity);
-    ESP_LOGD(TAG, "Calibrated External sensor values are temperature %0.2f humidiy %0.2f pressure %0.2f", 
+    ESP_LOGV(TAG, "Calibrated External sensor values are temperature %0.2f humidiy %0.2f pressure %0.2f", 
                         calibratedvalue->temperature, calibratedvalue->humidity, calibratedvalue->pressure);
 }
 
@@ -216,7 +216,7 @@ float get_volumetric_flow(void)
     
     
     volumetric_flow_calibrated = (coeffA * volumetric_flow_raw) + coeffB;
-    ESP_LOGD(TAG, "Volumetric flow raw = %.2f, Coeffiecient A = %.2f, B = %.2f, compensated = %.2f",
+    ESP_LOGV(TAG, "Volumetric flow raw = %.2f, Coeffiecient A = %.2f, B = %.2f, compensated = %.2f",
             volumetric_flow_raw, coeffA, coeffB, volumetric_flow_calibrated);
     return volumetric_flow_calibrated;
 }

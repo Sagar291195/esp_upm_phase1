@@ -250,7 +250,7 @@ static void vCalculateSequneceEndSummary()
     struct tm timeinfo = {0};
     char cStopDate[40];
 
-    get_current_date_time(&timeinfo);
+    timeinfo = get_current_time();
     timeinfo.tm_year = timeinfo.tm_year + 1900;
     timeinfo.tm_mon = timeinfo.tm_mon + 1;
     sprintf(cStopDate, "%d/%2d/%2d", timeinfo.tm_year, timeinfo.tm_mon, timeinfo.tm_mday);    
@@ -289,7 +289,7 @@ static void vCalculateSequneceEndSummary()
     {
         totalSequence[uGetCurrentRunningSequenceNumber() - 1].bSucessfullyRun = false;
     }
-    vInsertSequenceSummaryIntoDataBase(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), sequencesummary); /*  save summary to the db */
+    database_save_sequence_summary(uGetCurrentSampleNumber(), uGetCurrentRunningSequenceNumber(), sequencesummary); /*  save summary to the db */
 }
 
 /********************************************************************************************
@@ -297,7 +297,7 @@ static void vCalculateSequneceEndSummary()
 ********************************************************************************************/
 static void nvread_totalsequence_count(void)
 {
-    bool ret = nvsread_value_parameter(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount);
+    bool ret = nvsread_value_u8(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, &uTotalSequenceCount);
     if(ret == false)
     {
       ESP_LOGE(TAG, "Total sequence count read error");
@@ -347,7 +347,6 @@ void set_sequence_values(uint8_t uSequenceNumber, char *pStartDate, uint8_t uSta
     totalSequence[uSequenceNumber - 1].uDurationMinutes = uDurationMinutes;
     totalSequence[uSequenceNumber - 1].bSucessfullyRun = false; // setting the sucessfully run state to false
     strcpy((char *)&totalSequence[uSequenceNumber - 1].cStartPerson, pStartPerson);
-
     print_on_terminal();
     uTotalSequenceCount++;
 }
@@ -468,8 +467,7 @@ int32_t get_reamining_time_start_sequence(uint8_t uSequenceNumber)
     timeinfo.tm_min = uStartMin;
     timeinfo.tm_sec = 0;
   
-    struct tm now = {0};
-    get_current_date_time(&now);     /* getting the current time of the system */
+    struct tm now = get_current_time();
     int32_t seconds = difftime(mktime(&timeinfo), mktime(&now));
     ESP_LOGD(TAG, "Seconds remaining is %d", seconds);
     return seconds;
@@ -498,7 +496,7 @@ uint8_t get_sequence_number_tosave(void)
 ********************************************************************************************/
 void nvswrite_totalsequence_count(void)
 {
-    bool ret = nvswrite_value_parameters(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, (void *)&uTotalSequenceCount, sizeof(uTotalSequenceCount));
+    bool ret = nvswrite_value_u8(NVS_STORGE_NAME, TOTAL_SEQUENCE_COUNT_KEY, uTotalSequenceCount);
     if(ret == false)
     {
       ESP_LOGE(TAG, "Total sequence count write error");

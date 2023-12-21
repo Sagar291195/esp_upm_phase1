@@ -73,7 +73,8 @@ void vSetCounterValuesEndSummaryDetails()
 {
     ESP_LOGD(TAG, "Setting the end summary details");
     struct tm timeinfo = {0};
-    get_current_date_time(&timeinfo);
+
+    timeinfo = get_current_time();
     char cStopDate[40];
 
     timeinfo.tm_year = timeinfo.tm_year + 1900;
@@ -104,7 +105,8 @@ void vSetCounterValuesEndSummaryDetails()
     ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.genericsummary.xHourCounter.fTargetHour, endsummary.genericsummary.xHourCounter.fEffectiveHour);
     ESP_LOGD(TAG, "variation in hour is %.2f", endsummary.genericsummary.xHourCounter.fVariation);
 
-    strcpy(endsummary.cEndPerson, "Time Finish");  /* setting the end summary name to be ankit */
+    strcpy(endsummary.cEndPerson, "Time Finish");  
+    ESP_LOGD(TAG, "saving end summary to flash");
     vSaveEndSummaryToNvsFlash();    /* saving the values to the nvs flash */
 }
 
@@ -157,7 +159,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
             }
             else
             {
-                ESP_LOGE(TAG, "Error: Delay time is less than 0 means that time has already passed, but can force start the sequence now");
+                ESP_LOGE(TAG, "Delay time is less than 0 means that time has already passed, but can force start the sequence now");
             }
 
             ESP_LOGD(TAG, "Starting the sequence %d/%d", uCurrentRunningSequenceNumber, get_no_of_sequence_in_array());
@@ -245,6 +247,7 @@ static void vSetCurrentSequenceNumberToNvsFlash(void)
     {
       ESP_LOGE(TAG, "current sample number error");
     }
+
 }
 
 /********************************************************************************************
@@ -292,7 +295,7 @@ void vSetSampleNumberToNvsFlash()
 /********************************************************************************************
 * 
 ********************************************************************************************/
-uint8_t uGetCurrentRunningSequenceNumber()
+uint8_t uGetCurrentRunningSequenceNumber(void)
 {
     return uCurrentRunningSequenceNumber;
 }
@@ -558,11 +561,11 @@ void vShowWorkInProgressScreen()
 ********************************************************************************************/
 void vUpdateWorkInProgressScreen()
 {
-    ESP_LOGD(TAG, "Updating the work in progress screen");
+    ESP_LOGV(TAG, "Updating the work in progress screen");
 
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        ESP_LOGD(TAG, "Updating dashboard screen");
+        ESP_LOGV(TAG, "Updating dashboard screen");
         vUpdateDashboardScreen();
         xSemaphoreGive(gui_update_semaphore);
     }

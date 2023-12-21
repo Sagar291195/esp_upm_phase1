@@ -85,14 +85,14 @@ static void motorTask(void *pvParameters)
             flowRate = get_volumetric_flow();  /* calulating the current flow rate */
             if (isnan(flowRate))
             {
-                ESP_LOGD(TAG, "flow rate is nan");
+                ESP_LOGV(TAG, "flow rate is nan");
                 flowRate = MINIMUN_FLOW_RATE;
             }
             else
             {
                 fTempVariable = fGetTotalLiterCount();
                 fTempVariable += ((flowRate * getMotorPIDSampleComputeTime())) / (60 * 1000);   /* total liters flow is flowRate in L/Min * time in ms /60*1000 */
-                ESP_LOGD(TAG, "Flow rate : motor = %0.2f, Total liter = %.2f", flowRate, fTempVariable);
+                ESP_LOGV(TAG, "Flow rate : motor = %0.2f, Total liter = %.2f", flowRate, fTempVariable);
                 vSetTotalLiterCount(fTempVariable); /* updating the total liters flow in the variable */
             }
             motorPidComputeAndSetOutput(flowRate);  /* computing the duty cycle and set it */
@@ -174,7 +174,7 @@ void motorPWMSetDutyCycle(float duty)
 {
     /*converting % into the duty cycle */
     uint32_t duty_cycle = (((pow(2, DUTY_CYCLE_RESOLUTION)) - 1) * duty) / 100;
-    ESP_LOGD(TAG, "duty cycle is %d", duty_cycle);
+    ESP_LOGV(TAG, "duty cycle is %d", duty_cycle);
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2, duty_cycle));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_2));
 }
@@ -255,12 +255,12 @@ void motorPidComputeAndSetOutput(float input)
 {
     float fOutputDuty = 0;
 
-    ESP_LOGD(TAG, "input %f, setpoint %f", input, pid_setTargetVaule);
+    ESP_LOGV(TAG, "input %f, setpoint %f", input, pid_setTargetVaule);
     float error = (pid_setTargetVaule - input) / pid_setTargetVaule;    /*computing the error percentage  */
     /* if error is less than the default error then set the normal pid pramaters */
     if (fabs(error) < motorPID_DEFAULT_ERROR)
     {
-        ESP_LOGD(TAG, "ERROR %f", error);
+        ESP_LOGV(TAG, "ERROR %f", error);
         setMotorPwmPidSetKpKiKd(fKp, fKi, fKd);
         PID_COMPUTE_TIME_IN_MS = PID_COMPUTE_TIME_STABLE_IN_MS;
     }
