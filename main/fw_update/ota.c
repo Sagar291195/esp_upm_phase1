@@ -1,3 +1,6 @@
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
 #include <string.h>
 #include <sys/param.h>
 #include "freertos/FreeRTOS.h"
@@ -25,14 +28,14 @@
 #include "wifi.h"
 #include "ota.h"
 
-#define TAG "OTA"
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
+#define TAG            "OTA"
 
-extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
-extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
-
-/*! Saves bit values used in application */
-static EventGroupHandle_t event_group;
-
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /*! Saves OTA config received from ThingsBoard*/
 static struct shared_keys
 {
@@ -40,11 +43,43 @@ static struct shared_keys
     char targetFwVer[128];
 } shared_attributes;
 
+/********************************************************************************************
+ *                          GLOBAL VARIABLES
+ ********************************************************************************************/
+extern const uint8_t server_cert_pem_start[] asm("_binary_ca_cert_pem_start");
+extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
+
+/********************************************************************************************
+ *                          STATIC VARIABLES
+ ********************************************************************************************/
+/*! Saves bit values used in application */
+static EventGroupHandle_t event_group;
 /*! Buffer to save a received MQTT message */
 static char mqtt_msg[512];
-
 static esp_mqtt_client_handle_t mqtt_client;
 
+/********************************************************************************************
+ *                          STATIC PROTOTYPE
+ ********************************************************************************************/
+static void parse_ota_config(const cJSON *object);
+static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event);
+static enum state connection_state(BaseType_t actual_event, const char *current_state_name);
+static esp_err_t _http_event_handler(esp_http_client_event_t *evt);
+static const char *get_mqtt_url(const char *running_partition_label);
+static uint32_t get_mqtt_port(const char *running_partition_label);
+static const char *get_mqtt_access_token(const char *running_partition_label);
+static void mqtt_app_start(const char *running_partition_label);
+static bool fw_versions_are_equal(const char *current_ver, const char *target_ver);
+static bool ota_params_are_specified(struct shared_keys ota_config);
+static void start_ota(const char *current_ver, struct shared_keys ota_config);
+
+/********************************************************************************************
+ *                          STATIC FUNCTIONS
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void parse_ota_config(const cJSON *object)
 {
     if (object != NULL)
@@ -71,6 +106,9 @@ static void parse_ota_config(const cJSON *object)
     }
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
     assert(event != NULL);
@@ -148,7 +186,10 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
     return ESP_OK;
 }
 
-esp_err_t _http_event_handler(esp_http_client_event_t *evt)
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 {
     assert(evt != NULL);
 
@@ -184,18 +225,9 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
     return ESP_OK;
 }
 
-
-
-/**
- * @brief Get MQTT broker URL to use in MQTT client.
- *        If the flash memory is empty and running partition is 'factory'
- *        then MQTT broker URL specified in ThingsBoard OTA configuration submenu will be saved to NVS.
- *        If running partition is not 'factory' ('ota_0' or 'ota_1') then MQTT broker URL from NVS is used.
- *        The application stops if running partition is not 'factory' and MQTT broker URL was not found in NVS.
- *
- * @param running_partition_label Current running partition label
- * @return const char* MQTT broker URL
- */
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static const char *get_mqtt_url(const char *running_partition_label)
 {
     nvs_handle handle;
@@ -225,16 +257,9 @@ static const char *get_mqtt_url(const char *running_partition_label)
     return mqtt_url;
 }
 
-/**
- * @brief Get MQTT broker port to use in MQTT client.
- *        If the flash memory is empty and running partition is 'factory'
- *        then MQTT broker port specified in ThingsBoard OTA configuration submenu will be saved to NVS.
- *        If running partition is not 'factory' ('ota_0' or 'ota_1') then MQTT broker port from NVS is used.
- *        The application stops if running partition is not 'factory' and MQTT broker port was not found in NVS.
- *
- * @param running_partition_label Current running partition label
- * @return const char* MQTT broker port
- */
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static uint32_t get_mqtt_port(const char *running_partition_label)
 {
     nvs_handle handle;
@@ -263,16 +288,9 @@ static uint32_t get_mqtt_port(const char *running_partition_label)
     return mqtt_port;
 }
 
-/**
- * @brief Get MQTT access token to use in MQTT client.
- *        If the flash memory is empty and running partition is 'factory'
- *        then MQTT broker access token specified in ThingsBoard OTA configuration submenu will be saved to NVS.
- *        If running partition is not 'factory' ('ota_0' or 'ota_1') then MQTT broker access token from NVS is used.
- *        The application stops if running partition is not 'factory' and MQTT broker access token was not found in NVS.
- *
- * @param running_partition_label Current running partition label
- * @return const char* MQTT broker access token
- */
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static const char *get_mqtt_access_token(const char *running_partition_label)
 {
     nvs_handle handle;
@@ -302,6 +320,9 @@ static const char *get_mqtt_access_token(const char *running_partition_label)
     return access_token;
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void mqtt_app_start(const char *running_partition_label)
 {
     assert(running_partition_label != NULL);
@@ -322,6 +343,9 @@ static void mqtt_app_start(const char *running_partition_label)
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static bool fw_versions_are_equal(const char *current_ver, const char *target_ver)
 {
     assert(current_ver != NULL && target_ver != NULL);
@@ -334,6 +358,9 @@ static bool fw_versions_are_equal(const char *current_ver, const char *target_ve
     return false;
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static bool ota_params_are_specified(struct shared_keys ota_config)
 {
     if (strlen(ota_config.targetFwServerUrl) == 0)
@@ -351,6 +378,9 @@ static bool ota_params_are_specified(struct shared_keys ota_config)
     return true;
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static void start_ota(const char *current_ver, struct shared_keys ota_config)
 {
     assert(current_ver != NULL);
@@ -377,6 +407,9 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
     }
 }
 
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 static enum state connection_state(BaseType_t actual_event, const char *current_state_name)
 {
     assert(current_state_name != NULL);
@@ -396,20 +429,24 @@ static enum state connection_state(BaseType_t actual_event, const char *current_
     return STATE_CONNECTION_IS_OK;
 }
 
-/**
- * @brief OTA task, it handles the shared attributes updates and starts OTA if the config received from ThingsBoard is valid.
- *
- * @param pvParameters Pointer to the task arguments
- */
+
+/********************************************************************************************
+ *                             GLOBAL FUNCTIONS 
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 void ota_task(void *pvParameters)
 {
+    const esp_partition_t *running_partition;
     enum state current_connection_state = STATE_CONNECTION_IS_OK;
     enum state state = STATE_INITIAL;
     BaseType_t ota_events;
     BaseType_t actual_event = 0x00;
     char running_partition_label[sizeof(((esp_partition_t *)0)->label)];
     event_group = xEventGroupCreate();
-    ESP_LOGE(TAG, "Running Firmware: %s", FIRMWARE_VERSION);
+    ESP_LOGI(TAG, "Running Firmware: %s", FIRMWARE_VERSION);
 
     while (1)
     {
@@ -428,29 +465,27 @@ void ota_task(void *pvParameters)
         switch (state)
         {
         case STATE_INITIAL:
-        {
             // Initialize NVS.
-            esp_err_t err = nvs_flash_init();
-            if (err == ESP_ERR_NVS_NO_FREE_PAGES)
-            {
-                // OTA app partition table has a smaller NVS partition size than the non-OTA
-                // partition table. This size mismatch may cause NVS initialization to fail.
-                // If this happens, we erase NVS partition and initialize NVS again.
-                APP_ABORT_ON_ERROR(nvs_flash_erase());
-                err = nvs_flash_init();
-            }
-            APP_ABORT_ON_ERROR(err);
+            // esp_err_t err = nvs_flash_init();
+            // if (err == ESP_ERR_NVS_NO_FREE_PAGES)
+            // {
+            //     // OTA app partition table has a smaller NVS partition size than the non-OTA
+            //     // partition table. This size mismatch may cause NVS initialization to fail.
+            //     // If this happens, we erase NVS partition and initialize NVS again.
+            //     APP_ABORT_ON_ERROR(nvs_flash_erase());
+            //     err = nvs_flash_init();
+            // }
+            // APP_ABORT_ON_ERROR(err);
 
-            const esp_partition_t *running_partition = esp_ota_get_running_partition();
+            running_partition = esp_ota_get_running_partition();
             strncpy(running_partition_label, running_partition->label, sizeof(running_partition_label));
             ESP_LOGI(TAG, "Running partition: %s", running_partition_label);
 
             initialise_wifi(running_partition_label);
             state = STATE_WAIT_WIFI;
             break;
-        }
+
         case STATE_WAIT_WIFI:
-        {
             if (actual_event & WIFI_DISCONNECTED_EVENT)
             {
                 ESP_LOGW(TAG, "WAIT_WIFI state, Wi-Fi not connected, wait for the connect");
@@ -468,9 +503,8 @@ void ota_task(void *pvParameters)
             ESP_LOGE(TAG, "WAIT_WIFI state, unexpected event received: %d", actual_event);
             state = STATE_INITIAL;
             break;
-        }
+
         case STATE_WAIT_MQTT:
-        {
             current_connection_state = connection_state(actual_event, "WAIT_MQTT");
             if (current_connection_state != STATE_CONNECTION_IS_OK)
             {
@@ -503,9 +537,8 @@ void ota_task(void *pvParameters)
             ESP_LOGE(TAG, "WAIT_MQTT state, unexpected event received: %d", actual_event);
             state = STATE_INITIAL;
             break;
-        }
+
         case STATE_WAIT_OTA_CONFIG_FETCHED:
-        {
             current_connection_state = connection_state(actual_event, "WAIT_OTA_CONFIG_FETCHED");
             if (current_connection_state != STATE_CONNECTION_IS_OK)
             {
@@ -526,13 +559,11 @@ void ota_task(void *pvParameters)
                 state = STATE_WAIT_OTA_CONFIG_FETCHED;
                 break;
             }
-
             ESP_LOGE(TAG, "WAIT_OTA_CONFIG_FETCHED state, unexpected event received: %d", actual_event);
             state = STATE_INITIAL;
             break;
-        }
+
         case STATE_OTA_CONFIG_FETCHED:
-        {
             current_connection_state = connection_state(actual_event, "OTA_CONFIG_FETCHED");
             if (current_connection_state != STATE_CONNECTION_IS_OK)
             {
@@ -552,9 +583,8 @@ void ota_task(void *pvParameters)
             ESP_LOGE(TAG, "OTA_CONFIG_FETCHED state, unexpected event received: %d", actual_event);
             state = STATE_INITIAL;
             break;
-        }
+
         case STATE_APP_LOOP:
-        {
             current_connection_state = connection_state(actual_event, "APP_LOOP");
             if (current_connection_state != STATE_CONNECTION_IS_OK)
             {
@@ -574,30 +604,33 @@ void ota_task(void *pvParameters)
                 state = STATE_APP_LOOP;
                 break;
             }
-
             ESP_LOGE(TAG, "APP_LOOP state, unexpected event received: %d", actual_event);
             state = STATE_INITIAL;
             break;
-        }
+
         default:
-        {
             ESP_LOGE(TAG, "Unexpected state");
             state = STATE_INITIAL;
             break;
-        }
         }
 
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 
-void notify_wifi_connected()
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+void notify_wifi_connected( void )
 {
     xEventGroupClearBits(event_group, WIFI_DISCONNECTED_EVENT);
     xEventGroupSetBits(event_group, WIFI_CONNECTED_EVENT);
 }
 
-void notify_wifi_disconnected()
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+void notify_wifi_disconnected( void )
 {
     xEventGroupClearBits(event_group, WIFI_CONNECTED_EVENT);
     xEventGroupSetBits(event_group, WIFI_DISCONNECTED_EVENT);

@@ -1,7 +1,6 @@
 /********************************************************************************************
  *                              INCLUDES
  ********************************************************************************************/
-
 #include "esp_upm.h"
 #include "lvgl_helpers.h"
 #include <timeManagement.h>
@@ -76,7 +75,6 @@ static void wakeupmodeInit(void)
  ********************************************************************************************/
 void app_main()
 {
-
     printf("\n\n####################################################################################\n");
     ESP_LOGI(TAG, "Firmware Version : %s", FIRMWARE_VERSION);
     esp_err_t err = nvs_flash_init(); // Initializing the nvs for save and retriving the data
@@ -108,6 +106,7 @@ void app_main()
     {
         case DO_FIRMWARE_UPDATE:
              /*execute firmware update task here*/
+            xTaskCreatePinnedToCore(ota_task, "ota_task", 8192, NULL, 1, NULL, 1);
             break;
 
         case FIRMWARE_UPDATE_ERROR:

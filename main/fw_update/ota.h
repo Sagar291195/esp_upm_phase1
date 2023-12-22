@@ -1,37 +1,33 @@
 #ifndef OTA_H
 #define OTA_H
 
-#include "freertos/event_groups.h"
+/********************************************************************************************
+ *                              INCLUDES
+ ********************************************************************************************/
+#include "esp_upm.h"
 
 
-
-/*! Firmware version used for comparison after OTA config was received from ThingsBoard */
-#define FIRMWARE_VERSION "v1.2"
-
+/********************************************************************************************
+ *                              DEFINES
+ ********************************************************************************************/
 /*! Factory partiton label */
 #define FACTORY_PARTITION_LABEL "factory"
-
 /*! MQTT topic to send a telemetry to ThingsBoard */
 #define TB_TELEMETRY_TOPIC "v1/devices/me/telemetry"
-
 /*! MQTT topic to send the shared attributes to ThingsBoard or to receive the shared attributes if they were updated on ThingsBoard */
 #define TB_ATTRIBUTES_TOPIC "v1/devices/me/attributes"
-
 /*! MQTT topic to subscribe for the receiving of the specified shared attribute after the request to ThingsBoard */
 #define TB_ATTRIBUTES_SUBSCRIBE_TO_RESPONSE_TOPIC "v1/devices/me/attributes/response/+"
-
 /**
  * @brief  MQTT topic to request the specified shared attributes from ThingsBoard.
  *         44332 is a request id, any integer number can be used.
  */
 #define TB_ATTRIBUTES_REQUEST_TOPIC "v1/devices/me/attributes/request/44332"
-
 /**
  * @brief  MQTT topic to receive the requested specified shared attributes from ThingsBoard.
  *         44332 is a request id, have to be the same as used for the request.
  */
 #define TB_ATTRIBUTES_RESPONSE_TOPIC "v1/devices/me/attributes/response/44332"
-
 /*! Client attribute key to send the firmware version value to ThingsBoard */
 #define TB_CLIENT_ATTR_FIELD_CURRENT_FW "currentFwVer"
 
@@ -66,6 +62,9 @@
 /*! NVS storage key where the MQTT access token is saved */
 #define NVS_KEY_MQTT_ACCESS_TOKEN "access_token"
 
+/********************************************************************************************
+ *                              TYPEDEFS
+ ********************************************************************************************/
 /**
  * @brief Set of states for @ref ota_task(void)
  */
@@ -83,6 +82,13 @@ enum state
     STATE_CONNECTION_IS_OK
 };
 
+/********************************************************************************************
+ *                              GLOBAL VARIABLES
+ ********************************************************************************************/
+
+/********************************************************************************************
+ *                              GLOBAL FUNCTIONS
+ ********************************************************************************************/
 /*! Updates application event bits on changing Wi-Fi state */
 void notify_wifi_connected();
 void notify_wifi_disconnected();
