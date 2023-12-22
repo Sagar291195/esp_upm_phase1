@@ -293,7 +293,7 @@ void xsPresetScreenAdvance(void)
     static lv_style_t _xaGoToNextStyle_Adv;
     lv_style_init(&_xaGoToNextStyle_Adv);
     lv_style_set_bg_color(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_YELLOW);         // LV_COLOR_MAKE(0x38, 0x38, 0x38)
-    lv_style_set_text_font(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_34); // signal_20
+    lv_style_set_text_font(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_30); // signal_20
     lv_style_set_text_color(&_xaGoToNextStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xaGoToNextLbl_Adv, LV_LABEL_PART_MAIN, &_xaGoToNextStyle_Adv);
 
@@ -460,7 +460,7 @@ void xsPresetScreenAdvance(void)
 
     static lv_style_t _xaSlashLabelStyle_Adv;
     lv_style_init(&_xaSlashLabelStyle_Adv);
-    lv_style_set_text_font(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_34);
+    lv_style_set_text_font(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_style_set_text_color(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_add_style(_xaDotLabel_Adv, LV_LABEL_PART_MAIN, &_xaSlashLabelStyle_Adv);
 
