@@ -45,10 +45,8 @@ typedef enum
 typedef enum{
     NO_ERROR_FW_UDPATE,
     ERROR_SSID_PASSWORD_NOT_AVAILABLE,
-    ERROR_WIFI_CONNECT,
     ERROR_FIRMWARE_DOWNLOAD,
-    ERROR_FIRMWARE_ERASE,
-    ERROR_FIRMWARE_WRITE,
+    ERROR_TIMEOUT,
 }firmware_update_error_t;
 
 typedef struct

@@ -17,6 +17,7 @@
 
 #include "cJSON.h"
 
+#include "esp_timer.h"
 #include "esp_ota_ops.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
@@ -24,6 +25,7 @@
 
 #include "nvs.h"
 #include "nvs_flash.h"
+#include "storage/flash.h"
 
 #include "wifi.h"
 #include "ota.h"
@@ -398,12 +400,19 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
         esp_err_t ret = esp_https_ota(&config);
         if (ret == ESP_OK)
         {
-            esp_restart();
+            set_fw_update_errorcode(NO_ERROR_FW_UDPATE);
         }
         else
         {
             ESP_LOGE(TAG, "Firmware Upgrades Failed");
+            /* SKP : set error code and reboot esp*/
+            set_fw_update_errorcode( ERROR_FIRMWARE_DOWNLOAD );
         }
+    }
+    else
+    {
+        /* SKP : set error code and reboot esp*/
+        set_fw_update_errorcode( ERROR_LATEST_FIRMWARE_ALREADY );
     }
 }
 
@@ -431,6 +440,16 @@ static enum state connection_state(BaseType_t actual_event, const char *current_
 
 
 /********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static void ota_monitor_timer_callback(void* arg)
+{
+    int64_t time_since_boot = esp_timer_get_time();
+    ESP_LOGI(TAG, "One-shot timer called, time since boot: %lld us", time_since_boot);
+    set_fw_update_errorcode(ERROR_TIMEOUT);
+}
+
+/********************************************************************************************
  *                             GLOBAL FUNCTIONS 
  ********************************************************************************************/
 
@@ -439,6 +458,7 @@ static enum state connection_state(BaseType_t actual_event, const char *current_
  ********************************************************************************************/
 void ota_task(void *pvParameters)
 {
+    bool ret = false;
     const esp_partition_t *running_partition;
     enum state current_connection_state = STATE_CONNECTION_IS_OK;
     enum state state = STATE_INITIAL;
@@ -481,8 +501,27 @@ void ota_task(void *pvParameters)
             strncpy(running_partition_label, running_partition->label, sizeof(running_partition_label));
             ESP_LOGI(TAG, "Running partition: %s", running_partition_label);
 
-            initialise_wifi(running_partition_label);
-            state = STATE_WAIT_WIFI;
+            ret = initialise_wifi(running_partition_label);
+            if ( ret )
+            {
+                state = STATE_WAIT_WIFI;
+                /* SKP : start esp timer here to monitor firmware update process if timer expired 
+                set error code and reboot esp32*/
+                const esp_timer_create_args_t oneshot_timer_args = {
+                    .callback = &ota_monitor_timer_callback,
+                    /* argument specified here will be passed to timer callback function */
+                    .arg = NULL,
+                    .name = "one-shot"
+                };
+                esp_timer_handle_t ota_monitor_timer;
+                ESP_ERROR_CHECK(esp_timer_create(&oneshot_timer_args, &ota_monitor_timer));
+                ESP_ERROR_CHECK(esp_timer_start_once(ota_monitor_timer, 20000000));
+                ESP_LOGI(TAG, "Started timers, time since boot: %lld us", esp_timer_get_time());
+            }
+            else{
+                /* SKP : set error code and reboot esp32 */
+                set_fw_update_errorcode(ERROR_SSID_PASSWORD_NOT_AVAILABLE);
+            }
             break;
 
         case STATE_WAIT_WIFI:
@@ -499,8 +538,9 @@ void ota_task(void *pvParameters)
                 state = STATE_WAIT_MQTT;
                 break;
             }
-
+            
             ESP_LOGE(TAG, "WAIT_WIFI state, unexpected event received: %d", actual_event);
+            set_fw_update_errorcode(ERROR_WIFI_CONNECT);
             state = STATE_INITIAL;
             break;
 
@@ -535,6 +575,7 @@ void ota_task(void *pvParameters)
             }
 
             ESP_LOGE(TAG, "WAIT_MQTT state, unexpected event received: %d", actual_event);
+            set_fw_update_errorcode(ERROR_MQTT_CONNECT);
             state = STATE_INITIAL;
             break;
 
@@ -560,6 +601,7 @@ void ota_task(void *pvParameters)
                 break;
             }
             ESP_LOGE(TAG, "WAIT_OTA_CONFIG_FETCHED state, unexpected event received: %d", actual_event);
+            set_fw_update_errorcode(ERROR_MQTT_CONFIG_FETCH);
             state = STATE_INITIAL;
             break;
 
@@ -581,6 +623,7 @@ void ota_task(void *pvParameters)
                 break;
             }
             ESP_LOGE(TAG, "OTA_CONFIG_FETCHED state, unexpected event received: %d", actual_event);
+            set_fw_update_errorcode(ERROR_MQTT_CONFIG_FETCH);
             state = STATE_INITIAL;
             break;
 
@@ -605,11 +648,13 @@ void ota_task(void *pvParameters)
                 break;
             }
             ESP_LOGE(TAG, "APP_LOOP state, unexpected event received: %d", actual_event);
+            set_fw_update_errorcode(ERROR_UNKNOWN);
             state = STATE_INITIAL;
             break;
 
         default:
             ESP_LOGE(TAG, "Unexpected state");
+            set_fw_update_errorcode(ERROR_UNKNOWN);
             state = STATE_INITIAL;
             break;
         }

@@ -25,6 +25,6 @@
 /********************************************************************************************
  *                              GLOBAL FUNCTIONS
  ********************************************************************************************/
-void initialise_wifi(const char *running_partition_label);
+bool initialise_wifi(const char *running_partition_label);
 
 #endif /* WIFI_H */

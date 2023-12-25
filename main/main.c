@@ -246,3 +246,22 @@ static uint8_t get_firmware_update_error( void )
 {
     return device_state.fw_update_state;
 }
+
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+void set_fw_update_errorcode( uint8_t errorcode )
+{
+    device_state.fw_update_state = errorcode;
+
+    bool ret = nvswrite_device_mode_settings( &device_state );
+    if ( ret )
+    {
+        vTaskDelay (5000/portTICK_PERIOD_MS );
+        esp_restart();
+    }
+    else{
+        ESP_LOGE(TAG, "firmware update info write error");
+    }
+}
