@@ -82,7 +82,7 @@ bool initialise_wifi(const char *running_partition_label)
     APP_ABORT_ON_ERROR(esp_wifi_init(&cfg));
     APP_ABORT_ON_ERROR(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
 
-    // wifi_config_t wifi_config = {};
+    wifi_config_t wifi_config = {};
     // APP_ABORT_ON_ERROR(esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_config));
 
     // if (wifi_config.sta.ssid[0] == '\0' || wifi_config.sta.password[0] == '\0')
