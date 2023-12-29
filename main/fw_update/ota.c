@@ -56,6 +56,7 @@ extern const uint8_t server_cert_pem_end[] asm("_binary_ca_cert_pem_end");
  ********************************************************************************************/
 /*! Saves bit values used in application */
 static EventGroupHandle_t event_group;
+static esp_timer_handle_t ota_monitor_timer;
 /*! Buffer to save a received MQTT message */
 static char mqtt_msg[512];
 static esp_mqtt_client_handle_t mqtt_client;
@@ -86,6 +87,7 @@ static void parse_ota_config(const cJSON *object)
 {
     if (object != NULL)
     {
+       
         cJSON *server_url_response = cJSON_GetObjectItem(object, TB_SHARED_ATTR_FIELD_TARGET_FW_URL);
         if (cJSON_IsString(server_url_response) && (server_url_response->valuestring != NULL) && strlen(server_url_response->valuestring) < sizeof(shared_attributes.targetFwServerUrl))
         {
@@ -148,6 +150,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
         {
             memcpy(mqtt_msg, event->data, event->data_len);
             mqtt_msg[event->data_len] = 0;
+            ESP_LOGI(TAG, "Shared = %s", mqtt_msg);
             cJSON *attributes = cJSON_Parse(mqtt_msg);
             if (attributes != NULL)
             {
@@ -166,6 +169,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
         {
             memcpy(mqtt_msg, event->data, MIN(event->data_len, sizeof(mqtt_msg)));
             mqtt_msg[event->data_len] = 0;
+            ESP_LOGI(TAG, "Attribute = %s", mqtt_msg);
             cJSON *attributes = cJSON_Parse(mqtt_msg);
             parse_ota_config(attributes);
             char *attributes_string = cJSON_Print(attributes);
@@ -444,9 +448,15 @@ static enum state connection_state(BaseType_t actual_event, const char *current_
  ********************************************************************************************/
 static void ota_monitor_timer_callback(void* arg)
 {
+    static int  count = 0;
     int64_t time_since_boot = esp_timer_get_time();
-    ESP_LOGI(TAG, "One-shot timer called, time since boot: %lld us", time_since_boot);
-    set_fw_update_errorcode(ERROR_TIMEOUT);
+    ESP_LOGI(TAG, "One-shot timer called, time since boot: %lld ms", time_since_boot/1000);
+
+    // count++;
+    // if(count == 3)
+    // {
+    //     set_fw_update_errorcode(ERROR_TIMEOUT);
+    // }
 }
 
 /********************************************************************************************
@@ -485,18 +495,6 @@ void ota_task(void *pvParameters)
         switch (state)
         {
         case STATE_INITIAL:
-            // Initialize NVS.
-            // esp_err_t err = nvs_flash_init();
-            // if (err == ESP_ERR_NVS_NO_FREE_PAGES)
-            // {
-            //     // OTA app partition table has a smaller NVS partition size than the non-OTA
-            //     // partition table. This size mismatch may cause NVS initialization to fail.
-            //     // If this happens, we erase NVS partition and initialize NVS again.
-            //     APP_ABORT_ON_ERROR(nvs_flash_erase());
-            //     err = nvs_flash_init();
-            // }
-            // APP_ABORT_ON_ERROR(err);
-
             running_partition = esp_ota_get_running_partition();
             strncpy(running_partition_label, running_partition->label, sizeof(running_partition_label));
             ESP_LOGI(TAG, "Running partition: %s", running_partition_label);
@@ -507,16 +505,16 @@ void ota_task(void *pvParameters)
                 state = STATE_WAIT_WIFI;
                 /* SKP : start esp timer here to monitor firmware update process if timer expired 
                 set error code and reboot esp32*/
-                const esp_timer_create_args_t oneshot_timer_args = {
+                const esp_timer_create_args_t timer_args = {
                     .callback = &ota_monitor_timer_callback,
                     /* argument specified here will be passed to timer callback function */
                     .arg = NULL,
                     .name = "one-shot"
                 };
-                esp_timer_handle_t ota_monitor_timer;
-                ESP_ERROR_CHECK(esp_timer_create(&oneshot_timer_args, &ota_monitor_timer));
-                ESP_ERROR_CHECK(esp_timer_start_once(ota_monitor_timer, 20000000));
-                ESP_LOGI(TAG, "Started timers, time since boot: %lld us", esp_timer_get_time());
+                
+                ESP_ERROR_CHECK(esp_timer_create(&timer_args, &ota_monitor_timer));
+                ESP_ERROR_CHECK(esp_timer_start_periodic(ota_monitor_timer, 20000000));
+                ESP_LOGI(TAG, "Started timers, time since boot: %lld ms", esp_timer_get_time()/1000);
             }
             else{
                 /* SKP : set error code and reboot esp32 */

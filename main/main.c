@@ -105,17 +105,20 @@ void app_main()
     switch(devicemode)
     {
         case DO_FIRMWARE_UPDATE:
-             /*execute firmware update task here*/
+            /*execute firmware update task here*/
+            ESP_LOGI(TAG, "device is in firmware update state");
             xTaskCreatePinnedToCore(ota_task, "ota_task", 8192, NULL, 1, NULL, 1);
             break;
 
         case FIRMWARE_UPDATE_ERROR:
             /* start gui and display error message or warning */
+            ESP_LOGI(TAG, "device is in firmware update error state");
             xTaskCreatePinnedToCore(guiTask, "gui", 4096 * 4, NULL, 1, NULL, 1); // 0 LCD +Touch
             vTaskDelay(500 / portTICK_PERIOD_MS);
             break;
 
         case NORMAL_MODE:
+            ESP_LOGI(TAG, "device is in normal state");
             nvsread_calibrationdata();          // Read calibration data from flash
             nvsread_hours_liters_value();
             nvsread_sequence_parameters();
@@ -215,6 +218,7 @@ static uint8_t get_device_operating_mode( void )
     ret = nvsread_device_mode_settings(&device_state);
     if( ret == false )
     {   
+        ESP_LOGE(TAG, "device mode settings  are not available");
         device_state.device_operating_mode = NORMAL_MODE;
         device_state.fw_update_state = NO_ERROR_FW_UDPATE;
         ret = nvswrite_device_mode_settings( &device_state );
@@ -225,6 +229,7 @@ static uint8_t get_device_operating_mode( void )
     }
     else
     {
+
         if ( device_state.device_operating_mode == DONE_FIRMWARE_UPDATE )
         {
             device_state.device_operating_mode =  NORMAL_MODE;
@@ -235,6 +240,13 @@ static uint8_t get_device_operating_mode( void )
                 ESP_LOGE( TAG, "device mode settings write error" );
             }
         }
+        else if ( device_state.device_operating_mode == DO_FIRMWARE_UPDATE )
+        {
+            if( device_state.fw_update_state != NO_ERROR_FW_UDPATE )
+            {
+                ESP_LOGI(TAG, "error occured during firmware update");
+            }
+        } 
     }
     return device_state.device_operating_mode;
 }
@@ -254,7 +266,7 @@ static uint8_t get_firmware_update_error( void )
 void set_fw_update_errorcode( uint8_t errorcode )
 {
     device_state.fw_update_state = errorcode;
-
+    device_state.device_operating_mode = FIRMWARE_UPDATE_ERROR;
     bool ret = nvswrite_device_mode_settings( &device_state );
     if ( ret )
     {

@@ -55,7 +55,9 @@ lv_obj_t *_infoLabNameValLbl;
 lv_obj_t *_infoQRcodeImg;
 lv_obj_t *_infoDeviceIDTxtLbl;
 lv_obj_t *_infoDeviceIDValLbl;
-
+lv_obj_t *info_firmwaredownload;
+lv_obj_t *info_firmwaredownloadlabel;
+lv_obj_t * mbox1;
 lv_task_t *inforefresherTask;
 
 /**********************
@@ -65,6 +67,38 @@ lv_task_t *inforefresherTask;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
+static void event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_VALUE_CHANGED) 
+    {
+        if(strcmp( "OK", lv_msgbox_get_active_btn_text(obj)) == 0)
+        {
+            ESP_LOGI(TAG, "Device will be restarting in 5 sec");
+            static device_state_t device_state;
+            device_state.device_operating_mode = DO_FIRMWARE_UPDATE;
+            bool ret = nvswrite_device_mode_settings( &device_state );
+            if ( ret == false )
+            {
+                ESP_LOGE( TAG, "device mode settings write error" );
+            }
+            vTaskDelay(2000/portTICK_PERIOD_MS);
+            esp_restart();
+        }
+        else if( strcmp( "CANCEL", lv_msgbox_get_active_btn_text(obj)) == 0)
+        {
+            ESP_LOGI(TAG, "firmware update is canceled by user");
+            lv_obj_set_hidden(mbox1, true);
+        }
+    }
+}
+
+static void firmware_download_event_handler(lv_obj_t *obj, lv_event_t event)
+{
+    if (event == LV_EVENT_RELEASED)
+    {
+        lv_obj_set_hidden(mbox1, false);
+    }
+}
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -171,7 +205,7 @@ void CallScreenInfo(void)
 
     // Create a container for QR Image
     _infoQRCont = lv_cont_create(infoParentCont, NULL);
-    lv_obj_set_size(_infoQRCont, 300, 360);
+    lv_obj_set_size(_infoQRCont, 300, 300);
     lv_obj_align(_infoQRCont, _infoHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
@@ -221,7 +255,7 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoLabNameValLbl, LV_LABEL_PART_MAIN, &_infoLabNameValLblStyle);
 
     // Put QR image here
-    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 25, 70, 250, LV_COLOR_BLACK, LV_COLOR_WHITE);
+    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 50, 70, 200, LV_COLOR_BLACK, LV_COLOR_WHITE);
     lv_qrcode_update(_infoQRcodeImg, "hello", strlen("hello"));
 
     // Create label for "DEVICE ID" Text
@@ -245,6 +279,39 @@ void CallScreenInfo(void)
     lv_style_set_text_font(&_infoDeviceIDValLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
     lv_style_set_text_color(&_infoDeviceIDValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_infoDeviceIDValLbl, LV_LABEL_PART_MAIN, &_infoDeviceIDValLblStyle);
+
+    info_firmwaredownload = lv_btn_create(infoParentCont, NULL);
+    lv_obj_align(info_firmwaredownload, _infoQRCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
+    lv_obj_set_size(info_firmwaredownload, 300, 44);
+    lv_obj_set_event_cb(info_firmwaredownload, firmware_download_event_handler); // Flow Calibration
+
+    static lv_style_t firmwarebtnstyle;
+    lv_style_init(&firmwarebtnstyle);
+    lv_style_set_radius(&firmwarebtnstyle, LV_STATE_DEFAULT, 10);
+    lv_style_set_bg_color(&firmwarebtnstyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2
+    lv_style_set_border_width(&firmwarebtnstyle, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_opa(&firmwarebtnstyle, LV_STATE_DEFAULT, LV_OPA_MIN);
+    lv_obj_add_style(info_firmwaredownload, LV_BTN_PART_MAIN, &firmwarebtnstyle);
+
+    // Creat a Sensor Parameter Button Label
+    info_firmwaredownloadlabel = lv_label_create(info_firmwaredownload, NULL);
+    lv_obj_align(info_firmwaredownloadlabel, info_firmwaredownload, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+    lv_label_set_text(info_firmwaredownloadlabel, "FW UPDATE");
+
+    static lv_style_t fwdownloadlabelstyle;
+    lv_style_init(&fwdownloadlabelstyle);
+    lv_style_set_text_font(&fwdownloadlabelstyle, LV_STATE_DEFAULT, &lv_font_montserrat_16);
+    lv_style_set_text_color(&fwdownloadlabelstyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(info_firmwaredownloadlabel, LV_LABEL_PART_MAIN, &fwdownloadlabelstyle);
+
+    static const char * btns[] ={"OK", "CANCEL", ""};
+    mbox1 = lv_msgbox_create(lv_scr_act(), NULL);
+    lv_msgbox_set_text(mbox1, "Device will be restared during firmwar update, Click OK to continue or Abort to cancel...");
+    lv_msgbox_add_btns(mbox1, btns);
+    lv_obj_set_width(mbox1, 300);
+    lv_obj_set_event_cb(mbox1, event_handler);
+    lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 0, 0); /*Align to the corner*/
+    lv_obj_set_hidden(mbox1, true);
 
     crnt_screen = scrInfo;
     screenid = SCR_INFO;
