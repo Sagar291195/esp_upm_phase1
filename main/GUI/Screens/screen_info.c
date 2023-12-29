@@ -50,6 +50,8 @@ lv_obj_t *_infoHedingLbl;
 lv_obj_t *_infoQRCont;
 lv_obj_t *_infoDeviceNumTxtLbl;
 lv_obj_t *_infoDeviceNumValLbl;
+lv_obj_t *_infoFWVersionTxtLbl;
+lv_obj_t *_infoFWVersionValLbl;
 lv_obj_t *_infoLabNameTxtLbl;
 lv_obj_t *_infoLabNameValLbl;
 lv_obj_t *_infoQRcodeImg;
@@ -205,15 +207,15 @@ void CallScreenInfo(void)
 
     // Create a container for QR Image
     _infoQRCont = lv_cont_create(infoParentCont, NULL);
-    lv_obj_set_size(_infoQRCont, 300, 300);
+    lv_obj_set_size(_infoQRCont, 300, 310);
     lv_obj_align(_infoQRCont, _infoHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create a label for "DEVICE NUMBER" text
     _infoDeviceNumTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoDeviceNumTxtLbl, _infoQRCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
-    lv_label_set_text(_infoDeviceNumTxtLbl, "DEVICE NUMBER:");
+    lv_obj_align(_infoDeviceNumTxtLbl, _infoQRCont, LV_ALIGN_IN_TOP_LEFT, 10, 5);
+    lv_label_set_text(_infoDeviceNumTxtLbl, "Device Number:");
 
     static lv_style_t _infoDeviceNumTxtLblStyle;
     lv_style_init(&_infoDeviceNumTxtLblStyle);
@@ -232,10 +234,30 @@ void CallScreenInfo(void)
     lv_style_set_text_color(&_infoDeviceNumValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_infoDeviceNumValLbl, LV_LABEL_PART_MAIN, &_infoDeviceNumValLblStyle);
 
+    _infoFWVersionTxtLbl = lv_label_create(_infoQRCont, NULL);
+    lv_obj_align(_infoFWVersionTxtLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
+    lv_label_set_text(_infoFWVersionTxtLbl, "Firmware Version:");
+
+    static lv_style_t _infofwversionTxtLblStyle;
+    lv_style_init(&_infofwversionTxtLblStyle);
+    lv_style_set_text_font(&_infofwversionTxtLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
+    lv_style_set_text_color(&_infofwversionTxtLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
+    lv_obj_add_style(_infoFWVersionTxtLbl, LV_LABEL_PART_MAIN, &_infofwversionTxtLblStyle);
+
+    _infoFWVersionValLbl = lv_label_create(_infoQRCont, NULL);
+    lv_obj_align(_infoFWVersionValLbl, _infoFWVersionTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 90, 0);
+    lv_label_set_text(_infoFWVersionValLbl, FIRMWARE_VERSION);
+
+    static lv_style_t _infofwversionValLblStyle;
+    lv_style_init(&_infofwversionValLblStyle);
+    lv_style_set_text_font(&_infofwversionValLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
+    lv_style_set_text_color(&_infofwversionValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_infoFWVersionValLbl, LV_LABEL_PART_MAIN, &_infofwversionValLblStyle);
+
     // Create a label for Lab Name
     _infoLabNameTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoLabNameTxtLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-    lv_label_set_text(_infoLabNameTxtLbl, "Lab NAME:");
+    lv_obj_align(_infoLabNameTxtLbl, _infoFWVersionTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
+    lv_label_set_text(_infoLabNameTxtLbl, "Lab Name:");
 
     static lv_style_t _infoLabNameTxtLblStyle;
     lv_style_init(&_infoLabNameTxtLblStyle);
@@ -245,7 +267,7 @@ void CallScreenInfo(void)
 
     // Create a label for lab number
     _infoLabNameValLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoLabNameValLbl, _infoLabNameTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 150, 0);
+    lv_obj_align(_infoLabNameValLbl, _infoLabNameTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 140, 0);
     lv_label_set_text(_infoLabNameValLbl, "1356");
 
     static lv_style_t _infoLabNameValLblStyle;
@@ -255,12 +277,12 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoLabNameValLbl, LV_LABEL_PART_MAIN, &_infoLabNameValLblStyle);
 
     // Put QR image here
-    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 50, 70, 200, LV_COLOR_BLACK, LV_COLOR_WHITE);
+    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 50, 80, 200, LV_COLOR_BLACK, LV_COLOR_WHITE);
     lv_qrcode_update(_infoQRcodeImg, "hello", strlen("hello"));
 
     // Create label for "DEVICE ID" Text
     _infoDeviceIDTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 10);
+    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 8);
     lv_label_set_text(_infoDeviceIDTxtLbl, "DEVICE ID:");
 
     static lv_style_t _infoDeviceIDTxtLblStyle;

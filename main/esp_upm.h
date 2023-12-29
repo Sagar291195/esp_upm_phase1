@@ -49,7 +49,7 @@ extern "C" {
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
-#define FIRMWARE_VERSION    "1.0.0.4"
+#define FIRMWARE_VERSION    "1.0.0.5"
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -63,7 +63,9 @@ extern "C" {
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
  void set_fw_update_errorcode( uint8_t errorcode );
- 
+ void set_device_normal_operating_mode( void );
+ uint8_t get_firmware_update_error( void );
+ uint8_t get_device_working_mode( void );
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

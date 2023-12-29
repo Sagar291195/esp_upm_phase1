@@ -404,7 +404,7 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
         esp_err_t ret = esp_https_ota(&config);
         if (ret == ESP_OK)
         {
-            set_fw_update_errorcode(NO_ERROR_FW_UDPATE);
+            set_device_normal_operating_mode();
         }
         else
         {
@@ -452,11 +452,11 @@ static void ota_monitor_timer_callback(void* arg)
     int64_t time_since_boot = esp_timer_get_time();
     ESP_LOGI(TAG, "One-shot timer called, time since boot: %lld ms", time_since_boot/1000);
 
-    // count++;
-    // if(count == 3)
-    // {
-    //     set_fw_update_errorcode(ERROR_TIMEOUT);
-    // }
+    count++;
+    if(count == 10)
+    {
+        set_fw_update_errorcode(ERROR_TIMEOUT);
+    }
 }
 
 /********************************************************************************************

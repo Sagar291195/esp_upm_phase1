@@ -38,7 +38,6 @@ typedef enum
 {
     NORMAL_MODE,
     DO_FIRMWARE_UPDATE,
-    DONE_FIRMWARE_UPDATE,
     FIRMWARE_UPDATE_ERROR,
 }device_operating_mode;
 

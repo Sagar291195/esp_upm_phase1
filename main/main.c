@@ -36,8 +36,7 @@ static void IRAM_ATTR lv_tick_task(void *arg);      /* lvgl task to count the ti
 static void guiTask(void *pvParameter);             /* This it the lvgl task */
 static void create_demo_application(void);          /* This function intiate the first screen to show */
 static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
-static uint8_t get_device_operating_mode( void );
-static uint8_t get_firmware_update_error( void );
+static uint8_t nvsread_device_mode_data( void );
 
 /********************************************************************************************
  *                              CODE
@@ -100,7 +99,7 @@ void app_main()
     vTaskDelay(500 / portTICK_PERIOD_MS);
 
     nvs_storage_initialize();     // Initiating the data managament api
-    uint8_t devicemode = get_device_operating_mode();
+    uint8_t devicemode = nvsread_device_mode_data();
     
     switch(devicemode)
     {
@@ -212,7 +211,7 @@ static void guiTask(void *pvParameter)
 /********************************************************************************************
  *                              
  ********************************************************************************************/
-static uint8_t get_device_operating_mode( void )
+static uint8_t nvsread_device_mode_data( void )
 {
     bool ret = false;
     ret = nvsread_device_mode_settings(&device_state);
@@ -227,36 +226,24 @@ static uint8_t get_device_operating_mode( void )
             ESP_LOGE( TAG, "device mode settings write error" );
         }
     }
-    else
-    {
-
-        if ( device_state.device_operating_mode == DONE_FIRMWARE_UPDATE )
-        {
-            device_state.device_operating_mode =  NORMAL_MODE;
-            device_state.fw_update_state = NO_ERROR_FW_UDPATE;
-            ret = nvswrite_device_mode_settings( &device_state );
-            if ( ret == false )
-            {
-                ESP_LOGE( TAG, "device mode settings write error" );
-            }
-        }
-        else if ( device_state.device_operating_mode == DO_FIRMWARE_UPDATE )
-        {
-            if( device_state.fw_update_state != NO_ERROR_FW_UDPATE )
-            {
-                ESP_LOGI(TAG, "error occured during firmware update");
-            }
-        } 
-    }
+    
     return device_state.device_operating_mode;
 }
 
 /********************************************************************************************
  *                              
  ********************************************************************************************/
-static uint8_t get_firmware_update_error( void )
+uint8_t get_firmware_update_error( void )
 {
     return device_state.fw_update_state;
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+uint8_t get_device_working_mode( void )
+{
+    return device_state.device_operating_mode;
 }
 
 
@@ -267,6 +254,24 @@ void set_fw_update_errorcode( uint8_t errorcode )
 {
     device_state.fw_update_state = errorcode;
     device_state.device_operating_mode = FIRMWARE_UPDATE_ERROR;
+    bool ret = nvswrite_device_mode_settings( &device_state );
+    if ( ret )
+    {
+        vTaskDelay (5000/portTICK_PERIOD_MS );
+        esp_restart();
+    }
+    else{
+        ESP_LOGE(TAG, "firmware update info write error");
+    }
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+void set_device_normal_operating_mode( void )
+{
+    device_state.fw_update_state = NO_ERROR_FW_UDPATE;
+    device_state.device_operating_mode = NORMAL_MODE;
     bool ret = nvswrite_device_mode_settings( &device_state );
     if ( ret )
     {
