@@ -9,6 +9,7 @@ void Init_Screen(void)
     // Screen_Password();
     // vTestScreen1();
     // cScrTransitCheck();
+    
     if( get_device_working_mode() == NORMAL_MODE )
         Screen_Password(SCR_PASSWORD);
     else if( get_device_working_mode() == FIRMWARE_UPDATE_ERROR )     

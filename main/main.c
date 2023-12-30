@@ -134,6 +134,15 @@ void app_main()
             break;
 
         default:
+            ESP_LOGI(TAG, "device mode is not valid");
+            device_state.fw_update_state = NO_ERROR_FW_UDPATE;
+            device_state.device_operating_mode = NORMAL_MODE;
+            bool ret = nvswrite_device_mode_settings( &device_state );
+            if ( ret != true )
+            {
+                ESP_LOGE(TAG, "device mode write error");
+            }
+            esp_restart();
             break;    
     }
 }
