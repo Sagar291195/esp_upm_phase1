@@ -1,0 +1,17 @@
+{
+    "idf.adapterTargetName": "esp32",
+    "idf.flashType": "UART",
+    "idf.portWin": "COM4",
+    "files.associations": {
+        "lv_label.h": "c",
+        "screen_includes.h": "c",
+        "screen_metro_flowparameter.h": "c",
+        "lv_qrcode.h": "c",
+        "screen_code.h": "c",
+        "parameters.h": "c",
+        "guider_fonts.h": "c",
+        "lv_font.h": "c",
+        "gui_guider.h": "c",
+        "events_init.h": "c"
+    }
+}

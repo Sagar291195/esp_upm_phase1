@@ -1,6 +1,7 @@
 file(GLOB_RECURSE SOURCES *.c) 
-file(GLOB_RECURSE INCLUEDES gui/images gui/widgets gui/screens  gui/lv_lib_qrcode peripherals storage)
+file(GLOB_RECURSE INCLUDES  GUI/custom GUI/generated GUI/guider_fonts GUI/images GUI/guider_customer_fonts peripherals)
 
 idf_component_register( SRCS ${SOURCES}
-                        INCLUDE_DIRS ${INCLUEDES} .)
+                        INCLUDE_DIRS ${INCLUDES} .
+                       )
 

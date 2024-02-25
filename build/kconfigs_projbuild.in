@@ -1,0 +1,6 @@
+source "C:/Users/SAGAR/esp/esp-idf/components/app_update/Kconfig.projbuild"
+source "C:/Users/SAGAR/esp/esp-idf/components/bootloader/Kconfig.projbuild"
+source "C:/Users/SAGAR/esp/esp-idf/components/esp_rom/Kconfig.projbuild"
+source "C:/Users/SAGAR/esp/esp-idf/components/esptool_py/Kconfig.projbuild"
+source "C:/Users/SAGAR/esp/esp-idf/components/partition_table/Kconfig.projbuild"
+source "C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/main/Kconfig.projbuild"

@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/CMakeFiles/bootloader
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/CMakeFiles/bootloader.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/CMakeFiles/bootloader-complete.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Storage/3.Work/7.Steve/2.Firmware/esp_upm_phase1/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
