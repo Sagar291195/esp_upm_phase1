@@ -301,7 +301,9 @@ static esp_err_t bme680_set_mode(bme680_t *dev, uint8_t mode)
 
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     I2C_DEV_CHECK(&dev->i2c_dev, read_reg_8_nolock(dev, BME680_REG_CTRL_MEAS, &reg));
+    I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
     reg = bme_set_reg_bit(reg, BME680_MODE, mode);
+    I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
     I2C_DEV_CHECK(&dev->i2c_dev, write_reg_8_nolock(dev, BME680_REG_CTRL_MEAS, reg));
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
 

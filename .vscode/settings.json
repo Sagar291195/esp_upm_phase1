@@ -12,6 +12,8 @@
         "guider_fonts.h": "c",
         "lv_font.h": "c",
         "gui_guider.h": "c",
-        "events_init.h": "c"
+        "events_init.h": "c",
+        "lvgl_helpers.h": "c",
+        "esp_upm.h": "c"
     }
 }

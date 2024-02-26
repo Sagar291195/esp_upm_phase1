@@ -18,10 +18,9 @@ static void screen_dd_sensorevent_handler(lv_obj_t * obj, lv_event_t event)
 {
 	switch (event)
 	{
-	case LV_EVENT_RELEASED:	
 	case LV_EVENT_VALUE_CHANGED:
 	{
-		dropdown_sensor_value_changed(event);
+		dropdown_sensor_value_changed();
 	}
 		break;
 	default:

@@ -24,7 +24,7 @@ typedef enum{
 
 void custom_init(lv_ui *ui);
 
-void dropdown_sensor_value_changed(uint8_t event);
+void dropdown_sensor_value_changed(void);
 void start_button_clicked(void);
 void stop_button_clicked(void);
 
