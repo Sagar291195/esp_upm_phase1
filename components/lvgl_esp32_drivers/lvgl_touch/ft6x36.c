@@ -184,17 +184,6 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
     esp_err_t ret;
 
     ft6x06_i2c_read8(current_dev_addr, FT6X36_TD_STAT_REG, &touch_pnt_cnt);
-    if( touch_pnt_cnt > 0)
-    {
-        if( get_lcdsleep_status() == true)
-        {
-            lcd_set_wakeup();
-        }
-        else{
-            touch_count++;
-        }
-    }
-
     if (touch_pnt_cnt != 1) {    // ignore no touch & multi touch
         data->point.x = last_x;
         data->point.y = last_y;
@@ -239,6 +228,15 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
 #if CONFIG_LV_FT6X36_INVERT_Y
     last_y = LV_VER_RES - last_y;
 #endif
+    if( get_lcdsleep_status() == true)
+    {
+        lcd_set_wakeup();
+        return false;
+    }
+    else{
+        touch_count++;
+    }
+
     data->point.x = last_x;
     data->point.y = last_y;
     data->state = LV_INDEV_STATE_PR;

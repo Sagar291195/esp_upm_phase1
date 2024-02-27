@@ -67,12 +67,14 @@ static void IRAM_ATTR screen_timeout_handler(void *arg)
     static uint32_t idle_minute_counter = 0;
     static uint32_t savedtouchcount = 0;
 
-    if(devicesettings.screen_sleepmode_enable == 1 || dashboardflg != 1)
+    if(devicesettings.screen_sleepmode_enable == 1 )
     {
-        if(get_touchcount() == savedtouchcount && get_lcdsleep_status() == false)
+        ESP_LOGI(TAG, "screen timeout handler idle count : %d, %d, %d, %d, %d", idle_minute_counter, get_touchcount(),
+                         savedtouchcount, get_lcdsleep_status(), dashboardflg);
+        if((get_touchcount() == savedtouchcount) && (get_lcdsleep_status() == false) && (dashboardflg != 1))
         {
             idle_minute_counter++;
-            if(idle_minute_counter == devicesettings.screen_timeout_value)
+            if(idle_minute_counter == 2)//devicesettings.screen_timeout_value)
             {
                 savedtouchcount = 0;
 				reset_touchcount();
@@ -200,14 +202,14 @@ static void guiTask(void *pvParameter)
 
     const esp_timer_create_args_t screen_timeout_timer_args = {
         .callback = &screen_timeout_handler,
-        .name = "periodic_gui"};
+        .name = "screen_timer"};
     esp_timer_handle_t screen_timeout_timer;
 
     ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, LV_TICK_PERIOD_MS * 100));
 
     ESP_ERROR_CHECK(esp_timer_create(&screen_timeout_timer_args, &screen_timeout_timer));
-    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 60*1000));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 20*1000*1000));
 
     lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
     create_demo_application();      /* Create the demo application */
