@@ -5,6 +5,8 @@
 #define SDA_GPIO    21
 #define SCL_GPIO    22
 
+#define LCD_BACKLIGHT            GPIO_NUM_2     /* wakeup GPIO old hardware*/
+
 static const char *TAG = "lm2759";
 
 extern SemaphoreHandle_t main_mutex;
@@ -55,8 +57,12 @@ esp_err_t lm2759_set_mode(lm2759_t *dev)
 {
     CHECK_ARG(dev);
     // Set torch mode
+    #if 0
     CHECK_LOGE(dev, write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x01), "Failed to init LM2759");
-    return ESP_OK;
+    #endif
+
+    return write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x01);
+    // return ESP_OK;
 }
 
 esp_err_t lm2759_set_current(lm2759_t *dev, uint8_t current)
@@ -80,10 +86,22 @@ void lcd_led_driver_init(void)
     lm2759_t dev;
     memset(&dev, 0, sizeof(lm2759_t));
     
+    ESP_LOGI( TAG, "initialization of lm27590 driver");
     ESP_ERROR_CHECK(lm2759_init_desc(&dev, lm2759_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO));    
-    ESP_ERROR_CHECK(lm2759_set_mode(&dev));    
-    ESP_ERROR_CHECK(lm2759_set_current(&dev, 0x05));  
-   
+    ESP_LOGI( TAG, "set mode of lm2759");
+
+    if( lm2759_set_mode(&dev) == ESP_OK )
+    {
+        ESP_LOGI( TAG, "lm2759 is available, and setting current for lcd");
+        ESP_ERROR_CHECK(lm2759_set_current(&dev, 0x05));  
+    }
+    else{
+        ESP_LOGI(TAG, "turning on lcd backlight gpio");
+        gpio_pad_select_gpio(GPIO_NUM_2);                 // Set GPIO as OUTPUT
+        gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT); // WakeMode
+        gpio_set_level(GPIO_NUM_2, 1);
+    }
+    
     ESP_LOGI(TAG, "Init LCD driver finish");
 }
 
