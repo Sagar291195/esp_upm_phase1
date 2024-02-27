@@ -8,7 +8,6 @@
 #include <sensorManagement.h>
 #include <sampleManagement.h>
 #include "gui/screens/screen_includes.h"
-//#include "ft6x36.h"
 
 /********************************************************************************************
  *                              DEFINES
@@ -68,12 +67,12 @@ static void IRAM_ATTR screen_timeout_handler(void *arg)
     static uint32_t idle_minute_counter = 0;
     static uint32_t savedtouchcount = 0;
 
-    if(enable_screen_timeout() == true)
+    if(devicesettings.screen_sleepmode_enable == 1 || dashboardflg != 1)
     {
         if(get_touchcount() == savedtouchcount && get_lcdsleep_status() == false)
         {
             idle_minute_counter++;
-            if(idle_minute_counter == get_screen_timeout_minutes())
+            if(idle_minute_counter == devicesettings.screen_timeout_value)
             {
                 savedtouchcount = 0;
 				reset_touchcount();
@@ -130,16 +129,17 @@ void app_main()
 
     i2c_communication_semaphore = xSemaphoreCreateMutex();
     gui_update_semaphore = xSemaphoreCreateMutex();
-    wakeupmodeInit();                   // enabling the device from the wake mode
-    buzzer_initialization();              // This will initiate the buzze in the system
+    wakeupmodeInit();                           // enabling the device from the wake mode
+    buzzer_initialization();                // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    nvs_storage_initialize();     // Initiating the data managament api
-    nvsread_calibrationdata();          // Read calibration data from flash
+    nvs_storage_initialize();               // Initiating the data managament api
+    nvsread_device_settings();              //Read device settings from flash
+    nvsread_calibrationdata();              // Read calibration data from flash
     nvsread_hours_liters_value();
     nvsread_sequence_parameters();
-    sensor_initialization();          // Initiating all i2c sensors on the board
-    start_samplemanagement_service();    // Installing the sample management service
+    sensor_initialization();                // Initiating all i2c sensors on the board
+    start_samplemanagement_service();       // Installing the sample management service
     motor_initialization();                 // Installing the sample management service
     vTaskDelay(500 / portTICK_PERIOD_MS);
     

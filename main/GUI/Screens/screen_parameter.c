@@ -116,8 +116,6 @@ lv_obj_t *_xBackArrowCont;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-static bool screen_timeout_enable = false;
-static uint32_t screen_timeout_value = 0;
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -127,9 +125,8 @@ static void lang_DD_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        char buf[32];
-        lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        printf("Option: %s\n", buf);
+        devicesettings.selected_language = lv_dropdown_get_selected(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -140,11 +137,12 @@ static void SlpTmr_DD_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         selectedoption = lv_dropdown_get_selected(obj);
         if(selectedoption == 0)
-            screen_timeout_value = 1;
+            devicesettings.screen_timeout_value = 15;
         else if(selectedoption == 1)
-            screen_timeout_value = 30;
+            devicesettings.screen_timeout_value = 30;
         else if(selectedoption == 2)
-            screen_timeout_value = 60;        
+            devicesettings.screen_timeout_value = 60;  
+        nvswrite_device_settings(&devicesettings);          
     }
 }
 
@@ -154,7 +152,8 @@ static void Lumin_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("Value: %d\n", lv_slider_get_value(obj));
+        devicesettings.luminosity_value = lv_slider_get_value(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -164,7 +163,8 @@ static void Contrast_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("Value: %d\n", lv_slider_get_value(obj));
+        devicesettings.contrast_value = lv_slider_get_value(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -181,11 +181,8 @@ static void Buzzer_switch_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        bool buzzer_stat = get_buzzeron_stat();
-        buzzer_stat = !buzzer_stat;
-        set_buzzeron_stat(buzzer_stat);
-        printf("State: %s\n", lv_switch_get_state(obj) ? "Buzzer On" : "Buzzer Off");
-        fflush(NULL);
+        devicesettings.buzzer_enable = lv_switch_get_state(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -193,8 +190,8 @@ static void Led_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("State: %s\n", lv_switch_get_state(obj) ? "Led ON" : "LED Off");
-        fflush(NULL);
+        devicesettings.led_enable = lv_switch_get_state(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -202,8 +199,8 @@ static void WiFi_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("State: %s\n", lv_switch_get_state(obj) ? "WiFi On" : "WiFi Off");
-        fflush(NULL);
+        devicesettings.wifi_enable = lv_switch_get_state(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -211,8 +208,8 @@ static void Fan_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("State: %s\n", lv_switch_get_state(obj) ? "Fan On" : "Fan Off");
-        fflush(NULL);
+        devicesettings.external_fan_enable = lv_switch_get_state(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -220,10 +217,8 @@ static void Sleep_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        if(lv_switch_get_state(obj))
-            screen_timeout_enable = true;
-        else
-            screen_timeout_enable = false; 
+        devicesettings.screen_sleepmode_enable = lv_switch_get_state(obj);
+        nvswrite_device_settings(&devicesettings);
     }
 }
 
@@ -420,6 +415,10 @@ void ppxParameterScreen(void)
     // lv_style_set_bg_color(&_xSwitchStle1, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_style_set_bg_color(&_xSwitchStle1, LV_SWITCH_PART_INDIC, LV_COLOR_GREEN);
     lv_obj_add_style(xBuzzerSwitch, LV_SWITCH_PART_INDIC, &_xSwitchStle1);
+    if( devicesettings.buzzer_enable ==  1)
+        lv_switch_on(xBuzzerSwitch, LV_ANIM_OFF);
+    else    
+        lv_switch_off(xBuzzerSwitch, LV_ANIM_OFF);
 
     // Seprator line
     // Create Horizontal Line
@@ -480,6 +479,11 @@ void ppxParameterScreen(void)
     lv_obj_add_style(xLedSwitch, LV_SWITCH_PART_INDIC, &_xSwitchStle1);
     lv_obj_set_event_cb(xLedSwitch, Led_Switch_event_handler);
 
+    if( devicesettings.led_enable ==  1)
+        lv_switch_on(xLedSwitch, LV_ANIM_OFF);
+    else    
+        lv_switch_off(xLedSwitch, LV_ANIM_OFF);
+
     // Seprator line
     // Create Horizontal Line
     lv_obj_t *hor_line1 = lv_line_create(_xParaLabelContainer_par, NULL);
@@ -538,6 +542,11 @@ void ppxParameterScreen(void)
     lv_obj_add_style(xWiFiSwitch, LV_LABEL_PART_MAIN, &_xSwitchStle);
     lv_obj_add_style(xWiFiSwitch, LV_SWITCH_PART_INDIC, &_xSwitchStle1);
     lv_obj_set_event_cb(xWiFiSwitch, WiFi_Switch_event_handler);
+
+    if( devicesettings.wifi_enable ==  1)
+        lv_switch_on(xWiFiSwitch, LV_ANIM_OFF);
+    else    
+        lv_switch_off(xWiFiSwitch, LV_ANIM_OFF);
 
     // Seprator line
     // Create Horizontal Line
@@ -598,6 +607,11 @@ void ppxParameterScreen(void)
     lv_obj_add_style(xFanSwitch, LV_SWITCH_PART_INDIC, &_xSwitchStle1);
     lv_obj_set_event_cb(xFanSwitch, Fan_Switch_event_handler);
 
+    if( devicesettings.external_fan_enable ==  1)
+        lv_switch_on(xFanSwitch, LV_ANIM_OFF);
+    else    
+        lv_switch_off(xFanSwitch, LV_ANIM_OFF);
+
     // Seprator line
     // Create Horizontal Line
     lv_obj_t *hor_line3 = lv_line_create(_xParaLabelContainer_par, NULL);
@@ -656,6 +670,11 @@ void ppxParameterScreen(void)
     lv_obj_add_style(xSleepSwitch, LV_LABEL_PART_MAIN, &_xSwitchStle);
     lv_obj_add_style(xSleepSwitch, LV_SWITCH_PART_INDIC, &_xSwitchStle1);
     lv_obj_set_event_cb(xSleepSwitch, Sleep_event_handler);
+
+    if( devicesettings.screen_sleepmode_enable ==  1)
+        lv_switch_on(xSleepSwitch, LV_ANIM_OFF);
+    else    
+        lv_switch_off(xSleepSwitch, LV_ANIM_OFF);
 
     // Seprator line
     // Create Horizontal Line
@@ -725,6 +744,7 @@ void ppxParameterScreen(void)
     lv_style_set_border_width(&_xLangDropDownStyle_par, LV_DROPDOWN_PART_MAIN, 0);
     lv_obj_add_style(_xLangDropDown_par, LV_DROPDOWN_PART_MAIN, &_xLangDropDownStyle_par);
     lv_obj_set_event_cb(_xLangDropDown_par, lang_DD_event_handler);
+    lv_dropdown_set_selected(_xLangDropDown_par, devicesettings.selected_language);
 
     // Seprator line
     // Create Horizontal Line
@@ -774,7 +794,7 @@ void ppxParameterScreen(void)
 
     // Create a Language selection drop down list
     _xTimerDropDown_par = lv_dropdown_create(_xParaSlpTmrCont_par, NULL);
-    lv_dropdown_set_options(_xTimerDropDown_par, "1 min\n"
+    lv_dropdown_set_options(_xTimerDropDown_par, "15 min\n"
                                                  "30 min\n"
                                                  "60 min");
     lv_obj_align(_xTimerDropDown_par, _xParaSlpTmrCont_par, LV_ALIGN_IN_RIGHT_MID, 30, 0);
@@ -788,6 +808,13 @@ void ppxParameterScreen(void)
     lv_style_set_border_width(&_xTimerDropDownStyle_par, LV_DROPDOWN_PART_MAIN, 0);
     lv_obj_add_style(_xTimerDropDown_par, LV_DROPDOWN_PART_MAIN, &_xTimerDropDownStyle_par);
     lv_obj_set_event_cb(_xTimerDropDown_par, SlpTmr_DD_event_handler);
+    
+    if(devicesettings.screen_timeout_value == 15)
+        lv_dropdown_set_selected(_xTimerDropDown_par, 0);
+    else if(devicesettings.screen_timeout_value == 30)
+        lv_dropdown_set_selected(_xTimerDropDown_par, 1);
+    else if(devicesettings.screen_timeout_value == 60)
+        lv_dropdown_set_selected(_xTimerDropDown_par, 2);
 
     // Seprator line
     // Create Horizontal Line
@@ -845,6 +872,7 @@ void ppxParameterScreen(void)
     lv_style_init(&_xSliderStle);
     lv_style_set_bg_color(&_xSliderStle, LV_SWITCH_PART_BG, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_add_style(_xLuminslider_par, LV_LABEL_PART_MAIN, &_xSliderStle);
+    lv_slider_set_value(_xLuminslider_par, devicesettings.luminosity_value, LV_ANIM_OFF);
 
     // Seprator line
     // Create Horizontal Line
@@ -898,18 +926,8 @@ void ppxParameterScreen(void)
     lv_obj_set_width(_xContrastslider_par, 80);
     lv_obj_set_event_cb(_xContrastslider_par, Contrast_Slider_event_handler);
     lv_obj_add_style(_xContrastslider_par, LV_LABEL_PART_MAIN, &_xSliderStle);
+    lv_slider_set_value(_xContrastslider_par, devicesettings.contrast_value, LV_ANIM_OFF);
 
     crnt_screen = scrParameter; // scrParameter
     screenid = SCR_PARAMETER;
-}
-
-bool enable_screen_timeout(void)
-{
-    return screen_timeout_enable;
-}
-
-
-uint32_t get_screen_timeout_minutes(void)
-{
-    return screen_timeout_value;
 }

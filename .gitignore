@@ -71,3 +71,4 @@ platformio.ini
 
 binary/
 *.lock
+sdkconfig

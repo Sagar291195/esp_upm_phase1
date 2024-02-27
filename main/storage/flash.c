@@ -9,6 +9,7 @@
 #define TAG                 "FLASH"
 #define DB_FILENAME         "/spiffs/test.db"
 
+#define SETTINGS_STORGE_NAME     "settings"
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
@@ -16,15 +17,18 @@
 /********************************************************************************************
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
+device_settings_t devicesettings;
 
 /********************************************************************************************
  *                           STATIC VARIABLES
  ********************************************************************************************/
-SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
-sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
-sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
+static SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
+static sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
+static sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
 const char *data = "Callback function has been called";
-char *zErrMsg;
+static char *zErrMsg;
+static char dev_settings_key[] = "dev-setting";  // key to store data in flash
+
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -585,4 +589,50 @@ bool database_get_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumbe
     return bReadData;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvsread_device_settings(void)
+{
+    bool ret = false;
 
+    ret = nvsread_value_parameter(SETTINGS_STORGE_NAME, dev_settings_key, (char *)&devicesettings);
+    if ( ret == false || devicesettings.startbyte != 0xFE)
+    {   
+        devicesettings.startbyte = 0xFE;
+        memcpy(devicesettings.screen_lock_password, "1234", strlen("1234"));
+        memcpy(devicesettings.metrology_lock_password, "1234", strlen("1234"));
+        memcpy(devicesettings.wifi_ssid, "espupm_firmware", strlen("espupm_firmware"));
+        memcpy(devicesettings.wifi_password, "12345678", strlen("12345678"));
+        devicesettings.buzzer_enable = 0;
+        devicesettings.led_enable = 0;
+        devicesettings.wifi_enable = 0;
+        devicesettings.external_fan_enable = 0;
+        devicesettings.screen_sleepmode_enable = 0;
+        devicesettings.selected_language = ENGLISH;
+        devicesettings.screen_timeout_value = 15;
+        devicesettings.luminosity_value = 80;
+        devicesettings.contrast_value = 80;
+
+        ret = nvswrite_device_settings(&devicesettings);
+        if( ret )
+        {
+            ESP_LOGI(TAG, "default device settings are saved");
+        }
+    }
+    return ret;
+}
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvswrite_device_settings(device_settings_t *settingsbuffer)
+{   
+    bool ret = false;
+    ret = nvswrite_value_parameters(SETTINGS_STORGE_NAME, dev_settings_key, settingsbuffer, sizeof(device_settings_t));
+    if( ret == false)
+    {
+        ESP_LOGE(TAG, "device settings write error");
+    }
+    return ret;
+}   
