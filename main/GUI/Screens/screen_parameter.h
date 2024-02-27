@@ -27,6 +27,10 @@ extern "C"
  ********************************************************************************************/
 void ppxParameterScreen(void);
 
+uint32_t get_screen_timeout_minutes(void);
+
+bool enable_screen_timeout(void);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

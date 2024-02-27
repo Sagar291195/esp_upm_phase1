@@ -75,6 +75,7 @@ ft6x36_status_t ft6x36_status;
 ft6x36_t ft6x36_dev;//
 
 uint8_t current_dev_addr;       // set during init
+static uint32_t touch_count = 0;
 
 esp_err_t read_reg_8(ft6x36_t *dev, uint8_t reg, uint8_t *val)
 {
@@ -174,39 +175,38 @@ void ft6x06_init(uint16_t dev_addr) {
   * @param  data: Store data here
   * @retval Always false
   */
-bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
-   
-   // printf("Hello test\n");
-     ESP_LOGV(TAG, "ft6x36_read _start");
-  
-
+bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) 
+{
     uint8_t data_xy[4];        // 2 bytes X | 2 bytes Y
     uint8_t touch_pnt_cnt;        // Number of detected touch points
     static int16_t last_x = 0;  // 12bit pixel value
     static int16_t last_y = 0;  // 12bit pixel value
-    
     esp_err_t ret;
 
-
     ft6x06_i2c_read8(current_dev_addr, FT6X36_TD_STAT_REG, &touch_pnt_cnt);
-    
+    if( touch_pnt_cnt > 0)
+    {
+        if( get_lcdsleep_status() == true)
+        {
+            lcd_set_wakeup();
+        }
+        else{
+            touch_count++;
+        }
+    }
+
     if (touch_pnt_cnt != 1) {    // ignore no touch & multi touch
         data->point.x = last_x;
         data->point.y = last_y;
         data->state = LV_INDEV_STATE_REL;
-        //printf("touch read test\n");
         return false;
     }  
 
-    // rEAD x
     int16_t rawX;
     ret=read_reg_16(&ft6x36_dev,FT6X36_P1_XH_REG, (uint16_t *)&rawX);
     data_xy[1]=(int8_t)((rawX>>8)& 0xff);
     data_xy[0]=(int8_t)(rawX&0xff);
-    ESP_LOGV(TAG, "data_xy[1]=%u data_xy[0]=%u", data_xy[1], data_xy[0]);
-
     if (ret != ESP_OK) {
-        //printf("Hello check\n");
         ESP_LOGE(TAG, "Error getting X coordinates: %s", esp_err_to_name(ret));
         data->point.x = last_x;
         data->point.y = last_y;
@@ -218,10 +218,7 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
     ret=read_reg_16(&ft6x36_dev,FT6X36_P1_YH_REG, (uint16_t *)&rawY);
     data_xy[3]=(int8_t)((rawY>>8)& 0xff);
     data_xy[2]=(int8_t)(rawY&0xff);
-    ESP_LOGV(TAG, "data_xy[3]=%u data_xy[2]=%u", data_xy[3], data_xy[2]);
-    
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Error getting Y coordinates: %s", esp_err_to_name(ret));
         data->point.x = last_x;
         data->point.y = last_y;
         data->state = LV_INDEV_STATE_REL;   // no touch detected
@@ -245,10 +242,20 @@ bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
     data->point.x = last_x;
     data->point.y = last_y;
     data->state = LV_INDEV_STATE_PR;
-    ESP_LOGV(TAG, "X=%u Y=%u", data->point.x, data->point.y);
-    ESP_LOGV(TAG, "ft6x36_read _finish");
+
     return false;
 }
+
+uint32_t get_touchcount(void)
+{
+    return touch_count;
+}
+
+void reset_touchcount(void)
+{
+    touch_count = 0;
+}
+
 
 //=======================new Function
 esp_err_t ft6x36_init_desc(ft6x36_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio)

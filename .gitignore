@@ -70,3 +70,4 @@ platformio.ini
 .vscode/
 
 binary/
+*.lock

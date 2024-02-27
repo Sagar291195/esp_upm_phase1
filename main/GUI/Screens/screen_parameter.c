@@ -116,6 +116,8 @@ lv_obj_t *_xBackArrowCont;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
+static bool screen_timeout_enable = false;
+static uint32_t screen_timeout_value = 0;
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -133,11 +135,16 @@ static void lang_DD_event_handler(lv_obj_t *obj, lv_event_t event)
 
 static void SlpTmr_DD_event_handler(lv_obj_t *obj, lv_event_t event)
 {
+    uint8_t selectedoption = 0;
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        char buf[32];
-        lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
-        printf("Option: %s\n", buf);
+        selectedoption = lv_dropdown_get_selected(obj);
+        if(selectedoption == 0)
+            screen_timeout_value = 1;
+        else if(selectedoption == 1)
+            screen_timeout_value = 30;
+        else if(selectedoption == 2)
+            screen_timeout_value = 60;        
     }
 }
 
@@ -213,8 +220,10 @@ static void Sleep_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
     {
-        printf("State: %s\n", lv_switch_get_state(obj) ? "Sleep Mode On" : "Sleep Mode Off");
-        fflush(NULL);
+        if(lv_switch_get_state(obj))
+            screen_timeout_enable = true;
+        else
+            screen_timeout_enable = false; 
     }
 }
 
@@ -894,6 +903,13 @@ void ppxParameterScreen(void)
     screenid = SCR_PARAMETER;
 }
 
-/**********************
- *   STATIC FUNCTIONS
- **********************/
+bool enable_screen_timeout(void)
+{
+    return screen_timeout_enable;
+}
+
+
+uint32_t get_screen_timeout_minutes(void)
+{
+    return screen_timeout_value;
+}

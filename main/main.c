@@ -8,6 +8,7 @@
 #include <sensorManagement.h>
 #include <sampleManagement.h>
 #include "gui/screens/screen_includes.h"
+//#include "ft6x36.h"
 
 /********************************************************************************************
  *                              DEFINES
@@ -33,6 +34,7 @@ SemaphoreHandle_t gui_update_semaphore;   /* semaphore to GUId*/
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
 static void IRAM_ATTR lv_tick_task(void *arg);      /* lvgl task to count the ticks */
+static void IRAM_ATTR screen_timeout_handler(void *arg);
 static void guiTask(void *pvParameter);             /* This it the lvgl task */
 static void create_demo_application(void);          /* This function intiate the first screen to show */
 static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
@@ -56,6 +58,42 @@ static void IRAM_ATTR lv_tick_task(void *arg)
 {
     (void)arg;
     lv_tick_inc(portTICK_RATE_MS);
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static void IRAM_ATTR screen_timeout_handler(void *arg)
+{
+    static uint32_t idle_minute_counter = 0;
+    static uint32_t savedtouchcount = 0;
+
+    if(enable_screen_timeout() == true)
+    {
+        if(get_touchcount() == savedtouchcount && get_lcdsleep_status() == false)
+        {
+            idle_minute_counter++;
+            if(idle_minute_counter == get_screen_timeout_minutes())
+            {
+                savedtouchcount = 0;
+				reset_touchcount();
+                lcd_set_sleep();
+            }
+            else if( idle_minute_counter == 1)
+            {
+                savedtouchcount = 0;
+                reset_touchcount();
+            }
+        }
+        else{
+            savedtouchcount = get_touchcount();
+            idle_minute_counter = 0;
+        }
+    }
+    else
+    {
+        idle_minute_counter = 0;
+    }
 }
 
 /********************************************************************************************
@@ -159,8 +197,17 @@ static void guiTask(void *pvParameter)
         .callback = &lv_tick_task,
         .name = "periodic_gui"};
     esp_timer_handle_t periodic_timer;
+
+    const esp_timer_create_args_t screen_timeout_timer_args = {
+        .callback = &screen_timeout_handler,
+        .name = "periodic_gui"};
+    esp_timer_handle_t screen_timeout_timer;
+
     ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, LV_TICK_PERIOD_MS * 100));
+
+    ESP_ERROR_CHECK(esp_timer_create(&screen_timeout_timer_args, &screen_timeout_timer));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 60*1000));
 
     lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
     create_demo_application();      /* Create the demo application */
