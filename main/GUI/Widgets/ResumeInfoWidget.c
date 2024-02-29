@@ -55,7 +55,6 @@ lv_obj_t *pxPercentLabel;
 lv_obj_t *_xTimeleftHourTextLabel;
 lv_obj_t *_xTimeleftMinTextLabel;
 
-int _xBTN = 0;
 
 extern char *dashboardBTNTxt;
 
@@ -439,7 +438,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxTextLabel, pxArc, LV_ALIGN_OUT_TOP_LEFT, -140, 0);
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, 0, 60);
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 0;
 		dashboardBTNTxt = "START JOB ";
 		break;
 	case RESUMEINFO_PROBLEM:
@@ -451,7 +449,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -3, RESUMEINFO_PERCENT_OFFSET);
 		// lv_label_set_text(pxExt->pxPercentValue,  "");
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
-		//_xBTN = 1;
 		dashboardBTNTxt = "  VIEW SUMMARY";
 		break;
 	case RESUMEINFO_METROLOGY_IN_PROGRESS:
@@ -460,7 +457,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_label_set_text(pxExt->pxPercentSymbol, "0%");
 		lv_obj_align(pxExt->pxPercentValue, pxExt->pxProgressArc, LV_ALIGN_IN_TOP_MID, 0, RESUMEINFO_PERCENT_OFFSET);
 		lv_obj_align(pxExt->pxPercentSymbol, pxExt->pxPercentValue, LV_ALIGN_OUT_RIGHT_MID, RESUMEINFO_SYMBOL_OFFSET_X, RESUMEINFO_SYMBOL_OFFSET_Y);
-		//_xBTN = 2;
 		dashboardBTNTxt = "START JOB ";
 		break;
 	case RESUMEINFO_WORK_IN_PROGRESS:
@@ -485,8 +481,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_label_set_text(_xCurrentTaskNumberLabel, "2");
 		// lv_label_set_text_fmt(_xCurrentTaskNumberLabel, "%d", 2);
 		lv_obj_align(_xCurrentTaskNumberLabel, pxTaskNumberLabel, LV_ALIGN_OUT_RIGHT_BOTTOM, 0, 0);
-		//==
-		//_xBTN = 3;
 		dashboardBTNTxt = "STOP";
 		break;
 	case RESUMEINFO_WAIT:
@@ -503,7 +497,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 4;
 		dashboardBTNTxt = "FORCE STOP";
 		break;
 	case RESUMEINFO_JOB_FINISHED:
@@ -516,7 +509,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 5;
 		dashboardBTNTxt = "VIEW SUMMARY";
 		break;
 
@@ -530,7 +522,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 6;
 		dashboardBTNTxt = "FORCE START";
 		break;
 	case RESUMEINFO_METROLOGY_NEEDED:
@@ -543,7 +534,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 7;
 		dashboardBTNTxt = "START JOB";
 		break;
 	case RESUMEINFO_EXPORT_DATA:
@@ -556,7 +546,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 8;
 		dashboardBTNTxt = "STOP";
 		break;
 	}

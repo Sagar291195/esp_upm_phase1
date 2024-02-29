@@ -1,5 +1,6 @@
 #include <esp_log.h>
 #include "lm2759.h"
+#include "gui/screens/screen_includes.h"
 
 #define I2C_FREQ_HZ 100000 // Max 1MHz for esp-idf
 #define SDA_GPIO    21
@@ -123,6 +124,12 @@ void lcd_set_wakeup(void)
         gpio_set_level(GPIO_NUM_2, 1);
     }
     lcd_sleepstatus = false;
+
+
+    if(screenid != SCR_PASSWORD && screenid != SCR_METROLOGY_PASSWORD && screenid != SCR_PASSWORD_SAMPLE_STOP)
+    {
+        Screen_Password(SCR_PASSWORD_WAKEUP);
+    }
 }
 
 bool get_lcdsleep_status(void)

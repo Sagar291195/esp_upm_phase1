@@ -87,6 +87,8 @@ enum
     SCR_SUMMARY_START,
     SCR_SUMMARY_END,
     SCR_SUMMARY_SAMPLE,
+    SCR_PASSWORD_SAMPLE_STOP,
+    SCR_PASSWORD_WAKEUP,
 } metrology_screen_t;
 
 /********************************************************************************************

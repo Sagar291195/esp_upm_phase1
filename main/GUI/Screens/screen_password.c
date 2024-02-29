@@ -86,6 +86,7 @@ lv_obj_t *background;
 lv_obj_t *mpsEnterCalValTA;
 lv_obj_t *mpsMetroPswd;
 lv_obj_t *labelsymbol;
+uint8_t temp_screenid = 0;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -95,7 +96,7 @@ void Screen_Password(uint8_t screen_id)
     // Create Base container
     mpsMetroPswd = lv_obj_create(NULL, NULL);
     lv_scr_load(mpsMetroPswd);
-    if (crnt_screen != NULL)
+    if (crnt_screen != NULL && screen_id != SCR_PASSWORD_WAKEUP)
     {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
@@ -137,7 +138,7 @@ void Screen_Password(uint8_t screen_id)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screen_id == SCR_PASSWORD)
+    else if (screen_id == SCR_PASSWORD || screen_id == SCR_PASSWORD_SAMPLE_STOP ||  temp_screenid == SCR_PASSWORD_WAKEUP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -260,8 +261,16 @@ void Screen_Password(uint8_t screen_id)
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 10);
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_FOCUSED, 10);
 
-    crnt_screen = mpsMetroPswd;
-    screenid = screen_id;
+    if(screen_id != SCR_PASSWORD_WAKEUP)
+    {
+        crnt_screen = mpsMetroPswd;
+        screenid = screen_id;
+    }
+    else
+    {
+        temp_screenid = SCR_PASSWORD_WAKEUP;
+    }
+    
 }
 
 /**********************
@@ -283,7 +292,7 @@ static void task_cb_Code_InCorrect(lv_task_t *t)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screenid == SCR_PASSWORD)
+    else if (screenid == SCR_PASSWORD || temp_screenid == SCR_PASSWORD_WAKEUP || screenid == SCR_PASSWORD_SAMPLE_STOP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -336,6 +345,41 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         global_DashbordBTNflag = 1;
                         CallMetroMenuScreen();
+                    }
+                    else
+                    {
+                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_label_set_text(pswdmsg, "Wrong Code");
+                        lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
+                        timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);
+                        lv_task_once(timer_task);
+                    }
+                }
+                else if(screenid == SCR_PASSWORD_SAMPLE_STOP)
+                {
+                    if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
+                    {
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        xseSummaryEndScreen();
+                    }
+                    else
+                    {
+                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_label_set_text(pswdmsg, "Wrong Code");
+                        lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
+                        timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);
+                        lv_task_once(timer_task);
+                    }
+                }
+                else if(temp_screenid == SCR_PASSWORD_WAKEUP)
+                {
+                    if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
+                    {
+                        temp_screenid  = 0;
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_obj_del(mpsMetroPswd);
                     }
                     else
                     {
