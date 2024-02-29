@@ -314,7 +314,7 @@ void pxDashboardScreen(void)
 
     static lv_style_t _xListLabelClickStyle;
     lv_style_reset(&_xListLabelClickStyle);
-    lv_style_set_text_font(&_xListLabelClickStyle, LV_STATE_DEFAULT, &lv_font_montserrat_36);
+    lv_style_set_text_font(&_xListLabelClickStyle, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_style_set_text_color(&_xListLabelClickStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_style_set_border_width(&_xListLabelClickStyle, LV_LABEL_PART_MAIN, 0);
     lv_style_set_border_opa(&_xListLabelClickStyle, LV_LABEL_PART_MAIN, 0);

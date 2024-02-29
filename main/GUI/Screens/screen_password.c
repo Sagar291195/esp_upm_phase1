@@ -220,7 +220,7 @@ void Screen_Password(uint8_t screen_id)
     lv_style_set_bg_grad_dir(&style_label_main, LV_STATE_DEFAULT, LV_GRAD_DIR_VER);
     lv_style_set_bg_opa(&style_label_main, LV_STATE_DEFAULT, 0);
     lv_style_set_text_color(&style_label_main, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    lv_style_set_text_font(&style_label_main, LV_STATE_DEFAULT, &lv_font_montserrat_32);
+    lv_style_set_text_font(&style_label_main, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_style_set_text_letter_space(&style_label_main, LV_STATE_DEFAULT, 5);
     lv_style_set_pad_left(&style_label_main, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_right(&style_label_main, LV_STATE_DEFAULT, 0);
@@ -254,7 +254,7 @@ void Screen_Password(uint8_t screen_id)
     lv_obj_set_style_local_radius(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 140);
     lv_obj_set_style_local_bg_color(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
     lv_obj_set_style_local_bg_color(mpsKeyBoard, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
-    lv_obj_set_style_local_text_font(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_32);
+    lv_obj_set_style_local_text_font(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_obj_set_style_local_text_color(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_border_width(mpsKeyBoard, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_border_opa(mpsKeyBoard, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 200);

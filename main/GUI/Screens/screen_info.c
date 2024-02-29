@@ -50,12 +50,16 @@ lv_obj_t *_infoHedingLbl;
 lv_obj_t *_infoQRCont;
 lv_obj_t *_infoDeviceNumTxtLbl;
 lv_obj_t *_infoDeviceNumValLbl;
+lv_obj_t *_infoFWVersionTxtLbl;
+lv_obj_t *_infoFWVersionValLbl;
 lv_obj_t *_infoLabNameTxtLbl;
 lv_obj_t *_infoLabNameValLbl;
 lv_obj_t *_infoQRcodeImg;
 lv_obj_t *_infoDeviceIDTxtLbl;
 lv_obj_t *_infoDeviceIDValLbl;
-
+lv_obj_t *info_firmwaredownload;
+lv_obj_t *info_firmwaredownloadlabel;
+lv_obj_t * mbox1;
 lv_task_t *inforefresherTask;
 
 /**********************
@@ -65,6 +69,38 @@ lv_task_t *inforefresherTask;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
+static void event_handler(lv_obj_t * obj, lv_event_t event)
+{
+    if(event == LV_EVENT_VALUE_CHANGED) 
+    {
+        if(strcmp( "OK", lv_msgbox_get_active_btn_text(obj)) == 0)
+        {
+            ESP_LOGI(TAG, "Device will be restarting in 5 sec");
+            static device_state_t device_state;
+            device_state.device_operating_mode = DO_FIRMWARE_UPDATE;
+            bool ret = nvswrite_device_mode_settings( &device_state );
+            if ( ret == false )
+            {
+                ESP_LOGE( TAG, "device mode settings write error" );
+            }
+            vTaskDelay(2000/portTICK_PERIOD_MS);
+            esp_restart();
+        }
+        else if( strcmp( "CANCEL", lv_msgbox_get_active_btn_text(obj)) == 0)
+        {
+            ESP_LOGI(TAG, "firmware update is canceled by user");
+            lv_obj_set_hidden(mbox1, true);
+        }
+    }
+}
+
+static void firmware_download_event_handler(lv_obj_t *obj, lv_event_t event)
+{
+    if (event == LV_EVENT_RELEASED)
+    {
+        lv_obj_set_hidden(mbox1, false);
+    }
+}
 
 /**********************
  *   GLOBAL FUNCTIONS
@@ -171,15 +207,15 @@ void CallScreenInfo(void)
 
     // Create a container for QR Image
     _infoQRCont = lv_cont_create(infoParentCont, NULL);
-    lv_obj_set_size(_infoQRCont, 300, 360);
+    lv_obj_set_size(_infoQRCont, 300, 310);
     lv_obj_align(_infoQRCont, _infoHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 0);
     lv_obj_set_style_local_bg_color(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x3D, 0x3D, 0x3D)); // LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_opa(_infoQRCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create a label for "DEVICE NUMBER" text
     _infoDeviceNumTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoDeviceNumTxtLbl, _infoQRCont, LV_ALIGN_IN_TOP_LEFT, 10, 10);
-    lv_label_set_text(_infoDeviceNumTxtLbl, "DEVICE NUMBER:");
+    lv_obj_align(_infoDeviceNumTxtLbl, _infoQRCont, LV_ALIGN_IN_TOP_LEFT, 10, 5);
+    lv_label_set_text(_infoDeviceNumTxtLbl, "Device Number:");
 
     static lv_style_t _infoDeviceNumTxtLblStyle;
     lv_style_init(&_infoDeviceNumTxtLblStyle);
@@ -198,10 +234,30 @@ void CallScreenInfo(void)
     lv_style_set_text_color(&_infoDeviceNumValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_infoDeviceNumValLbl, LV_LABEL_PART_MAIN, &_infoDeviceNumValLblStyle);
 
+    _infoFWVersionTxtLbl = lv_label_create(_infoQRCont, NULL);
+    lv_obj_align(_infoFWVersionTxtLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
+    lv_label_set_text(_infoFWVersionTxtLbl, "Firmware Version:");
+
+    static lv_style_t _infofwversionTxtLblStyle;
+    lv_style_init(&_infofwversionTxtLblStyle);
+    lv_style_set_text_font(&_infofwversionTxtLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
+    lv_style_set_text_color(&_infofwversionTxtLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
+    lv_obj_add_style(_infoFWVersionTxtLbl, LV_LABEL_PART_MAIN, &_infofwversionTxtLblStyle);
+
+    _infoFWVersionValLbl = lv_label_create(_infoQRCont, NULL);
+    lv_obj_align(_infoFWVersionValLbl, _infoFWVersionTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 90, 0);
+    lv_label_set_text(_infoFWVersionValLbl, FIRMWARE_VERSION);
+
+    static lv_style_t _infofwversionValLblStyle;
+    lv_style_init(&_infofwversionValLblStyle);
+    lv_style_set_text_font(&_infofwversionValLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
+    lv_style_set_text_color(&_infofwversionValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_infoFWVersionValLbl, LV_LABEL_PART_MAIN, &_infofwversionValLblStyle);
+
     // Create a label for Lab Name
     _infoLabNameTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoLabNameTxtLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
-    lv_label_set_text(_infoLabNameTxtLbl, "Lab NAME:");
+    lv_obj_align(_infoLabNameTxtLbl, _infoFWVersionTxtLbl, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 8);
+    lv_label_set_text(_infoLabNameTxtLbl, "Lab Name:");
 
     static lv_style_t _infoLabNameTxtLblStyle;
     lv_style_init(&_infoLabNameTxtLblStyle);
@@ -211,7 +267,7 @@ void CallScreenInfo(void)
 
     // Create a label for lab number
     _infoLabNameValLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoLabNameValLbl, _infoLabNameTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 150, 0);
+    lv_obj_align(_infoLabNameValLbl, _infoLabNameTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 140, 0);
     lv_label_set_text(_infoLabNameValLbl, "1356");
 
     static lv_style_t _infoLabNameValLblStyle;
@@ -221,12 +277,12 @@ void CallScreenInfo(void)
     lv_obj_add_style(_infoLabNameValLbl, LV_LABEL_PART_MAIN, &_infoLabNameValLblStyle);
 
     // Put QR image here
-    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 25, 70, 250, LV_COLOR_BLACK, LV_COLOR_WHITE);
+    _infoQRcodeImg = lv_qrcode_create(_infoQRCont, 50, 80, 200, LV_COLOR_BLACK, LV_COLOR_WHITE);
     lv_qrcode_update(_infoQRcodeImg, "hello", strlen("hello"));
 
     // Create label for "DEVICE ID" Text
     _infoDeviceIDTxtLbl = lv_label_create(_infoQRCont, NULL);
-    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 10);
+    lv_obj_align(_infoDeviceIDTxtLbl, _infoQRcodeImg, LV_ALIGN_OUT_BOTTOM_LEFT, 50, 8);
     lv_label_set_text(_infoDeviceIDTxtLbl, "DEVICE ID:");
 
     static lv_style_t _infoDeviceIDTxtLblStyle;
@@ -245,6 +301,39 @@ void CallScreenInfo(void)
     lv_style_set_text_font(&_infoDeviceIDValLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_14); // signal_20
     lv_style_set_text_color(&_infoDeviceIDValLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_infoDeviceIDValLbl, LV_LABEL_PART_MAIN, &_infoDeviceIDValLblStyle);
+
+    info_firmwaredownload = lv_btn_create(infoParentCont, NULL);
+    lv_obj_align(info_firmwaredownload, _infoQRCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15);
+    lv_obj_set_size(info_firmwaredownload, 300, 44);
+    lv_obj_set_event_cb(info_firmwaredownload, firmware_download_event_handler); // Flow Calibration
+
+    static lv_style_t firmwarebtnstyle;
+    lv_style_init(&firmwarebtnstyle);
+    lv_style_set_radius(&firmwarebtnstyle, LV_STATE_DEFAULT, 10);
+    lv_style_set_bg_color(&firmwarebtnstyle, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2)); // #359Fe2
+    lv_style_set_border_width(&firmwarebtnstyle, LV_STATE_DEFAULT, 0);
+    lv_style_set_border_opa(&firmwarebtnstyle, LV_STATE_DEFAULT, LV_OPA_MIN);
+    lv_obj_add_style(info_firmwaredownload, LV_BTN_PART_MAIN, &firmwarebtnstyle);
+
+    // Creat a Sensor Parameter Button Label
+    info_firmwaredownloadlabel = lv_label_create(info_firmwaredownload, NULL);
+    lv_obj_align(info_firmwaredownloadlabel, info_firmwaredownload, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+    lv_label_set_text(info_firmwaredownloadlabel, "FW UPDATE");
+
+    static lv_style_t fwdownloadlabelstyle;
+    lv_style_init(&fwdownloadlabelstyle);
+    lv_style_set_text_font(&fwdownloadlabelstyle, LV_STATE_DEFAULT, &lv_font_montserrat_16);
+    lv_style_set_text_color(&fwdownloadlabelstyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(info_firmwaredownloadlabel, LV_LABEL_PART_MAIN, &fwdownloadlabelstyle);
+
+    static const char * btns[] ={"OK", "CANCEL", ""};
+    mbox1 = lv_msgbox_create(lv_scr_act(), NULL);
+    lv_msgbox_set_text(mbox1, "Device will be restared during firmwar update, Click OK to continue or Abort to cancel...");
+    lv_msgbox_add_btns(mbox1, btns);
+    lv_obj_set_width(mbox1, 300);
+    lv_obj_set_event_cb(mbox1, event_handler);
+    lv_obj_align(mbox1, NULL, LV_ALIGN_CENTER, 0, 0); /*Align to the corner*/
+    lv_obj_set_hidden(mbox1, true);
 
     crnt_screen = scrInfo;
     screenid = SCR_INFO;

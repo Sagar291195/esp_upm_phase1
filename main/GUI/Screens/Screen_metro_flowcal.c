@@ -279,7 +279,7 @@ void CallMetroFlowCalibrationScreen(void)
 
     static lv_style_t __fasRefValIntStyle;
     lv_style_init(&__fasRefValIntStyle);
-    lv_style_set_text_font(&__fasRefValIntStyle, LV_STATE_DEFAULT, &lv_font_montserrat_36); // signal_20
+    lv_style_set_text_font(&__fasRefValIntStyle, LV_STATE_DEFAULT, &lv_font_montserrat_30); // signal_20
     lv_style_set_text_color(&__fasRefValIntStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_fasRefValInt, LV_LABEL_PART_MAIN, &__fasRefValIntStyle);
 

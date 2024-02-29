@@ -10,6 +10,8 @@
 #define DB_FILENAME         "/spiffs/test.db"
 
 #define SETTINGS_STORGE_NAME     "settings"
+#define MODE_STORAGE        "configstorage"
+#define KEY_DEVICE_MODE     "devicemode"
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
@@ -416,6 +418,32 @@ bool nvswrite_value_u8(char *storagename, char *key, uint8_t value)
     return true;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvsread_device_mode_settings( device_state_t *devicestate )
+{
+    bool ret = false;
+
+    ret = nvsread_value_parameter( MODE_STORAGE, KEY_DEVICE_MODE, devicestate );
+    if( devicestate->startbyte == 0xFE && ret == true )
+    {
+        ret = true;
+    }
+    return ret;
+}
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvswrite_device_mode_settings(device_state_t *devicestate)
+{
+    bool ret = false;
+
+    devicestate->startbyte = 0xFE;
+    ret = nvswrite_value_parameters(MODE_STORAGE, KEY_DEVICE_MODE, devicestate, sizeof(device_state_t));
+    return ret;
+}
 /********************************************************************************************
  *      
  ********************************************************************************************/

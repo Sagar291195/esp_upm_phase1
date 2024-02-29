@@ -298,7 +298,7 @@ void callMetroFlowAdjustScreen(void)
     lv_obj_set_style_local_radius(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 120); // LV_RADIUS_CIRCLE 50
     lv_obj_set_style_local_bg_color(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
     lv_obj_set_style_local_bg_color(_fcsKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
-    lv_obj_set_style_local_text_font(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_32);
+    lv_obj_set_style_local_text_font(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_obj_set_style_local_text_color(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_border_width(_fcsKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
     // lv_obj_set_style_local_border_width(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 10);
