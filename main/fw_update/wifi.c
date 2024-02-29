@@ -83,22 +83,11 @@ bool initialise_wifi(const char *running_partition_label)
     APP_ABORT_ON_ERROR(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
 
     wifi_config_t wifi_config = {};
-    // APP_ABORT_ON_ERROR(esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_config));
+    wifi_sta_config_t wifi_sta_config
+    memcpy(wifi_sta_config.ssid, devicesettings.wifi_ssid, strlen(devicesettings.wifi_ssid));
+    memcpy(wifi_sta_config.password, devicesettings.wifi_password, strlen(devicesettings.wifi_password));
 
-    // if (wifi_config.sta.ssid[0] == '\0' || wifi_config.sta.password[0] == '\0')
-    // {
-        wifi_sta_config_t wifi_sta_config = {
-            .ssid = WIFI_SSID,
-            .password = WIFI_PASS,
-        };
-        wifi_config.sta = wifi_sta_config;
-        // return false;
-    // }
-    // else
-    // {
-        ESP_LOGI(TAG, "Wi-Fi credentials from flash memory: %s, %s", wifi_config.sta.ssid, wifi_config.sta.password);
-    // }
-
+    ESP_LOGI(TAG, "Wi-Fi credentials from flash memory: %s, %s", wifi_config.sta.ssid, wifi_config.sta.password);
     APP_ABORT_ON_ERROR(esp_wifi_get_mac(ESP_IF_WIFI_STA, esp32_mac))
     ESP_LOGI(TAG, "MAC address: %02X:%02X:%02X:%02X:%02X:%02X", esp32_mac[0], esp32_mac[1], esp32_mac[2], esp32_mac[3], esp32_mac[4], esp32_mac[5]);
     APP_ABORT_ON_ERROR(esp_wifi_set_mode(WIFI_MODE_STA));
