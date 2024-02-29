@@ -28,9 +28,6 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-static int screen_password = 1234;
-static int metrology_password = 1234;
-
 static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event);
 
 /**********************
@@ -81,9 +78,6 @@ static const lv_btnmatrix_ctrl_t fcs_tgl_kb_ctrl[] = {
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-
-static const char *pass;
-static const char *Re_pass;
 bool passNo = false;
 
 lv_task_t *timer_task = NULL;
@@ -92,6 +86,7 @@ lv_obj_t *background;
 lv_obj_t *mpsEnterCalValTA;
 lv_obj_t *mpsMetroPswd;
 lv_obj_t *labelsymbol;
+uint8_t temp_screenid = 0;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -101,7 +96,7 @@ void Screen_Password(uint8_t screen_id)
     // Create Base container
     mpsMetroPswd = lv_obj_create(NULL, NULL);
     lv_scr_load(mpsMetroPswd);
-    if (crnt_screen != NULL)
+    if (crnt_screen != NULL && screen_id != SCR_PASSWORD_WAKEUP)
     {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
@@ -143,7 +138,7 @@ void Screen_Password(uint8_t screen_id)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screen_id == SCR_PASSWORD)
+    else if (screen_id == SCR_PASSWORD || screen_id == SCR_PASSWORD_SAMPLE_STOP ||  temp_screenid == SCR_PASSWORD_WAKEUP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -266,8 +261,16 @@ void Screen_Password(uint8_t screen_id)
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 10);
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_FOCUSED, 10);
 
-    crnt_screen = mpsMetroPswd;
-    screenid = screen_id;
+    if(screen_id != SCR_PASSWORD_WAKEUP)
+    {
+        crnt_screen = mpsMetroPswd;
+        screenid = screen_id;
+    }
+    else
+    {
+        temp_screenid = SCR_PASSWORD_WAKEUP;
+    }
+    
 }
 
 /**********************
@@ -289,7 +292,7 @@ static void task_cb_Code_InCorrect(lv_task_t *t)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screenid == SCR_PASSWORD)
+    else if (screenid == SCR_PASSWORD || temp_screenid == SCR_PASSWORD_WAKEUP || screenid == SCR_PASSWORD_SAMPLE_STOP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -302,22 +305,21 @@ static void task_cb_Code_InCorrect(lv_task_t *t)
 
 static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
 {
-    static int temppasword = 0;
-    int retemppasword = 0;
+    static char temppasword[5];
+    const char *pass;
+    int passLength;
 
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         if (!passNo)
         {
             pass = lv_textarea_get_text(mpsEnterCalValTA);
-            int passLength = strlen(pass);
+            passLength = strlen(pass);
             if (passLength == 4)
             {
-                temppasword = 0;
-                temppasword = atoi(pass);
                 if (screenid == SCR_PASSWORD)
                 {
-                    if (temppasword == screen_password)
+                    if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
                     {
                         global_DashbordBTNflag = 1;
                         lv_textarea_set_text(mpsEnterCalValTA, "");
@@ -328,7 +330,7 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                     }
                     else
                     {
-                        ESP_LOGI(TAG, "Password not matched: %d , %d", metrology_password, temppasword);
+                        ESP_LOGI(TAG, "Password not matched: %s , %s", devicesettings.screen_lock_password, pass);
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         lv_label_set_text(pswdmsg, "Wrong Code");
                         lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
@@ -338,7 +340,7 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                 }
                 else if (screenid == SCR_METROLOGY_PASSWORD)
                 {
-                    if (temppasword == metrology_password)
+                    if (strncmp(pass, devicesettings.metrology_lock_password, passLength) == 0)
                     {
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         global_DashbordBTNflag = 1;
@@ -346,7 +348,42 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                     }
                     else
                     {
-                        ESP_LOGI(TAG, "Password not matched metrology : %d , %d", metrology_password, temppasword);
+                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_label_set_text(pswdmsg, "Wrong Code");
+                        lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
+                        timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);
+                        lv_task_once(timer_task);
+                    }
+                }
+                else if(screenid == SCR_PASSWORD_SAMPLE_STOP)
+                {
+                    if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
+                    {
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        xseSummaryEndScreen();
+                    }
+                    else
+                    {
+                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_label_set_text(pswdmsg, "Wrong Code");
+                        lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
+                        timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);
+                        lv_task_once(timer_task);
+                    }
+                }
+                else if(temp_screenid == SCR_PASSWORD_WAKEUP)
+                {
+                    if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
+                    {
+                        temp_screenid  = 0;
+                        lv_textarea_set_text(mpsEnterCalValTA, "");
+                        lv_obj_del(mpsMetroPswd);
+                    }
+                    else
+                    {
+                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         lv_label_set_text(pswdmsg, "Wrong Code");
                         lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
@@ -356,7 +393,9 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                 }
                 else if (screenid == SCR_CHANGE_PASSWORD)
                 {
-                    ESP_LOGI(TAG, "Change Password 1 = %s, %d", pass, temppasword);
+                    ESP_LOGI(TAG, "Change Password 1 = %s", pass);
+                    memset(temppasword, 0x00, sizeof(temppasword));
+                    memcpy(temppasword, pass, passLength);
                     lv_textarea_set_text(mpsEnterCalValTA, "");
                     lv_label_set_text(pswdmsg, "Re Enter Metrology Code");
                     passNo = true;
@@ -366,16 +405,16 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
 
         if (passNo)
         {
-            Re_pass = lv_textarea_get_text(mpsEnterCalValTA);
-            int RepassLength = strlen(Re_pass);
-            if (RepassLength == 4)
+            pass = lv_textarea_get_text(mpsEnterCalValTA);
+            passLength = strlen(pass);
+            if (passLength == 4)
             {
-                retemppasword = atoi(Re_pass);
-                ESP_LOGI(TAG, "Change Password 2 = %s, %d", Re_pass, retemppasword);
+                ESP_LOGI(TAG, "Change Password 2 = %s", pass);
                 passNo = false;
-                if (retemppasword == temppasword)
+                if (strncmp(pass, temppasword, passLength) == 0)
                 {
-                    metrology_password = retemppasword;
+                    memcpy(devicesettings.metrology_lock_password, pass, passLength);
+                    nvswrite_device_settings(&devicesettings);
                     lv_textarea_set_text(mpsEnterCalValTA, "");
                     lv_label_set_text(labelsymbol, LV_SYMBOL_OK);
                     lv_label_set_text(pswdmsg, "Code Changed");
@@ -384,8 +423,8 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                 }
                 else
                 {
-                    ESP_LOGI(TAG, "Password not matched for change = %s , %s", pass, Re_pass);
-                    ESP_LOGI(TAG, "Password not matched for change = %d , %d", temppasword, retemppasword);
+                    ESP_LOGI(TAG, "Password not matched for change = %s ", pass);
+                    ESP_LOGI(TAG, "Password not matched for change = %s ", temppasword);
                     lv_textarea_set_text(mpsEnterCalValTA, "");
                     lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);
                     timer_task = lv_task_create(task_cb_Code_InCorrect, 10000, LV_TASK_PRIO_MID, NULL);

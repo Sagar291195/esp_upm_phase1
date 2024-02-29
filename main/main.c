@@ -33,6 +33,7 @@ static device_state_t device_state;
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
 static void IRAM_ATTR lv_tick_task(void *arg);      /* lvgl task to count the ticks */
+static void IRAM_ATTR screen_timeout_handler(void *arg);
 static void guiTask(void *pvParameter);             /* This it the lvgl task */
 static void create_demo_application(void);          /* This function intiate the first screen to show */
 static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
@@ -57,6 +58,44 @@ static void IRAM_ATTR lv_tick_task(void *arg)
 {
     (void)arg;
     lv_tick_inc(portTICK_RATE_MS);
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static void IRAM_ATTR screen_timeout_handler(void *arg)
+{
+    static uint32_t idle_minute_counter = 0;
+    static uint32_t savedtouchcount = 0;
+
+    if(devicesettings.screen_sleepmode_enable == 1 )
+    {
+        ESP_LOGI(TAG, "screen timeout handler idle count : %d, %d, %d, %d, %d", idle_minute_counter, get_touchcount(),
+                         savedtouchcount, get_lcdsleep_status(), dashboardflg);
+        if((get_touchcount() == savedtouchcount) && (get_lcdsleep_status() == false) && (dashboardflg != 1))
+        {
+            idle_minute_counter++;
+            if(idle_minute_counter == 2)//devicesettings.screen_timeout_value)
+            {
+                savedtouchcount = 0;
+				reset_touchcount();
+                lcd_set_sleep();
+            }
+            else if( idle_minute_counter == 1)
+            {
+                savedtouchcount = 0;
+                reset_touchcount();
+            }
+        }
+        else{
+            savedtouchcount = get_touchcount();
+            idle_minute_counter = 0;
+        }
+    }
+    else
+    {
+        idle_minute_counter = 0;
+    }
 }
 
 /********************************************************************************************
@@ -93,13 +132,14 @@ void app_main()
 
     i2c_communication_semaphore = xSemaphoreCreateMutex();
     gui_update_semaphore = xSemaphoreCreateMutex();
-    wakeupmodeInit();                   // enabling the device from the wake mode
-    buzzer_initialization();              // This will initiate the buzze in the system
+    wakeupmodeInit();                           // enabling the device from the wake mode
+    buzzer_initialization();                // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
-
     nvs_storage_initialize();     // Initiating the data managament api
+    nvsread_device_settings();              //Read device settings from flash
     uint8_t devicemode = nvsread_device_mode_data();
+
     
     switch(devicemode)
     {
@@ -193,8 +233,17 @@ static void guiTask(void *pvParameter)
         .callback = &lv_tick_task,
         .name = "periodic_gui"};
     esp_timer_handle_t periodic_timer;
+
+    const esp_timer_create_args_t screen_timeout_timer_args = {
+        .callback = &screen_timeout_handler,
+        .name = "screen_timer"};
+    esp_timer_handle_t screen_timeout_timer;
+
     ESP_ERROR_CHECK(esp_timer_create(&periodic_timer_args, &periodic_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, LV_TICK_PERIOD_MS * 100));
+
+    ESP_ERROR_CHECK(esp_timer_create(&screen_timeout_timer_args, &screen_timeout_timer));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 20*1000*1000));
 
     lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
     create_demo_application();      /* Create the demo application */

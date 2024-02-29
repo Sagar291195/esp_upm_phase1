@@ -180,7 +180,9 @@ uint8_t ft6x36_get_gesture_id();
 
 bool ft6x36_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
 
+uint32_t get_touchcount(void);
 
+void reset_touchcount(void);
 #ifdef __cplusplus
 }
 #endif

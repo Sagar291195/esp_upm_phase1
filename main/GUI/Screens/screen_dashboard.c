@@ -574,9 +574,6 @@ void DashboardInfoWidget(void)
         vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-
-        // lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
-        // lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
         waitModeBuzzBeep();
         break;
     }
@@ -609,7 +606,7 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        ESP_LOGD(TAG, "Button Pressed : %d", xBTN);
+        ESP_LOGI(TAG, "Button Pressed : %d", xBTN);
         switch (xBTN)
         {
         case 0:
@@ -620,26 +617,18 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             xsPresetScreenAdvance();
             break;
 
-        case 1:
-            // printf("Problem State\n");
-            break;
-
-        case 2:
-            // printf("Metrology In Progress State\n");
-            break;
-
         case 3:
             lv_task_del(refresherTask);
             refresherTask = NULL;
             vControllerSampleStop();
-            xseSummaryEndScreen();
+            Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 
         case 4:
             lv_task_del(refresherTask);
             refresherTask = NULL;
             vControllerSampleStop();
-            xseSummaryEndScreen();
+            Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 
         case 5:
@@ -647,13 +636,8 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             refresherTask = NULL;
             xseSummaryEndScreen();
             break;
-        case 6:
-            break;
 
-        case 7:
-            break;
-
-        case 8:
+        default:
             break;
         }
     }

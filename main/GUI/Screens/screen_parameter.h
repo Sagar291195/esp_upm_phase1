@@ -26,7 +26,6 @@ extern "C"
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
 void ppxParameterScreen(void);
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

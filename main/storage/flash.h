@@ -63,10 +63,33 @@ typedef struct
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
+enum{
+    ENGLISH,
+    FRENCH,
+    ITALIAN
+}languages_t;
+
+typedef struct{
+    char startbyte;
+    char screen_lock_password[5];
+    char metrology_lock_password[5];
+    char wifi_ssid[32];
+    char wifi_password[32];
+    uint8_t buzzer_enable;
+    uint8_t led_enable;
+    uint8_t wifi_enable;
+    uint8_t external_fan_enable;
+    uint8_t screen_sleepmode_enable;
+    uint8_t selected_language;
+    uint8_t screen_timeout_value;
+    uint8_t luminosity_value;
+    uint8_t contrast_value;
+}device_settings_t;
 
 /********************************************************************************************
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
+extern device_settings_t devicesettings;
 
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
@@ -86,4 +109,7 @@ bool nvswrite_device_mode_settings(device_state_t *devicestate);
 bool nvsread_device_mode_settings(device_state_t *devicestate);
 bool database_get_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t *sequenceSummary);
 void database_save_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumber, sequenceSummary_t sequenceSummary);
+
+bool nvsread_device_settings(void);
+bool nvswrite_device_settings(device_settings_t *settingsbuffer);
 #endif  /*__FLASH_H__*/
