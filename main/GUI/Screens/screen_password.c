@@ -84,7 +84,7 @@ lv_task_t *timer_task = NULL;
 lv_obj_t *pswdmsg;
 lv_obj_t *background;
 lv_obj_t *mpsEnterCalValTA;
-lv_obj_t *mpsMetroPswd;
+static lv_obj_t *mpsMetroPswd;
 lv_obj_t *labelsymbol;
 uint8_t temp_screenid = 0;
 /**********************
@@ -96,11 +96,12 @@ void Screen_Password(uint8_t screen_id)
     // Create Base container
     mpsMetroPswd = lv_obj_create(NULL, NULL);
     lv_scr_load(mpsMetroPswd);
-    if (crnt_screen != NULL && screen_id != SCR_PASSWORD_WAKEUP)
+    if(screen_id != SCR_PASSWORD_WAKEUP && crnt_screen != NULL)
     {
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+    
     // Write style LV_OBJ_PART_MAIN for screen
     static lv_style_t style_screen_main1;
     lv_style_reset(&style_screen_main1);
@@ -138,7 +139,7 @@ void Screen_Password(uint8_t screen_id)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screen_id == SCR_PASSWORD || screen_id == SCR_PASSWORD_SAMPLE_STOP ||  temp_screenid == SCR_PASSWORD_WAKEUP)
+    else if (screen_id == SCR_PASSWORD || screen_id == SCR_PASSWORD_SAMPLE_STOP ||  screen_id == SCR_PASSWORD_WAKEUP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -379,11 +380,16 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                     {
                         temp_screenid  = 0;
                         lv_textarea_set_text(mpsEnterCalValTA, "");
-                        lv_obj_del(mpsMetroPswd);
+                        if( mpsMetroPswd != NULL)
+                        {
+                            ESP_LOGI(TAG, "deleting the password screen");
+                            lv_obj_del(mpsMetroPswd);
+                        }
+                            
                     }
                     else
                     {
-                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        ESP_LOGI(TAG, "Password not matched wakeup : %s, %s", devicesettings.metrology_lock_password, pass);
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         lv_label_set_text(pswdmsg, "Wrong Code");
                         lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);

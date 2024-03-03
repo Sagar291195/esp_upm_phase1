@@ -126,10 +126,10 @@ void lcd_set_wakeup(void)
     lcd_sleepstatus = false;
 
 
-    if(screenid != SCR_PASSWORD && screenid != SCR_METROLOGY_PASSWORD && screenid != SCR_PASSWORD_SAMPLE_STOP)
-    {
-        Screen_Password(SCR_PASSWORD_WAKEUP);
-    }
+    // if(screenid != SCR_PASSWORD && screenid != SCR_METROLOGY_PASSWORD && screenid != SCR_PASSWORD_SAMPLE_STOP)
+    // {
+    //     Screen_Password(SCR_PASSWORD_WAKEUP);
+    // }
 }
 
 bool get_lcdsleep_status(void)

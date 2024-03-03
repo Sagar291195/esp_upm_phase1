@@ -83,7 +83,7 @@ bool initialise_wifi(const char *running_partition_label)
     APP_ABORT_ON_ERROR(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
 
     wifi_config_t wifi_config = {};
-    wifi_sta_config_t wifi_sta_config
+    wifi_sta_config_t wifi_sta_config;
     memcpy(wifi_sta_config.ssid, devicesettings.wifi_ssid, strlen(devicesettings.wifi_ssid));
     memcpy(wifi_sta_config.password, devicesettings.wifi_password, strlen(devicesettings.wifi_password));
 
