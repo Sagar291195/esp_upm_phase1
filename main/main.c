@@ -75,7 +75,7 @@ static void IRAM_ATTR screen_timeout_handler(void *arg)
         if((get_touchcount() == savedtouchcount) && (get_lcdsleep_status() == false) && (dashboardflg != 1))
         {
             idle_minute_counter++;
-            if(idle_minute_counter == 2)//devicesettings.screen_timeout_value)
+            if(idle_minute_counter == devicesettings.screen_timeout_value)
             {
                 savedtouchcount = 0;
 				reset_touchcount();
@@ -243,7 +243,7 @@ static void guiTask(void *pvParameter)
     ESP_ERROR_CHECK(esp_timer_start_periodic(periodic_timer, LV_TICK_PERIOD_MS * 100));
 
     ESP_ERROR_CHECK(esp_timer_create(&screen_timeout_timer_args, &screen_timeout_timer));
-    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 20*1000*1000));
+    ESP_ERROR_CHECK(esp_timer_start_periodic(screen_timeout_timer, 60*1000*1000));
 
     lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
     create_demo_application();      /* Create the demo application */

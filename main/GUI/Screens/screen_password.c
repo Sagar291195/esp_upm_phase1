@@ -94,12 +94,20 @@ uint8_t temp_screenid = 0;
 void Screen_Password(uint8_t screen_id)
 {
     // Create Base container
-    mpsMetroPswd = lv_obj_create(NULL, NULL);
-    lv_scr_load(mpsMetroPswd);
-    if(screen_id != SCR_PASSWORD_WAKEUP && crnt_screen != NULL)
+    
+    if(screen_id != SCR_PASSWORD_WAKEUP)
     {
-        lv_obj_del(crnt_screen);
-        crnt_screen = NULL;
+        mpsMetroPswd = lv_obj_create(NULL, NULL);
+        lv_scr_load(mpsMetroPswd);
+        if(crnt_screen != NULL)
+        {
+            lv_obj_del(crnt_screen);
+            crnt_screen = NULL;
+        }
+
+    }else{
+        mpsMetroPswd = lv_obj_create(NULL, NULL);
+        lv_scr_load(mpsMetroPswd);
     }
     
     // Write style LV_OBJ_PART_MAIN for screen
@@ -383,6 +391,7 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                         if( mpsMetroPswd != NULL)
                         {
                             ESP_LOGI(TAG, "deleting the password screen");
+                            lv_scr_load(crnt_screen);
                             lv_obj_del(mpsMetroPswd);
                         }
                             
