@@ -1,6 +1,7 @@
+# ESP UPM Project
+
+This project is developed for Flow Calculation. There are number of sensors like BME680, BME280 and SDP32 sensors are connected which measures the temperature, pressure and flow parameters.
 
 
-ESP UPM Project
 
-Path of Screens: C:\esp\esp-idf\myPrograms\lvgl_esp_codes\lv_port_esp32_old\components\lv_examples\lv_examples\src\ESPUPM_SIM_01\GUI\Screens
 

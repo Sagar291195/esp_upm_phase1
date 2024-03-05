@@ -7,6 +7,7 @@
 #include <sensorManagement.h>
 #include <sampleManagement.h>
 #include "gui/screens/screen_includes.h"
+#include "driver/uart.h"
 
 #include "fw_update/ota.h"
 /********************************************************************************************
@@ -21,6 +22,10 @@
 #define WAKEMODE            GPIO_NUM_32     /* wakeup GPIO old hardware*/
 #endif
 
+#define DEBUG_UART_NUM      UART_NUM_0
+#define BUF_SIZE            (1024)
+#define RD_BUF_SIZE         (BUF_SIZE)
+static QueueHandle_t        uart0_queue;
 
 /********************************************************************************************
  *                              VARIABLES
@@ -38,6 +43,7 @@ static void guiTask(void *pvParameter);             /* This it the lvgl task */
 static void create_demo_application(void);          /* This function intiate the first screen to show */
 static void wakeupmodeInit(void);                   /* This function wakeup the screen*/
 static uint8_t nvsread_device_mode_data( void );
+static void debug_uart_init(void);
 
 /********************************************************************************************
  *                              CODE
@@ -111,6 +117,119 @@ static void wakeupmodeInit(void)
 /********************************************************************************************
  *                              
  ********************************************************************************************/
+static void debug_uart_init(void)
+{
+    uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB,
+    };
+    //Install UART driver, and get the queue.
+    uart_driver_install(DEBUG_UART_NUM, BUF_SIZE * 2, BUF_SIZE * 2, 20, &uart0_queue, 0);
+    uart_param_config(DEBUG_UART_NUM, &uart_config);
+
+    //Set UART pins (using UART0 default pins ie no changes.)
+    uart_set_pin(DEBUG_UART_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+
+    //Set uart pattern detect function.
+    uart_enable_pattern_det_baud_intr(DEBUG_UART_NUM, '\n', 1, 9, 0, 0);
+    //Reset the pattern queue length to record at most 20 pattern positions.
+    uart_pattern_queue_reset(DEBUG_UART_NUM, 20);
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static void uart_event_task(void *pvParameters)
+{
+    uart_event_t event;
+    size_t buffered_size;
+    uint8_t* dtmp = (uint8_t*) malloc(RD_BUF_SIZE);
+
+    for(;;) {
+        if(xQueueReceive(uart0_queue, (void * )&event, (portTickType)portMAX_DELAY)) {
+            bzero(dtmp, RD_BUF_SIZE);
+            ESP_LOGI(TAG, "uart[%d] event:", DEBUG_UART_NUM);
+            switch(event.type) {
+                case UART_DATA:
+                    break;
+            
+                case UART_FIFO_OVF:
+                    ESP_LOGI(TAG, "hw fifo overflow");
+                    uart_flush_input(DEBUG_UART_NUM);
+                    xQueueReset(uart0_queue);
+                    break;
+            
+                case UART_BUFFER_FULL:
+                    ESP_LOGI(TAG, "ring buffer full");
+                    uart_flush_input(DEBUG_UART_NUM);
+                    xQueueReset(uart0_queue);
+                    break;
+                case UART_BREAK:
+                    ESP_LOGI(TAG, "uart rx break");
+                    break;
+                
+                case UART_PARITY_ERR:
+                    ESP_LOGI(TAG, "uart parity error");
+                    break;
+                
+                case UART_FRAME_ERR:
+                    ESP_LOGI(TAG, "uart frame error");
+                    break;
+                
+                case UART_PATTERN_DET:
+                    uart_get_buffered_data_len(DEBUG_UART_NUM, &buffered_size);
+                    int pos = uart_pattern_pop_pos(DEBUG_UART_NUM);
+                    int len = 0;
+                    ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size);
+                    if (pos == -1) {
+                        uart_flush_input(DEBUG_UART_NUM);
+                    } else {
+                        len = uart_read_bytes(DEBUG_UART_NUM, dtmp, (pos+1), 100 / portTICK_PERIOD_MS);
+                        if( len )
+                        {
+                            dtmp[len] = '\0';
+
+                            printf("EVENT_PATTERN\t(%d bytes):\t", len);
+                            for (int i=0; i < len; i++)
+                                printf("%02x", dtmp[i]);
+                            printf("\n");
+
+                            if(strcasestr((char *)dtmp, "AT+SSID") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    ESP_LOGI(TAG, "SSID=%s\r\n", devicesettings.wifi_ssid);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    strcpy(devicesettings.wifi_ssid, pch+1);
+                                    ESP_LOGI(TAG, "SSID = %s", devicesettings.wifi_ssid);
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
+                        }   
+                    }
+                    break;
+
+                default:
+                    ESP_LOGI(TAG, "uart event type: %d", event.type);
+                    break;
+            }
+        }
+    }
+    free(dtmp);
+    dtmp = NULL;
+    vTaskDelete(NULL);
+}
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
 void app_main()
 {
     printf("\n\n####################################################################################\n");
@@ -133,6 +252,7 @@ void app_main()
     i2c_communication_semaphore = xSemaphoreCreateMutex();
     gui_update_semaphore = xSemaphoreCreateMutex();
     wakeupmodeInit();                           // enabling the device from the wake mode
+    debug_uart_init();
     buzzer_initialization();                // This will initiate the buzze in the system
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -140,7 +260,8 @@ void app_main()
     nvsread_device_settings();              //Read device settings from flash
     uint8_t devicemode = nvsread_device_mode_data();
 
-    
+    xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, 12, NULL);
+
     switch(devicemode)
     {
         case DO_FIRMWARE_UPDATE:
