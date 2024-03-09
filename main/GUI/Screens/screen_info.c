@@ -228,7 +228,7 @@ void CallScreenInfo(void)
     // Create a label for Device number
     _infoDeviceNumValLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceNumValLbl, _infoDeviceNumTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 100, 0);
-    lv_label_set_text(_infoDeviceNumValLbl, "68-356");
+    lv_label_set_text(_infoDeviceNumValLbl, devicesettings.device_serial_number);
 
     static lv_style_t _infoDeviceNumValLblStyle;
     lv_style_init(&_infoDeviceNumValLblStyle);
@@ -296,7 +296,7 @@ void CallScreenInfo(void)
     // Create a label for device ID number
     _infoDeviceIDValLbl = lv_label_create(_infoQRCont, NULL);
     lv_obj_align(_infoDeviceIDValLbl, _infoDeviceIDTxtLbl, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
-    lv_label_set_text(_infoDeviceIDValLbl, "68-356");
+    lv_label_set_text(_infoDeviceIDValLbl, devicesettings.device_serial_number);
 
     static lv_style_t _infoDeviceIDValLblStyle;
     lv_style_init(&_infoDeviceIDValLblStyle);

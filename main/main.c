@@ -226,6 +226,24 @@ static void uart_event_task(void *pvParameters)
                                     ESP_LOGI(TAG, "OK\r\n");
                                 }
                             }
+                            else if(strcasestr((char *)dtmp, "AT+SRNUM=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    ESP_LOGI(TAG, "SERIAL NUMBER = %s\r\n", devicesettings.device_serial_number);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    strcpy(devicesettings.device_serial_number, pch+1);
+                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    {
+                                        ESP_LOGE(TAG, "device settings write error for serial number");
+                                    }
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
                             else{
                                 ESP_LOGE(TAG, "incorrect command entered");
                             }
@@ -271,11 +289,13 @@ void app_main()
     gui_update_semaphore = xSemaphoreCreateMutex();
     wakeupmodeInit();                           // enabling the device from the wake mode
     debug_uart_init();
-    buzzer_initialization();                // This will initiate the buzze in the system
+    
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
     nvs_storage_initialize();     // Initiating the data managament api
     nvsread_device_settings();              //Read device settings from flash
+    if(devicesettings.buzzer_enable == 1)
+        buzzer_initialization();                // This will initiate the buzze in the system
     uint8_t devicemode = nvsread_device_mode_data();
 
     xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, 12, NULL);

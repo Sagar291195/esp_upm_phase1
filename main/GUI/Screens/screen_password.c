@@ -88,20 +88,15 @@ static lv_obj_t *mpsMetroPswd;
 lv_obj_t *labelsymbol;
 uint8_t temp_screenid = 0;
 
-esp_timer_handle_t screen_timeout_timer;
+
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
-static void password_timeout_handler(void* arg)
-{
-    lv_scr_load(crnt_screen);
-    lv_obj_del(mpsMetroPswd);
-}
 
 void Screen_Password(uint8_t screen_id)
 {
     // Create Base container
-    if(screen_id != SCR_PASSWORD_WAKEUP && screen_id != SCR_PASSWORD_SAMPLE_STOP)
+    if(screen_id != SCR_PASSWORD_WAKEUP)
     {
         mpsMetroPswd = lv_obj_create(NULL, NULL);
         lv_scr_load(mpsMetroPswd);
@@ -114,15 +109,6 @@ void Screen_Password(uint8_t screen_id)
     }else{
         mpsMetroPswd = lv_obj_create(NULL, NULL);
         lv_scr_load(mpsMetroPswd);
-        if(screen_id == SCR_PASSWORD_SAMPLE_STOP)
-        {
-            const esp_timer_create_args_t screen_timeout_timer_args = {
-                    .callback = &password_timeout_handler,
-        .               name = "screen_timer_pwd"};
-            
-            ESP_ERROR_CHECK(esp_timer_create(&screen_timeout_timer_args, &screen_timeout_timer));
-            ESP_ERROR_CHECK(esp_timer_start_once(screen_timeout_timer, 30*1000*1000));
-        }
     }
     
     // Write style LV_OBJ_PART_MAIN for screen
@@ -285,7 +271,7 @@ void Screen_Password(uint8_t screen_id)
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 10);
     lv_obj_set_style_local_pad_all(mpsKeyBoard, LV_KEYBOARD_PART_BTN, LV_STATE_FOCUSED, 10);
 
-    if(screen_id != SCR_PASSWORD_WAKEUP && screen_id != SCR_PASSWORD_SAMPLE_STOP)
+    if(screen_id != SCR_PASSWORD_WAKEUP)
     {
         crnt_screen = mpsMetroPswd;
         screenid = screen_id;
@@ -316,7 +302,7 @@ static void task_cb_Code_InCorrect(lv_task_t *t)
     {
         lv_label_set_text(pswdmsg, "Enter New Metrology Code");
     }
-    else if (screenid == SCR_PASSWORD || temp_screenid == SCR_PASSWORD_WAKEUP || temp_screenid == SCR_PASSWORD_SAMPLE_STOP)
+    else if (screenid == SCR_PASSWORD || temp_screenid == SCR_PASSWORD_WAKEUP || screenid == SCR_PASSWORD_SAMPLE_STOP)
     {
         lv_label_set_text(pswdmsg, "Enter Code ");
     }
@@ -380,20 +366,17 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                         lv_task_once(timer_task);
                     }
                 }
-                else if(temp_screenid == SCR_PASSWORD_SAMPLE_STOP)
+                else if(screenid == SCR_PASSWORD_SAMPLE_STOP)
                 {
                     if (strncmp(pass, devicesettings.screen_lock_password, passLength) == 0)
                     {
-                        ESP_ERROR_CHECK(esp_timer_stop(screen_timeout_timer));
-                        ESP_ERROR_CHECK(esp_timer_delete(screen_timeout_timer));
-                        delete_timeupdate_task();
                         vControllerSampleStop();
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         xseSummaryEndScreen();
                     }
                     else
                     {
-                        ESP_LOGI(TAG, "Password not matched metrology : %s, %s", devicesettings.metrology_lock_password, pass);
+                        ESP_LOGI(TAG, "Password not matched sample stop : %s, %s", devicesettings.metrology_lock_password, pass);
                         lv_textarea_set_text(mpsEnterCalValTA, "");
                         lv_label_set_text(pswdmsg, "Wrong Code");
                         lv_label_set_text(labelsymbol, LV_SYMBOL_WARNING);

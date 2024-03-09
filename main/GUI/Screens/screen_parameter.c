@@ -193,6 +193,10 @@ static void Buzzer_switch_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         devicesettings.buzzer_enable = lv_switch_get_state(obj);
+        if(devicesettings.buzzer_enable == 1)
+        {
+            buzzer_initialization();
+        }
         nvswrite_device_settings(&devicesettings);
     }
 }
@@ -202,6 +206,10 @@ static void Led_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         devicesettings.led_enable = lv_switch_get_state(obj);
+        if(devicesettings.led_enable == 1)
+        {
+            ws2812_init(13);
+        }
         nvswrite_device_settings(&devicesettings);
     }
 }

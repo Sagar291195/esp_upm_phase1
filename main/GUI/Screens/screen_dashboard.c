@@ -520,7 +520,8 @@ void DashboardInfoWidget(void)
         vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-        readyModeBuzzBeep();
+        if(devicesettings.buzzer_enable == 1)
+            readyModeBuzzBeep();
         break;
 
     case 1: // Work in progress
@@ -544,7 +545,8 @@ void DashboardInfoWidget(void)
 
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0xEB, 0x3B, 0x5A));
-        workInProgressBuzzBeep();
+        if(devicesettings.buzzer_enable == 1)
+            workInProgressBuzzBeep();
         break;
 
     case 2: // Work Finished
@@ -561,7 +563,8 @@ void DashboardInfoWidget(void)
         /* Setting the label text to the view summary */
         lv_label_set_text(xStopButtonLabel, dashboardBTNTxt);
         lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x35, 0x9F, 0xE2));
-        jobFinishedModeBuzzBeep();
+        if(devicesettings.buzzer_enable == 1)
+            jobFinishedModeBuzzBeep();
         break;
 
     case 3: // Wait In Progress
@@ -575,7 +578,8 @@ void DashboardInfoWidget(void)
         vSetResumeInfoHour(IW_create, uGetTotalHoursIntegerPart(), uGetTotalHoursFloatPart());
         lv_obj_set_style_local_bg_color(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x38, 0x38, 0x38));
         lv_obj_set_style_local_border_opa(IW_create, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
-        waitModeBuzzBeep();
+        if(devicesettings.buzzer_enable == 1)
+            waitModeBuzzBeep();
         break;
     }
 }
@@ -618,10 +622,12 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
             break;
 
         case 3:
+            delete_timeupdate_task();
             Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 
         case 4:
+            delete_timeupdate_task();
             Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 

@@ -641,6 +641,7 @@ bool nvsread_device_settings(void)
         devicesettings.screen_timeout_value = 15;
         devicesettings.luminosity_value = 80;
         devicesettings.contrast_value = 80;
+        memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));
 
         ret = nvswrite_device_settings(&devicesettings);
         if( ret )

@@ -84,6 +84,7 @@ typedef struct{
     uint8_t screen_timeout_value;
     uint8_t luminosity_value;
     uint8_t contrast_value;
+    char device_serial_number[16];
 }device_settings_t;
 
 /********************************************************************************************
