@@ -193,7 +193,7 @@ void xseSummaryEndScreen(void)
     // Create Label for Battery icon
     __xseBatteryLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseBatteryLabel_se, _xseContStatusBar_se, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__xseBatteryLabel_se, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__xseBatteryLabel_se, get_battery_symbol());
 
     static lv_style_t _xseBatteryLabelStyle_se;
     lv_style_init(&_xseBatteryLabelStyle_se);
@@ -205,6 +205,7 @@ void xseSummaryEndScreen(void)
     __xseWifiLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseWifiLabel_se, __xseBatteryLabel_se, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xseWifiLabel_se, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__xseWifiLabel_se, true);
 
     static lv_style_t _xseWifiLabelStyle_se;
     lv_style_init(&_xseWifiLabelStyle_se);
@@ -216,6 +217,7 @@ void xseSummaryEndScreen(void)
     __xseSignalLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseSignalLabel_se, __xseWifiLabel_se, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xseSignalLabel_se, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__xseSignalLabel_se, true);
 
     static lv_style_t _xseSignalLabelStyle_se;
     lv_style_init(&_xseSignalLabelStyle_se);
@@ -941,6 +943,7 @@ static void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
     if (lv_obj_get_screen(__xseTimeLabel_se) == lv_scr_act())
     {
         lv_label_set_text(__xseTimeLabel_se, guiTime);
+        lv_label_set_text(__xseBatteryLabel_se, get_battery_symbol());
     }
 }
 
@@ -953,6 +956,7 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xserefresherTask);
+        __xserefresherTask = NULL;
         global_DashbordBTNflag = 1;
         set_archiv_or_summary_screen(0);
         xsPresetScreenAdvance();
@@ -964,6 +968,7 @@ static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(__xserefresherTask);
+        __xserefresherTask = NULL;
         dashboardflg = 0;
         set_archiv_or_summary_screen(0);
         pxDashboardScreen();
@@ -981,6 +986,7 @@ static void SeqWidgetTriBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         if (database_get_sequence_summary(uGetCurrentSampleNumber(), seqnumber, &xSequnceSummary))
         {
             lv_task_del(__xserefresherTask);
+            __xserefresherTask = NULL;
             vSetSampleNumberAndSequnceNumberSampleSummary(uGetCurrentSampleNumber(), seqnumber, &xSequnceSummary);
             sssSummarySampleScreen();
         }

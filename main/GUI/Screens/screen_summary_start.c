@@ -161,7 +161,7 @@ void xssSummaryStartScreen(void)
     // Create Label for Battery icon
     __xssBatteryLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssBatteryLabel_ss, _xssContStatusBar_ss, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__xssBatteryLabel_ss, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__xssBatteryLabel_ss, get_battery_symbol());
 
     static lv_style_t _xssBatteryLabelStyle_ss;
     lv_style_init(&_xssBatteryLabelStyle_ss);
@@ -173,6 +173,8 @@ void xssSummaryStartScreen(void)
     __xssWifiLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssWifiLabel_ss, __xssBatteryLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xssWifiLabel_ss, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__xssWifiLabel_ss, true);
+
 
     static lv_style_t _xssWifiLabelStyle_ss;
     lv_style_init(&_xssWifiLabelStyle_ss);
@@ -184,6 +186,8 @@ void xssSummaryStartScreen(void)
     __xssSignalLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssSignalLabel_ss, __xssWifiLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xssSignalLabel_ss, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__xssSignalLabel_ss, true);
+
 
     static lv_style_t _xssSignalLabelStyle_ss;
     lv_style_init(&_xssSignalLabelStyle_ss);
@@ -488,6 +492,7 @@ static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
     if (screenid == SCR_SUMMARY_START)
     {
         lv_label_set_text(__xssTimeLabel_ss, guiTime);
+        lv_label_set_text(__xssBatteryLabel_ss, get_battery_symbol());
     }
 }
 

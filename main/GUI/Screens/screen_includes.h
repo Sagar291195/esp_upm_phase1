@@ -48,6 +48,7 @@ extern "C"
 
 #include "esp_upm.h"
 #include "espupm_tasks.h"
+#include "sensorManagement.h"
 
  /********************************************************************************************
  *                              DEFINES

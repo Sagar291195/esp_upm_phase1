@@ -128,28 +128,23 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
 
         if (!strcmp(btntext, MenuBTN_SERVICE))
         {
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
+            delete_timeupdate_task();
             screen_set_time_date();
         }
         if (!strcmp(btntext, MenuBTN_ARCHIV))
         {
             iArchORSummaryScrn = 1;
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
+            delete_timeupdate_task();
             xseSummaryEndScreen();
         }
         if (!strcmp(btntext, MenuBTN_METROLOGY))
         {
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
+            delete_timeupdate_task();
             Screen_Password(SCR_METROLOGY_PASSWORD);
         }
         if (!strcmp(btntext, MenuBTN_PARAMETER))
         {
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
-
+            delete_timeupdate_task();
             ppxParameterScreen();
         }
         if (!strcmp(btntext, MenuBTN_INFO))
@@ -240,7 +235,6 @@ void pxDashboardScreen(void)
     // Create Watch upper left corner
     _xTimeLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xTimeLabel, _xContainerStatusBar, LV_ALIGN_IN_TOP_LEFT, 8, 5);
-    // lv_label_set_text(_xTimeLabel, "4:30");
     lv_label_set_text(_xTimeLabel, guiTime);
 
     static lv_style_t _xTimeLabelStyle;
@@ -248,12 +242,12 @@ void pxDashboardScreen(void)
     lv_style_set_text_font(&_xTimeLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_style_set_text_color(&_xTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xTimeLabel, LV_LABEL_PART_MAIN, &_xTimeLabelStyle);
-    refresherTask = lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_HIGHEST, NULL);
+    
 
     // Create Label for Battery icon
     _xBatteryLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xBatteryLabel, _xContainerStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(_xBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(_xBatteryLabel, get_battery_symbol()); 
 
     static lv_style_t _xBatteryLabelStyle;
     lv_style_init(&_xBatteryLabelStyle);
@@ -265,6 +259,7 @@ void pxDashboardScreen(void)
     _xWifiLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWifiLabel, _xBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_xWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(_xWifiLabel, true);
 
     static lv_style_t _xWifiLabelStyle;
     lv_style_init(&_xWifiLabelStyle);
@@ -276,6 +271,7 @@ void pxDashboardScreen(void)
     _xSignalLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xSignalLabel, _xWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_xSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(_xSignalLabel, true);
 
     static lv_style_t _xSignalLabelStyle;
     lv_style_init(&_xSignalLabelStyle);
@@ -283,6 +279,7 @@ void pxDashboardScreen(void)
     lv_style_set_text_color(&_xSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xSignalLabel, LV_LABEL_PART_MAIN, &_xSignalLabelStyle);
 
+    refresherTask = lv_task_create(_xTimeLabel_refr_func, 1000, LV_TASK_PRIO_HIGHEST, NULL);
     //=======================================================================================
 
     // Create List Button
@@ -324,7 +321,7 @@ void pxDashboardScreen(void)
 
     _xWelcomeMsgLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWelcomeMsgLabel, _xWifiLabel, LV_ALIGN_OUT_BOTTOM_MID, -90, 0);
-    lv_label_set_text(_xWelcomeMsgLabel, "Welcome Steve");
+    lv_label_set_text(_xWelcomeMsgLabel, "Welcome LSDIAG");
 
     static lv_style_t _xWelcomeMsgLabelStyle;
     lv_style_init(&_xWelcomeMsgLabelStyle);
@@ -514,6 +511,7 @@ void DashboardInfoWidget(void)
     {
     case 0: // Ready Mode
         xBTN = 0;
+        lv_obj_set_click(_xListBtn, true);
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_READY, "Ready");
@@ -526,6 +524,7 @@ void DashboardInfoWidget(void)
         break;
 
     case 1: // Work in progress
+        lv_obj_set_click(_xListBtn, false);
         xBTN = 3;
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -550,6 +549,7 @@ void DashboardInfoWidget(void)
 
     case 2: // Work Finished
         xBTN = 5;
+        lv_obj_set_click(_xListBtn, true);
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_JOB_FINISHED, "Job finished");
@@ -566,6 +566,7 @@ void DashboardInfoWidget(void)
 
     case 3: // Wait In Progress
         xBTN = 4;
+        lv_obj_set_click(_xListBtn, true);
         IW_create = pxCreateResumeInfo(container);
         lv_obj_align(IW_create, NULL, LV_ALIGN_CENTER, 0, 0);
         vSetResumeInfoState(IW_create, RESUMEINFO_WAIT, "  Wait in progress");
@@ -586,9 +587,10 @@ void DashboardInfoWidget(void)
  */
 static void _xTimeLabel_refr_func(lv_task_t *refresherTask)
 {
-    if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act())
+    if (lv_obj_get_screen(_xTimeLabel) == lv_scr_act() && lv_obj_get_screen(_xBatteryLabel) == lv_scr_act())
     {
         lv_label_set_text(_xTimeLabel, guiTime);
+        lv_label_set_text(_xBatteryLabel, get_battery_symbol());
     }
 }
 
@@ -611,29 +613,21 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         {
         case 0:
             lv_obj_set_style_local_bg_color(_xStopBtn, LV_BTN_PART_MAIN, LV_BTN_STATE_PRESSED, LV_COLOR_BLUE);
-            fflush(NULL);
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
+            delete_timeupdate_task();
             xsPresetScreenAdvance();
             break;
 
         case 3:
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
-            vControllerSampleStop();
             Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 
         case 4:
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
-            vControllerSampleStop();
             Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
             break;
 
         case 5:
-            lv_task_del(refresherTask);
-            refresherTask = NULL;
+            delete_timeupdate_task();
+            lv_obj_set_click(_xListBtn, true);
             xseSummaryEndScreen();
             break;
 
@@ -675,6 +669,12 @@ void vShowJobFinishedDashboardScreen()
     showJobFinishedTask = lv_task_create(vShowJobFinishedDashBoardScreenTask, 1 * 1000, LV_TASK_PRIO_MID, NULL);
 }
 
+
+void delete_timeupdate_task(void)
+{
+    lv_task_del(refresherTask);
+    refresherTask = NULL;
+}
 /**********************
  *    ERROR ASSERT
  **********************/

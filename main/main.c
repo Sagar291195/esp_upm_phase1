@@ -152,7 +152,6 @@ static void uart_event_task(void *pvParameters)
     for(;;) {
         if(xQueueReceive(uart0_queue, (void * )&event, (portTickType)portMAX_DELAY)) {
             bzero(dtmp, RD_BUF_SIZE);
-            ESP_LOGI(TAG, "uart[%d] event:", DEBUG_UART_NUM);
             switch(event.type) {
                 case UART_DATA:
                     break;
@@ -184,7 +183,6 @@ static void uart_event_task(void *pvParameters)
                     uart_get_buffered_data_len(DEBUG_UART_NUM, &buffered_size);
                     int pos = uart_pattern_pop_pos(DEBUG_UART_NUM);
                     int len = 0;
-                    ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size);
                     if (pos == -1) {
                         uart_flush_input(DEBUG_UART_NUM);
                     } else {
@@ -192,13 +190,7 @@ static void uart_event_task(void *pvParameters)
                         if( len )
                         {
                             dtmp[len] = '\0';
-
-                            printf("EVENT_PATTERN\t(%d bytes):\t", len);
-                            for (int i=0; i < len; i++)
-                                printf("%02x", dtmp[i]);
-                            printf("\n");
-
-                            if(strcasestr((char *)dtmp, "AT+SSID") != NULL)
+                            if(strcasestr((char *)dtmp, "AT+SSID=") != NULL)
                             {
                                 if(strcasestr((char *)dtmp, "?") != NULL)
                                 {
@@ -209,9 +201,33 @@ static void uart_event_task(void *pvParameters)
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
                                     strcpy(devicesettings.wifi_ssid, pch+1);
-                                    ESP_LOGI(TAG, "SSID = %s", devicesettings.wifi_ssid);
+                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    {
+                                        ESP_LOGE(TAG, "device settings write error for wifi ssid");
+                                    }
                                     ESP_LOGI(TAG, "OK\r\n");
                                 }
+                            }
+                            else if(strcasestr((char *)dtmp, "AT+PASSWORD=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    ESP_LOGI(TAG, "PASSWORD=%s\r\n", devicesettings.wifi_password);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    strcpy(devicesettings.wifi_password, pch+1);
+                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    {
+                                        ESP_LOGE(TAG, "device settings write error for wifi password");
+                                    }
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
+                            else{
+                                ESP_LOGE(TAG, "incorrect command entered");
                             }
                         }   
                     }
@@ -227,6 +243,8 @@ static void uart_event_task(void *pvParameters)
     dtmp = NULL;
     vTaskDelete(NULL);
 }
+
+
 /********************************************************************************************
  *                              
  ********************************************************************************************/

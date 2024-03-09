@@ -39,13 +39,28 @@ lv_obj_t *fwerror_maincontainer;
 lv_obj_t *fwerror_label;
 
 lv_obj_t *crnt_screen;
+lv_task_t *fw_errorrefresherTask;
 /********************************************************************************************
  *                          STATIC PROTOTYPE
  ********************************************************************************************/
+static void fw_error_refer_func(lv_task_t *refresherTask);
+
 
 /********************************************************************************************
  *                          STATIC FUNCTIONS
  ********************************************************************************************/
+
+/********************************************************************************************
+ *     
+ ********************************************************************************************/
+static void fw_error_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(fwerror_timelabel) == lv_scr_act())
+    {
+        lv_label_set_text(fwerror_timelabel, guiTime);
+        lv_label_set_text(fwerror_batterylabel, get_battery_symbol());
+    }
+}
 
 /********************************************************************************************
  *     
@@ -126,10 +141,12 @@ void screen_firmware_error(void)
     lv_style_set_text_color(&TimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(fwerror_timelabel, LV_LABEL_PART_MAIN, &TimeLabelStyle);
 
+    fw_errorrefresherTask = lv_task_create(fw_error_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
+
     // Create Label for Battery icon
     fwerror_batterylabel = lv_label_create(fwerror_statusbar, NULL);
     lv_obj_align(fwerror_batterylabel, fwerror_statusbar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(fwerror_batterylabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(fwerror_batterylabel, get_battery_symbol()); 
 
     static lv_style_t BatteryLabelStyle;
     lv_style_init(&BatteryLabelStyle);
@@ -141,6 +158,7 @@ void screen_firmware_error(void)
     fwerror_wifilabel = lv_label_create(fwerror_statusbar, NULL);
     lv_obj_align(fwerror_wifilabel, fwerror_batterylabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(fwerror_wifilabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(fwerror_wifilabel, true);
 
     static lv_style_t WifiLabelStyle;
     lv_style_init(&WifiLabelStyle);
@@ -152,6 +170,7 @@ void screen_firmware_error(void)
     fwerror_signallabel = lv_label_create(fwerror_statusbar, NULL);
     lv_obj_align(fwerror_signallabel, fwerror_wifilabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(fwerror_signallabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(fwerror_signallabel, true);
 
     static lv_style_t SignalLabelStyle;
     lv_style_init(&SignalLabelStyle);

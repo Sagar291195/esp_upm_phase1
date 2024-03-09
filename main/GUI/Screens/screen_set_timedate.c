@@ -60,10 +60,19 @@ char min_Roller_Default[5] = "00";
 char sec_Roller_Default[5] = "00";
 static struct tm set_time_data;
 lv_obj_t *crnt_screen;
+lv_obj_t *set_timedate_battery_icon;
 
+lv_task_t *settimedate_refresherTask;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void settimedate_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(set_timedate_battery_icon) == lv_scr_act())
+    {
+        lv_label_set_text(set_timedate_battery_icon, get_battery_symbol());
+    }
+}
 
 void screen_set_time_date(void)
 {
@@ -90,10 +99,9 @@ void screen_set_time_date(void)
     lv_obj_set_style_local_border_opa(set_timedate_header, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create Label for Battery icon
-    lv_obj_t *set_timedate_battery_icon;
     set_timedate_battery_icon = lv_label_create(set_timedate_header, NULL);
     lv_obj_align(set_timedate_battery_icon, set_timedate_header, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(set_timedate_battery_icon, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(set_timedate_battery_icon, get_battery_symbol());
 
     static lv_style_t style_battery_label;
     lv_style_init(&style_battery_label);
@@ -106,6 +114,7 @@ void screen_set_time_date(void)
     set_timedate_wifi_icon = lv_label_create(set_timedate_header, NULL);
     lv_obj_align(set_timedate_wifi_icon, set_timedate_battery_icon, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(set_timedate_wifi_icon, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(set_timedate_wifi_icon, true);
 
     static lv_style_t style_wifi_label;
     lv_style_init(&style_wifi_label);
@@ -118,6 +127,7 @@ void screen_set_time_date(void)
     set_timedate_signal_icon = lv_label_create(set_timedate_header, NULL);
     lv_obj_align(set_timedate_signal_icon, set_timedate_wifi_icon, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(set_timedate_signal_icon, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(set_timedate_signal_icon, true);
 
     static lv_style_t style_signal_label;
     lv_style_init(&style_signal_label);
@@ -125,6 +135,7 @@ void screen_set_time_date(void)
     lv_style_set_text_color(&style_signal_label, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(set_timedate_signal_icon, LV_LABEL_PART_MAIN, &style_signal_label);
 
+    settimedate_refresherTask = lv_task_create(settimedate_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
     // Black arrow Container
     lv_obj_t *set_timeddate_back;
     set_timeddate_back = lv_cont_create(set_timedate_header, NULL);
@@ -590,8 +601,8 @@ static void _pidBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        printf("PID Tune Screen Back Arrow Pressed\n");
-        fflush(NULL);
+        lv_task_del(settimedate_refresherTask);
+        settimedate_refresherTask = NULL;
         pxDashboardScreen();
     }
 }

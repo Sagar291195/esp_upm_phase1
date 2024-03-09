@@ -109,6 +109,7 @@ lv_obj_t *_xAdjContrastTextLabel_par;
 lv_obj_t *_xContrastslider_par;
 lv_obj_t *_xBackArrowCont;
 
+lv_task_t *param_refresherTask;
 /**********************
  *      MACROS
  **********************/
@@ -120,6 +121,14 @@ lv_obj_t *_xBackArrowCont;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void param_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(_xTimeLabel_par) == lv_scr_act())
+    {
+        lv_label_set_text(_xTimeLabel_par, guiTime);
+        lv_label_set_text(_xBatteryLabel_par, get_battery_symbol());
+    }
+}
 
 static void lang_DD_event_handler(lv_obj_t *obj, lv_event_t event)
 {
@@ -173,6 +182,8 @@ static void _xBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(param_refresherTask);
+        param_refresherTask = NULL;
         pxDashboardScreen();
     }
 }
@@ -266,7 +277,7 @@ void ppxParameterScreen(void)
     // Create Label for Battery icon
     _xBatteryLabel_par = lv_label_create(_xContainerStatusBar_par, NULL);
     lv_obj_align(_xBatteryLabel_par, _xContainerStatusBar_par, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(_xBatteryLabel_par, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(_xBatteryLabel_par, get_battery_symbol());
 
     static lv_style_t _xBatteryLabelStyle_par;
     lv_style_init(&_xBatteryLabelStyle_par);
@@ -278,6 +289,7 @@ void ppxParameterScreen(void)
     _xWifiLabel_par = lv_label_create(_xContainerStatusBar_par, NULL);
     lv_obj_align(_xWifiLabel_par, _xBatteryLabel_par, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_xWifiLabel_par, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(_xWifiLabel_par, true);
 
     static lv_style_t _xWifiLabelStyle_par;
     lv_style_init(&_xWifiLabelStyle_par);
@@ -289,12 +301,15 @@ void ppxParameterScreen(void)
     _xSignalLabel_par = lv_label_create(_xContainerStatusBar_par, NULL);
     lv_obj_align(_xSignalLabel_par, _xWifiLabel_par, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_xSignalLabel_par, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(_xSignalLabel_par, true);
 
     static lv_style_t _xSignalLabelStyle_par;
     lv_style_init(&_xSignalLabelStyle_par);
     lv_style_set_text_font(&_xSignalLabelStyle_par, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&_xSignalLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xSignalLabel_par, LV_LABEL_PART_MAIN, &_xSignalLabelStyle_par);
+
+    param_refresherTask = lv_task_create(param_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create a container to put all the parameter
     _xParaLabelContainer_par = lv_page_create(container_par, NULL);

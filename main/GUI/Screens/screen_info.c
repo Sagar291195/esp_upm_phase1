@@ -146,7 +146,7 @@ void CallScreenInfo(void)
     // Create Label for Battery icon
     _infoBatteryLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoBatteryLabel, _infoContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(_infoBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(_infoBatteryLabel, get_battery_symbol());
 
     static lv_style_t _smmBatteryLabelStyle;
     lv_style_init(&_smmBatteryLabelStyle);
@@ -158,6 +158,7 @@ void CallScreenInfo(void)
     _infoWifiLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoWifiLabel, _infoBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_infoWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(_infoWifiLabel, true);
 
     static lv_style_t infoWifiLabelStyle;
     lv_style_init(&infoWifiLabelStyle);
@@ -169,6 +170,7 @@ void CallScreenInfo(void)
     _infoSignalLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoSignalLabel, _infoWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_infoSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(_infoSignalLabel, true);
 
     static lv_style_t _infoSignalLabelStyle;
     lv_style_init(&_infoSignalLabelStyle);
@@ -344,6 +346,7 @@ static void infoTimeLabel_refr_func(lv_task_t *inforefresherTask)
     if (lv_obj_get_screen(infoTimeLabel) == lv_scr_act())
     {
         lv_label_set_text(infoTimeLabel, guiTime);
+        lv_label_set_text(_infoBatteryLabel, get_battery_symbol());
     }
 }
 
@@ -356,6 +359,7 @@ static void _infoBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(inforefresherTask);
+        inforefresherTask = NULL;
         pxDashboardScreen();
     }
 }

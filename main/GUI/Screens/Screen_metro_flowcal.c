@@ -155,12 +155,11 @@ void CallMetroFlowCalibrationScreen(void)
     lv_style_set_text_color(&_fasTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasTimeLabel, LV_LABEL_PART_MAIN, &_fasTimeLabelStyle);
 
-    _fasTimeRefTask = lv_task_create(screen_metro_flowcal_refresh, 100, LV_TASK_PRIO_LOW, NULL);
-
+    
     // Create Label for Battery icon
     __fasBatteryLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasBatteryLabel, _fasContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__fasBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__fasBatteryLabel, get_battery_symbol());
 
     static lv_style_t _fasBatteryLabelStyle;
     lv_style_init(&_fasBatteryLabelStyle);
@@ -172,6 +171,7 @@ void CallMetroFlowCalibrationScreen(void)
     __fasWifiLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasWifiLabel, __fasBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fasWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__fasWifiLabel, true);
 
     static lv_style_t __fasWifiLabelStyle;
     lv_style_init(&__fasWifiLabelStyle);
@@ -183,12 +183,15 @@ void CallMetroFlowCalibrationScreen(void)
     __fasSignalLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasSignalLabel, __fasWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__fasSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__fasSignalLabel, true);
 
     static lv_style_t __fasSignalLabelStyle;
     lv_style_init(&__fasSignalLabelStyle);
     lv_style_set_text_font(&__fasSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__fasSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasSignalLabel, LV_LABEL_PART_MAIN, &__fasSignalLabelStyle);
+
+    _fasTimeRefTask = lv_task_create(screen_metro_flowcal_refresh, 100, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain FLOW Header
     _fasFlowHeadingCont = lv_cont_create(fasParentCont, NULL);
@@ -470,6 +473,8 @@ void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask)
         {
             lv_img_set_src(_fasStatusIcon, &cross_icon);
         }
+        lv_label_set_text(__fasTimeLabel, guiTime);
+        lv_label_set_text(__fasBatteryLabel, get_battery_symbol());
     }
 }
 
