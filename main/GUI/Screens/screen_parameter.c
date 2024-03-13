@@ -10,6 +10,7 @@
 /*********************
  *   DEFINES/CONST
  *********************/
+#define TAG "PARAMETER"
 
 #define SYMBOL_SIGNAL "\uf012"
 #define _ParaContWidth 65
@@ -174,6 +175,7 @@ static void Contrast_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         devicesettings.contrast_value = lv_slider_get_value(obj);
+        lcd_set_contrast(devicesettings.contrast_value);
         nvswrite_device_settings(&devicesettings);
     }
 }
@@ -209,11 +211,13 @@ static void Led_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
         devicesettings.led_enable = lv_switch_get_state(obj);
         if(devicesettings.led_enable == 1)
         {
+            ESP_LOGI(TAG, "enabling the es2812 pin");
             ws2812_init(13);
         }
         else
         {
-            gpio_matrix_out(13, 0x100, 0, 0);
+            ESP_LOGI(TAG, "disabling the pin");
+            ws2812_disable();
         }
         nvswrite_device_settings(&devicesettings);
     }

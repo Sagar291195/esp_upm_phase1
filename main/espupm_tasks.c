@@ -317,10 +317,14 @@ void ws2812_task(void *pvParamters)
 {
     if(devicesettings.led_enable == 1)
     {
+        ESP_LOGI("WS2812", "Initialization of ws2812");
         ws2812_init(13);
         cr = 0x5D;
         cg = 0xAF;
         cb = 0x48;
+    }
+    else{
+        ws2812_disable();
     }
 
     while (1)
@@ -371,6 +375,7 @@ void ws2812_task(void *pvParamters)
                 break;    
             }
         }
+        vTaskDelay(100/portTICK_RATE_MS);
     }
 }
 
