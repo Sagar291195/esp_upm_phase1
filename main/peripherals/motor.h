@@ -26,6 +26,7 @@ extern "C"
 #else
 #define GPIO_MOTOR              4    //Gpio of the motor
 #endif
+#define GPIO_EXTERNAL_FAN       14
 #define motorWAIT_ON            (100)   /** Loop delay to wait motor on when interupt is already on (in ms) */
 #define motorPULSE_BY_CYCLE     (3.0)   /** Number of pulse for a complete rotation */
 #define motorMIN_SET            (0.0)   /** Motor minimum command possible */

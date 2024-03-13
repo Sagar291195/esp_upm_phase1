@@ -138,6 +138,10 @@ void initiatePWMMotor()
         .duty = 0, // initial duty to zero
         .hpoint = 0};
     ledc_channel_config(&channel);
+
+    gpio_pad_select_gpio(GPIO_EXTERNAL_FAN);                 // Set GPIO as OUTPUT
+    gpio_set_direction(GPIO_EXTERNAL_FAN, GPIO_MODE_OUTPUT); // WakeMode
+    gpio_set_level(GPIO_EXTERNAL_FAN, 0);
 }
 
 /********************************************************************************************
@@ -245,6 +249,14 @@ void setStateOfMotor(bool state)
 {
     ESP_LOGD(TAG, "state is %d", state);
     isMotorRunning = state;
+    if(state == true && devicesettings.external_fan_enable == 1)
+    {
+        gpio_set_level(GPIO_EXTERNAL_FAN, 1);    
+    }
+    else{
+        gpio_set_level(GPIO_EXTERNAL_FAN, 0);
+    }
+
     motorPWMSetDutyCycle(0); // setting the motor to stop
 }
 

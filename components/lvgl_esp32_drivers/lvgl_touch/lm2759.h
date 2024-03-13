@@ -64,6 +64,7 @@ void lcd_set_wakeup(void);
 
 bool get_lcdsleep_status(void);
 
+void lcd_set_contrast(int dutycycle);
 #ifdef __cplusplus
 }
 #endif

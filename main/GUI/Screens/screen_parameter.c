@@ -6,6 +6,7 @@
 
 #include "screen_includes.h"
 
+
 /*********************
  *   DEFINES/CONST
  *********************/
@@ -209,6 +210,10 @@ static void Led_Switch_event_handler(lv_obj_t *obj, lv_event_t event)
         if(devicesettings.led_enable == 1)
         {
             ws2812_init(13);
+        }
+        else
+        {
+            gpio_matrix_out(13, 0x100, 0, 0);
         }
         nvswrite_device_settings(&devicesettings);
     }

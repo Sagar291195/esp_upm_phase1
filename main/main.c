@@ -244,6 +244,63 @@ static void uart_event_task(void *pvParameters)
                                     ESP_LOGI(TAG, "OK\r\n");
                                 }
                             }
+                            else if(strcasestr((char *)dtmp, "AT+KP=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "KP Value = %0.2f", pid_parameters.fKp);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    pid_parameters.fKp = atof(pch);
+                                    nvswrite_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
+                            else if(strcasestr((char *)dtmp, "AT+KI=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "KI Value = %0.2f", pid_parameters.fKi);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    pid_parameters.fKi = atof(pch);
+                                    nvswrite_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
+                            else if(strcasestr((char *)dtmp, "AT+KD=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "KD Value = %0.2f", pid_parameters.fKd);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    struct_PID_parameters_t pid_parameters; 
+                                    nvsread_pid_parameters(&pid_parameters);
+                                    pid_parameters.fKd = atof(pch);
+                                    nvswrite_pid_parameters(&pid_parameters);
+                                    ESP_LOGI(TAG, "OK\r\n");
+                                }
+                            }
                             else{
                                 ESP_LOGE(TAG, "incorrect command entered");
                             }
@@ -296,6 +353,7 @@ void app_main()
     nvsread_device_settings();              //Read device settings from flash
     if(devicesettings.buzzer_enable == 1)
         buzzer_initialization();                // This will initiate the buzze in the system
+
     uint8_t devicemode = nvsread_device_mode_data();
 
     xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, 12, NULL);
