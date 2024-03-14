@@ -566,7 +566,8 @@ void vUpdateWorkInProgressScreen()
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
         ESP_LOGV(TAG, "Updating dashboard screen");
-        vUpdateDashboardScreen();
+        if(screenid == SCR_DASHBOARD)
+            vUpdateDashboardScreen();
         xSemaphoreGive(gui_update_semaphore);
     }
 }

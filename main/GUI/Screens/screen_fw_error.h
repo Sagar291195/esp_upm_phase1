@@ -1,5 +1,5 @@
-#ifndef SCREEN_PARAMETER_H
-#define SCREEN_PARAMETER_H
+#ifndef SCREEN_FW_ERROR_H
+#define SCREEN_FW_ERROR_H
 
 #ifdef __cplusplus
 extern "C"
@@ -22,12 +22,14 @@ extern "C"
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
 
+
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
-void ppxParameterScreen(void);
+void screen_firmware_error(void);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*SCREEN_PARAMETER_H*/
+#endif /*SCREEN_FW_ERROR_H*/

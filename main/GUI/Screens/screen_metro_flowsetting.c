@@ -58,6 +58,7 @@ lv_obj_t *__mfsBackArrowLabel;
 lv_obj_t *__mfsFlowHeadingLbl;
 lv_obj_t *_mfsFlowLogo;
 lv_obj_t *_mfsCurveUnitCont;
+static lv_task_t *flow_settings_refresherTask;
 
 int metroflowUnit; // for LPH flowUnit == 0, For LPM == 1
 
@@ -72,6 +73,15 @@ int metroflowUnit; // for LPH flowUnit == 0, For LPM == 1
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void flow_settings_refr_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__mfsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__mfsTimeLabel, guiTime);
+        lv_label_set_text(__mfsBatteryLabel, get_battery_symbol());
+    }
+}
+
 
 void callMetroFlowSettingScreen(void)
 {
@@ -116,7 +126,7 @@ void callMetroFlowSettingScreen(void)
 
     __mfsBatteryLabel = lv_label_create(_mfsContStatusBar, NULL);
     lv_obj_align(__mfsBatteryLabel, _mfsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__mfsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__mfsBatteryLabel, get_battery_symbol());
 
     static lv_style_t __mfsBatteryLabelStyle;
     lv_style_init(&__mfsBatteryLabelStyle);
@@ -128,6 +138,7 @@ void callMetroFlowSettingScreen(void)
     __mfsWifiLabel = lv_label_create(_mfsContStatusBar, NULL);
     lv_obj_align(__mfsWifiLabel, __mfsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mfsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__mfsWifiLabel, true);
 
     static lv_style_t __mfsWifiLabelStyle;
     lv_style_init(&__mfsWifiLabelStyle);
@@ -140,6 +151,7 @@ void callMetroFlowSettingScreen(void)
     __mfsSignalLabel = lv_label_create(_mfsContStatusBar, NULL);
     lv_obj_align(__mfsSignalLabel, __mfsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mfsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__mfsSignalLabel, true);
 
     static lv_style_t __mfsSignalLabelStyle;
     lv_style_init(&__mfsSignalLabelStyle);
@@ -147,6 +159,7 @@ void callMetroFlowSettingScreen(void)
     lv_style_set_text_color(&__mfsSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mfsSignalLabel, LV_LABEL_PART_MAIN, &__mfsSignalLabelStyle);
 
+    flow_settings_refresherTask = lv_task_create(flow_settings_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
     // Crate a container to contain FLOW Header
 
     _mfsFlowHeadingCont = lv_cont_create(mfsParentCont, NULL);
@@ -455,6 +468,8 @@ static void __mfsValidAdjBTN_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         ESP_LOGI(TAG, "Valid and Adjust button pressed");
         set_flow_calibration_point_cout(0);
+        lv_task_del(flow_settings_refresherTask);
+        flow_settings_refresherTask = NULL;
         callMetroFlowAdjustScreen();
     }
 }
@@ -463,6 +478,8 @@ static void __mfsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(flow_settings_refresherTask);
+        flow_settings_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -477,55 +494,46 @@ static void curve_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         {
             global_CurveDegree = 1;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear2") == 0)
         {
             global_CurveDegree = 2;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear3") == 0)
         {
             global_CurveDegree = 3;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear4") == 0)
         {
             global_CurveDegree = 4;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear5") == 0)
         {
             global_CurveDegree = 5;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear6") == 0)
         {
             global_CurveDegree = 6;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear7") == 0)
         {
             global_CurveDegree = 7;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear8") == 0)
         {
             global_CurveDegree = 8;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear9") == 0)
         {
             global_CurveDegree = 9;
             printf("Curve Points: %d\n", global_CurveDegree);
-            fflush(NULL);
         }
         else
         {

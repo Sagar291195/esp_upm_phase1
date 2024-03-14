@@ -30,6 +30,10 @@
 #define SCL_GPIO                                22      /* i2c scl pin */
 #define MASSFLOW_CALCULATION_FACTOR             0.1
 
+
+#define BATTERY_MIN_VOLTAGE         9.0
+#define BATTERY_MAX_VOLTAGE         16.8
+
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
@@ -48,7 +52,7 @@ static external_sensor_data_t external_sensor_data_average = {0};   /* Data vari
 float sdp32_pressure_value = 0; /* sp32 diff pressure sensor average values */
 float sdp32_temperature_value = 0;    /* sdp32 average temperature sensor value*/
 INA3231_sensor_data_t ina3221_sensor_data[INA3221_CHANNEL];         /* array to store the sensor data */
-
+static int battery_percentage = 0;
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -232,6 +236,10 @@ static void internal_sensor_read_task(void *pvParamters)
 ********************************************************************************************/
 static void ina3221_sensor_read_task(void *pvParameters)
 {
+    float bus_voltage;
+    float shunt_voltage;
+    float shunt_current;
+
     ina3221_t dev = {
         .shunt = {100, 100, 100}, // shunt values are 100 mOhm for each channel
         .config.config_register = INA3221_DEFAULT_CONFIG,
@@ -254,9 +262,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
     }
     ESP_LOGD(TAG, "Ina3231 has been inititated");
     vTaskDelay(pdMS_TO_TICKS(500));
-    float bus_voltage;
-    float shunt_voltage;
-    float shunt_current;
+
 
     while (1)
     {
@@ -298,10 +304,18 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ina3221_sensor_data[i].bus_voltage = bus_voltage;
                 ina3221_sensor_data[i].shunt_voltage = shunt_voltage;
                 ina3221_sensor_data[i].shunt_current = shunt_current;
-                ESP_LOGV(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
+                
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
+
+        battery_percentage = (((ina3221_sensor_data[0].bus_voltage - BATTERY_MIN_VOLTAGE) / (BATTERY_MAX_VOLTAGE - BATTERY_MIN_VOLTAGE)) * 100);
+        if(battery_percentage < 0)
+            battery_percentage = 0;
+        else if(battery_percentage > 100)
+            battery_percentage = 100;
+
+        ESP_LOGD(TAG, "Channel 0: Bus voltage: %.2f V, percentage:  %d",  ina3221_sensor_data[0].bus_voltage, battery_percentage);
     }
     vTaskDelete(NULL);
 }
@@ -444,6 +458,39 @@ float get_sdp32_massflow_value(void)
     massflow = sdp32_pressure_value*MASSFLOW_CALCULATION_FACTOR;
     return massflow;
 }
+
+/********************************************************************************************
+* 
+********************************************************************************************/
+int get_battery_percentage(void)
+{
+    return battery_percentage;
+}
+
+/********************************************************************************************
+* 
+********************************************************************************************/
+char *get_battery_symbol(void)
+{
+    if(battery_percentage < 10)
+    {
+        return LV_SYMBOL_BATTERY_EMPTY;
+    }
+    else if(battery_percentage < 30)
+    {
+        return LV_SYMBOL_BATTERY_1;
+    }
+    else if(battery_percentage < 60)
+    {
+        return LV_SYMBOL_BATTERY_2;
+    }
+    else if(battery_percentage < 90)
+    {
+        return LV_SYMBOL_BATTERY_3;
+    }
+    return LV_SYMBOL_BATTERY_FULL;
+}
+
 /********************************************************************************************
 * 
 ********************************************************************************************/

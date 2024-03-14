@@ -118,6 +118,7 @@ lv_obj_t *_fasGraphMaxX;
 lv_obj_t *_fasEraseBtn;
 lv_obj_t *_fasEraseBtnLabel;
 
+static lv_task_t *flow_param_refresherTask;
 /**********************
  *      MACROS
  **********************/
@@ -129,10 +130,17 @@ lv_obj_t *_fasEraseBtnLabel;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void flow_parameter_refr_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__fpsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__fpsTimeLabel, guiTime);
+        lv_label_set_text(__fpsBatteryLabel, get_battery_symbol());
+    }
+}
 
 void callMetroFlowParameterScreen(void)
 {
-
     scrFlowPara = lv_obj_create(NULL, NULL);
     lv_scr_load(scrFlowPara);
     if (crnt_screen != NULL)
@@ -148,7 +156,6 @@ void callMetroFlowParameterScreen(void)
     lv_obj_set_style_local_radius(fpsParentCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
-
     _fpsContStatusBar = lv_cont_create(fpsParentCont, NULL);
     lv_obj_set_size(_fpsContStatusBar, 320, 35);
     lv_obj_align(_fpsContStatusBar, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
@@ -156,7 +163,6 @@ void callMetroFlowParameterScreen(void)
     lv_obj_set_style_local_border_opa(_fpsContStatusBar, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_MIN);
 
     // Create Watch upper left corner
-
     __fpsTimeLabel = lv_label_create(_fpsContStatusBar, NULL);
     lv_obj_align(__fpsTimeLabel, _fpsContStatusBar, LV_ALIGN_IN_TOP_LEFT, 12, 5);
     lv_label_set_text(__fpsTimeLabel, guiTime);
@@ -168,10 +174,9 @@ void callMetroFlowParameterScreen(void)
     lv_obj_add_style(__fpsTimeLabel, LV_LABEL_PART_MAIN, &_fpsTimeLabelStyle);
 
     // Create Label for Battery icon
-
     __fpsBatteryLabel = lv_label_create(_fpsContStatusBar, NULL);
     lv_obj_align(__fpsBatteryLabel, _fpsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__fpsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__fpsBatteryLabel, get_battery_symbol());
 
     static lv_style_t _fpsBatteryLabelStyle;
     lv_style_init(&_fpsBatteryLabelStyle);
@@ -180,10 +185,10 @@ void callMetroFlowParameterScreen(void)
     lv_obj_add_style(__fpsBatteryLabel, LV_LABEL_PART_MAIN, &_fpsBatteryLabelStyle);
 
     // Create Label for Wifi icon
-
     __fpsWifiLabel = lv_label_create(_fpsContStatusBar, NULL);
     lv_obj_align(__fpsWifiLabel, __fpsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fpsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__fpsWifiLabel, true);
 
     static lv_style_t __fpsWifiLabelStyle;
     lv_style_init(&__fpsWifiLabelStyle);
@@ -191,6 +196,7 @@ void callMetroFlowParameterScreen(void)
     lv_style_set_text_color(&__fpsWifiLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fpsWifiLabel, LV_LABEL_PART_MAIN, &__fpsWifiLabelStyle);
 
+    flow_param_refresherTask = lv_task_create(flow_parameter_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
     //+++++++++++++++++++++++++++++++++++++++++++++++
     //            Create Scroll Page                +++++++++++++++++++++++++++++++++++++
     //+++++++++++++++++++++++++++++++++++++++++++++++
@@ -204,7 +210,6 @@ void callMetroFlowParameterScreen(void)
     lv_obj_set_style_local_bg_color(_fpsParaLblCont, LV_PAGE_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD)); // LV_COLOR_MAKE(0x38, 0x38, 0x38)
     lv_obj_set_style_local_border_width(_fpsParaLblCont, LV_PAGE_PART_BG, LV_STATE_DEFAULT, 0);
 
-    //+++++++++++++++++++++++++++++++++++++++++++++++
 
     //==============================================================================================================
     // Create a container to contain Parameter Header
@@ -717,6 +722,8 @@ static void _fpsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(flow_param_refresherTask);
+        flow_param_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -725,6 +732,8 @@ static void _fpsEraseBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(flow_param_refresherTask);
+        flow_param_refresherTask = NULL;
         callMetroFlowSettingScreen();
     }
 }

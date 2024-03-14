@@ -60,7 +60,7 @@ lv_obj_t *_smmNewVerTestBtn;
 lv_obj_t *_smmNewVerTestBtnLbl;
 lv_obj_t *_smmValidationTestCont;
 lv_obj_t *_smmVTC;
-
+lv_task_t *metro_menu_refresherTask;
 /**********************
  *      MACROS
  **********************/
@@ -68,7 +68,14 @@ lv_obj_t *_smmVTC;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-
+static void metro_menu_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__smmTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__smmTimeLabel, guiTime);
+        lv_label_set_text(__smmBatteryLabel, get_battery_symbol());
+    }
+}
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -113,7 +120,7 @@ void CallMetroMenuScreen(void)
     // Create Label for Battery icon
     __smmBatteryLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmBatteryLabel, _smmContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__smmBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__smmBatteryLabel, get_battery_symbol());
 
     static lv_style_t _smmBatteryLabelStyle;
     lv_style_init(&_smmBatteryLabelStyle);
@@ -125,6 +132,7 @@ void CallMetroMenuScreen(void)
     __smmWifiLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmWifiLabel, __smmBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__smmWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__smmWifiLabel, true);
 
     static lv_style_t __smmWifiLabelStyle;
     lv_style_init(&__smmWifiLabelStyle);
@@ -136,12 +144,15 @@ void CallMetroMenuScreen(void)
     __smmSignalLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmSignalLabel, __smmWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__smmSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__smmSignalLabel, true);
 
     static lv_style_t __smmSignalLabelStyle;
     lv_style_init(&__smmSignalLabelStyle);
     lv_style_set_text_font(&__smmSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__smmSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmSignalLabel, LV_LABEL_PART_MAIN, &__smmSignalLabelStyle);
+
+    metro_menu_refresherTask = lv_task_create(metro_menu_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain Summary Start Header
     _smmMetroHeadingCont = lv_cont_create(smmPatrentCont, NULL);
@@ -316,6 +327,8 @@ static void __smmBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         // printf("Back to Dashbord from presetscrn\n");
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         pxDashboardScreen();
     }
 }
@@ -324,6 +337,8 @@ static void new_cal_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         callMetroTempSettingScreen();
     }
 }
@@ -332,6 +347,8 @@ static void flow_cal_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         Screen_Password(SCR_CHANGE_PASSWORD);
     }
 }

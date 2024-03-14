@@ -245,7 +245,7 @@ void sssSummarySampleScreen(void)
         // Create Label for Battery icon
         __sssBatteryLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssBatteryLabel, _sssContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-        lv_label_set_text(__sssBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+        lv_label_set_text(__sssBatteryLabel, get_battery_symbol());
 
         static lv_style_t _sssBatteryLabelStyle;
         lv_style_init(&_sssBatteryLabelStyle);
@@ -257,6 +257,7 @@ void sssSummarySampleScreen(void)
         __sssWifiLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssWifiLabel, __sssBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
         lv_label_set_text(__sssWifiLabel, LV_SYMBOL_WIFI);
+        lv_obj_set_hidden(__sssWifiLabel, true);
 
         static lv_style_t _sssWifiLabelStyle;
         lv_style_init(&_sssWifiLabelStyle);
@@ -268,6 +269,7 @@ void sssSummarySampleScreen(void)
         __sssSignalLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssSignalLabel, __sssWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
         lv_label_set_text(__sssSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+        lv_obj_set_hidden(__sssSignalLabel, true);
 
         static lv_style_t _sssSignalLabelStyle;
         lv_style_init(&_sssSignalLabelStyle);
@@ -1191,6 +1193,7 @@ static void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
         if (lv_obj_get_screen(__sssTimeLabel) == lv_scr_act())
         {
                 lv_label_set_text(__sssTimeLabel, guiTime);
+                lv_label_set_text(__sssBatteryLabel, get_battery_symbol());
         }
 }
 
@@ -1202,6 +1205,7 @@ static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
+                __sssrefresherTask = NULL;
                 xseSummaryEndScreen();
         }
 }
@@ -1211,6 +1215,7 @@ static void QuitBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
+                __sssrefresherTask = NULL;
                 dashboardflg = 0;
                 pxDashboardScreen();
         }

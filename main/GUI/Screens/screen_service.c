@@ -117,6 +117,7 @@ lv_obj_t *_sstActionTxt123;
 lv_obj_t *_sstMsgTxt123;
 lv_obj_t *_sstActionSwitch123;
 
+lv_task_t *service_refresherTask;
 /**********************
  *      MACROS
  **********************/
@@ -128,6 +129,16 @@ lv_obj_t *_sstActionSwitch123;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void service_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__sstTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__sstTimeLabel, guiTime);
+        lv_label_set_text(_sstBatteryLbl, get_battery_symbol());
+    }
+}
+
+
 void callServiceSetScreen(void)
 {
     sstParentCont = lv_obj_create(NULL, NULL);
@@ -165,7 +176,7 @@ void callServiceSetScreen(void)
     // Create Label for Battery icon
     _sstBatteryLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstBatteryLbl, _sstContStausBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(_sstBatteryLbl, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(_sstBatteryLbl, get_battery_symbol());
 
     static lv_style_t _sstBatteryLblStyle;
     lv_style_init(&_sstBatteryLblStyle);
@@ -177,6 +188,7 @@ void callServiceSetScreen(void)
     _sstWiFiLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstWiFiLbl, _sstBatteryLbl, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_sstWiFiLbl, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(_sstWiFiLbl, true);
 
     static lv_style_t _xWifiLabelStyle_par;
     lv_style_init(&_xWifiLabelStyle_par);
@@ -188,12 +200,15 @@ void callServiceSetScreen(void)
     _sstSignalLbl = lv_label_create(_sstContStausBar, NULL);
     lv_obj_align(_sstSignalLbl, _sstWiFiLbl, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_sstSignalLbl, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(_sstSignalLbl, true);
 
     static lv_style_t _xSignalLabelStyle_par;
     lv_style_init(&_xSignalLabelStyle_par);
     lv_style_set_text_font(&_xSignalLabelStyle_par, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&_xSignalLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_sstSignalLbl, LV_LABEL_PART_MAIN, &_xSignalLabelStyle_par);
+
+    service_refresherTask = lv_task_create(service_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create a container to put all the parameters
     _sstSliderPage = lv_page_create(sstParentCont, NULL);
@@ -681,6 +696,8 @@ static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         // printf("Back to Dashbord from presetscrn\n");
+        lv_task_del(service_refresherTask);
+        service_refresherTask = NULL;
         pxDashboardScreen();
     }
 }

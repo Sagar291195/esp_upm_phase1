@@ -315,56 +315,67 @@ void set_buzzeron_stat(bool stat)
  ********************************************************************************************/
 void ws2812_task(void *pvParamters)
 {
-    ws2812_init(13);
-    cr = 0x5D;
-    cg = 0xAF;
-    cb = 0x48;
+    if(devicesettings.led_enable == 1)
+    {
+        ESP_LOGI("WS2812", "Initialization of ws2812");
+        ws2812_init(13);
+        cr = 0x5D;
+        cg = 0xAF;
+        cb = 0x48;
+    }
+    else{
+        ws2812_disable();
+    }
 
     while (1)
     {
-        switch (dashboardflg)
+        if(devicesettings.led_enable == 1)
         {
-        case 0: // Ready
-            cr = 0x5D;
-            cg = 0xAF;
-            cb = 0x48;
-            iLEDActive();
-            break;
+            switch (dashboardflg)
+            {
+            case 0: // Ready
+                cr = 0x5D;
+                cg = 0xAF;
+                cb = 0x48;
+                iLEDActive();
+                break;
 
-        case 1: // Work in progress
-            cr = 0x54;
-            cg = 0x83;
-            cb = 0xAF;
-            iLEDActive();
-            vTaskDelay(100);
-            iLEDDeActive();
-            vTaskDelay(100);
-            iLEDActive();
-            vTaskDelay(100);
-            iLEDDeActive();
-            vTaskDelay(2000);
-            break;
+            case 1: // Work in progress
+                cr = 0x54;
+                cg = 0x83;
+                cb = 0xAF;
+                iLEDActive();
+                vTaskDelay(100);
+                iLEDDeActive();
+                vTaskDelay(100);
+                iLEDActive();
+                vTaskDelay(100);
+                iLEDDeActive();
+                vTaskDelay(2000);
+                break;
 
-        case 2: // Work Finished
-            cr = 0x38;
-            cg = 0x67;
-            cb = 0xD6;
-            iLEDActive();
-            break;
+            case 2: // Work Finished
+                cr = 0x38;
+                cg = 0x67;
+                cb = 0xD6;
+                iLEDActive();
+                break;
 
-        case 3: // Wait
-            cr = 0xD5;
-            cg = 0xDE;
-            cb = 0x54;
-            iLEDActive();
-            vTaskDelay(300);
-            iLEDDeActive();
-            vTaskDelay(300);
-            break;
+            case 3: // Wait
+                cr = 0xD5;
+                cg = 0xDE;
+                cb = 0x54;
+                iLEDActive();
+                vTaskDelay(300);
+                iLEDDeActive();
+                vTaskDelay(300);
+                break;
 
-        default:
-            break;    
+            default:
+                break;    
+            }
         }
+        vTaskDelay(100/portTICK_RATE_MS);
     }
 }
 

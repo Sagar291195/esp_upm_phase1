@@ -106,4 +106,9 @@ float get_sdp32_temperature_value();
 
 
 float get_sdp32_massflow_value(void);
+
+
+int get_battery_percentage(void);
+
+char *get_battery_symbol(void);
 #endif // __SENSORMANAGEMENT_H__

@@ -42,7 +42,8 @@ typedef struct {
  *
  * This may be called again to soft reset the device and initialize it again.
  */
-esp_err_t lm2759_set_mode(lm2759_t *dev);
+esp_err_t lm2759_set_torchmode(lm2759_t *dev);
+esp_err_t lm2759_set_shutdownmode(lm2759_t *dev);
 
 /**
  * @brief Initialize device descriptior
@@ -55,10 +56,15 @@ esp_err_t lm2759_set_mode(lm2759_t *dev);
  */
 esp_err_t lm2759_init_desc(lm2759_t *dev, uint8_t addr, i2c_port_t port, gpio_num_t sda_gpio, gpio_num_t scl_gpio);
 
-//esp_err_t lm2759_init(void);
-
 void lcd_led_driver_init(void);
 
+void lcd_set_sleep(void);
+
+void lcd_set_wakeup(void);
+
+bool get_lcdsleep_status(void);
+
+void lcd_set_contrast(int dutycycle);
 #ifdef __cplusplus
 }
 #endif

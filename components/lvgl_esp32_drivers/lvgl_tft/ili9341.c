@@ -91,9 +91,9 @@ void ili9341_init(void)
 #endif
 
 	//Initialize non-SPI GPIOs
-        gpio_pad_select_gpio(ILI9341_DC);
+	gpio_pad_select_gpio(ILI9341_DC);
 	gpio_set_direction(ILI9341_DC, GPIO_MODE_OUTPUT);
-        gpio_pad_select_gpio(ILI9341_RST);
+	gpio_pad_select_gpio(ILI9341_RST);
 	gpio_set_direction(ILI9341_RST, GPIO_MODE_OUTPUT);
 
 #if ILI9341_ENABLE_BACKLIGHT_CONTROL

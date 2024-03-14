@@ -201,7 +201,7 @@ void xsPresetScreenAdvance(void)
     // Create Label for Battery icon
     _xaBatteryLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
     lv_obj_align(_xaBatteryLabel_Adv, _xaContainerStatusBar_Adv, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(_xaBatteryLabel_Adv, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(_xaBatteryLabel_Adv, get_battery_symbol());
 
     static lv_style_t _xaBatteryLabelStyle_Adv;
     lv_style_init(&_xaBatteryLabelStyle_Adv);
@@ -213,6 +213,7 @@ void xsPresetScreenAdvance(void)
     _xaWifiLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
     lv_obj_align(_xaWifiLabel_Adv, _xaBatteryLabel_Adv, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(_xaWifiLabel_Adv, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(_xaWifiLabel_Adv, true);
 
     static lv_style_t _xaWifiLabelStyle_Adv;
     lv_style_init(&_xaWifiLabelStyle_Adv);
@@ -224,6 +225,7 @@ void xsPresetScreenAdvance(void)
     _xaSignalLabel_Adv = lv_label_create(_xaContainerStatusBar_Adv, NULL);
     lv_obj_align(_xaSignalLabel_Adv, _xaWifiLabel_Adv, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(_xaSignalLabel_Adv, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(_xaSignalLabel_Adv, true);
 
     static lv_style_t _xaSignalLabelStyle_Adv;
     lv_style_init(&_xaSignalLabelStyle_Adv);
@@ -293,7 +295,7 @@ void xsPresetScreenAdvance(void)
     static lv_style_t _xaGoToNextStyle_Adv;
     lv_style_init(&_xaGoToNextStyle_Adv);
     lv_style_set_bg_color(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_YELLOW);         // LV_COLOR_MAKE(0x38, 0x38, 0x38)
-    lv_style_set_text_font(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_34); // signal_20
+    lv_style_set_text_font(&_xaGoToNextStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_30); // signal_20
     lv_style_set_text_color(&_xaGoToNextStyle_Adv, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xaGoToNextLbl_Adv, LV_LABEL_PART_MAIN, &_xaGoToNextStyle_Adv);
 
@@ -460,7 +462,7 @@ void xsPresetScreenAdvance(void)
 
     static lv_style_t _xaSlashLabelStyle_Adv;
     lv_style_init(&_xaSlashLabelStyle_Adv);
-    lv_style_set_text_font(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_34);
+    lv_style_set_text_font(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_style_set_text_color(&_xaSlashLabelStyle_Adv, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_add_style(_xaDotLabel_Adv, LV_LABEL_PART_MAIN, &_xaSlashLabelStyle_Adv);
 
@@ -833,6 +835,7 @@ static void _xaTimeLabel_Adv_refr_func(lv_task_t *_xarefresherTask)
     if (lv_obj_get_screen(_xaTimeLabel_Adv) == lv_scr_act())
     {
         lv_label_set_text(_xaTimeLabel_Adv, guiTime);
+        lv_label_set_text(_xaBatteryLabel_Adv, get_battery_symbol());
     }
 }
 
@@ -845,7 +848,8 @@ static void _xsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
-        lv_task_del(_xarefresherTask); //_xarefresherTask
+        lv_task_del(_xarefresherTask); 
+        _xarefresherTask = NULL;
         rollerMovCkFlag = false;
         global_DashbordBTNflag = 1;
         dashboardflg = 0; // Set Dashboard resume info into Ready Mode
@@ -860,6 +864,7 @@ static void valid_btn_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         SeqCounter++;
         lv_task_del(_xarefresherTask);
+        _xarefresherTask = NULL; 
         defaultParametrs();
         if (rollerMovCkFlag == true)
         {

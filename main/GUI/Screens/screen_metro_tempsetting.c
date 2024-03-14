@@ -58,6 +58,8 @@ lv_obj_t *__mtsTempHeadingLbl;
 lv_obj_t *_mtsTempLogo;
 lv_obj_t *_mtsCurveUnitCont;
 
+lv_task_t *temp_settings_refresherTask; 
+
 int global_CurveDegree_temp;
 int metroTempUnit;
 
@@ -72,6 +74,14 @@ int metroTempUnit;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void temp_settings_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__mtsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__mtsTimeLabel, guiTime);
+        lv_label_set_text(__mtsBatteryLabel, get_battery_symbol());
+    }
+}
 
 void callMetroTempSettingScreen(void)
 {
@@ -113,7 +123,7 @@ void callMetroTempSettingScreen(void)
     // Create Label for Battery icon
     __mtsBatteryLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsBatteryLabel, _mtsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__mtsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__mtsBatteryLabel, get_battery_symbol());
 
     static lv_style_t __mtsBatteryLabelStyle;
     lv_style_init(&__mtsBatteryLabelStyle);
@@ -125,6 +135,7 @@ void callMetroTempSettingScreen(void)
     __mtsWifiLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsWifiLabel, __mtsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mtsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__mtsWifiLabel, true);
 
     static lv_style_t __mtsWifiLabelStyle;
     lv_style_init(&__mtsWifiLabelStyle);
@@ -136,12 +147,15 @@ void callMetroTempSettingScreen(void)
     __mtsSignalLabel = lv_label_create(_mtsContStatusBar, NULL);
     lv_obj_align(__mtsSignalLabel, __mtsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mtsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__mtsSignalLabel, true);
 
     static lv_style_t __mtsSignalLabelStyle;
     lv_style_init(&__mtsSignalLabelStyle);
     lv_style_set_text_font(&__mtsSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__mtsSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mtsSignalLabel, LV_LABEL_PART_MAIN, &__mtsSignalLabelStyle);
+
+    temp_settings_refresherTask = lv_task_create(temp_settings_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain FLOW Header
     _mtsTempHeadingCont = lv_cont_create(mtsParentCont, NULL);
@@ -464,6 +478,8 @@ static void __mtsValidAdjBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(temp_settings_refresherTask);
+        temp_settings_refresherTask = NULL;
         callMetroAdjust();
     }
 }
@@ -472,6 +488,8 @@ static void __mtsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(temp_settings_refresherTask);
+        temp_settings_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -551,7 +569,6 @@ static void unit_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
         if (!strcmp(buf, "°C"))
         {
             metroTempUnit = 0;
@@ -572,7 +589,6 @@ static void lowerlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 
@@ -583,7 +599,6 @@ static void higherlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 

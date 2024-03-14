@@ -41,12 +41,14 @@ extern "C"
 #include "screen_password.h"
 #include "screen_set_timedate.h"
 #include "screen_archive.h"
+#include "screen_fw_error.h"
 
 #include "../Widgets/ResumeInfoWidget.h"
 #include "../Widgets/sequence_widget.h"
 
 #include "esp_upm.h"
 #include "espupm_tasks.h"
+#include "sensorManagement.h"
 
  /********************************************************************************************
  *                              DEFINES
@@ -87,6 +89,9 @@ enum
     SCR_SUMMARY_START,
     SCR_SUMMARY_END,
     SCR_SUMMARY_SAMPLE,
+    SCR_PASSWORD_SAMPLE_STOP,
+    SCR_PASSWORD_WAKEUP,
+    SCR_FW_ERROR,
 } metrology_screen_t;
 
 /********************************************************************************************
