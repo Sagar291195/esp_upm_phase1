@@ -158,7 +158,6 @@ static void SlpTmr_DD_event_handler(lv_obj_t *obj, lv_event_t event)
 }
 
 // Lumin_Slider_event_handler
-
 static void Lumin_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)
@@ -169,7 +168,6 @@ static void Lumin_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
 }
 
 // Contrast_Slider_event_handler
-
 static void Contrast_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_VALUE_CHANGED)

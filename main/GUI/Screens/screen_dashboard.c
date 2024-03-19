@@ -419,6 +419,7 @@ void pxDashboardScreen(void)
     lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_click(list_btn, false);
+    lv_obj_set_hidden(list_btn, true);
 
     list_btn = lv_list_add_btn(xMenulist1, NULL, NULL); // LV_SYMBOL_FILE
     lv_obj_set_event_cb(list_btn, event_handler);
