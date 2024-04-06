@@ -194,54 +194,72 @@ static void uart_event_task(void *pvParameters)
                             {
                                 if(strcasestr((char *)dtmp, "?") != NULL)
                                 {
-                                    ESP_LOGI(TAG, "SSID=%s\r\n", devicesettings.wifi_ssid);
+                                    ESP_LOGI(TAG, "SSID=%s", devicesettings.wifi_ssid);
                                 }
                                 else
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    strcpy(devicesettings.wifi_ssid, pch+1);
-                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
                                     {
-                                        ESP_LOGE(TAG, "device settings write error for wifi ssid");
+                                        pch++;
+                                        memset(devicesettings.wifi_ssid, 0x00, sizeof(devicesettings.wifi_ssid));
+                                        memcpy(devicesettings.wifi_ssid, pch, (strlen(pch)-2));
+                                        ESP_LOGI(TAG, "WiFi SSID = %s", devicesettings.wifi_ssid);
+                                        if(nvswrite_device_settings(&devicesettings) == false)
+                                        {
+                                            ESP_LOGE(TAG, "device settings write error for wifi ssid");
+                                        }
+                                        ESP_LOGI(TAG, "OK");
                                     }
-                                    ESP_LOGI(TAG, "OK\r\n");
                                 }
                             }
                             else if(strcasestr((char *)dtmp, "AT+PASSWORD=") != NULL)
                             {
                                 if(strcasestr((char *)dtmp, "?") != NULL)
                                 {
-                                    ESP_LOGI(TAG, "PASSWORD=%s\r\n", devicesettings.wifi_password);
+                                    ESP_LOGI(TAG, "PASSWORD=%s", devicesettings.wifi_password);
                                 }
                                 else
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    strcpy(devicesettings.wifi_password, pch+1);
-                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
                                     {
-                                        ESP_LOGE(TAG, "device settings write error for wifi password");
+                                        pch++;
+                                        memset(devicesettings.wifi_password, 0x00, sizeof(devicesettings.wifi_password));
+                                        memcpy(devicesettings.wifi_password, pch, (strlen(pch)-2));
+                                        if(nvswrite_device_settings(&devicesettings) == false)
+                                        {
+                                            ESP_LOGE(TAG, "device settings write error for wifi password");
+                                        }
+                                        ESP_LOGI(TAG, "WiFi PASSWORD = %s", devicesettings.wifi_password);
+                                        ESP_LOGI(TAG, "OK");
                                     }
-                                    ESP_LOGI(TAG, "OK\r\n");
                                 }
                             }
                             else if(strcasestr((char *)dtmp, "AT+SRNUM=") != NULL)
                             {
                                 if(strcasestr((char *)dtmp, "?") != NULL)
                                 {
-                                    ESP_LOGI(TAG, "SERIAL NUMBER = %s\r\n", devicesettings.device_serial_number);
+                                    ESP_LOGI(TAG, "SERIAL NUMBER = %s", devicesettings.device_serial_number);
                                 }
                                 else
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    strcpy(devicesettings.device_serial_number, pch+1);
-                                    if(nvswrite_device_settings(&devicesettings) == false)
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
                                     {
-                                        ESP_LOGE(TAG, "device settings write error for serial number");
+                                        pch++;
+                                        memset(devicesettings.device_serial_number, 0x00, sizeof(devicesettings.device_serial_number));
+                                        memcpy(devicesettings.device_serial_number, pch, (strlen(pch)-2));               
+                                        if(nvswrite_device_settings(&devicesettings) == false)
+                                        {
+                                            ESP_LOGE(TAG, "device settings write error for serial number");
+                                        }
+                                        ESP_LOGI(TAG, "WiFi Serial number = %s", devicesettings.device_serial_number);
+                                        ESP_LOGI(TAG, "OK");
                                     }
-                                    ESP_LOGI(TAG, "OK\r\n");
                                 }
                             }
                             else if(strcasestr((char *)dtmp, "AT+KP=") != NULL)
@@ -256,11 +274,17 @@ static void uart_event_task(void *pvParameters)
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    struct_PID_parameters_t pid_parameters; 
-                                    nvsread_pid_parameters(&pid_parameters);
-                                    pid_parameters.fKp = atof(pch);
-                                    nvswrite_pid_parameters(&pid_parameters);
-                                    ESP_LOGI(TAG, "OK\r\n");
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
+                                    {
+                                        pch++;
+                                        struct_PID_parameters_t pid_parameters; 
+                                        nvsread_pid_parameters(&pid_parameters);
+                                        pid_parameters.fKp = atof(pch);
+                                        nvswrite_pid_parameters(&pid_parameters);
+                                        ESP_LOGI(TAG, "KP Value = %0.2f", pid_parameters.fKp);
+                                        ESP_LOGI(TAG, "OK");
+                                    }
+                                    
                                 }
                             }
                             else if(strcasestr((char *)dtmp, "AT+KI=") != NULL)
@@ -275,11 +299,16 @@ static void uart_event_task(void *pvParameters)
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    struct_PID_parameters_t pid_parameters; 
-                                    nvsread_pid_parameters(&pid_parameters);
-                                    pid_parameters.fKi = atof(pch);
-                                    nvswrite_pid_parameters(&pid_parameters);
-                                    ESP_LOGI(TAG, "OK\r\n");
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
+                                    {
+                                        pch++;
+                                        struct_PID_parameters_t pid_parameters; 
+                                        nvsread_pid_parameters(&pid_parameters);
+                                        pid_parameters.fKi = atof(pch);
+                                        nvswrite_pid_parameters(&pid_parameters);
+                                        ESP_LOGI(TAG, "KI Value = %0.2f", pid_parameters.fKi);
+                                        ESP_LOGI(TAG, "OK");
+                                    }
                                 }
                             }
                             else if(strcasestr((char *)dtmp, "AT+KD=") != NULL)
@@ -294,11 +323,16 @@ static void uart_event_task(void *pvParameters)
                                 {
                                     char *pch;
                                     pch = strchr((char *)dtmp, '=');
-                                    struct_PID_parameters_t pid_parameters; 
-                                    nvsread_pid_parameters(&pid_parameters);
-                                    pid_parameters.fKd = atof(pch);
-                                    nvswrite_pid_parameters(&pid_parameters);
-                                    ESP_LOGI(TAG, "OK\r\n");
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
+                                    {
+                                        pch++;
+                                        struct_PID_parameters_t pid_parameters; 
+                                        nvsread_pid_parameters(&pid_parameters);
+                                        pid_parameters.fKd = atof(pch);
+                                        nvswrite_pid_parameters(&pid_parameters);
+                                        ESP_LOGI(TAG, "KD Value = %0.2f", pid_parameters.fKd);
+                                        ESP_LOGI(TAG, "OK");
+                                    }
                                 }
                             }
                             else{

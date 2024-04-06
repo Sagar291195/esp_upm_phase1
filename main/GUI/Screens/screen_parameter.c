@@ -163,6 +163,7 @@ static void Lumin_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         devicesettings.luminosity_value = lv_slider_get_value(obj);
+        lcd_set_contrast(devicesettings.contrast_value);
         nvswrite_device_settings(&devicesettings);
     }
 }
@@ -173,7 +174,6 @@ static void Contrast_Slider_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_VALUE_CHANGED)
     {
         devicesettings.contrast_value = lv_slider_get_value(obj);
-        lcd_set_contrast(devicesettings.contrast_value);
         nvswrite_device_settings(&devicesettings);
     }
 }

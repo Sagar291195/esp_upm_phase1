@@ -120,7 +120,8 @@ void lcd_led_driver_init(void)
         ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
     }
 
-    devicesettings.contrast_value = 80;
+    if(devicesettings.contrast_value == 0)
+        devicesettings.contrast_value = 30;
     lcd_set_contrast(devicesettings.contrast_value);
     ESP_LOGI(TAG, "Init LCD driver finish");
 }

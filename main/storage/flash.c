@@ -627,6 +627,7 @@ bool nvsread_device_settings(void)
     ret = nvsread_value_parameter(SETTINGS_STORGE_NAME, dev_settings_key, (char *)&devicesettings);
     if ( ret == false || devicesettings.startbyte != 0xFE)
     {   
+        memset(&devicesettings, 0x00, sizeof(devicesettings));
         devicesettings.startbyte = 0xFE;
         memcpy(devicesettings.screen_lock_password, "1234", strlen("1234"));
         memcpy(devicesettings.metrology_lock_password, "1234", strlen("1234"));
@@ -648,6 +649,12 @@ bool nvsread_device_settings(void)
         {
             ESP_LOGI(TAG, "default device settings are saved");
         }
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Device serial number = %s", devicesettings.device_serial_number);
+        ESP_LOGI(TAG, "Device WiFi SSID = %s", devicesettings.wifi_ssid);
+        ESP_LOGI(TAG, "Device WiFi Password = %s", devicesettings.wifi_password);
     }
     return ret;
 }

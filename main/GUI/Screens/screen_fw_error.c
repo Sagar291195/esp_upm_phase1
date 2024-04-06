@@ -153,6 +153,7 @@ void screen_firmware_error(void)
     lv_style_set_text_font(&BatteryLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&BatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(fwerror_batterylabel, LV_LABEL_PART_MAIN, &BatteryLabelStyle);
+    lv_obj_set_hidden(fwerror_batterylabel, true);
 
     // Create Label for Wifi icon
     fwerror_wifilabel = lv_label_create(fwerror_statusbar, NULL);
