@@ -629,17 +629,17 @@ bool nvsread_device_settings(void)
     {   
         memset(&devicesettings, 0x00, sizeof(devicesettings));
         devicesettings.startbyte = 0xFE;
-        memcpy(devicesettings.screen_lock_password, "1234", strlen("1234"));
-        memcpy(devicesettings.metrology_lock_password, "1234", strlen("1234"));
-        memcpy(devicesettings.wifi_ssid, "espupm_firmware", strlen("espupm_firmware"));
+        memcpy(devicesettings.screen_lock_password, "2024", strlen("2024"));
+        memcpy(devicesettings.metrology_lock_password, "1664", strlen("1664"));
+        memcpy(devicesettings.wifi_ssid, "espupm_ota", strlen("espupm_ota"));
         memcpy(devicesettings.wifi_password, "12345678", strlen("12345678"));
         devicesettings.buzzer_enable = 0;
         devicesettings.led_enable = 0;
         devicesettings.wifi_enable = 0;
         devicesettings.external_fan_enable = 0;
-        devicesettings.screen_sleepmode_enable = 0;
+        devicesettings.screen_sleepmode_enable = 1;
         devicesettings.selected_language = ENGLISH;
-        devicesettings.screen_timeout_value = 15;
+        devicesettings.screen_timeout_value = 2;
         devicesettings.luminosity_value = 80;
         devicesettings.contrast_value = 80;
         memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));

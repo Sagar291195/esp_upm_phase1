@@ -148,11 +148,11 @@ static void SlpTmr_DD_event_handler(lv_obj_t *obj, lv_event_t event)
     {
         selectedoption = lv_dropdown_get_selected(obj);
         if(selectedoption == 0)
-            devicesettings.screen_timeout_value = 15;
+            devicesettings.screen_timeout_value = 2;
         else if(selectedoption == 1)
-            devicesettings.screen_timeout_value = 30;
+            devicesettings.screen_timeout_value = 5;
         else if(selectedoption == 2)
-            devicesettings.screen_timeout_value = 60;  
+            devicesettings.screen_timeout_value = 10;  
         nvswrite_device_settings(&devicesettings);          
     }
 }
@@ -824,9 +824,9 @@ void ppxParameterScreen(void)
 
     // Create a Language selection drop down list
     _xTimerDropDown_par = lv_dropdown_create(_xParaSlpTmrCont_par, NULL);
-    lv_dropdown_set_options(_xTimerDropDown_par, "15 min\n"
-                                                 "30 min\n"
-                                                 "60 min");
+    lv_dropdown_set_options(_xTimerDropDown_par, "2 min\n"
+                                                 "5 min\n"
+                                                 "10 min");
     lv_obj_align(_xTimerDropDown_par, _xParaSlpTmrCont_par, LV_ALIGN_IN_RIGHT_MID, 30, 0);
     lv_obj_set_size(_xTimerDropDown_par, 80, 30);
 
@@ -839,11 +839,11 @@ void ppxParameterScreen(void)
     lv_obj_add_style(_xTimerDropDown_par, LV_DROPDOWN_PART_MAIN, &_xTimerDropDownStyle_par);
     lv_obj_set_event_cb(_xTimerDropDown_par, SlpTmr_DD_event_handler);
     
-    if(devicesettings.screen_timeout_value == 15)
+    if(devicesettings.screen_timeout_value == 2)
         lv_dropdown_set_selected(_xTimerDropDown_par, 0);
-    else if(devicesettings.screen_timeout_value == 30)
+    else if(devicesettings.screen_timeout_value == 5)
         lv_dropdown_set_selected(_xTimerDropDown_par, 1);
-    else if(devicesettings.screen_timeout_value == 60)
+    else if(devicesettings.screen_timeout_value == 10)
         lv_dropdown_set_selected(_xTimerDropDown_par, 2);
 
     // Seprator line

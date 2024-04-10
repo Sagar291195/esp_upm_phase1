@@ -384,6 +384,16 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_text_color(&style_UnitHour, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 	lv_obj_add_style(UnitHour, LV_LABEL_PART_MAIN, &style_UnitHour);
 
+	lv_obj_set_hidden(UnitHour, true);
+	lv_obj_set_hidden(var_hour_Label_Float, true);
+	lv_obj_set_hidden(hourpoint, true);
+	lv_obj_set_hidden(var_hour_Label_Int, true);
+	lv_obj_set_hidden(UnitLiter, true);
+	lv_obj_set_hidden(var_liter_Label_Float, true);
+	lv_obj_set_hidden(literpoint, true);
+	lv_obj_set_hidden(var_liter_Label_Int, true);
+	lv_obj_set_hidden(fix_hour_Label, true);
+	lv_obj_set_hidden(fix_liters_Label, true);
 	//-----------------------------------------------------------------------------------------------------
 
 	pxExt->pxContainer = pxContainer;

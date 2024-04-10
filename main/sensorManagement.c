@@ -31,7 +31,7 @@
 #define MASSFLOW_CALCULATION_FACTOR             0.1
 
 
-#define BATTERY_MIN_VOLTAGE         9.0
+#define BATTERY_MIN_VOLTAGE         12.4
 #define BATTERY_MAX_VOLTAGE         16.8
 
 /********************************************************************************************
