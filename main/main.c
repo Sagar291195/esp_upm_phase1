@@ -78,7 +78,7 @@ static void IRAM_ATTR screen_timeout_handler(void *arg)
     {
         ESP_LOGI(TAG, "screen timeout handler idle count : %d, %d, %d, %d, %d", idle_minute_counter, get_touchcount(),
                          savedtouchcount, get_lcdsleep_status(), dashboardflg);
-        if((get_touchcount() == savedtouchcount) && (get_lcdsleep_status() == false) && (dashboardflg != 1))
+        if((get_touchcount() == savedtouchcount) && (get_lcdsleep_status() == false))
         {
             idle_minute_counter++;
             if(idle_minute_counter == devicesettings.screen_timeout_value)

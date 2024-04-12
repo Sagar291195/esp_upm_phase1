@@ -177,8 +177,6 @@ static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 }
 
 // Event handler associated to menu icon btn to call menu screen
-
-
 static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event)
 {
     static bool bxCatchMenuClick = true;
