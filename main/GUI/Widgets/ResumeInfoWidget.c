@@ -442,7 +442,9 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_set_style_local_line_color(pxArc, LV_ARC_PART_INDIC, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48));
 		lv_obj_set_style_local_bg_opa(pxArc, LV_ARC_PART_BG, LV_STATE_DEFAULT, LV_OPA_TRANSP);
 		lv_arc_set_angles(pxExt->pxProgressArc, 0, 360);
-		lv_label_set_text(pxExt->pxPercentValue, "Let's \nStart");
+		lv_label_set_text_fmt(pxExt->pxPercentValue, "%c%c%c\n %c%c%c%c", devicesettings.device_serial_number[0],
+			devicesettings.device_serial_number[1], devicesettings.device_serial_number[2], devicesettings.device_serial_number[3], 
+			devicesettings.device_serial_number[4], devicesettings.device_serial_number[5], devicesettings.device_serial_number[6]);
 		lv_obj_set_style_local_text_font(pxPercentLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_obj_align(pxTextLabel, pxArc, LV_ALIGN_OUT_TOP_LEFT, -140, 0);

@@ -330,7 +330,7 @@ void pxDashboardScreen(void)
 
     _xWelcomeMsgLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWelcomeMsgLabel, _xWifiLabel, LV_ALIGN_OUT_BOTTOM_MID, -90, 0);
-    lv_label_set_text(_xWelcomeMsgLabel, "Welcome LSDIAG");
+    lv_label_set_text_fmt(_xWelcomeMsgLabel, "Welcome %s", devicesettings.customer_name);
 
     static lv_style_t _xWelcomeMsgLabelStyle;
     lv_style_init(&_xWelcomeMsgLabelStyle);

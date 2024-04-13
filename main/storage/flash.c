@@ -643,6 +643,7 @@ bool nvsread_device_settings(void)
         devicesettings.luminosity_value = 80;
         devicesettings.contrast_value = 80;
         memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));
+        memcpy(devicesettings.customer_name, "Navier", strlen("Navier"));
 
         ret = nvswrite_device_settings(&devicesettings);
         if( ret )

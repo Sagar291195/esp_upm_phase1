@@ -335,6 +335,30 @@ static void uart_event_task(void *pvParameters)
                                     }
                                 }
                             }
+                            else if(strcasestr((char *)dtmp, "AT+CUSTOMER=") != NULL)
+                            {
+                                if(strcasestr((char *)dtmp, "?") != NULL)
+                                {
+                                    ESP_LOGI(TAG, "Customer Name = %s", devicesettings.customer_name);
+                                }
+                                else
+                                {
+                                    char *pch;
+                                    pch = strchr((char *)dtmp, '=');
+                                    if(pch && strcasestr((char *)dtmp, "\r\n") != NULL)
+                                    {
+                                        pch++;
+                                        memset(devicesettings.customer_name, 0x00, sizeof(devicesettings.customer_name));
+                                        memcpy(devicesettings.customer_name, pch, (strlen(pch)-2));               
+                                        if(nvswrite_device_settings(&devicesettings) == false)
+                                        {
+                                            ESP_LOGE(TAG, "device settings write error for serial number");
+                                        }
+                                        ESP_LOGI(TAG, "WiFi Serial number = %s", devicesettings.customer_name);
+                                        ESP_LOGI(TAG, "OK");
+                                    }
+                                }
+                            }
                             else{
                                 ESP_LOGE(TAG, "incorrect command entered");
                             }
