@@ -54,6 +54,7 @@ lv_obj_t *xseParentContainer_se;
 lv_obj_t *_xseContStatusBar_se;
 lv_obj_t *__xseTimeLabel_se;
 lv_obj_t *__xseBatteryLabel_se;
+lv_obj_t *__xseBatteryPercentage_se;
 lv_obj_t *__xseWifiLabel_se;
 lv_obj_t *__xseSignalLabel_se;
 lv_obj_t *_xseSummaryParent_se;
@@ -145,13 +146,14 @@ lv_task_t *__xserefresherTask;
  *  GLOBAL VARIABLES
  **********************/
 static uint8_t sequence_number[MAXIMUM_NO_OF_SAMPLES] = {0};
+static bool requiredreboot =  false;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xseSummaryEndScreen(void)
+void xseSummaryEndScreen(bool needreboot)
 {
-
+    requiredreboot = needreboot;
     scrSummaryEnd = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEnd);
     if (crnt_screen != NULL)
@@ -200,6 +202,16 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_font(&_xseBatteryLabelStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_xseBatteryLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseBatteryLabel_se, LV_LABEL_PART_MAIN, &_xseBatteryLabelStyle_se);
+
+    __xseBatteryPercentage_se = lv_label_create(_xseContStatusBar_se, NULL);
+    lv_obj_align(__xseBatteryPercentage_se, _xseContStatusBar_se, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__xseBatteryPercentage_se, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__xseBatteryPercentage_se, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     __xseWifiLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
@@ -944,6 +956,7 @@ static void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
     {
         lv_label_set_text(__xseTimeLabel_se, guiTime);
         lv_label_set_text(__xseBatteryLabel_se, get_battery_symbol());
+        lv_label_set_text_fmt(__xseBatteryPercentage_se, "%d%%", get_battery_percentage());
     }
 }
 
@@ -958,8 +971,15 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xserefresherTask);
         __xserefresherTask = NULL;
         global_DashbordBTNflag = 1;
-        set_archiv_or_summary_screen(0);
-        xsPresetScreenAdvance();
+        if(requiredreboot == true)
+        {
+            esp_restart();
+        }
+        else
+        {
+            set_archiv_or_summary_screen(0);
+            xsPresetScreenAdvance();
+        }
     }
 }
 
@@ -970,8 +990,16 @@ static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xserefresherTask);
         __xserefresherTask = NULL;
         dashboardflg = 0;
-        set_archiv_or_summary_screen(0);
-        pxDashboardScreen();
+        if(requiredreboot == true)
+        {
+            esp_restart();
+        }
+        else
+        {
+            set_archiv_or_summary_screen(0);
+            pxDashboardScreen();
+        }
+
     }
 }
 

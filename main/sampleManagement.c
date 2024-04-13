@@ -598,7 +598,7 @@ void vControllerShowEndSummayScreen()
     ESP_LOGD(TAG, "Showing the end summary screen");
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        xseSummaryEndScreen();
+        xseSummaryEndScreen(true);
         xSemaphoreGive(gui_update_semaphore);
     }
 }

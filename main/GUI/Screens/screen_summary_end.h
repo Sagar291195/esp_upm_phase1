@@ -25,7 +25,7 @@ extern "C"
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
-void xseSummaryEndScreen(void);
+void xseSummaryEndScreen(bool needreboot);
 void SequenceWidgetArrange(void);
 
 

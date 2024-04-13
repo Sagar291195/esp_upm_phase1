@@ -42,6 +42,7 @@ lv_obj_t *scrInfo;
 lv_obj_t *_infoContStatusBar;
 lv_obj_t *infoTimeLabel;
 lv_obj_t *_infoBatteryLabel;
+lv_obj_t *_infoBatteryPecentage;
 lv_obj_t *_infoWifiLabel;
 lv_obj_t *_infoSignalLabel;
 lv_obj_t *_infoHeadingCont;
@@ -154,6 +155,16 @@ void CallScreenInfo(void)
     lv_style_set_text_color(&_smmBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_infoBatteryLabel, LV_LABEL_PART_MAIN, &_smmBatteryLabelStyle);
 
+    _infoBatteryPecentage = lv_label_create(_infoContStatusBar, NULL);
+    lv_obj_align(_infoBatteryPecentage, _infoContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(_infoBatteryPecentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_infoBatteryPecentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     _infoWifiLabel = lv_label_create(_infoContStatusBar, NULL);
     lv_obj_align(_infoWifiLabel, _infoBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
@@ -191,7 +202,7 @@ void CallScreenInfo(void)
     _infoBackArrowLabel = lv_img_create(_infoHeadingCont, NULL);
     lv_img_set_src(_infoBackArrowLabel, &left_arrow_icon);
     lv_obj_align(_infoBackArrowLabel, _infoHeadingCont, LV_ALIGN_IN_LEFT_MID, 5, 0);
-    lv_obj_set_click(_infoBackArrowLabel, true);
+   // lv_obj_set_click(_infoBackArrowLabel, true);
     lv_obj_set_style_local_image_recolor_opa(_infoBackArrowLabel, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
     lv_obj_set_style_local_image_recolor(_infoBackArrowLabel, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_event_cb(_infoBackArrowLabel, _infoBackArrow_event_handler);
@@ -347,6 +358,7 @@ static void infoTimeLabel_refr_func(lv_task_t *inforefresherTask)
     {
         lv_label_set_text(infoTimeLabel, guiTime);
         lv_label_set_text(_infoBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(_infoBatteryPecentage, "%d%%", get_battery_percentage()); 
     }
 }
 

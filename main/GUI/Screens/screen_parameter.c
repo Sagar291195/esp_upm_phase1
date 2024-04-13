@@ -56,6 +56,7 @@ lv_obj_t *container_par;
 lv_obj_t *_xContainerStatusBar_par;
 lv_obj_t *_xTimeLabel_par;
 lv_obj_t *_xBatteryLabel_par;
+lv_obj_t *_xBatteryPercentage_par;
 lv_obj_t *_xWifiLabel_par;
 lv_obj_t *_xSignalLabel_par;
 lv_obj_t *_xParaLabelContainer_par;
@@ -129,6 +130,7 @@ static void param_refer_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(_xTimeLabel_par, guiTime);
         lv_label_set_text(_xBatteryLabel_par, get_battery_symbol());
+        lv_label_set_text_fmt(_xBatteryPercentage_par, "%d%%", get_battery_percentage());
     }
 }
 
@@ -299,6 +301,16 @@ void ppxParameterScreen(void)
     lv_style_set_text_font(&_xBatteryLabelStyle_par, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_xBatteryLabelStyle_par, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xBatteryLabel_par, LV_LABEL_PART_MAIN, &_xBatteryLabelStyle_par);
+
+    _xBatteryPercentage_par = lv_label_create(_xContainerStatusBar_par, NULL);
+    lv_obj_align(_xBatteryPercentage_par, _xContainerStatusBar_par, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(_xBatteryPercentage_par, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xBatteryPercentage_par, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     _xWifiLabel_par = lv_label_create(_xContainerStatusBar_par, NULL);

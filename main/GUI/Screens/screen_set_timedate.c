@@ -61,6 +61,7 @@ char sec_Roller_Default[5] = "00";
 static struct tm set_time_data;
 lv_obj_t *crnt_screen;
 lv_obj_t *set_timedate_battery_icon;
+lv_obj_t *set_timedate_battery_percentage;
 
 lv_task_t *settimedate_refresherTask;
 /**********************
@@ -71,6 +72,7 @@ static void settimedate_refer_func(lv_task_t *refresherTask)
     if (lv_obj_get_screen(set_timedate_battery_icon) == lv_scr_act())
     {
         lv_label_set_text(set_timedate_battery_icon, get_battery_symbol());
+        lv_label_set_text_fmt(set_timedate_battery_percentage, "%d%%", get_battery_percentage());
     }
 }
 
@@ -108,6 +110,16 @@ void screen_set_time_date(void)
     lv_style_set_text_font(&style_battery_label, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&style_battery_label, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(set_timedate_battery_icon, LV_LABEL_PART_MAIN, &style_battery_label);
+
+    set_timedate_battery_percentage = lv_label_create(set_timedate_header, NULL);
+    lv_obj_align(set_timedate_battery_percentage, set_timedate_header, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(set_timedate_battery_percentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(set_timedate_battery_percentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     lv_obj_t *set_timedate_wifi_icon;

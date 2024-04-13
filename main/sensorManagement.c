@@ -344,6 +344,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
     {
         sdp32_send_cmd_read(&dev, stopContRead_cmd);     /* sending stop continuous read command */
         xSemaphoreGive(i2c_communication_semaphore);
+        vTaskDelete(NULL);
     }
     vTaskDelay(pdMS_TO_TICKS(20));
 
@@ -360,6 +361,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(SDP32_SENSOR_READ_DURATION_IN_MS));
         if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
         {
+            ESP_LOGI(TAG, "reading pressure");
             sdp32_read_pressure(&dev, read_buff); // actually reading the mass flow
             xSemaphoreGive(i2c_communication_semaphore);
         }
@@ -490,6 +492,7 @@ char *get_battery_symbol(void)
     }
     return LV_SYMBOL_BATTERY_FULL;
 }
+
 
 /********************************************************************************************
 * 

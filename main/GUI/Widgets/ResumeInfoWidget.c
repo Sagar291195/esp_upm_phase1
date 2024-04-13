@@ -264,9 +264,9 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_line_rounded(&style_hor_line, LV_STATE_DEFAULT, true);
 
 	lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
+	lv_obj_set_hidden(hor_line, true);
 
 	// Create total hour label fix
-
 	lv_obj_t *fix_hour_Label = lv_label_create(pxContainer, NULL);
 	lv_obj_align(fix_hour_Label, pxContainer, LV_ALIGN_IN_BOTTOM_RIGHT, -90, -55);
 	lv_label_set_text(fix_hour_Label, "TOTAL HOURS");

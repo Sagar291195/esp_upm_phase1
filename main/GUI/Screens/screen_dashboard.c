@@ -63,6 +63,7 @@ lv_obj_t *xStartButtonLabel;
 lv_obj_t *_xContainerStatusBar;
 lv_obj_t *_xTimeLabel;
 lv_obj_t *_xBatteryLabel;
+lv_obj_t *_xBatteryPecentage;
 lv_obj_t *_xWifiLabel;
 lv_obj_t *_xSignalLabel;
 lv_obj_t *_xListBtn;
@@ -135,7 +136,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         {
             iArchORSummaryScrn = 1;
             delete_timeupdate_task();
-            xseSummaryEndScreen();
+            xseSummaryEndScreen(false);
         }
         if (!strcmp(btntext, MenuBTN_METROLOGY))
         {
@@ -252,6 +253,16 @@ void pxDashboardScreen(void)
     lv_style_set_text_font(&_xBatteryLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_xBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xBatteryLabel, LV_LABEL_PART_MAIN, &_xBatteryLabelStyle);
+
+    _xBatteryPecentage = lv_label_create(_xContainerStatusBar, NULL);
+    lv_obj_align(_xBatteryPecentage, _xContainerStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(_xBatteryPecentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xBatteryPecentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     _xWifiLabel = lv_label_create(_xContainerStatusBar, NULL);
@@ -594,6 +605,7 @@ static void _xTimeLabel_refr_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(_xTimeLabel, guiTime);
         lv_label_set_text(_xBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(_xBatteryPecentage, "%d%%", get_battery_percentage());
     }
 }
 
@@ -633,7 +645,7 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         case 5:
             delete_timeupdate_task();
             lv_obj_set_click(_xListBtn, true);
-            xseSummaryEndScreen();
+            xseSummaryEndScreen(true);
             break;
 
         default:
