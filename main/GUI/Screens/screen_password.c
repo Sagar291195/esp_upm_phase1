@@ -372,7 +372,6 @@ static void passwordcheck_event_handler(lv_obj_t *obj, lv_event_t event)
                     {
                         vControllerSampleStop();
                         lv_textarea_set_text(mpsEnterCalValTA, "");
-                        xseSummaryEndScreen(true);
                     }
                     else
                     {

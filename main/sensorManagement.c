@@ -21,7 +21,7 @@
 #define BME_680_AVERAGING_TIME_IN_MS            1000    /* bme 680 external sensor averating time in ms */
 #define BME680_SENSOR_READ_IN_MS                200
 #define INA3221_CURRENT_SENSOR_IN_MS            1000    /* INA sensor averaging time in ms */
-#define SDP32_SENSOR_READ_DURATION_IN_MS        20      /* This is the duration after which the sensor will update the data into the array. */
+#define SDP32_SENSOR_READ_DURATION_IN_MS        50      /* This is the duration after which the sensor will update the data into the array. */
 #define SDP32_SENSOR_AVERAGE_DURATION_IN_MS     200     /* sdp sensor average time out */
 #define SDP32_DIFF_PRESSURE_SCALE_FACTOR        240.0   /* scale factor for the sdp32 diff sensor */
 #define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR     200.0   /*sdp32 temperater scale factor */
@@ -342,9 +342,10 @@ static void sdp32_sensor_read_task(void *pvParameters)
 
     if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
     {
-        sdp32_send_cmd_read(&dev, stopContRead_cmd);     /* sending stop continuous read command */
+        int rslt = sdp32_send_cmd_read(&dev, stopContRead_cmd);     /* sending stop continuous read command */
         xSemaphoreGive(i2c_communication_semaphore);
-        vTaskDelete(NULL);
+        if(rslt == 1)
+            vTaskDelete(NULL);
     }
     vTaskDelay(pdMS_TO_TICKS(20));
 
@@ -361,7 +362,6 @@ static void sdp32_sensor_read_task(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(SDP32_SENSOR_READ_DURATION_IN_MS));
         if (pdTRUE == xSemaphoreTake(i2c_communication_semaphore, portMAX_DELAY))
         {
-            ESP_LOGI(TAG, "reading pressure");
             sdp32_read_pressure(&dev, read_buff); // actually reading the mass flow
             xSemaphoreGive(i2c_communication_semaphore);
         }
@@ -369,6 +369,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
         bool check = CheckCrc(read_buff, 2, checksum);  /* checking the checksum, as the values we are getting are correct or not */
         if (!check)  /* if checksum failed then continue the loop, else store the value in the array */
         {
+            ESP_LOGE(TAG, "crc checksum verification failed");
             continue;
         }
         else
@@ -381,6 +382,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
             sdp32_read_count++;
             if (sdp32_read_count == NO_OF_SAMPLES_SDP32)
             {
+                ESP_LOGE(TAG, "SDP32 pressure value = %f", sdp32_pressure_value);
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;

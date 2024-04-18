@@ -137,7 +137,7 @@ lv_obj_t *_xseBTNValid_se;
 lv_obj_t *_xseBTNValidLbl_se;
 
 lv_task_t *__xserefresherTask;
-
+lv_obj_t *xSampleNoLblArch;
 /**********************
  *      MACROS
  **********************/
@@ -164,15 +164,15 @@ void xseSummaryEndScreen(bool needreboot)
 
     ESP_LOGI(TAG, "Loading Summary end screen");
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
-    // lv_scr_load(xseParentContainer_se);
+
     lv_obj_set_size(xseParentContainer_se, 320, 480);
     lv_obj_set_click(xseParentContainer_se, false);
     lv_obj_align(xseParentContainer_se, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_local_bg_color(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_border_opa(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_radius(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-    // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
 
+    // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
     _xseContStatusBar_se = lv_cont_create(xseParentContainer_se, NULL);
     lv_obj_set_size(_xseContStatusBar_se, 320, 35);
     lv_obj_align(_xseContStatusBar_se, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
@@ -189,8 +189,6 @@ void xseSummaryEndScreen(bool needreboot)
     lv_style_set_text_font(&_xseTimeLabelStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_20);
     lv_style_set_text_color(&_xseTimeLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseTimeLabel_se, LV_LABEL_PART_MAIN, &_xseTimeLabelStyle_se);
-
-    __xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create Label for Battery icon
     __xseBatteryLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
@@ -236,6 +234,8 @@ void xseSummaryEndScreen(bool needreboot)
     lv_style_set_text_font(&_xseSignalLabelStyle_se, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&_xseSignalLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseSignalLabel_se, LV_LABEL_PART_MAIN, &_xseSignalLabelStyle_se);
+
+    __xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create a Sliding page  to put all the Summary in it
     _xseSummaryParent_se = lv_page_create(xseParentContainer_se, NULL);
@@ -903,7 +903,6 @@ static void xDrawArchHeadNav(void)
     lv_obj_set_style_local_text_font(xNextNavBTNArch, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_40);
     lv_obj_set_style_local_text_color(xNextNavBTNArch, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    lv_obj_t *xSampleNoLblArch;
     xSampleNoLblArch = lv_label_create(_xseContNavBTNSamNArch, NULL);
     lv_obj_align(xSampleNoLblArch, _xseContNavBTNSamNArch, LV_ALIGN_IN_TOP_MID, -20, 2);
     lv_label_set_text(xSampleNoLblArch, "Sample \n N°1002");
@@ -917,6 +916,10 @@ void SequenceWidgetArrange(void)
     sequence_t *sequencedata = get_sequence_array();
     uint8_t totalseq = get_no_of_sequence_in_array();
     memset(&sequence_number, 0x00, sizeof(sequence_number));
+
+    if(get_archiv_or_summary_screen_stat() == 1)
+        lv_label_set_text_fmt(xSampleNoLblArch, "Sample \n N°%d", uGetCurrentSampleNumber());
+
     for (uint8_t i = 0; i < totalseq; i++)
     {
         _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
@@ -977,8 +980,16 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         }
         else
         {
+            if (get_archiv_or_summary_screen_stat() == 0)
+            {
+                xsPresetScreenAdvance();
+            }
+            else
+            {
+                pxDashboardScreen();
+            }
             set_archiv_or_summary_screen(0);
-            xsPresetScreenAdvance();
+            
         }
     }
 }

@@ -264,8 +264,8 @@ static void vCalculateSequneceEndSummary()
     sequencesummary.summary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - sequencesummary.summary.xHourCounter.fStartHour;
     sequencesummary.summary.xHourCounter.fVariation = fabs(((sequencesummary.summary.xHourCounter.fTargetHour - sequencesummary.summary.xHourCounter.fEffectiveHour) / sequencesummary.summary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
 
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", sequencesummary.summary.xHourCounter.fTargetHour, sequencesummary.summary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", sequencesummary.summary.xHourCounter.fVariation);
+    ESP_LOGI(TAG, "Hour counter target and effective values are %.2f and %.2f", sequencesummary.summary.xHourCounter.fTargetHour, sequencesummary.summary.xHourCounter.fEffectiveHour);
+    ESP_LOGI(TAG, "variation in hour is %.2f", sequencesummary.summary.xHourCounter.fVariation);
 
     /* calculating the variation of extenal sensor data and the air flow */
     sequencesummary.airflowVolumetric.fAirflowVariation = fCalculateVariationInPercentage(sequencesummary.airflowVolumetric.fAirflowMaxValue, sequencesummary.airflowVolumetric.fAirflowMinValue, sequencesummary.airflowVolumetric.fAirflowSetPoint);
