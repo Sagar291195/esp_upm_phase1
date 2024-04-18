@@ -70,10 +70,7 @@ int sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
 
     // Set command
-    // CHECK_LOGE(dev, i2c_dev_write(&dev->i2c_dev, NULL, 0, cmd, 2), "Failed to send cmd read"); // 2->3
-    esp_err_t ret = i2c_dev_write(&dev->i2c_dev, NULL, 0, cmd, 2);
-    if(ret != ESP_OK)
-        return_value = 1;
+    CHECK_LOGE(dev, i2c_dev_write(&dev->i2c_dev, NULL, 0, cmd, 2), "Failed to send cmd read"); // 2->3
 
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);   
     return return_value; 
