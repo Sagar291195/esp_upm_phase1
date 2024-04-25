@@ -631,8 +631,8 @@ bool nvsread_device_settings(void)
         devicesettings.startbyte = 0xFE;
         memcpy(devicesettings.screen_lock_password, "2024", strlen("2024"));
         memcpy(devicesettings.metrology_lock_password, "1664", strlen("1664"));
-        memcpy(devicesettings.wifi_ssid, "espupm_ota", strlen("espupm_ota"));
-        memcpy(devicesettings.wifi_password, "12345678", strlen("12345678"));
+        memcpy(devicesettings.wifi_ssid, "belkin.96a", strlen("belkin.96a"));
+        memcpy(devicesettings.wifi_password, "aa3e6a36", strlen("aa3e6a36"));
         devicesettings.buzzer_enable = 0;
         devicesettings.led_enable = 0;
         devicesettings.wifi_enable = 0;
@@ -643,7 +643,7 @@ bool nvsread_device_settings(void)
         devicesettings.luminosity_value = 80;
         devicesettings.contrast_value = 80;
         memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));
-        memcpy(devicesettings.customer_name, "Navier", strlen("Navier"));
+        memcpy(devicesettings.customer_name, "LSDiag", strlen("LSDiag"));
 
         ret = nvswrite_device_settings(&devicesettings);
         if( ret )
