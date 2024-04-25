@@ -63,6 +63,8 @@ esp_err_t sdp32_init_desc(sdp32_t *dev, uint8_t addr, i2c_port_t port, gpio_num_
 
 int sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
 {
+    int return_value = 0;
+
     CHECK_ARG(dev);
 
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
@@ -71,7 +73,7 @@ int sdp32_send_cmd_read(sdp32_t *dev, uint8_t *cmd)
     CHECK_LOGE(dev, i2c_dev_write(&dev->i2c_dev, NULL, 0, cmd, 2), "Failed to send cmd read"); // 2->3
 
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);   
-    return 0; 
+    return return_value; 
 }
 
 /********************************************************************************************

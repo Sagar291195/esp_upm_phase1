@@ -46,6 +46,7 @@ lv_obj_t *sstParentCont;
 lv_obj_t *_sstContStausBar;
 lv_obj_t *__sstTimeLabel;
 lv_obj_t *_sstBatteryLbl;
+lv_obj_t *_sstBatteryPercentage;
 lv_obj_t *_sstWiFiLbl;
 lv_obj_t *_sstSignalLbl;
 lv_obj_t *_sstSliderPage;
@@ -135,6 +136,7 @@ static void service_refer_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(__sstTimeLabel, guiTime);
         lv_label_set_text(_sstBatteryLbl, get_battery_symbol());
+        lv_label_set_text_fmt(_sstBatteryPercentage, "%d%%", get_battery_percentage());
     }
 }
 
@@ -183,6 +185,16 @@ void callServiceSetScreen(void)
     lv_style_set_text_font(&_sstBatteryLblStyle, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_sstBatteryLblStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_sstBatteryLbl, LV_LABEL_PART_MAIN, &_sstBatteryLblStyle);
+
+    _sstBatteryPercentage = lv_label_create(_sstContStausBar, NULL);
+    lv_obj_align(_sstBatteryPercentage, _sstContStausBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(_sstBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_sstBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     _sstWiFiLbl = lv_label_create(_sstContStausBar, NULL);

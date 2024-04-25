@@ -85,6 +85,7 @@ typedef struct{
     uint8_t luminosity_value;
     uint8_t contrast_value;
     char device_serial_number[16];
+    char customer_name[32];
 }device_settings_t;
 
 /********************************************************************************************

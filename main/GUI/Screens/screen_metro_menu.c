@@ -32,7 +32,7 @@ LV_IMG_DECLARE(metrology_icon)
  **********************/
 static void __smmBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void new_cal_event_handler(lv_obj_t *obj, lv_event_t event);
-static void flow_cal_event_handler(lv_obj_t *obj, lv_event_t event);
+static void change_password_event_handler(lv_obj_t *obj, lv_event_t event);
 static void flow_adjust_event_handler(lv_obj_t *obj, lv_event_t event);
 static void __smmTriangeBtn_event_handler(lv_obj_t *obj, lv_event_t event);
 
@@ -46,6 +46,7 @@ lv_obj_t *smmPatrentCont;
 lv_obj_t *_smmContStatusBar;
 lv_obj_t *__smmTimeLabel;
 lv_obj_t *__smmBatteryLabel;
+lv_obj_t *__smmBatteryPercentage;
 lv_obj_t *__smmWifiLabel;
 lv_obj_t *__smmSignalLabel;
 lv_obj_t *_smmMetroHeadingCont;
@@ -74,6 +75,7 @@ static void metro_menu_refer_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(__smmTimeLabel, guiTime);
         lv_label_set_text(__smmBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__smmBatteryPercentage, "%d%%", get_battery_percentage());
     }
 }
 /**********************
@@ -127,6 +129,16 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_font(&_smmBatteryLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_smmBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmBatteryLabel, LV_LABEL_PART_MAIN, &_smmBatteryLabelStyle);
+
+    __smmBatteryPercentage = lv_label_create(_smmContStatusBar, NULL);
+    lv_obj_align(__smmBatteryPercentage, _smmContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__smmBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__smmBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     __smmWifiLabel = lv_label_create(_smmContStatusBar, NULL);
@@ -199,7 +211,7 @@ void CallMetroMenuScreen(void)
     _smmSensorParBtn1 = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmSensorParBtn1, _smmMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_obj_set_size(_smmSensorParBtn1, 300, 44);
-    lv_obj_set_event_cb(_smmSensorParBtn1, flow_cal_event_handler);
+    lv_obj_set_event_cb(_smmSensorParBtn1, change_password_event_handler);
     // lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
 
     static lv_style_t _smmSensorParBtnStyle1;
@@ -225,7 +237,7 @@ void CallMetroMenuScreen(void)
     _smmSensorParBtn = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmSensorParBtn, _smmSensorParBtn1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15); // _smmSensorParBtn1 ,, _smmMetroHeadingCont
     lv_obj_set_size(_smmSensorParBtn, 300, 44);
-    lv_obj_set_event_cb(_smmSensorParBtn, flow_cal_event_handler);
+    // lv_obj_set_event_cb(_smmSensorParBtn, change_password_event_handler);
     // lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
 
     static lv_style_t _smmSensorParBtnStyle;
@@ -343,7 +355,7 @@ static void new_cal_event_handler(lv_obj_t *obj, lv_event_t event)
     }
 }
 
-static void flow_cal_event_handler(lv_obj_t *obj, lv_event_t event)
+static void change_password_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {

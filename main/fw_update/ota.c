@@ -400,7 +400,9 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
             .url = ota_config.targetFwServerUrl,
             .cert_pem = (char *)server_cert_pem_start,
             .event_handler = _http_event_handler,
+            .skip_cert_common_name_check = true,
         };
+        
         esp_err_t ret = esp_https_ota(&config);
         if (ret == ESP_OK)
         {

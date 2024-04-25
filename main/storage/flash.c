@@ -627,27 +627,35 @@ bool nvsread_device_settings(void)
     ret = nvsread_value_parameter(SETTINGS_STORGE_NAME, dev_settings_key, (char *)&devicesettings);
     if ( ret == false || devicesettings.startbyte != 0xFE)
     {   
+        memset(&devicesettings, 0x00, sizeof(devicesettings));
         devicesettings.startbyte = 0xFE;
-        memcpy(devicesettings.screen_lock_password, "1234", strlen("1234"));
-        memcpy(devicesettings.metrology_lock_password, "1234", strlen("1234"));
-        memcpy(devicesettings.wifi_ssid, "espupm_firmware", strlen("espupm_firmware"));
-        memcpy(devicesettings.wifi_password, "12345678", strlen("12345678"));
+        memcpy(devicesettings.screen_lock_password, "2024", strlen("2024"));
+        memcpy(devicesettings.metrology_lock_password, "1664", strlen("1664"));
+        memcpy(devicesettings.wifi_ssid, "belkin.96a", strlen("belkin.96a"));
+        memcpy(devicesettings.wifi_password, "aa3e6a36", strlen("aa3e6a36"));
         devicesettings.buzzer_enable = 0;
         devicesettings.led_enable = 0;
         devicesettings.wifi_enable = 0;
         devicesettings.external_fan_enable = 0;
-        devicesettings.screen_sleepmode_enable = 0;
+        devicesettings.screen_sleepmode_enable = 1;
         devicesettings.selected_language = ENGLISH;
-        devicesettings.screen_timeout_value = 15;
+        devicesettings.screen_timeout_value = 2;
         devicesettings.luminosity_value = 80;
         devicesettings.contrast_value = 80;
         memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));
+        memcpy(devicesettings.customer_name, "LSDiag", strlen("LSDiag"));
 
         ret = nvswrite_device_settings(&devicesettings);
         if( ret )
         {
             ESP_LOGI(TAG, "default device settings are saved");
         }
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Device serial number = %s", devicesettings.device_serial_number);
+        ESP_LOGI(TAG, "Device WiFi SSID = %s", devicesettings.wifi_ssid);
+        ESP_LOGI(TAG, "Device WiFi Password = %s", devicesettings.wifi_password);
     }
     return ret;
 }

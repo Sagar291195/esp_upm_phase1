@@ -56,6 +56,7 @@ lv_obj_t *fcsParentCont;
 lv_obj_t *_fcsContStatusBar;
 lv_obj_t *__fcsTimeLabel;
 lv_obj_t *__fcsBatteryLabel;
+lv_obj_t *__fcsBatteryPercentage;
 lv_obj_t *__fcsWifiLabel;
 lv_obj_t *__fcsSignalLabel;
 lv_obj_t *_fcsMetroHeadingCont;
@@ -126,6 +127,7 @@ static void flow_adjust_refer_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(__fcsTimeLabel, guiTime);
         lv_label_set_text(__fcsBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__fcsBatteryPercentage, "%d%%", get_battery_percentage());
     }
 }
 
@@ -180,6 +182,16 @@ void callMetroFlowAdjustScreen(void)
     lv_style_set_text_font(&_fcsBatteryLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_fcsBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fcsBatteryLabel, LV_LABEL_PART_MAIN, &_fcsBatteryLabelStyle);
+
+    __fcsBatteryPercentage = lv_label_create(_fcsContStatusBar, NULL);
+    lv_obj_align(__fcsBatteryPercentage, _fcsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__fcsBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__fcsBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     __fcsWifiLabel = lv_label_create(_fcsContStatusBar, NULL);

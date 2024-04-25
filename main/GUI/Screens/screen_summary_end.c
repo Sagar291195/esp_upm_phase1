@@ -54,6 +54,7 @@ lv_obj_t *xseParentContainer_se;
 lv_obj_t *_xseContStatusBar_se;
 lv_obj_t *__xseTimeLabel_se;
 lv_obj_t *__xseBatteryLabel_se;
+lv_obj_t *__xseBatteryPercentage_se;
 lv_obj_t *__xseWifiLabel_se;
 lv_obj_t *__xseSignalLabel_se;
 lv_obj_t *_xseSummaryParent_se;
@@ -136,7 +137,7 @@ lv_obj_t *_xseBTNValid_se;
 lv_obj_t *_xseBTNValidLbl_se;
 
 lv_task_t *__xserefresherTask;
-
+lv_obj_t *xSampleNoLblArch;
 /**********************
  *      MACROS
  **********************/
@@ -145,13 +146,14 @@ lv_task_t *__xserefresherTask;
  *  GLOBAL VARIABLES
  **********************/
 static uint8_t sequence_number[MAXIMUM_NO_OF_SAMPLES] = {0};
+static bool requiredreboot =  false;
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void xseSummaryEndScreen(void)
+void xseSummaryEndScreen(bool needreboot)
 {
-
+    requiredreboot = needreboot;
     scrSummaryEnd = lv_obj_create(NULL, NULL);
     lv_scr_load(scrSummaryEnd);
     if (crnt_screen != NULL)
@@ -162,15 +164,15 @@ void xseSummaryEndScreen(void)
 
     ESP_LOGI(TAG, "Loading Summary end screen");
     xseParentContainer_se = lv_cont_create(scrSummaryEnd, NULL);
-    // lv_scr_load(xseParentContainer_se);
+
     lv_obj_set_size(xseParentContainer_se, 320, 480);
     lv_obj_set_click(xseParentContainer_se, false);
     lv_obj_align(xseParentContainer_se, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_local_bg_color(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_style_local_border_opa(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_style_local_radius(xseParentContainer_se, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
-    // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
 
+    // Create a Satus BAR Container to contain Watch , Signal, wifi & battery status
     _xseContStatusBar_se = lv_cont_create(xseParentContainer_se, NULL);
     lv_obj_set_size(_xseContStatusBar_se, 320, 35);
     lv_obj_align(_xseContStatusBar_se, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
@@ -188,8 +190,6 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_color(&_xseTimeLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseTimeLabel_se, LV_LABEL_PART_MAIN, &_xseTimeLabelStyle_se);
 
-    __xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
-
     // Create Label for Battery icon
     __xseBatteryLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
     lv_obj_align(__xseBatteryLabel_se, _xseContStatusBar_se, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
@@ -200,6 +200,16 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_font(&_xseBatteryLabelStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_xseBatteryLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseBatteryLabel_se, LV_LABEL_PART_MAIN, &_xseBatteryLabelStyle_se);
+
+    __xseBatteryPercentage_se = lv_label_create(_xseContStatusBar_se, NULL);
+    lv_obj_align(__xseBatteryPercentage_se, _xseContStatusBar_se, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__xseBatteryPercentage_se, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__xseBatteryPercentage_se, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     __xseWifiLabel_se = lv_label_create(_xseContStatusBar_se, NULL);
@@ -224,6 +234,8 @@ void xseSummaryEndScreen(void)
     lv_style_set_text_font(&_xseSignalLabelStyle_se, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&_xseSignalLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseSignalLabel_se, LV_LABEL_PART_MAIN, &_xseSignalLabelStyle_se);
+
+    __xserefresherTask = lv_task_create(__xseTimeLabel_se_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Create a Sliding page  to put all the Summary in it
     _xseSummaryParent_se = lv_page_create(xseParentContainer_se, NULL);
@@ -891,7 +903,6 @@ static void xDrawArchHeadNav(void)
     lv_obj_set_style_local_text_font(xNextNavBTNArch, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_40);
     lv_obj_set_style_local_text_color(xNextNavBTNArch, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
 
-    lv_obj_t *xSampleNoLblArch;
     xSampleNoLblArch = lv_label_create(_xseContNavBTNSamNArch, NULL);
     lv_obj_align(xSampleNoLblArch, _xseContNavBTNSamNArch, LV_ALIGN_IN_TOP_MID, -20, 2);
     lv_label_set_text(xSampleNoLblArch, "Sample \n N°1002");
@@ -905,6 +916,10 @@ void SequenceWidgetArrange(void)
     sequence_t *sequencedata = get_sequence_array();
     uint8_t totalseq = get_no_of_sequence_in_array();
     memset(&sequence_number, 0x00, sizeof(sequence_number));
+
+    if(get_archiv_or_summary_screen_stat() == 1)
+        lv_label_set_text_fmt(xSampleNoLblArch, "Sample \n N°%d", uGetCurrentSampleNumber());
+
     for (uint8_t i = 0; i < totalseq; i++)
     {
         _xseSeque1_se = lv_cont_create(_xseSummaryParent_se, NULL);
@@ -944,6 +959,7 @@ static void __xseTimeLabel_se_refr_func(lv_task_t *__xserefresherTask)
     {
         lv_label_set_text(__xseTimeLabel_se, guiTime);
         lv_label_set_text(__xseBatteryLabel_se, get_battery_symbol());
+        lv_label_set_text_fmt(__xseBatteryPercentage_se, "%d%%", get_battery_percentage());
     }
 }
 
@@ -958,8 +974,23 @@ static void __xseBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xserefresherTask);
         __xserefresherTask = NULL;
         global_DashbordBTNflag = 1;
-        set_archiv_or_summary_screen(0);
-        xsPresetScreenAdvance();
+        if(requiredreboot == true)
+        {
+            esp_restart();
+        }
+        else
+        {
+            if (get_archiv_or_summary_screen_stat() == 0)
+            {
+                xsPresetScreenAdvance();
+            }
+            else
+            {
+                pxDashboardScreen();
+            }
+            set_archiv_or_summary_screen(0);
+            
+        }
     }
 }
 
@@ -970,8 +1001,16 @@ static void Valid_BTN_event_handler(lv_obj_t *obj, lv_event_t event)
         lv_task_del(__xserefresherTask);
         __xserefresherTask = NULL;
         dashboardflg = 0;
-        set_archiv_or_summary_screen(0);
-        pxDashboardScreen();
+        if(requiredreboot == true)
+        {
+            esp_restart();
+        }
+        else
+        {
+            set_archiv_or_summary_screen(0);
+            pxDashboardScreen();
+        }
+
     }
 }
 

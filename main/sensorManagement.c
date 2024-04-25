@@ -21,7 +21,7 @@
 #define BME_680_AVERAGING_TIME_IN_MS            1000    /* bme 680 external sensor averating time in ms */
 #define BME680_SENSOR_READ_IN_MS                200
 #define INA3221_CURRENT_SENSOR_IN_MS            1000    /* INA sensor averaging time in ms */
-#define SDP32_SENSOR_READ_DURATION_IN_MS        20      /* This is the duration after which the sensor will update the data into the array. */
+#define SDP32_SENSOR_READ_DURATION_IN_MS        50      /* This is the duration after which the sensor will update the data into the array. */
 #define SDP32_SENSOR_AVERAGE_DURATION_IN_MS     200     /* sdp sensor average time out */
 #define SDP32_DIFF_PRESSURE_SCALE_FACTOR        240.0   /* scale factor for the sdp32 diff sensor */
 #define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR     200.0   /*sdp32 temperater scale factor */
@@ -31,7 +31,7 @@
 #define MASSFLOW_CALCULATION_FACTOR             0.1
 
 
-#define BATTERY_MIN_VOLTAGE         9.0
+#define BATTERY_MIN_VOLTAGE         12.4
 #define BATTERY_MAX_VOLTAGE         16.8
 
 /********************************************************************************************
@@ -367,6 +367,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
         bool check = CheckCrc(read_buff, 2, checksum);  /* checking the checksum, as the values we are getting are correct or not */
         if (!check)  /* if checksum failed then continue the loop, else store the value in the array */
         {
+            ESP_LOGE(TAG, "crc checksum verification failed");
             continue;
         }
         else
@@ -379,6 +380,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
             sdp32_read_count++;
             if (sdp32_read_count == NO_OF_SAMPLES_SDP32)
             {
+                ESP_LOGI(TAG, "SDP32 pressure value = %X, %X, %f, %f", read_buff[0], read_buff[1], temp_value, sdp32_pressure_value);
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
@@ -490,6 +492,7 @@ char *get_battery_symbol(void)
     }
     return LV_SYMBOL_BATTERY_FULL;
 }
+
 
 /********************************************************************************************
 * 

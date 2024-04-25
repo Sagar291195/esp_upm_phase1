@@ -94,29 +94,34 @@ void lcd_led_driver_init(void)
     else{
         ESP_LOGI(TAG, "turning on lcd backlight gpio");
         lm2759_available = false;
+       
         // gpio_pad_select_gpio(GPIO_NUM_2);                 // Set GPIO as OUTPUT
         // gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT); // WakeMode
-        // gpio_set_level(GPIO_NUM_2, 1);
+        // gpio_set_level(GPIO_NUM_2, 1); 
 
-        ledc_channel_config_t ledc_channel_left = {0};
-        ledc_channel_left.gpio_num = GPIO_NUM_2;
-        ledc_channel_left.speed_mode = LEDC_HIGH_SPEED_MODE;
-        ledc_channel_left.channel = LEDC_CHANNEL_3;
-        ledc_channel_left.intr_type = LEDC_INTR_DISABLE;
-        ledc_channel_left.timer_sel = LEDC_TIMER_2;
-        ledc_channel_left.duty = 0;
-
-        ledc_timer_config_t ledc_timer = {0};
-        ledc_timer.speed_mode = LEDC_HIGH_SPEED_MODE;
-        ledc_timer.duty_resolution = LEDC_TIMER_10_BIT;
-        ledc_timer.timer_num = LEDC_TIMER_2;
-        ledc_timer.freq_hz = 1000;
-
-        ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel_left));
+        ledc_timer_config_t ledc_timer = {
+        .speed_mode       = LEDC_LOW_SPEED_MODE,
+        .timer_num        = LEDC_TIMER_2,
+        .duty_resolution  = LEDC_TIMER_10_BIT,
+        .freq_hz          = 5000,  // Set output frequency at 5 kHz
+        .clk_cfg          = LEDC_AUTO_CLK
+        };
         ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
-        
-        
+
+        ledc_channel_config_t ledc_channel = {
+        .speed_mode     = LEDC_LOW_SPEED_MODE,
+        .channel        = LEDC_CHANNEL_0,
+        .timer_sel      = LEDC_TIMER_2,
+        .intr_type      = LEDC_INTR_DISABLE,
+        .gpio_num       = GPIO_NUM_2,
+        .duty           = 0, // Set duty to 0%
+        .hpoint         = 0
+        };
+        ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
     }
+
+    if(devicesettings.contrast_value == 0)
+        devicesettings.contrast_value = 30;
     lcd_set_contrast(devicesettings.contrast_value);
     ESP_LOGI(TAG, "Init LCD driver finish");
 }
@@ -196,10 +201,10 @@ void lcd_set_contrast(int dutycycle)
     {
         uint32_t duty_cycle_value = (((pow(2, LEDC_TIMER_10_BIT)) - 1) * dutycycle) / 100;
         ESP_LOGI(TAG, "lcd duty cycle is %d", duty_cycle_value);
-        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3, duty_cycle_value));
-        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3));
-}
+        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty_cycle_value));
+        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0));  
     }
+}
     
 
 void lcd_set_sleep(void)
@@ -208,8 +213,8 @@ void lcd_set_sleep(void)
     {   
         lm2759_set_shutdownmode(&dev);
     }else{
-        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3, 0));
-        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3));
+        lcd_set_contrast(0);
+        gpio_set_level(GPIO_NUM_2, 0);
     }
     lcd_sleepstatus = true;
 }
@@ -221,6 +226,7 @@ void lcd_set_wakeup(void)
     {
         lm2759_set_torchmode(&dev);
     }else{
+        // gpio_set_level(GPIO_NUM_2, 1);
         lcd_set_contrast(devicesettings.contrast_value);
     }
     lcd_sleepstatus = false;

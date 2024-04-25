@@ -264,9 +264,9 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_line_rounded(&style_hor_line, LV_STATE_DEFAULT, true);
 
 	lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
+	lv_obj_set_hidden(hor_line, true);
 
 	// Create total hour label fix
-
 	lv_obj_t *fix_hour_Label = lv_label_create(pxContainer, NULL);
 	lv_obj_align(fix_hour_Label, pxContainer, LV_ALIGN_IN_BOTTOM_RIGHT, -90, -55);
 	lv_label_set_text(fix_hour_Label, "TOTAL HOURS");
@@ -384,6 +384,16 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_text_color(&style_UnitHour, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 	lv_obj_add_style(UnitHour, LV_LABEL_PART_MAIN, &style_UnitHour);
 
+	lv_obj_set_hidden(UnitHour, true);
+	lv_obj_set_hidden(var_hour_Label_Float, true);
+	lv_obj_set_hidden(hourpoint, true);
+	lv_obj_set_hidden(var_hour_Label_Int, true);
+	lv_obj_set_hidden(UnitLiter, true);
+	lv_obj_set_hidden(var_liter_Label_Float, true);
+	lv_obj_set_hidden(literpoint, true);
+	lv_obj_set_hidden(var_liter_Label_Int, true);
+	lv_obj_set_hidden(fix_hour_Label, true);
+	lv_obj_set_hidden(fix_liters_Label, true);
 	//-----------------------------------------------------------------------------------------------------
 
 	pxExt->pxContainer = pxContainer;
@@ -432,7 +442,9 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_set_style_local_line_color(pxArc, LV_ARC_PART_INDIC, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48));
 		lv_obj_set_style_local_bg_opa(pxArc, LV_ARC_PART_BG, LV_STATE_DEFAULT, LV_OPA_TRANSP);
 		lv_arc_set_angles(pxExt->pxProgressArc, 0, 360);
-		lv_label_set_text(pxExt->pxPercentValue, "Let's \nStart");
+		lv_label_set_text_fmt(pxExt->pxPercentValue, "%c%c%c\n %c%c%c%c", devicesettings.device_serial_number[0],
+			devicesettings.device_serial_number[1], devicesettings.device_serial_number[2], devicesettings.device_serial_number[3], 
+			devicesettings.device_serial_number[4], devicesettings.device_serial_number[5], devicesettings.device_serial_number[6]);
 		lv_obj_set_style_local_text_font(pxPercentLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_obj_align(pxTextLabel, pxArc, LV_ALIGN_OUT_TOP_LEFT, -140, 0);

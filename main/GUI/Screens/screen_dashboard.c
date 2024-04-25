@@ -63,6 +63,7 @@ lv_obj_t *xStartButtonLabel;
 lv_obj_t *_xContainerStatusBar;
 lv_obj_t *_xTimeLabel;
 lv_obj_t *_xBatteryLabel;
+lv_obj_t *_xBatteryPecentage;
 lv_obj_t *_xWifiLabel;
 lv_obj_t *_xSignalLabel;
 lv_obj_t *_xListBtn;
@@ -135,7 +136,7 @@ static void event_handler(lv_obj_t *obj, lv_event_t event)
         {
             iArchORSummaryScrn = 1;
             delete_timeupdate_task();
-            xseSummaryEndScreen();
+            xseSummaryEndScreen(false);
         }
         if (!strcmp(btntext, MenuBTN_METROLOGY))
         {
@@ -177,8 +178,6 @@ static void event_handler_xMenulist1(lv_obj_t *obj, lv_event_t event)
 }
 
 // Event handler associated to menu icon btn to call menu screen
-
-
 static void event_handler_xListBtn(lv_obj_t *obj, lv_event_t event)
 {
     static bool bxCatchMenuClick = true;
@@ -255,6 +254,16 @@ void pxDashboardScreen(void)
     lv_style_set_text_color(&_xBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_xBatteryLabel, LV_LABEL_PART_MAIN, &_xBatteryLabelStyle);
 
+    _xBatteryPecentage = lv_label_create(_xContainerStatusBar, NULL);
+    lv_obj_align(_xBatteryPecentage, _xContainerStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(_xBatteryPecentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(_xBatteryPecentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     _xWifiLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWifiLabel, _xBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
@@ -321,7 +330,7 @@ void pxDashboardScreen(void)
 
     _xWelcomeMsgLabel = lv_label_create(_xContainerStatusBar, NULL);
     lv_obj_align(_xWelcomeMsgLabel, _xWifiLabel, LV_ALIGN_OUT_BOTTOM_MID, -90, 0);
-    lv_label_set_text(_xWelcomeMsgLabel, "Welcome LSDIAG");
+    lv_label_set_text_fmt(_xWelcomeMsgLabel, "Welcome %s", devicesettings.customer_name);
 
     static lv_style_t _xWelcomeMsgLabelStyle;
     lv_style_init(&_xWelcomeMsgLabelStyle);
@@ -419,6 +428,7 @@ void pxDashboardScreen(void)
     lv_obj_set_style_local_outline_opa(list_btn, LV_BTN_PART_MAIN, LV_STATE_PRESSED, 0);
     lv_obj_set_style_local_bg_color(list_btn, LV_BTN_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0x5D, 0x5D));
     lv_obj_set_click(list_btn, false);
+    lv_obj_set_hidden(list_btn, true);
 
     list_btn = lv_list_add_btn(xMenulist1, NULL, NULL); // LV_SYMBOL_FILE
     lv_obj_set_event_cb(list_btn, event_handler);
@@ -595,6 +605,7 @@ static void _xTimeLabel_refr_func(lv_task_t *refresherTask)
     {
         lv_label_set_text(_xTimeLabel, guiTime);
         lv_label_set_text(_xBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(_xBatteryPecentage, "%d%%", get_battery_percentage());
     }
 }
 
@@ -628,13 +639,14 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 
         case 4:
             delete_timeupdate_task();
-            Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
+            vControllerSampleStop();
+            xseSummaryEndScreen(true);
             break;
 
         case 5:
             delete_timeupdate_task();
             lv_obj_set_click(_xListBtn, true);
-            xseSummaryEndScreen();
+            xseSummaryEndScreen(true);
             break;
 
         default:

@@ -50,6 +50,7 @@ lv_obj_t *xseParentContainer_seArch;
 lv_obj_t *_xseContStatusBar_seArch;
 lv_obj_t *__xseTimeLabel_seArch;
 lv_obj_t *__xseBatteryLabel_seArch;
+lv_obj_t *__xseBatteryPercentage_seArch;
 lv_obj_t *__xseWifiLabel_seArch;
 lv_obj_t *__xseSignalLabel_seArch;
 
@@ -105,6 +106,16 @@ void xCallArchvScreen(void)
     lv_style_set_text_font(&_xseBatteryLabelStyle_se, LV_STATE_DEFAULT, &lv_font_montserrat_24);
     lv_style_set_text_color(&_xseBatteryLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseBatteryLabel_seArch, LV_LABEL_PART_MAIN, &_xseBatteryLabelStyle_se);
+
+    __xseBatteryPercentage_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
+    lv_obj_align(__xseBatteryPercentage_seArch, _xseContStatusBar_seArch, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__xseBatteryPercentage_seArch, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__xseBatteryPercentage_seArch, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
 
     // Create Label for Wifi icon
     __xseWifiLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);

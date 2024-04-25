@@ -192,14 +192,14 @@ static void vMonitorSensorDataTask(void *pvParameters)
 
         if (!bOneTime)
         {
-            printf("------------------Settings-----------------------\n");
-            printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
-            printf("------------------Settings-----------------------\n");
-            bOneTime = true;
+            // printf("------------------Settings-----------------------\n");
+            // printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
+            // printf("------------------Settings-----------------------\n");
+            // bOneTime = true;
 
-            printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
+            // printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
         }
-        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value(), xInaSensorData[0].bus_voltage, xInaSensorData[0].shunt_voltage, xInaSensorData[0].shunt_current, xInaSensorData[1].bus_voltage, xInaSensorData[1].shunt_voltage, xInaSensorData[1].shunt_current, xInaSensorData[2].bus_voltage, xInaSensorData[2].shunt_voltage, xInaSensorData[2].shunt_current, raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
+        // printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value(), xInaSensorData[0].bus_voltage, xInaSensorData[0].shunt_voltage, xInaSensorData[0].shunt_current, xInaSensorData[1].bus_voltage, xInaSensorData[1].shunt_voltage, xInaSensorData[1].shunt_current, xInaSensorData[2].bus_voltage, xInaSensorData[2].shunt_voltage, xInaSensorData[2].shunt_current, raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
     }
 
     vTaskDelete(NULL);
@@ -264,8 +264,8 @@ static void vCalculateSequneceEndSummary()
     sequencesummary.summary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - sequencesummary.summary.xHourCounter.fStartHour;
     sequencesummary.summary.xHourCounter.fVariation = fabs(((sequencesummary.summary.xHourCounter.fTargetHour - sequencesummary.summary.xHourCounter.fEffectiveHour) / sequencesummary.summary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
 
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", sequencesummary.summary.xHourCounter.fTargetHour, sequencesummary.summary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", sequencesummary.summary.xHourCounter.fVariation);
+    ESP_LOGI(TAG, "Hour counter target and effective values are %.2f and %.2f", sequencesummary.summary.xHourCounter.fTargetHour, sequencesummary.summary.xHourCounter.fEffectiveHour);
+    ESP_LOGI(TAG, "variation in hour is %.2f", sequencesummary.summary.xHourCounter.fVariation);
 
     /* calculating the variation of extenal sensor data and the air flow */
     sequencesummary.airflowVolumetric.fAirflowVariation = fCalculateVariationInPercentage(sequencesummary.airflowVolumetric.fAirflowMaxValue, sequencesummary.airflowVolumetric.fAirflowMinValue, sequencesummary.airflowVolumetric.fAirflowSetPoint);
