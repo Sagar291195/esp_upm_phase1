@@ -32,7 +32,7 @@ LV_IMG_DECLARE(metrology_icon)
  **********************/
 static void __smmBackArrow_event_handler(lv_obj_t *obj, lv_event_t event);
 static void new_cal_event_handler(lv_obj_t *obj, lv_event_t event);
-static void flow_cal_event_handler(lv_obj_t *obj, lv_event_t event);
+static void change_password_event_handler(lv_obj_t *obj, lv_event_t event);
 static void flow_adjust_event_handler(lv_obj_t *obj, lv_event_t event);
 static void __smmTriangeBtn_event_handler(lv_obj_t *obj, lv_event_t event);
 
@@ -46,6 +46,7 @@ lv_obj_t *smmPatrentCont;
 lv_obj_t *_smmContStatusBar;
 lv_obj_t *__smmTimeLabel;
 lv_obj_t *__smmBatteryLabel;
+lv_obj_t *__smmBatteryPercentage;
 lv_obj_t *__smmWifiLabel;
 lv_obj_t *__smmSignalLabel;
 lv_obj_t *_smmMetroHeadingCont;
@@ -60,7 +61,7 @@ lv_obj_t *_smmNewVerTestBtn;
 lv_obj_t *_smmNewVerTestBtnLbl;
 lv_obj_t *_smmValidationTestCont;
 lv_obj_t *_smmVTC;
-
+lv_task_t *metro_menu_refresherTask;
 /**********************
  *      MACROS
  **********************/
@@ -68,7 +69,15 @@ lv_obj_t *_smmVTC;
 /**********************
  *  GLOBAL VARIABLES
  **********************/
-
+static void metro_menu_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__smmTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__smmTimeLabel, guiTime);
+        lv_label_set_text(__smmBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__smmBatteryPercentage, "%d%%", get_battery_percentage());
+    }
+}
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -113,7 +122,7 @@ void CallMetroMenuScreen(void)
     // Create Label for Battery icon
     __smmBatteryLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmBatteryLabel, _smmContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__smmBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__smmBatteryLabel, get_battery_symbol());
 
     static lv_style_t _smmBatteryLabelStyle;
     lv_style_init(&_smmBatteryLabelStyle);
@@ -121,10 +130,21 @@ void CallMetroMenuScreen(void)
     lv_style_set_text_color(&_smmBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmBatteryLabel, LV_LABEL_PART_MAIN, &_smmBatteryLabelStyle);
 
+    __smmBatteryPercentage = lv_label_create(_smmContStatusBar, NULL);
+    lv_obj_align(__smmBatteryPercentage, _smmContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__smmBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__smmBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __smmWifiLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmWifiLabel, __smmBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__smmWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__smmWifiLabel, true);
 
     static lv_style_t __smmWifiLabelStyle;
     lv_style_init(&__smmWifiLabelStyle);
@@ -136,12 +156,15 @@ void CallMetroMenuScreen(void)
     __smmSignalLabel = lv_label_create(_smmContStatusBar, NULL);
     lv_obj_align(__smmSignalLabel, __smmWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__smmSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__smmSignalLabel, true);
 
     static lv_style_t __smmSignalLabelStyle;
     lv_style_init(&__smmSignalLabelStyle);
     lv_style_set_text_font(&__smmSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__smmSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__smmSignalLabel, LV_LABEL_PART_MAIN, &__smmSignalLabelStyle);
+
+    metro_menu_refresherTask = lv_task_create(metro_menu_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain Summary Start Header
     _smmMetroHeadingCont = lv_cont_create(smmPatrentCont, NULL);
@@ -188,7 +211,7 @@ void CallMetroMenuScreen(void)
     _smmSensorParBtn1 = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmSensorParBtn1, _smmMetroHeadingCont, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 10);
     lv_obj_set_size(_smmSensorParBtn1, 300, 44);
-    lv_obj_set_event_cb(_smmSensorParBtn1, flow_cal_event_handler);
+    lv_obj_set_event_cb(_smmSensorParBtn1, change_password_event_handler);
     // lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
 
     static lv_style_t _smmSensorParBtnStyle1;
@@ -214,7 +237,7 @@ void CallMetroMenuScreen(void)
     _smmSensorParBtn = lv_btn_create(smmPatrentCont, NULL);
     lv_obj_align(_smmSensorParBtn, _smmSensorParBtn1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 15); // _smmSensorParBtn1 ,, _smmMetroHeadingCont
     lv_obj_set_size(_smmSensorParBtn, 300, 44);
-    lv_obj_set_event_cb(_smmSensorParBtn, flow_cal_event_handler);
+    // lv_obj_set_event_cb(_smmSensorParBtn, change_password_event_handler);
     // lv_obj_set_event_cb(_xsValidBtn, BTN_event_handler);
 
     static lv_style_t _smmSensorParBtnStyle;
@@ -316,6 +339,8 @@ static void __smmBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         // printf("Back to Dashbord from presetscrn\n");
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         pxDashboardScreen();
     }
 }
@@ -324,14 +349,18 @@ static void new_cal_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         callMetroTempSettingScreen();
     }
 }
 
-static void flow_cal_event_handler(lv_obj_t *obj, lv_event_t event)
+static void change_password_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(metro_menu_refresherTask);
+        metro_menu_refresherTask = NULL;
         Screen_Password(SCR_CHANGE_PASSWORD);
     }
 }

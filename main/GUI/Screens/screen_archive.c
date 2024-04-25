@@ -1,10 +1,4 @@
 /**
- *  @copyright "License Name" described in the LICENSE file.
- *  @author    Abhai Tiwari
- *  @date      2021-12-01
- */
-
-/**
  *  @file
  *  @brief
  *  @details
@@ -56,6 +50,7 @@ lv_obj_t *xseParentContainer_seArch;
 lv_obj_t *_xseContStatusBar_seArch;
 lv_obj_t *__xseTimeLabel_seArch;
 lv_obj_t *__xseBatteryLabel_seArch;
+lv_obj_t *__xseBatteryPercentage_seArch;
 lv_obj_t *__xseWifiLabel_seArch;
 lv_obj_t *__xseSignalLabel_seArch;
 
@@ -73,8 +68,8 @@ void xCallArchvScreen(void)
         lv_obj_del(crnt_screen);
         crnt_screen = NULL;
     }
+
     xseParentContainer_seArch = lv_cont_create(scrSummaryEndArch, NULL);
-    // lv_scr_load(xseParentContainer_se);
     lv_obj_set_size(xseParentContainer_seArch, 320, 480);
     lv_obj_set_click(xseParentContainer_seArch, false);
     lv_obj_align(xseParentContainer_seArch, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -104,7 +99,7 @@ void xCallArchvScreen(void)
     // Create Label for Battery icon
     __xseBatteryLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseBatteryLabel_seArch, _xseContStatusBar_seArch, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__xseBatteryLabel_seArch, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__xseBatteryLabel_seArch, get_battery_symbol());
 
     static lv_style_t _xseBatteryLabelStyle_se;
     lv_style_init(&_xseBatteryLabelStyle_se);
@@ -112,10 +107,21 @@ void xCallArchvScreen(void)
     lv_style_set_text_color(&_xseBatteryLabelStyle_se, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xseBatteryLabel_seArch, LV_LABEL_PART_MAIN, &_xseBatteryLabelStyle_se);
 
+    __xseBatteryPercentage_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
+    lv_obj_align(__xseBatteryPercentage_seArch, _xseContStatusBar_seArch, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__xseBatteryPercentage_seArch, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__xseBatteryPercentage_seArch, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __xseWifiLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseWifiLabel_seArch, __xseBatteryLabel_seArch, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xseWifiLabel_seArch, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__xseWifiLabel_seArch, true);
 
     static lv_style_t _xseWifiLabelStyle_se;
     lv_style_init(&_xseWifiLabelStyle_se);
@@ -127,6 +133,7 @@ void xCallArchvScreen(void)
     __xseSignalLabel_seArch = lv_label_create(_xseContStatusBar_seArch, NULL);
     lv_obj_align(__xseSignalLabel_seArch, __xseWifiLabel_seArch, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xseSignalLabel_seArch, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__xseSignalLabel_seArch, true);
 
     static lv_style_t _xseSignalLabelStyle_se;
     lv_style_init(&_xseSignalLabelStyle_se);

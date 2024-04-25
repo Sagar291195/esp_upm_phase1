@@ -1,13 +1,18 @@
 #include <esp_log.h>
 #include "lm2759.h"
+#include "gui/screens/screen_includes.h"
 
 #define I2C_FREQ_HZ 100000 // Max 1MHz for esp-idf
 #define SDA_GPIO    21
 #define SCL_GPIO    22
 
+#define LCD_BACKLIGHT            GPIO_NUM_2     /* wakeup GPIO old hardware*/
+
 static const char *TAG = "lm2759";
 
-extern SemaphoreHandle_t main_mutex;
+static bool lm2759_available = false;
+static bool lcd_sleepstatus = false;
+static lm2759_t dev;
 
 /**
  * lm2759 registers
@@ -51,52 +56,189 @@ esp_err_t lm2759_init_desc(lm2759_t *dev, uint8_t addr, i2c_port_t port, gpio_nu
     return i2c_dev_create_mutex(&dev->i2c_dev);
 }
 
-esp_err_t lm2759_set_mode(lm2759_t *dev)
+esp_err_t lm2759_set_torchmode(lm2759_t *dev)
 {
     CHECK_ARG(dev);
-    // Set torch mode
-    CHECK_LOGE(dev, write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x01), "Failed to init LM2759");
-    return ESP_OK;
+    return write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x01);
+}
+
+esp_err_t lm2759_set_shutdownmode(lm2759_t *dev)
+{
+    CHECK_ARG(dev);
+    return write_register8(&dev->i2c_dev, lm2759_REG_GENERAL, 0x00);
 }
 
 esp_err_t lm2759_set_current(lm2759_t *dev, uint8_t current)
 {
-    //i2cdev_init();
     CHECK_ARG(dev);
-
     I2C_DEV_TAKE_MUTEX(&dev->i2c_dev);
-
-    // Set torch mode
     CHECK_LOGE(dev, write_register8(&dev->i2c_dev, lm2759_REG_T_CURRENT, current), "Failed to set current");
-
     I2C_DEV_GIVE_MUTEX(&dev->i2c_dev);
-
     return ESP_OK;
 }
 
 void lcd_led_driver_init(void)
 {
     ESP_LOGI(TAG, "Init LCD driver current");
-    lm2759_t dev;
     memset(&dev, 0, sizeof(lm2759_t));
     
+    ESP_LOGI( TAG, "initialization of lm27590 driver");
     ESP_ERROR_CHECK(lm2759_init_desc(&dev, lm2759_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO));    
-    ESP_ERROR_CHECK(lm2759_set_mode(&dev));    
-    ESP_ERROR_CHECK(lm2759_set_current(&dev, 0x05));  
-   
+    ESP_LOGI( TAG, "set mode of lm2759");
+
+    if( lm2759_set_torchmode(&dev) == ESP_OK )
+    {
+        ESP_LOGI( TAG, "lm2759 is available, and setting current for lcd");
+        lm2759_available = true;
+    }
+    else{
+        ESP_LOGI(TAG, "turning on lcd backlight gpio");
+        lm2759_available = false;
+       
+        // gpio_pad_select_gpio(GPIO_NUM_2);                 // Set GPIO as OUTPUT
+        // gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT); // WakeMode
+        // gpio_set_level(GPIO_NUM_2, 1); 
+
+        ledc_timer_config_t ledc_timer = {
+        .speed_mode       = LEDC_LOW_SPEED_MODE,
+        .timer_num        = LEDC_TIMER_2,
+        .duty_resolution  = LEDC_TIMER_10_BIT,
+        .freq_hz          = 5000,  // Set output frequency at 5 kHz
+        .clk_cfg          = LEDC_AUTO_CLK
+        };
+        ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
+
+        ledc_channel_config_t ledc_channel = {
+        .speed_mode     = LEDC_LOW_SPEED_MODE,
+        .channel        = LEDC_CHANNEL_0,
+        .timer_sel      = LEDC_TIMER_2,
+        .intr_type      = LEDC_INTR_DISABLE,
+        .gpio_num       = GPIO_NUM_2,
+        .duty           = 0, // Set duty to 0%
+        .hpoint         = 0
+        };
+        ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
+    }
+
+    if(devicesettings.contrast_value == 0)
+        devicesettings.contrast_value = 30;
+    lcd_set_contrast(devicesettings.contrast_value);
     ESP_LOGI(TAG, "Init LCD driver finish");
 }
 
-void lcd_set_current(uint8_t current)
+
+void lcd_set_contrast(int dutycycle)
 {
-    if(xSemaphoreTake(main_mutex, portMAX_DELAY)){
+    if(lm2759_available == true)
+    {
+        uint8_t current_value;
+        if(dutycycle > 93)
+        {
+            current_value = 0x0F;
+        }
+        else if(dutycycle > 86)
+        {
+            current_value = 0x0E;
+        }
+        else if(dutycycle > 80)
+        {
+            current_value = 0x0D;
+        }
+        else if(dutycycle > 73)
+        {
+            current_value = 0x0C;
+        }
+        else if(dutycycle > 66)
+        {
+            current_value = 0x0B;
+        }
+        else if(dutycycle > 59)
+        {
+            current_value = 0x0A;
+        }
+         else if(dutycycle > 52)
+        {
+            current_value = 0x09;
+        }
+        else if(dutycycle > 46)
+        {
+            current_value = 0x08;
+        }
+        else if(dutycycle > 40)
+        {
+            current_value = 0x07;
+        }
+         else if(dutycycle > 33)
+        {
+            current_value = 0x06;
+        }
+        else if(dutycycle > 27)
+        {
+            current_value = 0x05;
+        }
+        else if(dutycycle > 22)
+        {
+            current_value = 0x04;
+        }
+         else if(dutycycle > 15)
+        {
+            current_value = 0x03;
+        }
+        else if(dutycycle > 10)
+        {
+            current_value = 0x02;
+        }
+        else  if(dutycycle > 5)
+        {
+            current_value = 0x01;
+        }
+        else{
+            current_value = 0x00;
+        }
+        ESP_ERROR_CHECK(lm2759_set_current(&dev, current_value));  
+    }
+    else
+    {
+        uint32_t duty_cycle_value = (((pow(2, LEDC_TIMER_10_BIT)) - 1) * dutycycle) / 100;
+        ESP_LOGI(TAG, "lcd duty cycle is %d", duty_cycle_value);
+        ESP_ERROR_CHECK(ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty_cycle_value));
+        ESP_ERROR_CHECK(ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0));  
+    }
+}
+    
 
-    if (current >= 0x08) return;    
-    lm2759_t dev;
-    memset(&dev, 0, sizeof(lm2759_t));
+void lcd_set_sleep(void)
+{
+    if( lm2759_available == true )
+    {   
+        lm2759_set_shutdownmode(&dev);
+    }else{
+        lcd_set_contrast(0);
+        gpio_set_level(GPIO_NUM_2, 0);
+    }
+    lcd_sleepstatus = true;
+}
 
-    ESP_ERROR_CHECK(lm2759_init_desc(&dev, lm2759_I2C_ADDRESS, 0, SDA_GPIO, SCL_GPIO));
-    ESP_ERROR_CHECK(lm2759_set_current(&dev, current));
 
-    xSemaphoreGive(main_mutex);}
+void lcd_set_wakeup(void)
+{
+    if( lm2759_available == true )
+    {
+        lm2759_set_torchmode(&dev);
+    }else{
+        // gpio_set_level(GPIO_NUM_2, 1);
+        lcd_set_contrast(devicesettings.contrast_value);
+    }
+    lcd_sleepstatus = false;
+
+
+    if(screenid != SCR_PASSWORD && screenid != SCR_METROLOGY_PASSWORD && screenid != SCR_PASSWORD_SAMPLE_STOP)
+    {
+        Screen_Password(SCR_PASSWORD_WAKEUP);
+    }
+}
+
+bool get_lcdsleep_status(void)
+{
+    return lcd_sleepstatus;
 }

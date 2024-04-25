@@ -48,6 +48,7 @@ lv_obj_t *sssParentContainer;
 lv_obj_t *_sssContStatusBar;
 lv_obj_t *__sssTimeLabel;
 lv_obj_t *__sssBatteryLabel;
+lv_obj_t *__sssBatteryPercentage;
 lv_obj_t *__sssWifiLabel;
 lv_obj_t *__sssSignalLabel;
 lv_obj_t *_sssSummaryParentScroll;
@@ -240,12 +241,12 @@ void sssSummarySampleScreen(void)
         lv_style_set_text_font(&_sssTimeLabelStyle, LV_STATE_DEFAULT, &lv_font_montserrat_20);
         lv_style_set_text_color(&_sssTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
         lv_obj_add_style(__sssTimeLabel, LV_LABEL_PART_MAIN, &_sssTimeLabelStyle);
-        __sssrefresherTask = lv_task_create(__sssTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
+       
 
         // Create Label for Battery icon
         __sssBatteryLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssBatteryLabel, _sssContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-        lv_label_set_text(__sssBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+        lv_label_set_text(__sssBatteryLabel, get_battery_symbol());
 
         static lv_style_t _sssBatteryLabelStyle;
         lv_style_init(&_sssBatteryLabelStyle);
@@ -253,10 +254,23 @@ void sssSummarySampleScreen(void)
         lv_style_set_text_color(&_sssBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
         lv_obj_add_style(__sssBatteryLabel, LV_LABEL_PART_MAIN, &_sssBatteryLabelStyle);
 
+        __sssBatteryPercentage = lv_label_create(_sssContStatusBar, NULL);
+        lv_obj_align(__sssBatteryPercentage, _sssContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+        lv_label_set_text_fmt(__sssBatteryPercentage, "%d%%", get_battery_percentage());
+
+        static lv_style_t _xBatteryPercentageStyle;
+        lv_style_init(&_xBatteryPercentageStyle);
+        lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+        lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+        lv_obj_add_style(__sssBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
+         __sssrefresherTask = lv_task_create(__sssTimeLabel_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
+
         // Create Label for Wifi icon
         __sssWifiLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssWifiLabel, __sssBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
         lv_label_set_text(__sssWifiLabel, LV_SYMBOL_WIFI);
+        lv_obj_set_hidden(__sssWifiLabel, true);
 
         static lv_style_t _sssWifiLabelStyle;
         lv_style_init(&_sssWifiLabelStyle);
@@ -268,6 +282,7 @@ void sssSummarySampleScreen(void)
         __sssSignalLabel = lv_label_create(_sssContStatusBar, NULL);
         lv_obj_align(__sssSignalLabel, __sssWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
         lv_label_set_text(__sssSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+        lv_obj_set_hidden(__sssSignalLabel, true);
 
         static lv_style_t _sssSignalLabelStyle;
         lv_style_init(&_sssSignalLabelStyle);
@@ -1191,6 +1206,8 @@ static void __sssTimeLabel_refr_func(lv_task_t *__sssrefresherTask)
         if (lv_obj_get_screen(__sssTimeLabel) == lv_scr_act())
         {
                 lv_label_set_text(__sssTimeLabel, guiTime);
+                lv_label_set_text(__sssBatteryLabel, get_battery_symbol());
+                lv_label_set_text_fmt(__sssBatteryPercentage, "%d%%", get_battery_percentage());
         }
 }
 
@@ -1202,7 +1219,8 @@ static void __sssBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
         if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
-                xseSummaryEndScreen();
+                __sssrefresherTask = NULL;
+                xseSummaryEndScreen(false);
         }
 }
 
@@ -1211,6 +1229,7 @@ static void QuitBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         if (event == LV_EVENT_RELEASED)
         {
                 lv_task_del(__sssrefresherTask);
+                __sssrefresherTask = NULL;
                 dashboardflg = 0;
                 pxDashboardScreen();
         }

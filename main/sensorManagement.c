@@ -21,7 +21,7 @@
 #define BME_680_AVERAGING_TIME_IN_MS            1000    /* bme 680 external sensor averating time in ms */
 #define BME680_SENSOR_READ_IN_MS                200
 #define INA3221_CURRENT_SENSOR_IN_MS            1000    /* INA sensor averaging time in ms */
-#define SDP32_SENSOR_READ_DURATION_IN_MS        20      /* This is the duration after which the sensor will update the data into the array. */
+#define SDP32_SENSOR_READ_DURATION_IN_MS        50      /* This is the duration after which the sensor will update the data into the array. */
 #define SDP32_SENSOR_AVERAGE_DURATION_IN_MS     200     /* sdp sensor average time out */
 #define SDP32_DIFF_PRESSURE_SCALE_FACTOR        240.0   /* scale factor for the sdp32 diff sensor */
 #define SDP32_DIFF_TEMPERATURE_SCALE_FACTOR     200.0   /*sdp32 temperater scale factor */
@@ -29,6 +29,10 @@
 #define SDA_GPIO                                21      /* i2c sda pin */
 #define SCL_GPIO                                22      /* i2c scl pin */
 #define MASSFLOW_CALCULATION_FACTOR             0.1
+
+
+#define BATTERY_MIN_VOLTAGE         12.4
+#define BATTERY_MAX_VOLTAGE         16.8
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -48,7 +52,7 @@ static external_sensor_data_t external_sensor_data_average = {0};   /* Data vari
 float sdp32_pressure_value = 0; /* sp32 diff pressure sensor average values */
 float sdp32_temperature_value = 0;    /* sdp32 average temperature sensor value*/
 INA3231_sensor_data_t ina3221_sensor_data[INA3221_CHANNEL];         /* array to store the sensor data */
-
+static int battery_percentage = 0;
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -232,6 +236,10 @@ static void internal_sensor_read_task(void *pvParamters)
 ********************************************************************************************/
 static void ina3221_sensor_read_task(void *pvParameters)
 {
+    float bus_voltage;
+    float shunt_voltage;
+    float shunt_current;
+
     ina3221_t dev = {
         .shunt = {100, 100, 100}, // shunt values are 100 mOhm for each channel
         .config.config_register = INA3221_DEFAULT_CONFIG,
@@ -254,9 +262,7 @@ static void ina3221_sensor_read_task(void *pvParameters)
     }
     ESP_LOGD(TAG, "Ina3231 has been inititated");
     vTaskDelay(pdMS_TO_TICKS(500));
-    float bus_voltage;
-    float shunt_voltage;
-    float shunt_current;
+
 
     while (1)
     {
@@ -298,10 +304,18 @@ static void ina3221_sensor_read_task(void *pvParameters)
                 ina3221_sensor_data[i].bus_voltage = bus_voltage;
                 ina3221_sensor_data[i].shunt_voltage = shunt_voltage;
                 ina3221_sensor_data[i].shunt_current = shunt_current;
-                ESP_LOGV(TAG, "Channel %d: Bus voltage: %.2f V, Shunt voltage: %.2f mV, Shunt current: %.2f mA", i, bus_voltage, shunt_voltage, shunt_current);
+                
             }
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
+
+        battery_percentage = (((ina3221_sensor_data[0].bus_voltage - BATTERY_MIN_VOLTAGE) / (BATTERY_MAX_VOLTAGE - BATTERY_MIN_VOLTAGE)) * 100);
+        if(battery_percentage < 0)
+            battery_percentage = 0;
+        else if(battery_percentage > 100)
+            battery_percentage = 100;
+
+        ESP_LOGD(TAG, "Channel 0: Bus voltage: %.2f V, percentage:  %d",  ina3221_sensor_data[0].bus_voltage, battery_percentage);
     }
     vTaskDelete(NULL);
 }
@@ -353,6 +367,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
         bool check = CheckCrc(read_buff, 2, checksum);  /* checking the checksum, as the values we are getting are correct or not */
         if (!check)  /* if checksum failed then continue the loop, else store the value in the array */
         {
+            ESP_LOGE(TAG, "crc checksum verification failed");
             continue;
         }
         else
@@ -365,6 +380,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
             sdp32_read_count++;
             if (sdp32_read_count == NO_OF_SAMPLES_SDP32)
             {
+                ESP_LOGI(TAG, "SDP32 pressure value = %X, %X, %f, %f", read_buff[0], read_buff[1], temp_value, sdp32_pressure_value);
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
@@ -444,6 +460,40 @@ float get_sdp32_massflow_value(void)
     massflow = sdp32_pressure_value*MASSFLOW_CALCULATION_FACTOR;
     return massflow;
 }
+
+/********************************************************************************************
+* 
+********************************************************************************************/
+int get_battery_percentage(void)
+{
+    return battery_percentage;
+}
+
+/********************************************************************************************
+* 
+********************************************************************************************/
+char *get_battery_symbol(void)
+{
+    if(battery_percentage < 10)
+    {
+        return LV_SYMBOL_BATTERY_EMPTY;
+    }
+    else if(battery_percentage < 30)
+    {
+        return LV_SYMBOL_BATTERY_1;
+    }
+    else if(battery_percentage < 60)
+    {
+        return LV_SYMBOL_BATTERY_2;
+    }
+    else if(battery_percentage < 90)
+    {
+        return LV_SYMBOL_BATTERY_3;
+    }
+    return LV_SYMBOL_BATTERY_FULL;
+}
+
+
 /********************************************************************************************
 * 
 ********************************************************************************************/

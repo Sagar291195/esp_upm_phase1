@@ -70,3 +70,7 @@ platformio.ini
 .vscode/
 
 binary/
+*.lock
+sdkconfig
+dependencies.lock
+sdkconfig

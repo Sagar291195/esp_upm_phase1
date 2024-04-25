@@ -21,12 +21,12 @@
 #define MAX_TOLERATION_IN_HOUR_VARIATION    5.0     /* maximum variation in tolerance for the hour measurement to mark the sample as sucessful */
 #define MAX_TOLERATION_IN_VOLUME_VARIATION  5.0     /* maximum variation in tolerance for volume measurement to mark as sucessful */
 #define MAX_TOLERATION_IN_FLOW_VARIATION    5.0     /* maximum tolerance in variation for flow of air to mark the sample as sucessful */
-#define motorPID_DEFAULT_AKI (4.8)  /** Default PID aggressive Ki */
-#define motorPID_DEFAULT_AKD (1.2)  /** Default PID aggressive Kd */
-#define motorPID_DEFAULT_AKP (15)   /** Default PID aggressive Kp */
-#define motorPID_DEFAULT_KI (3.0)   /** Default PID normal Ki */
-#define motorPID_DEFAULT_KD (1.0)   /** Default PID normal Kd */
-#define motorPID_DEFAULT_KP (5.0)   /** Default PID normal Kp */
+#define motorPID_DEFAULT_AKI (2)  /** Default PID aggressive Ki */
+#define motorPID_DEFAULT_AKD (3)  /** Default PID aggressive Kd */
+#define motorPID_DEFAULT_AKP (1)   /** Default PID aggressive Kp */
+#define motorPID_DEFAULT_KI (0.2)   /** Default PID normal Ki */
+#define motorPID_DEFAULT_KD (0.3)   /** Default PID normal Kd */
+#define motorPID_DEFAULT_KP (0.1)   /** Default PID normal Kp */
 
 /********************************************************************************************
  *                              TYPEDEFS

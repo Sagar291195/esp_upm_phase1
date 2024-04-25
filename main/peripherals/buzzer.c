@@ -61,10 +61,17 @@ static void buzzer_init_gpio(void)
  ********************************************************************************************/
 void buzzer_initialization(void)
 {
-    gpio_pad_select_gpio(BUZZER);
-    gpio_set_direction(BUZZER, GPIO_MODE_OUTPUT);
-    gpio_set_level(BUZZER, 0);
-    buzzer_init_gpio();
+    static bool init = false;
+
+    if(init == false)
+    {
+        init = true;
+        gpio_pad_select_gpio(BUZZER);
+        gpio_set_direction(BUZZER, GPIO_MODE_OUTPUT);
+        gpio_set_level(BUZZER, 0);
+        buzzer_init_gpio();
+    }
+
 }
 
 

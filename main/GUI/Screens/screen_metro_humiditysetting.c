@@ -50,6 +50,7 @@ lv_obj_t *mhsParentCont;
 lv_obj_t *_mhsContStatusBar;
 lv_obj_t *__mhsTimeLabel;
 lv_obj_t *__mhsBatteryLabel;
+lv_obj_t *__mhsBatteryPercentage;
 lv_obj_t *__mhsWifiLabel;
 lv_obj_t *__mhsSignalLabel;
 lv_obj_t *_mhsHumidityHeadingCont;
@@ -57,6 +58,8 @@ lv_obj_t *__mhsBackArrowLabel;
 lv_obj_t *__mhsHumidityHeadingLbl;
 lv_obj_t *_mhsHumidityLogo;
 lv_obj_t *_mhsCurveUnitCont;
+
+static lv_task_t *humidity_settings_refresherTask;
 
 int global_CurveDegree_humidity;
 
@@ -73,6 +76,15 @@ int metrohumidityUnit; // for LPH flowUnit == 0, For LPM == 1
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void humidity_settings_refr_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__mhsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__mhsTimeLabel, guiTime);
+        lv_label_set_text(__mhsBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__mhsBatteryPercentage, "%d%%", get_battery_percentage());
+    }
+}
 
 void callMetroHumiditySettingScreen(void)
 {
@@ -115,7 +127,7 @@ void callMetroHumiditySettingScreen(void)
     // Create Label for Battery icon
     __mhsBatteryLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsBatteryLabel, _mhsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__mhsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__mhsBatteryLabel, get_battery_symbol());
 
     static lv_style_t __mhsBatteryLabelStyle;
     lv_style_init(&__mhsBatteryLabelStyle);
@@ -123,10 +135,21 @@ void callMetroHumiditySettingScreen(void)
     lv_style_set_text_color(&__mhsBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mhsBatteryLabel, LV_LABEL_PART_MAIN, &__mhsBatteryLabelStyle);
 
+    __mhsBatteryPercentage = lv_label_create(_mhsContStatusBar, NULL);
+    lv_obj_align(__mhsBatteryPercentage, _mhsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__mhsBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__mhsBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __mhsWifiLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsWifiLabel, __mhsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mhsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__mhsWifiLabel, true);
 
     static lv_style_t __mhsWifiLabelStyle;
     lv_style_init(&__mhsWifiLabelStyle);
@@ -138,12 +161,15 @@ void callMetroHumiditySettingScreen(void)
     __mhsSignalLabel = lv_label_create(_mhsContStatusBar, NULL);
     lv_obj_align(__mhsSignalLabel, __mhsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mhsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__mhsSignalLabel, true);
 
     static lv_style_t __mhsSignalLabelStyle;
     lv_style_init(&__mhsSignalLabelStyle);
     lv_style_set_text_font(&__mhsSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__mhsSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mhsSignalLabel, LV_LABEL_PART_MAIN, &__mhsSignalLabelStyle);
+
+    humidity_settings_refresherTask = lv_task_create(humidity_settings_refr_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain FLOW Header
     _mhsHumidityHeadingCont = lv_cont_create(mhsParentCont, NULL);
@@ -466,6 +492,8 @@ static void __mhsValidAdjBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(humidity_settings_refresherTask);
+        humidity_settings_refresherTask = NULL;
         callMetroAdjust();
     }
 }
@@ -474,6 +502,8 @@ static void __mhsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(humidity_settings_refresherTask);
+        humidity_settings_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -485,60 +515,50 @@ static void curve_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
         if (strcmp(buf, "Linear1") == 0)
         {
             global_CurveDegree_humidity = 1;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear2") == 0)
         {
             global_CurveDegree_humidity = 2;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear3") == 0)
         {
             global_CurveDegree_humidity = 3;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear4") == 0)
         {
             global_CurveDegree_humidity = 4;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear5") == 0)
         {
             global_CurveDegree_humidity = 5;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear6") == 0)
         {
             global_CurveDegree_humidity = 6;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear7") == 0)
         {
             global_CurveDegree_humidity = 7;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear8") == 0)
         {
             global_CurveDegree_humidity = 8;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear9") == 0)
         {
             global_CurveDegree_humidity = 9;
             printf("Curve Points: %d\n", global_CurveDegree_humidity);
-            fflush(NULL);
         }
         else
         {
@@ -569,7 +589,6 @@ static void lowerlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 
@@ -580,7 +599,6 @@ static void higherlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 

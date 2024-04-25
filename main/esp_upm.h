@@ -19,6 +19,7 @@ extern "C" {
 #include "freertos/task.h"
 #include "esp_freertos_hooks.h"
 #include "freertos/semphr.h"
+#include "freertos/event_groups.h"
 
 #include "esp_system.h"
 #include "driver/gpio.h"
@@ -48,7 +49,7 @@ extern "C" {
 /********************************************************************************************
  *                              DEFINES
  ********************************************************************************************/
-#define FIRMWARE_VERSION    "1.0.0.4"
+#define FIRMWARE_VERSION    "1.3.0.4"
 
 /********************************************************************************************
  *                              TYPEDEFS
@@ -61,8 +62,10 @@ extern "C" {
 /********************************************************************************************
  *                           GLOBAL FUNCTIONS
  ********************************************************************************************/
- 
- 
+ void set_fw_update_errorcode( uint8_t errorcode );
+ void set_device_normal_operating_mode( void );
+ uint8_t get_firmware_update_error( void );
+ uint8_t get_device_working_mode( void );
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

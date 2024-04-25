@@ -102,8 +102,8 @@ void vSetCounterValuesEndSummaryDetails()
     endsummary.genericsummary.xHourCounter.fEffectiveHour = fGetTotalHoursCount() - endsummary.genericsummary.xHourCounter.fStartHour;
     
     endsummary.genericsummary.xHourCounter.fVariation = fabs(((endsummary.genericsummary.xHourCounter.fTargetHour - endsummary.genericsummary.xHourCounter.fEffectiveHour) / endsummary.genericsummary.xHourCounter.fTargetHour) * 100);    /* calculating the variation in hours */
-    ESP_LOGD(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.genericsummary.xHourCounter.fTargetHour, endsummary.genericsummary.xHourCounter.fEffectiveHour);
-    ESP_LOGD(TAG, "variation in hour is %.2f", endsummary.genericsummary.xHourCounter.fVariation);
+    ESP_LOGI(TAG, "Hour counter target and effective values are %.2f and %.2f", endsummary.genericsummary.xHourCounter.fTargetHour, endsummary.genericsummary.xHourCounter.fEffectiveHour);
+    ESP_LOGI(TAG, "variation in hour is %.2f", endsummary.genericsummary.xHourCounter.fVariation);
 
     strcpy(endsummary.cEndPerson, "Time Finish");  
     ESP_LOGD(TAG, "saving end summary to flash");
@@ -181,6 +181,9 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 if (!bSampleForcedStop) /* our job is finished, need to show the finised job summary screen only when the sample is time end */
                 {   
                     vShowJobFinishedScreen();
+                }
+                else{
+                    xseSummaryEndScreen(true);
                 }
                 
                 ESP_LOGD(TAG, "Setting the sequence number to 0");  /* if the sequence is the last sequence in the array, then the sample is over, not set the sequence to run to 0. indicating that no sequnce is in progress */
@@ -459,10 +462,8 @@ void vNotifySampleMangementToProceed()
 ********************************************************************************************/
 void vStopCurrentSample()
 {
-    
     bSampleForcedStop = true; /* setting the force stop sample flag to true */
 
-    
     if (is_sequence_running())   /* if sequce is running stopping it */
     {
         ESP_LOGD(TAG, "Sequnce is running stopping it");
@@ -473,6 +474,7 @@ void vStopCurrentSample()
         ESP_LOGD(TAG, "No sample is currently running, deleting the sample management service");
         vSetCurrentRunningSequenceNumber(0);    /* setting the current sample number to invalidate or zero */
         vSetCurrentSequenceNumberToNvsFlash(); // settin to the nvs flash
+        
         if (xHandleSampleManagementService != NULL) /* deleting the sample management service task */
         {
             vTaskDelete(xHandleSampleManagementService);
@@ -566,7 +568,8 @@ void vUpdateWorkInProgressScreen()
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
         ESP_LOGV(TAG, "Updating dashboard screen");
-        vUpdateDashboardScreen();
+        if(screenid == SCR_DASHBOARD)
+            vUpdateDashboardScreen();
         xSemaphoreGive(gui_update_semaphore);
     }
 }
@@ -597,7 +600,7 @@ void vControllerShowEndSummayScreen()
     ESP_LOGD(TAG, "Showing the end summary screen");
     if (xSemaphoreTake(gui_update_semaphore, portMAX_DELAY) == pdTRUE)
     {
-        xseSummaryEndScreen();
+        xseSummaryEndScreen(true);
         xSemaphoreGive(gui_update_semaphore);
     }
 }

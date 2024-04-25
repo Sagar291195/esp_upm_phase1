@@ -155,34 +155,45 @@ void ws2812_handleInterrupt(void *arg)
 }
 
 
+void ws2812_disable(void)
+{
+    gpio_pad_select_gpio(13);                 // Set GPIO as OUTPUT
+    gpio_set_direction(13, GPIO_MODE_INPUT); // WakeMode
+    gpio_set_level(13, 0);
+    rmt_driver_uninstall(RMTCHANNEL);
+}
+
 /********************************************************************************************
  *  
  ********************************************************************************************/
 void ws2812_init(int gpioNum)
 {
-  DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_RMT_CLK_EN);
-  DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_RMT_RST);
+  static bool init_ws2812 = false;
+  if(init_ws2812 == false)
+  {
+    init_ws2812 = true;
+    DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_RMT_CLK_EN);
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_RMT_RST);
 
-  rmt_set_pin((rmt_channel_t)RMTCHANNEL, RMT_MODE_TX, (gpio_num_t)gpioNum);
+    rmt_set_pin((rmt_channel_t)RMTCHANNEL, RMT_MODE_TX, (gpio_num_t)gpioNum);
 
-  ws2812_initRMTChannel(RMTCHANNEL);
+    ws2812_initRMTChannel(RMTCHANNEL);
 
-  RMT.tx_lim_ch[RMTCHANNEL].limit = MAX_PULSES;
-  RMT.int_ena.ch0_tx_thr_event = 1;
-  RMT.int_ena.ch0_tx_end = 1;
+    RMT.tx_lim_ch[RMTCHANNEL].limit = MAX_PULSES;
+    RMT.int_ena.ch0_tx_thr_event = 1;
+    RMT.int_ena.ch0_tx_end = 1;
 
-  ws2812_bits[0].level0 = 1;
-  ws2812_bits[0].level1 = 0;
-  ws2812_bits[0].duration0 = PULSE_T0H;
-  ws2812_bits[0].duration1 = PULSE_T0L;
-  ws2812_bits[1].level0 = 1;
-  ws2812_bits[1].level1 = 0;
-  ws2812_bits[1].duration0 = PULSE_T1H;
-  ws2812_bits[1].duration1 = PULSE_T1L;
+    ws2812_bits[0].level0 = 1;
+    ws2812_bits[0].level1 = 0;
+    ws2812_bits[0].duration0 = PULSE_T0H;
+    ws2812_bits[0].duration1 = PULSE_T0L;
+    ws2812_bits[1].level0 = 1;
+    ws2812_bits[1].level1 = 0;
+    ws2812_bits[1].duration0 = PULSE_T1H;
+    ws2812_bits[1].duration1 = PULSE_T1L;
 
-  esp_intr_alloc(ETS_RMT_INTR_SOURCE, 0, ws2812_handleInterrupt, NULL, &rmt_intr_handle);
-
-  return;
+    esp_intr_alloc(ETS_RMT_INTR_SOURCE, 0, ws2812_handleInterrupt, NULL, &rmt_intr_handle);
+  }
 }
 
 /********************************************************************************************

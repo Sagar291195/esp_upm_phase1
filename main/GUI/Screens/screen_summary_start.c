@@ -67,6 +67,7 @@ lv_obj_t *xssParentContainer_ss;
 lv_obj_t *_xssContStatusBar_ss;
 lv_obj_t *__xssTimeLabel_ss;
 lv_obj_t *__xssBatteryLabel_ss;
+lv_obj_t *__xssBatteryPercentage_ss;
 lv_obj_t *__xssWifiLabel_ss;
 lv_obj_t *__xssSignalLabel_ss;
 lv_obj_t *_xssParaHeadingCont_ss;
@@ -161,7 +162,7 @@ void xssSummaryStartScreen(void)
     // Create Label for Battery icon
     __xssBatteryLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssBatteryLabel_ss, _xssContStatusBar_ss, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__xssBatteryLabel_ss, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__xssBatteryLabel_ss, get_battery_symbol());
 
     static lv_style_t _xssBatteryLabelStyle_ss;
     lv_style_init(&_xssBatteryLabelStyle_ss);
@@ -169,10 +170,22 @@ void xssSummaryStartScreen(void)
     lv_style_set_text_color(&_xssBatteryLabelStyle_ss, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__xssBatteryLabel_ss, LV_LABEL_PART_MAIN, &_xssBatteryLabelStyle_ss);
 
+    __xssBatteryPercentage_ss = lv_label_create(_xssContStatusBar_ss, NULL);
+    lv_obj_align(__xssBatteryPercentage_ss, _xssContStatusBar_ss, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__xssBatteryPercentage_ss, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__xssBatteryPercentage_ss, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __xssWifiLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssWifiLabel_ss, __xssBatteryLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__xssWifiLabel_ss, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__xssWifiLabel_ss, true);
+
 
     static lv_style_t _xssWifiLabelStyle_ss;
     lv_style_init(&_xssWifiLabelStyle_ss);
@@ -184,6 +197,8 @@ void xssSummaryStartScreen(void)
     __xssSignalLabel_ss = lv_label_create(_xssContStatusBar_ss, NULL);
     lv_obj_align(__xssSignalLabel_ss, __xssWifiLabel_ss, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__xssSignalLabel_ss, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__xssSignalLabel_ss, true);
+
 
     static lv_style_t _xssSignalLabelStyle_ss;
     lv_style_init(&_xssSignalLabelStyle_ss);
@@ -488,6 +503,8 @@ static void __xssTimeLabel_ss_refr_func(lv_task_t *__xssTMrefresherTask)
     if (screenid == SCR_SUMMARY_START)
     {
         lv_label_set_text(__xssTimeLabel_ss, guiTime);
+        lv_label_set_text(__xssBatteryLabel_ss, get_battery_symbol());
+        lv_label_set_text_fmt(__xssBatteryPercentage_ss, "%d%%", get_battery_percentage());
     }
 }
 

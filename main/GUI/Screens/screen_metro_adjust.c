@@ -49,6 +49,7 @@ lv_obj_t *mtaPatrentCont;
 lv_obj_t *_mtaContStatusBar;
 lv_obj_t *__mtaTimeLabel;
 lv_obj_t *__mtaBatteryLabel;
+lv_obj_t *__mtaBatteryPercentage;
 lv_obj_t *__mtaWifiLabel;
 lv_obj_t *__mtaSignalLabel;
 lv_obj_t *_mtaMetroHeadingCont;
@@ -117,6 +118,8 @@ static const lv_btnmatrix_ctrl_t mta_tgl_kb_ctrl[] = {
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+
+
 void sensor_value_update(lv_task_t *taskhandle)
 {
     const char *tempbuffer;
@@ -160,6 +163,9 @@ void sensor_value_update(lv_task_t *taskhandle)
         correction = (((reference_value - sensorvalue) / reference_value) * 100);
         lv_label_set_text_fmt(_mtaCorrectionValueLbl, "%0.2f", correction);
     }
+    lv_label_set_text(__mtaBatteryLabel, get_battery_symbol());
+    lv_label_set_text_fmt(__mtaBatteryPercentage, "%d%%", get_battery_percentage());
+    lv_label_set_text(__mtaTimeLabel, guiTime);
     
 }
 
@@ -202,7 +208,7 @@ void callMetroAdjust(void)
     // Create Label for Battery icon
     __mtaBatteryLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaBatteryLabel, _mtaContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__mtaBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__mtaBatteryLabel, get_battery_symbol());
 
     static lv_style_t __mtaBatteryLabelStyle;
     lv_style_init(&__mtaBatteryLabelStyle);
@@ -210,10 +216,21 @@ void callMetroAdjust(void)
     lv_style_set_text_color(&__mtaBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mtaBatteryLabel, LV_LABEL_PART_MAIN, &__mtaBatteryLabelStyle);
 
+    __mtaBatteryPercentage = lv_label_create(_mtaContStatusBar, NULL);
+    lv_obj_align(__mtaBatteryPercentage, _mtaContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__mtaBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__mtaBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __mtaWifiLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaWifiLabel, __mtaBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mtaWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__mtaWifiLabel, true);
 
     static lv_style_t __mtaWifiLabelStyle;
     lv_style_init(&__mtaWifiLabelStyle);
@@ -225,12 +242,14 @@ void callMetroAdjust(void)
     __mtaSignalLabel = lv_label_create(_mtaContStatusBar, NULL);
     lv_obj_align(__mtaSignalLabel, __mtaSignalLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mtaSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__mtaSignalLabel, true);
 
     static lv_style_t __mtaSignalLabelStyle;
     lv_style_init(&__mtaSignalLabelStyle);
     lv_style_set_text_font(&__mtaSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__mtaSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mtaSignalLabel, LV_LABEL_PART_MAIN, &__mtaSignalLabelStyle);
+
 
     // Crate a container to contain Summary Start Header
 
@@ -490,6 +509,7 @@ static void _mtavalidbuttoncalled_event_cb(lv_obj_t *ta, lv_event_t event)
             callMetroFlowSettingScreen();
         }
         lv_task_del(calibration_screenupdate_task);
+        calibration_screenupdate_task = NULL;
     }
 }
 
@@ -498,6 +518,7 @@ static void __mtaBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
     if (event == LV_EVENT_RELEASED)
     {
         lv_task_del(calibration_screenupdate_task);
+        calibration_screenupdate_task = NULL;
         CallMetroMenuScreen();
     }
 }

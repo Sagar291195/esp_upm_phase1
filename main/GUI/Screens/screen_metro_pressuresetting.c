@@ -50,6 +50,7 @@ lv_obj_t *mpsParentCont;
 lv_obj_t *_mpsContStatusBar;
 lv_obj_t *__mpsTimeLabel;
 lv_obj_t *__mpsBatteryLabel;
+lv_obj_t *__mpsBatteryPercentage;
 lv_obj_t *__mpsWifiLabel;
 lv_obj_t *__mpsSignalLabel;
 lv_obj_t *_mpsPressureHeadingCont;
@@ -58,6 +59,7 @@ lv_obj_t *__mpsPressureHeadingLbl;
 lv_obj_t *_mpsPressureLogo;
 lv_obj_t *_mpsCurveUnitCont;
 
+lv_task_t *pressure_settings_refresherTask;
 int global_CurveDegree_pressure;
 
 int metropressureUnit; // for LPH flowUnit == 0, For LPM == 1
@@ -73,6 +75,15 @@ int metropressureUnit; // for LPH flowUnit == 0, For LPM == 1
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void pressure_settings_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__mpsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__mpsTimeLabel, guiTime);
+        lv_label_set_text(__mpsBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__mpsBatteryPercentage, "%d%%", get_battery_percentage());
+    }
+}
 
 void callMetroPressureSettingScreen(void)
 {
@@ -114,7 +125,7 @@ void callMetroPressureSettingScreen(void)
     // Create Label for Battery icon
     __mpsBatteryLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsBatteryLabel, _mpsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__mpsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__mpsBatteryLabel, get_battery_symbol());
 
     static lv_style_t __mpsBatteryLabelStyle;
     lv_style_init(&__mpsBatteryLabelStyle);
@@ -122,10 +133,22 @@ void callMetroPressureSettingScreen(void)
     lv_style_set_text_color(&__mpsBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mpsBatteryLabel, LV_LABEL_PART_MAIN, &__mpsBatteryLabelStyle);
 
+    __mpsBatteryPercentage = lv_label_create(_mpsContStatusBar, NULL);
+    lv_obj_align(__mpsBatteryPercentage, _mpsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__mpsBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__mpsBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
+
     // Create Label for Wifi icon
     __mpsWifiLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsWifiLabel, __mpsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__mpsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__mpsWifiLabel, true);
 
     static lv_style_t __mpsWifiLabelStyle;
     lv_style_init(&__mpsWifiLabelStyle);
@@ -137,12 +160,15 @@ void callMetroPressureSettingScreen(void)
     __mpsSignalLabel = lv_label_create(_mpsContStatusBar, NULL);
     lv_obj_align(__mpsSignalLabel, __mpsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__mpsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__mpsSignalLabel, true);
 
     static lv_style_t __mpsSignalLabelStyle;
     lv_style_init(&__mpsSignalLabelStyle);
     lv_style_set_text_font(&__mpsSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__mpsSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__mpsSignalLabel, LV_LABEL_PART_MAIN, &__mpsSignalLabelStyle);
+
+    pressure_settings_refresherTask = lv_task_create(pressure_settings_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain FLOW Header
     _mpsPressureHeadingCont = lv_cont_create(mpsParentCont, NULL);
@@ -464,6 +490,8 @@ static void __mpsValidAdjBTN_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(pressure_settings_refresherTask);
+        pressure_settings_refresherTask = NULL;
         callMetroAdjust();
     }
 }
@@ -472,6 +500,8 @@ static void __mpsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(pressure_settings_refresherTask);
+        pressure_settings_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -488,55 +518,46 @@ static void curve_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         {
             global_CurveDegree_pressure = 1;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear2") == 0)
         {
             global_CurveDegree_pressure = 2;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear3") == 0)
         {
             global_CurveDegree_pressure = 3;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear4") == 0)
         {
             global_CurveDegree_pressure = 4;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear5") == 0)
         {
             global_CurveDegree_pressure = 5;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear6") == 0)
         {
             global_CurveDegree_pressure = 6;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear7") == 0)
         {
             global_CurveDegree_pressure = 7;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear8") == 0)
         {
             global_CurveDegree_pressure = 8;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else if (strcmp(buf, "Linear9") == 0)
         {
             global_CurveDegree_pressure = 9;
             printf("Curve Points: %d\n", global_CurveDegree_pressure);
-            fflush(NULL);
         }
         else
         {
@@ -567,7 +588,6 @@ static void lowerlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 
@@ -578,7 +598,6 @@ static void higherlim_dropdown_event_handler(lv_obj_t *obj, lv_event_t event)
         char buf[32];
         lv_dropdown_get_selected_str(obj, buf, sizeof(buf));
         printf("Option: %s\n", buf);
-        fflush(NULL);
     }
 }
 

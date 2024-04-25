@@ -55,7 +55,6 @@ lv_obj_t *pxPercentLabel;
 lv_obj_t *_xTimeleftHourTextLabel;
 lv_obj_t *_xTimeleftMinTextLabel;
 
-int _xBTN = 0;
 
 extern char *dashboardBTNTxt;
 
@@ -265,9 +264,9 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_line_rounded(&style_hor_line, LV_STATE_DEFAULT, true);
 
 	lv_obj_add_style(hor_line, LV_LINE_PART_MAIN, &style_hor_line);
+	lv_obj_set_hidden(hor_line, true);
 
 	// Create total hour label fix
-
 	lv_obj_t *fix_hour_Label = lv_label_create(pxContainer, NULL);
 	lv_obj_align(fix_hour_Label, pxContainer, LV_ALIGN_IN_BOTTOM_RIGHT, -90, -55);
 	lv_label_set_text(fix_hour_Label, "TOTAL HOURS");
@@ -385,6 +384,16 @@ lv_obj_t *pxCreateResumeInfo(lv_obj_t *pxParent)
 	lv_style_set_text_color(&style_UnitHour, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
 	lv_obj_add_style(UnitHour, LV_LABEL_PART_MAIN, &style_UnitHour);
 
+	lv_obj_set_hidden(UnitHour, true);
+	lv_obj_set_hidden(var_hour_Label_Float, true);
+	lv_obj_set_hidden(hourpoint, true);
+	lv_obj_set_hidden(var_hour_Label_Int, true);
+	lv_obj_set_hidden(UnitLiter, true);
+	lv_obj_set_hidden(var_liter_Label_Float, true);
+	lv_obj_set_hidden(literpoint, true);
+	lv_obj_set_hidden(var_liter_Label_Int, true);
+	lv_obj_set_hidden(fix_hour_Label, true);
+	lv_obj_set_hidden(fix_liters_Label, true);
 	//-----------------------------------------------------------------------------------------------------
 
 	pxExt->pxContainer = pxContainer;
@@ -433,13 +442,14 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_set_style_local_line_color(pxArc, LV_ARC_PART_INDIC, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x5D, 0xAF, 0x48));
 		lv_obj_set_style_local_bg_opa(pxArc, LV_ARC_PART_BG, LV_STATE_DEFAULT, LV_OPA_TRANSP);
 		lv_arc_set_angles(pxExt->pxProgressArc, 0, 360);
-		lv_label_set_text(pxExt->pxPercentValue, "Let's \nStart");
+		lv_label_set_text_fmt(pxExt->pxPercentValue, "%c%c%c\n %c%c%c%c", devicesettings.device_serial_number[0],
+			devicesettings.device_serial_number[1], devicesettings.device_serial_number[2], devicesettings.device_serial_number[3], 
+			devicesettings.device_serial_number[4], devicesettings.device_serial_number[5], devicesettings.device_serial_number[6]);
 		lv_obj_set_style_local_text_font(pxPercentLabel, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_obj_align(pxTextLabel, pxArc, LV_ALIGN_OUT_TOP_LEFT, -140, 0);
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, 0, 60);
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 0;
 		dashboardBTNTxt = "START JOB ";
 		break;
 	case RESUMEINFO_PROBLEM:
@@ -451,7 +461,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -3, RESUMEINFO_PERCENT_OFFSET);
 		// lv_label_set_text(pxExt->pxPercentValue,  "");
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
-		//_xBTN = 1;
 		dashboardBTNTxt = "  VIEW SUMMARY";
 		break;
 	case RESUMEINFO_METROLOGY_IN_PROGRESS:
@@ -460,7 +469,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_label_set_text(pxExt->pxPercentSymbol, "0%");
 		lv_obj_align(pxExt->pxPercentValue, pxExt->pxProgressArc, LV_ALIGN_IN_TOP_MID, 0, RESUMEINFO_PERCENT_OFFSET);
 		lv_obj_align(pxExt->pxPercentSymbol, pxExt->pxPercentValue, LV_ALIGN_OUT_RIGHT_MID, RESUMEINFO_SYMBOL_OFFSET_X, RESUMEINFO_SYMBOL_OFFSET_Y);
-		//_xBTN = 2;
 		dashboardBTNTxt = "START JOB ";
 		break;
 	case RESUMEINFO_WORK_IN_PROGRESS:
@@ -485,8 +493,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_label_set_text(_xCurrentTaskNumberLabel, "2");
 		// lv_label_set_text_fmt(_xCurrentTaskNumberLabel, "%d", 2);
 		lv_obj_align(_xCurrentTaskNumberLabel, pxTaskNumberLabel, LV_ALIGN_OUT_RIGHT_BOTTOM, 0, 0);
-		//==
-		//_xBTN = 3;
 		dashboardBTNTxt = "STOP";
 		break;
 	case RESUMEINFO_WAIT:
@@ -503,7 +509,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 4;
 		dashboardBTNTxt = "FORCE STOP";
 		break;
 	case RESUMEINFO_JOB_FINISHED:
@@ -516,7 +521,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 5;
 		dashboardBTNTxt = "VIEW SUMMARY";
 		break;
 
@@ -530,7 +534,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 6;
 		dashboardBTNTxt = "FORCE START";
 		break;
 	case RESUMEINFO_METROLOGY_NEEDED:
@@ -543,7 +546,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 7;
 		dashboardBTNTxt = "START JOB";
 		break;
 	case RESUMEINFO_EXPORT_DATA:
@@ -556,7 +558,6 @@ void vSetResumeInfoState(lv_obj_t *pxObj, ResumeInfoState_t xState, const char *
 		lv_obj_align(pxPercentLabel, pxArc, LV_ALIGN_IN_TOP_MID, -2, RESUMEINFO_PERCENT_OFFSET);
 		lv_label_set_text(pxExt->pxPercentSymbol, "");
 		lv_task_create(arc_loader, 20, LV_TASK_PRIO_HIGH, pxArc);
-		//_xBTN = 8;
 		dashboardBTNTxt = "STOP";
 		break;
 	}

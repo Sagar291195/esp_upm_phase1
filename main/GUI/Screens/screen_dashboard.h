@@ -31,7 +31,7 @@ void DashboardInfoWidget(void);
 void pxDashboardScreen(void);
 void vUpdateDashboardScreen();
 void vShowJobFinishedDashboardScreen();
-
+void delete_timeupdate_task(void);
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

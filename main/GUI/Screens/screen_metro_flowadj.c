@@ -56,6 +56,7 @@ lv_obj_t *fcsParentCont;
 lv_obj_t *_fcsContStatusBar;
 lv_obj_t *__fcsTimeLabel;
 lv_obj_t *__fcsBatteryLabel;
+lv_obj_t *__fcsBatteryPercentage;
 lv_obj_t *__fcsWifiLabel;
 lv_obj_t *__fcsSignalLabel;
 lv_obj_t *_fcsMetroHeadingCont;
@@ -67,6 +68,7 @@ lv_obj_t *_fcsEnterCalValTA;
 lv_obj_t *_fcsValidBtn;
 lv_obj_t *_fcsValidBtnLbl;
 lv_obj_t *_fcsKeyBord;
+static lv_task_t *flow_adjust_refresherTask = NULL;
 
 /*Create a custom map for the keyboard*/
 
@@ -119,6 +121,16 @@ static const lv_btnmatrix_ctrl_t fcs_tgl_kb_ctrl[] = {
  *  GLOBAL VARIABLES
  **********************/
 
+static void flow_adjust_refer_func(lv_task_t *refresherTask)
+{
+    if (lv_obj_get_screen(__fcsTimeLabel) == lv_scr_act())
+    {
+        lv_label_set_text(__fcsTimeLabel, guiTime);
+        lv_label_set_text(__fcsBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__fcsBatteryPercentage, "%d%%", get_battery_percentage());
+    }
+}
+
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
@@ -158,10 +170,12 @@ void callMetroFlowAdjustScreen(void)
     lv_style_set_text_color(&_fcsTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fcsTimeLabel, LV_LABEL_PART_MAIN, &_fcsTimeLabelStyle);
 
+    flow_adjust_refresherTask = lv_task_create(flow_adjust_refer_func, 1000, LV_TASK_PRIO_LOW, NULL);
+
     // Create Label for Battery icon
     __fcsBatteryLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsBatteryLabel, _fcsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__fcsBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__fcsBatteryLabel, get_battery_symbol());
 
     static lv_style_t _fcsBatteryLabelStyle;
     lv_style_init(&_fcsBatteryLabelStyle);
@@ -169,10 +183,21 @@ void callMetroFlowAdjustScreen(void)
     lv_style_set_text_color(&_fcsBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fcsBatteryLabel, LV_LABEL_PART_MAIN, &_fcsBatteryLabelStyle);
 
+    __fcsBatteryPercentage = lv_label_create(_fcsContStatusBar, NULL);
+    lv_obj_align(__fcsBatteryPercentage, _fcsContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__fcsBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__fcsBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __fcsWifiLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsWifiLabel, __fcsBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fcsWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__fcsWifiLabel, true);
 
     static lv_style_t _fcsWifiLabelStyle;
     lv_style_init(&_fcsWifiLabelStyle);
@@ -184,6 +209,7 @@ void callMetroFlowAdjustScreen(void)
     __fcsSignalLabel = lv_label_create(_fcsContStatusBar, NULL);
     lv_obj_align(__fcsSignalLabel, __fcsWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__fcsSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__fcsSignalLabel, true);
 
     static lv_style_t __fcsSignalLabelStyle;
     lv_style_init(&__fcsSignalLabelStyle);
@@ -298,7 +324,7 @@ void callMetroFlowAdjustScreen(void)
     lv_obj_set_style_local_radius(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 120); // LV_RADIUS_CIRCLE 50
     lv_obj_set_style_local_bg_color(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
     lv_obj_set_style_local_bg_color(_fcsKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD));
-    lv_obj_set_style_local_text_font(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_32);
+    lv_obj_set_style_local_text_font(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, &lv_font_montserrat_30);
     lv_obj_set_style_local_text_color(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_obj_set_style_local_border_width(_fcsKeyBord, LV_KEYBOARD_PART_BG, LV_STATE_DEFAULT, 0);
     // lv_obj_set_style_local_border_width(_fcsKeyBord, LV_KEYBOARD_PART_BTN, LV_STATE_DEFAULT, 10);
@@ -318,6 +344,8 @@ static void __fcsBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        lv_task_del(flow_adjust_refresherTask);
+        flow_adjust_refresherTask = NULL;
         CallMetroMenuScreen();
     }
 }
@@ -342,6 +370,8 @@ static void __fcsValidBTN_event_handler(lv_obj_t *obj, lv_event_t event)
         reference_flowcalibration_Points[flow_calibration_point_count] = SetPt;
         ESP_LOGI(TAG, "Reference flowPoints[%d] = %f", flow_calibration_point_count, reference_flowcalibration_Points[flow_calibration_point_count]);
         lv_textarea_set_text(_fcsEnterCalValTA, "");
+        lv_task_del(flow_adjust_refresherTask);
+        flow_adjust_refresherTask = NULL;
         CallMetroFlowCalibrationScreen();
     }
 }

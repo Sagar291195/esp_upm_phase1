@@ -9,6 +9,9 @@
 #define TAG                 "FLASH"
 #define DB_FILENAME         "/spiffs/test.db"
 
+#define SETTINGS_STORGE_NAME     "settings"
+#define MODE_STORAGE        "configstorage"
+#define KEY_DEVICE_MODE     "devicemode"
 /********************************************************************************************
  *                              TYPEDEFS
  ********************************************************************************************/
@@ -16,15 +19,18 @@
 /********************************************************************************************
  *                           GLOBAL VARIABLES
  ********************************************************************************************/
+device_settings_t devicesettings;
 
 /********************************************************************************************
  *                           STATIC VARIABLES
  ********************************************************************************************/
-SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
-sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
-sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
+static SemaphoreHandle_t mutexForTheDb = NULL; /* Since many task writing to the db at the same time so we need mutual exclusion */
+static sqlite3 *dbRawMeasurement = NULL;   /* db handle for the raw measurement data */
+static sqlite3 *dbArchivedMeasurement = NULL;  /* db handle for the archive data */
 const char *data = "Callback function has been called";
-char *zErrMsg;
+static char *zErrMsg;
+static char dev_settings_key[] = "dev-setting";  // key to store data in flash
+
 
 /********************************************************************************************
  *                           STATIC PROTOTYPE
@@ -415,6 +421,32 @@ bool nvswrite_value_u8(char *storagename, char *key, uint8_t value)
 /********************************************************************************************
  *      
  ********************************************************************************************/
+bool nvsread_device_mode_settings( device_state_t *devicestate )
+{
+    bool ret = false;
+
+    ret = nvsread_value_parameter( MODE_STORAGE, KEY_DEVICE_MODE, devicestate );
+    if( devicestate->startbyte == 0xFE && ret == true )
+    {
+        ret = true;
+    }
+    return ret;
+}
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvswrite_device_mode_settings(device_state_t *devicestate)
+{
+    bool ret = false;
+
+    devicestate->startbyte = 0xFE;
+    ret = nvswrite_value_parameters(MODE_STORAGE, KEY_DEVICE_MODE, devicestate, sizeof(device_state_t));
+    return ret;
+}
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
 void nvs_storage_initialize(void)
 {
     esp_err_t err = vInitializeSpiffs();        /* initializing our spiffs */
@@ -585,4 +617,59 @@ bool database_get_sequence_summary(uint32_t sampleNumber, uint32_t sequenceNumbe
     return bReadData;
 }
 
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvsread_device_settings(void)
+{
+    bool ret = false;
 
+    ret = nvsread_value_parameter(SETTINGS_STORGE_NAME, dev_settings_key, (char *)&devicesettings);
+    if ( ret == false || devicesettings.startbyte != 0xFE)
+    {   
+        memset(&devicesettings, 0x00, sizeof(devicesettings));
+        devicesettings.startbyte = 0xFE;
+        memcpy(devicesettings.screen_lock_password, "2024", strlen("2024"));
+        memcpy(devicesettings.metrology_lock_password, "1664", strlen("1664"));
+        memcpy(devicesettings.wifi_ssid, "belkin.96a", strlen("belkin.96a"));
+        memcpy(devicesettings.wifi_password, "aa3e6a36", strlen("aa3e6a36"));
+        devicesettings.buzzer_enable = 0;
+        devicesettings.led_enable = 0;
+        devicesettings.wifi_enable = 0;
+        devicesettings.external_fan_enable = 0;
+        devicesettings.screen_sleepmode_enable = 1;
+        devicesettings.selected_language = ENGLISH;
+        devicesettings.screen_timeout_value = 2;
+        devicesettings.luminosity_value = 80;
+        devicesettings.contrast_value = 80;
+        memcpy(devicesettings.device_serial_number, "XX-XXXX", strlen("XX-XXXX"));
+        memcpy(devicesettings.customer_name, "LSDiag", strlen("LSDiag"));
+
+        ret = nvswrite_device_settings(&devicesettings);
+        if( ret )
+        {
+            ESP_LOGI(TAG, "default device settings are saved");
+        }
+    }
+    else
+    {
+        ESP_LOGI(TAG, "Device serial number = %s", devicesettings.device_serial_number);
+        ESP_LOGI(TAG, "Device WiFi SSID = %s", devicesettings.wifi_ssid);
+        ESP_LOGI(TAG, "Device WiFi Password = %s", devicesettings.wifi_password);
+    }
+    return ret;
+}
+
+/********************************************************************************************
+ *      
+ ********************************************************************************************/
+bool nvswrite_device_settings(device_settings_t *settingsbuffer)
+{   
+    bool ret = false;
+    ret = nvswrite_value_parameters(SETTINGS_STORGE_NAME, dev_settings_key, settingsbuffer, sizeof(device_settings_t));
+    if( ret == false)
+    {
+        ESP_LOGE(TAG, "device settings write error");
+    }
+    return ret;
+}   

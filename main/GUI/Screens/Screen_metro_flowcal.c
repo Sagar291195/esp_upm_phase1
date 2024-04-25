@@ -66,6 +66,7 @@ lv_obj_t *fasParentCont;
 lv_obj_t *_fasContStatusBar;
 lv_obj_t *__fasTimeLabel;
 lv_obj_t *__fasBatteryLabel;
+lv_obj_t *__fasBatteryPercentage;
 lv_obj_t *__fasWifiLabel;
 lv_obj_t *__fasSignalLabel;
 lv_obj_t *_fasFlowHeadingCont;
@@ -155,12 +156,11 @@ void CallMetroFlowCalibrationScreen(void)
     lv_style_set_text_color(&_fasTimeLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasTimeLabel, LV_LABEL_PART_MAIN, &_fasTimeLabelStyle);
 
-    _fasTimeRefTask = lv_task_create(screen_metro_flowcal_refresh, 100, LV_TASK_PRIO_LOW, NULL);
-
+    
     // Create Label for Battery icon
     __fasBatteryLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasBatteryLabel, _fasContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -10, 5);
-    lv_label_set_text(__fasBatteryLabel, LV_SYMBOL_BATTERY_FULL); // LV_SYMBOL_BATTERY_FULL
+    lv_label_set_text(__fasBatteryLabel, get_battery_symbol());
 
     static lv_style_t _fasBatteryLabelStyle;
     lv_style_init(&_fasBatteryLabelStyle);
@@ -168,10 +168,22 @@ void CallMetroFlowCalibrationScreen(void)
     lv_style_set_text_color(&_fasBatteryLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasBatteryLabel, LV_LABEL_PART_MAIN, &_fasBatteryLabelStyle);
 
+    
+    __fasBatteryPercentage = lv_label_create(_fasContStatusBar, NULL);
+    lv_obj_align(__fasBatteryPercentage, _fasContStatusBar, LV_ALIGN_IN_TOP_RIGHT, -60, 7);
+    lv_label_set_text_fmt(__fasBatteryPercentage, "%d%%", get_battery_percentage());
+
+    static lv_style_t _xBatteryPercentageStyle;
+    lv_style_init(&_xBatteryPercentageStyle);
+    lv_style_set_text_font(&_xBatteryPercentageStyle, LV_STATE_DEFAULT, &lv_font_montserrat_18);
+    lv_style_set_text_color(&_xBatteryPercentageStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
+    lv_obj_add_style(__fasBatteryPercentage, LV_LABEL_PART_MAIN, &_xBatteryPercentageStyle);
+
     // Create Label for Wifi icon
     __fasWifiLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasWifiLabel, __fasBatteryLabel, LV_ALIGN_OUT_LEFT_TOP, -7, 2);
     lv_label_set_text(__fasWifiLabel, LV_SYMBOL_WIFI);
+    lv_obj_set_hidden(__fasWifiLabel, true);
 
     static lv_style_t __fasWifiLabelStyle;
     lv_style_init(&__fasWifiLabelStyle);
@@ -183,12 +195,15 @@ void CallMetroFlowCalibrationScreen(void)
     __fasSignalLabel = lv_label_create(_fasContStatusBar, NULL);
     lv_obj_align(__fasSignalLabel, __fasWifiLabel, LV_ALIGN_OUT_LEFT_TOP, -5, 1);
     lv_label_set_text(__fasSignalLabel, SYMBOL_SIGNAL); //"\uf012" #define SYMBOL_SIGNAL "\uf012"
+    lv_obj_set_hidden(__fasSignalLabel, true);
 
     static lv_style_t __fasSignalLabelStyle;
     lv_style_init(&__fasSignalLabelStyle);
     lv_style_set_text_font(&__fasSignalLabelStyle, LV_STATE_DEFAULT, &signal_20); // signal_20
     lv_style_set_text_color(&__fasSignalLabelStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(__fasSignalLabel, LV_LABEL_PART_MAIN, &__fasSignalLabelStyle);
+
+    _fasTimeRefTask = lv_task_create(screen_metro_flowcal_refresh, 100, LV_TASK_PRIO_LOW, NULL);
 
     // Crate a container to contain FLOW Header
     _fasFlowHeadingCont = lv_cont_create(fasParentCont, NULL);
@@ -279,7 +294,7 @@ void CallMetroFlowCalibrationScreen(void)
 
     static lv_style_t __fasRefValIntStyle;
     lv_style_init(&__fasRefValIntStyle);
-    lv_style_set_text_font(&__fasRefValIntStyle, LV_STATE_DEFAULT, &lv_font_montserrat_36); // signal_20
+    lv_style_set_text_font(&__fasRefValIntStyle, LV_STATE_DEFAULT, &lv_font_montserrat_30); // signal_20
     lv_style_set_text_color(&__fasRefValIntStyle, LV_LABEL_PART_MAIN, LV_COLOR_WHITE);
     lv_obj_add_style(_fasRefValInt, LV_LABEL_PART_MAIN, &__fasRefValIntStyle);
 
@@ -449,17 +464,17 @@ void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask)
 
         if (!bOneTime)
         {
-            printf("------------------Settings-----------------------\n");
-            printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
-            printf("------------------Settings-----------------------\n");
-            bOneTime = true;
+            // printf("------------------Settings-----------------------\n");
+            // printf(" kp is: %0.2f || Ki is: %0.2f || kd is: %0.2f || Akp is :%0.2f || Aki is: %0.2f||Akd is: %0.2f \n", fGetPIDParameterKp(), fGetPIDParameterKi(), fGetPIDParameterKd(), fGetPIDParameterAkp(), fGetPIDParameterAki(), fGetPIDParameterAkd());
+            // printf("------------------Settings-----------------------\n");
+            // bOneTime = true;
 
-            printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
+            // printf("Hardware Time, SDP Temp, SDP DP, SDP Massflow, Ch0 Voltage, Ch0 Shunt Voltage, Ch0 Current, Ch1 Voltage, Ch1 Shunt Voltage, Ch1 Current, Ch2 Voltage, Ch2 Shunt Voltage, Ch2 Current, Ext Temp Raw, Ext Humidity Raw, Ext Pressure Raw, Ext AirDensity Raw, Int Temp Raw, Int Humidity Raw, Int Pressure Raw, Int AirDensity Raw, Ext Temp user, Ext Humidity user, Ext Pressure user, Ext AirDensity user, Int Temp user, Int Humidity user, Int Pressure user, Int AirDensity user, Volumetric Flow, Hour counter, Liter Counter\n");
         }
         get_external_sensor_calibratedvalue(&external_sensor_data); /* getting the extenal sensor data from sensor management */
         get_external_sensor_data_raw(&raw_sensor_data);
         get_ina3221_sensor_data(&xInaSensorData[0]);   /* getting the INA data */
-        printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value(), xInaSensorData[0].bus_voltage, xInaSensorData[0].shunt_voltage, xInaSensorData[0].shunt_current, xInaSensorData[1].bus_voltage, xInaSensorData[1].shunt_voltage, xInaSensorData[1].shunt_current, xInaSensorData[2].bus_voltage, xInaSensorData[2].shunt_voltage, xInaSensorData[2].shunt_current, raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
+        // printf("%llu,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f,%0.2f\n", esp_timer_get_time(),get_sdp32_temperature_value(), get_sdp32_pressure_value(), get_sdp32_massflow_value(), xInaSensorData[0].bus_voltage, xInaSensorData[0].shunt_voltage, xInaSensorData[0].shunt_current, xInaSensorData[1].bus_voltage, xInaSensorData[1].shunt_voltage, xInaSensorData[1].shunt_current, xInaSensorData[2].bus_voltage, xInaSensorData[2].shunt_voltage, xInaSensorData[2].shunt_current, raw_sensor_data.temperature, raw_sensor_data.humidity, raw_sensor_data.pressure, get_external_air_density_raw(), get_internal_temperature_value(), get_internal_humidity_value(), get_internal_pressure_value(),  get_internal_air_density_raw(), external_sensor_data.temperature, external_sensor_data.humidity, external_sensor_data.pressure, get_external_air_density_calibrated(), get_internal_temperature_calibrated(), get_internal_humidity_calibrated(), get_internal_pressure_calibrated(),  get_internal_air_density_calibrated(), get_volumetric_flow(), fGetTotalHoursCount(), fGetTotalLiterCount());
 
 
         if (percentError > -10.0 && percentError < 10.0)
@@ -470,6 +485,9 @@ void screen_metro_flowcal_refresh(lv_task_t *_fasTimeRefTask)
         {
             lv_img_set_src(_fasStatusIcon, &cross_icon);
         }
+        lv_label_set_text(__fasTimeLabel, guiTime);
+        lv_label_set_text(__fasBatteryLabel, get_battery_symbol());
+        lv_label_set_text_fmt(__fasBatteryPercentage, "%d%%", get_battery_percentage());
     }
 }
 
