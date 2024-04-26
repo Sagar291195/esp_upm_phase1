@@ -380,7 +380,7 @@ static void sdp32_sensor_read_task(void *pvParameters)
             sdp32_read_count++;
             if (sdp32_read_count == NO_OF_SAMPLES_SDP32)
             {
-                ESP_LOGI(TAG, "SDP32 pressure value = %X, %X, %f, %f", read_buff[0], read_buff[1], temp_value, sdp32_pressure_value);
+                // ESP_LOGI(TAG, "SDP32 pressure value = %X, %X, %f, %f", read_buff[0], read_buff[1], temp_value, sdp32_pressure_value);
                 sdp32_pressure_value = temp_sdp32_pressure / NO_OF_SAMPLES_SDP32;
                 sdp32_read_count = 0;
                 temp_sdp32_pressure = 0;
