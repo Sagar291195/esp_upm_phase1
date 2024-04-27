@@ -157,8 +157,9 @@ void ws2812_handleInterrupt(void *arg)
 
 void ws2812_disable(void)
 {
+    gpio_reset_pin(13);
     gpio_pad_select_gpio(13);                 // Set GPIO as OUTPUT
-    gpio_set_direction(13, GPIO_MODE_INPUT); // WakeMode
+    gpio_set_direction(13, GPIO_MODE_OUTPUT); // WakeMode
     gpio_set_level(13, 0);
     rmt_driver_uninstall(RMTCHANNEL);
 }
