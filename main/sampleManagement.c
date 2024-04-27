@@ -175,7 +175,6 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
          
             if ((uCurrentRunningSequenceNumber == get_no_of_sequence_in_array()) || bSampleForcedStop == true)     /* show the summary screen, when all the sequneces are finished or we forced stop the samples by pressing the stop button*/
             {
-                
                 vSetCounterValuesEndSummaryDetails();   /* filling the end summary, when not force stopped */
                 ESP_LOGD(TAG, "end of the Sample reached"); /* now need to save the end summary */
                 if (!bSampleForcedStop) /* our job is finished, need to show the finised job summary screen only when the sample is time end */
@@ -463,7 +462,6 @@ void vNotifySampleMangementToProceed()
 void vStopCurrentSample()
 {
     bSampleForcedStop = true; /* setting the force stop sample flag to true */
-
     if (is_sequence_running())   /* if sequce is running stopping it */
     {
         ESP_LOGD(TAG, "Sequnce is running stopping it");
@@ -580,7 +578,7 @@ void vUpdateWorkInProgressScreen()
 void vShowJobFinishedScreen()
 {
     ESP_LOGD(TAG, "Showing the job finish screen");
-    vTaskDelay(100);
+    // vTaskDelay(100);
     vShowJobFinishedDashboardScreen();
 }
 

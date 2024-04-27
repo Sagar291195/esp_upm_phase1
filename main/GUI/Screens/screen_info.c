@@ -199,13 +199,22 @@ void CallScreenInfo(void)
     lv_obj_set_style_local_border_width(_infoHeadingCont, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
 
     // Create Back arrow img
-    _infoBackArrowLabel = lv_img_create(_infoHeadingCont, NULL);
-    lv_img_set_src(_infoBackArrowLabel, &left_arrow_icon);
-    lv_obj_align(_infoBackArrowLabel, _infoHeadingCont, LV_ALIGN_IN_LEFT_MID, 5, 0);
-   // lv_obj_set_click(_infoBackArrowLabel, true);
-    lv_obj_set_style_local_image_recolor_opa(_infoBackArrowLabel, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
-    lv_obj_set_style_local_image_recolor(_infoBackArrowLabel, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    lv_obj_set_event_cb(_infoBackArrowLabel, _infoBackArrow_event_handler);
+     static lv_style_t style;
+    lv_style_init(&style);
+    lv_style_set_image_recolor_opa(&style, LV_STATE_PRESSED, LV_OPA_30);
+    lv_style_set_image_recolor(&style, LV_STATE_PRESSED, LV_COLOR_BLACK);
+    lv_style_set_text_color(&style, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+
+    _infoBackArrowLabel = lv_imgbtn_create(_infoHeadingCont, NULL);
+    lv_obj_set_size(_infoBackArrowLabel, 30, 30);
+    lv_imgbtn_set_src(_infoBackArrowLabel, LV_BTN_STATE_RELEASED, &left_arrow_icon);
+    lv_imgbtn_set_src(_infoBackArrowLabel, LV_BTN_STATE_PRESSED, &left_arrow_icon);
+    lv_imgbtn_set_src(_infoBackArrowLabel, LV_BTN_STATE_CHECKED_RELEASED, &left_arrow_icon);
+    lv_imgbtn_set_src(_infoBackArrowLabel, LV_BTN_STATE_CHECKED_PRESSED, &left_arrow_icon);
+    lv_imgbtn_set_checkable(_infoBackArrowLabel, true);
+    lv_obj_add_style(_infoBackArrowLabel, LV_IMGBTN_PART_MAIN, &style);
+    lv_obj_align(_infoBackArrowLabel, _infoHeadingCont, LV_ALIGN_IN_LEFT_MID, 10, -5);
+    lv_obj_set_event_cb(_infoBackArrowLabel, _infoBackArrow_event_handler );
 
     // Create Label for Sequences "Heading"
     _infoHedingLbl = lv_label_create(_infoHeadingCont, NULL);
@@ -370,6 +379,7 @@ static void _infoBackArrow_event_handler(lv_obj_t *obj, lv_event_t event)
 {
     if (event == LV_EVENT_RELEASED)
     {
+        ESP_LOGI(TAG, "back arrow event");
         lv_task_del(inforefresherTask);
         inforefresherTask = NULL;
         pxDashboardScreen();

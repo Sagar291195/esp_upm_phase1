@@ -324,6 +324,7 @@ void ws2812_task(void *pvParamters)
         cb = 0x48;
     }
     else{
+        ESP_LOGI("WS2812", "disable ws2812");
         ws2812_disable();
     }
 

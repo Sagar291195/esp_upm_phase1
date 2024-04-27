@@ -405,6 +405,11 @@ void app_main()
     wakeupmodeInit();                           // enabling the device from the wake mode
     debug_uart_init();
     
+    gpio_reset_pin(13);
+    gpio_pad_select_gpio(13);                 // Set GPIO as OUTPUT
+    gpio_set_direction(13, GPIO_MODE_OUTPUT); // WakeMode
+    gpio_set_level(13, 1);
+
     ESP_ERROR_CHECK(i2cdev_init());
     vTaskDelay(500 / portTICK_PERIOD_MS);
     nvs_storage_initialize();     // Initiating the data managament api
