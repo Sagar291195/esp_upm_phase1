@@ -255,5 +255,6 @@ void nvsread_pid_parameters(struct_PID_parameters_t *paramaters)
         paramaters->fAkd = motorPID_DEFAULT_AKD;
         paramaters->fACoff = 1;
         paramaters->fNcoff = 1;
+        strcpy(paramaters->pid_version, "0.0.0.0");
     }
 }

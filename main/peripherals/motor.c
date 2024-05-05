@@ -53,7 +53,7 @@ static float fAkp;
 static float fAki;
 static float fAkd;
 uint16_t PID_COMPUTE_TIME_IN_MS = PID_COMPUT_TIME_AGGRESIVE_IN_MS;
-
+static char pid_config_version[32];
  /********************************************************************************************
  *                           STATIC PROTOTYPE
  ********************************************************************************************/
@@ -194,7 +194,10 @@ void initializePIDController(void)
     struct_PID_parameters_t pid_parameters;
     /* getting the parameters of the pid controller from nvs flash, if not found, the below function
      * will set the default values */
+    memset(&pid_parameters, 0x00, sizeof(pid_parameters));
+    memset(pid_config_version, 0x00, sizeof(pid_config_version));
     nvsread_pid_parameters(&pid_parameters);
+    strcpy(pid_config_version, pid_parameters.pid_version);
 
     /* configuring  the parameters of the pid controller */
     save_motor_pid_parameter(pid_parameters.fKp / pid_parameters.fNcoff,
@@ -352,6 +355,14 @@ float fGetPIDParameterAkd()
 uint16_t getMotorPIDSampleComputeTime()
 {
     return PID_COMPUTE_TIME_IN_MS;
+}
+
+/********************************************************************************************
+ *  
+ ********************************************************************************************/
+char *get_pid_config_version(void)
+{
+    return pid_config_version;
 }
 
 /********************************************************************************************

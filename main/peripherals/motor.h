@@ -196,6 +196,9 @@ uint16_t getMotorPIDSampleComputeTime();
  */
 void motor_initialization();
 
+
+char *get_pid_config_version(void);
+
 #ifdef __cplusplus
 }
 #endif

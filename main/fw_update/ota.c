@@ -43,6 +43,8 @@ static struct shared_keys
 {
     char targetFwServerUrl[256];
     char targetFwVer[128];
+    char targetConfigurationUrl[256];
+    char targetConfigurationVer[128];
 } shared_attributes;
 
 /********************************************************************************************
@@ -92,8 +94,6 @@ static void parse_ota_config(const cJSON *object)
         if (cJSON_IsString(server_url_response) && (server_url_response->valuestring != NULL) && strlen(server_url_response->valuestring) < sizeof(shared_attributes.targetFwServerUrl))
         {
             memset(shared_attributes.targetFwServerUrl, '\0', sizeof(shared_attributes.targetFwServerUrl));
-            ESP_LOGI(TAG, "parse_ota_config: %s", shared_attributes.targetFwServerUrl);
-            ESP_LOGI(TAG, "server_url_response->valuestring: %s", server_url_response->valuestring);
             memcpy(shared_attributes.targetFwServerUrl, server_url_response->valuestring, strlen(server_url_response->valuestring));
             shared_attributes.targetFwServerUrl[sizeof(shared_attributes.targetFwServerUrl) - 1] = 0;
             ESP_LOGI(TAG, "Received firmware URL: %s", shared_attributes.targetFwServerUrl);
@@ -107,6 +107,26 @@ static void parse_ota_config(const cJSON *object)
             shared_attributes.targetFwVer[sizeof(shared_attributes.targetFwVer) - 1] = 0;
             ESP_LOGI(TAG, "Received firmware version: %s", shared_attributes.targetFwVer);
         }
+        
+
+        cJSON *config_url_response = cJSON_GetObjectItem(object, TB_SHARED_ATTR_FIELD_TARGET_CONFIG_URL);
+        if (cJSON_IsString(config_url_response) && (config_url_response->valuestring != NULL) && strlen(config_url_response->valuestring) < sizeof(shared_attributes.targetConfigurationUrl))
+        {
+            memset(shared_attributes.targetConfigurationUrl, '\0', sizeof(shared_attributes.targetConfigurationUrl));
+            memcpy(shared_attributes.targetConfigurationUrl, config_url_response->valuestring, strlen(config_url_response->valuestring));
+            shared_attributes.targetConfigurationUrl[sizeof(shared_attributes.targetConfigurationUrl) - 1] = 0;
+            ESP_LOGI(TAG, "Received configuration URL: %s", shared_attributes.targetConfigurationUrl);
+        }
+
+        cJSON *target_config_ver_response = cJSON_GetObjectItem(object, TB_SHARED_ATTR_FIELD_TARGET_CONFIG_VER);
+        if (cJSON_IsString(target_config_ver_response) && (target_config_ver_response->valuestring != NULL) && strlen(target_config_ver_response->valuestring) < sizeof(shared_attributes.targetConfigurationVer))
+        {
+            memset(shared_attributes.targetConfigurationVer, '\0', sizeof(shared_attributes.targetFwVer));
+            memcpy(shared_attributes.targetConfigurationVer, target_config_ver_response->valuestring, strlen(target_config_ver_response->valuestring));
+            shared_attributes.targetConfigurationVer[sizeof(shared_attributes.targetConfigurationVer) - 1] = 0;
+            ESP_LOGI(TAG, "Received configuration version: %s", shared_attributes.targetConfigurationVer);
+        }
+
     }
 }
 
@@ -150,7 +170,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
         {
             memcpy(mqtt_msg, event->data, event->data_len);
             mqtt_msg[event->data_len] = 0;
-            ESP_LOGI(TAG, "Shared = %s", mqtt_msg);
+            ESP_LOGD(TAG, "Shared = %s", mqtt_msg);
             cJSON *attributes = cJSON_Parse(mqtt_msg);
             if (attributes != NULL)
             {
@@ -198,6 +218,73 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 static esp_err_t _http_event_handler(esp_http_client_event_t *evt)
 {
     assert(evt != NULL);
+    static char *output_buffer;  // Buffer to store response of http request from event handler
+    static int output_len;       // Stores number of bytes read
+
+    switch (evt->event_id)
+    {
+    case HTTP_EVENT_ERROR:
+        ESP_LOGD(TAG, "HTTP_EVENT_ERROR");
+        break;
+    case HTTP_EVENT_ON_CONNECTED:
+        ESP_LOGD(TAG, "HTTP_EVENT_ON_CONNECTED");
+        break;
+    case HTTP_EVENT_HEADER_SENT:
+        ESP_LOGD(TAG, "HTTP_EVENT_HEADER_SENT");
+        break;
+    case HTTP_EVENT_ON_HEADER:
+        ESP_LOGD(TAG, "HTTP_EVENT_ON_HEADER, key=%s, value=%s", evt->header_key, evt->header_value);
+        break;
+    case HTTP_EVENT_ON_DATA:
+        ESP_LOGD(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
+        if (!esp_http_client_is_chunked_response(evt->client))
+        {
+            // Write out data
+            ESP_LOGD(TAG, "%.*s", evt->data_len, (char *)evt->data);
+            if (evt->user_data) {
+                memcpy(evt->user_data + output_len, evt->data, evt->data_len);
+            } else {
+                if (output_buffer == NULL) {
+                    output_buffer = (char *) malloc(esp_http_client_get_content_length(evt->client));
+                    output_len = 0;
+                    if (output_buffer == NULL) {
+                        ESP_LOGE(TAG, "Failed to allocate memory for output buffer");
+                        return ESP_FAIL;
+                    }
+                }
+                memcpy(output_buffer + output_len, evt->data, evt->data_len);
+            }
+            output_len += evt->data_len;
+        }
+        break;
+    case HTTP_EVENT_ON_FINISH:
+        ESP_LOGD(TAG, "HTTP_EVENT_ON_FINISH");
+        if (output_buffer != NULL) {
+            // Response is accumulated in output_buffer. Uncomment the below line to print the accumulated response
+            // ESP_LOG_BUFFER_HEX(TAG, output_buffer, output_len);
+            free(output_buffer);
+            output_buffer = NULL;
+        }
+        output_len = 0;
+        break;
+    case HTTP_EVENT_DISCONNECTED:
+        ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED");
+        if (output_buffer != NULL) {
+            free(output_buffer);
+            output_buffer = NULL;
+        }
+        output_len = 0;
+        break;
+    }
+    return ESP_OK;
+}
+
+/********************************************************************************************
+ *                              
+ ********************************************************************************************/
+static esp_err_t download_http_event_handler(esp_http_client_event_t *evt)
+{
+    assert(evt != NULL);
 
     switch (evt->event_id)
     {
@@ -230,7 +317,6 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt)
     }
     return ESP_OK;
 }
-
 /********************************************************************************************
  *                              
  ********************************************************************************************/
@@ -391,6 +477,32 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
 {
     assert(current_ver != NULL);
 
+    if( strcmp(get_pid_config_version(), ota_config.targetConfigurationVer) != 0)
+    {
+        ESP_LOGI(TAG, "Downloading new pid configuration, version = %s", ota_config.targetConfigurationVer);
+        ESP_LOGI(TAG, "Configuration URL = %s", ota_config.targetConfigurationUrl);
+        char local_response_buffer[512] = {0};
+        esp_http_client_config_t configuration = {
+            .url = ota_config.targetConfigurationUrl,
+            .cert_pem = (char *)server_cert_pem_start,
+            .event_handler = _http_event_handler,
+            .skip_cert_common_name_check = true,
+            .user_data = local_response_buffer,
+        };
+
+        esp_http_client_handle_t client = esp_http_client_init(&configuration);
+        esp_err_t err = esp_http_client_perform(client);
+        if (err == ESP_OK) {
+            ESP_LOGI(TAG, "HTTP GET Status = %d, content_length = %d",
+                    esp_http_client_get_status_code(client),
+                    esp_http_client_get_content_length(client));
+        } else {
+            ESP_LOGE(TAG, "HTTP GET request failed: %s", esp_err_to_name(err));
+        }
+        ESP_LOGI(TAG, "configuration data = %s", local_response_buffer);
+        esp_http_client_cleanup(client);
+    }
+    
     if (!fw_versions_are_equal(current_ver, ota_config.targetFwVer) && ota_params_are_specified(ota_config))
     {
         ESP_LOGW(TAG, "Starting OTA, firmware versions are different - current: %s, target: %s", current_ver, ota_config.targetFwVer);
@@ -399,7 +511,7 @@ static void start_ota(const char *current_ver, struct shared_keys ota_config)
         esp_http_client_config_t config = {
             .url = ota_config.targetFwServerUrl,
             .cert_pem = (char *)server_cert_pem_start,
-            .event_handler = _http_event_handler,
+            .event_handler = download_http_event_handler,
             .skip_cert_common_name_check = true,
         };
         

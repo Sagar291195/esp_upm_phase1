@@ -113,6 +113,7 @@ typedef struct struct_PID_parameters
     float fAkd;
     float fNcoff;
     float fACoff;
+    char pid_version[32];
 } struct_PID_parameters_t;
 
 /********************************************************************************************

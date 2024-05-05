@@ -34,9 +34,11 @@
 /*! Shared attribute keys on ThingsBoard */
 #define TB_SHARED_ATTR_FIELD_TARGET_FW_URL "targetFwUrl"
 #define TB_SHARED_ATTR_FIELD_TARGET_FW_VER "targetFwVer"
+#define TB_SHARED_ATTR_FIELD_TARGET_CONFIG_VER "targetConfigVer"
+#define TB_SHARED_ATTR_FIELD_TARGET_CONFIG_URL "targetConfigUrl"
 
 /*! Body of the request of specified shared attributes */
-#define TB_SHARED_ATTR_KEYS_REQUEST "{\"sharedKeys\":\"targetFwUrl,targetFwVer\"}"
+#define TB_SHARED_ATTR_KEYS_REQUEST "{\"sharedKeys\":\"targetFwUrl,targetFwVer,targetConfigVer,targetConfigUrl\"}"
 
 /**
  * @brief Bit set for application events
