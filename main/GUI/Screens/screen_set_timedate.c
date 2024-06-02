@@ -151,8 +151,8 @@ void screen_set_time_date(void)
     // Black arrow Container
     lv_obj_t *set_timeddate_back;
     set_timeddate_back = lv_cont_create(set_timedate_header, NULL);
-    lv_obj_set_size(set_timeddate_back, 50, 50);
-    lv_obj_align(set_timeddate_back, set_timedate_header, LV_ALIGN_IN_TOP_LEFT, 10, 0);
+    lv_obj_set_size(set_timeddate_back, 60, 60);
+    lv_obj_align(set_timeddate_back, set_timedate_header, LV_ALIGN_IN_TOP_LEFT, 10, 10);
     lv_obj_set_style_local_bg_color(set_timeddate_back, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x39, 0x89, 0xBD)); // 5f615f , LV_COLOR_MAKE(0x5D, 0x5D, 0x5D)
     lv_obj_set_style_local_border_width(set_timeddate_back, LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, 0);
     lv_obj_set_event_cb(set_timeddate_back, _pidBackArrow_event_handler);
@@ -165,7 +165,7 @@ void screen_set_time_date(void)
     lv_obj_set_click(back_arrow, true);
     lv_obj_set_style_local_image_recolor_opa(back_arrow, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, 255);
     lv_obj_set_style_local_image_recolor(back_arrow, LV_IMG_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_WHITE);
-    lv_obj_set_event_cb(back_arrow, _pidBackArrow_event_handler);
+    // lv_obj_set_event_cb(back_arrow, _pidBackArrow_event_handler);
 
    
     lv_obj_t *screen_label;

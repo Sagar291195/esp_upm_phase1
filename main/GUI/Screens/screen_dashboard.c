@@ -634,7 +634,8 @@ static void BTN_event_handler(lv_obj_t *obj, lv_event_t event)
 
         case 3:
             delete_timeupdate_task();
-            Screen_Password(SCR_PASSWORD_SAMPLE_STOP);
+            vControllerSampleStop();
+            xseSummaryEndScreen(true);
             break;
 
         case 4:
