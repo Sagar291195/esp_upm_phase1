@@ -181,9 +181,7 @@ static void vSampleManagementServiceFunction(void *pvParamaters)
                 {   
                     vShowJobFinishedScreen();
                 }
-                else{
-                    xseSummaryEndScreen(true);
-                }
+               
                 
                 ESP_LOGD(TAG, "Setting the sequence number to 0");  /* if the sequence is the last sequence in the array, then the sample is over, not set the sequence to run to 0. indicating that no sequnce is in progress */
                 vSetCurrentRunningSequenceNumber(0);
